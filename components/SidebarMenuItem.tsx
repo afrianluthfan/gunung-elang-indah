@@ -13,9 +13,9 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
   active,
 }) => {
   const activeClass =
-    "w-full rounded-xl bg-white p-2 pl-5 font-bold text-[#011869]";
+    "w-full rounded-xl bg-white p-2 min-w-[110px] pl-5 font-bold text-[#011869]";
   const nonActiveClass =
-    "w-full rounded-xl bg-none p-2 pl-5 font-bold text-white";
+    "w-full rounded-xl bg-none p-2 min-w-[110px] pl-5 font-bold text-white";
 
   return (
     <Link

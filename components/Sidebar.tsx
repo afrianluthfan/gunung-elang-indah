@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 const Sidebar = () => {
   const router = useRouter();
   return (
-    <div className="flex h-screen w-[17.3vw] flex-col items-center justify-between bg-[#011869] p-5">
+    <div className="flex h-screen w-[17.3vw] min-w-[107px] flex-col items-center justify-between bg-[#011869] p-5">
       <SidebarTopItem />
       <div className="flex w-full flex-col gap-3">
         <SidebarMenuItem active pageName="Profiling" pageRoute="profiling" />
