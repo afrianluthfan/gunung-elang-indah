@@ -86,6 +86,39 @@ const Sidebar = () => {
       },
     ];
 
+    const financeMenus = [
+      {
+        activePage: "/piutang",
+        pageName: "Piutang",
+        pageRoute: "piutang",
+      },
+      {
+        activePage: "/hutang",
+        pageName: "hutang",
+        pageRoute: "hutang",
+      },
+      {
+        activePage: "/pemasukan",
+        pageName: "Pemasukan",
+        pageRoute: "pemasukan",
+      },
+      {
+        activePage: "/pengeluaran",
+        pageName: "Pengeluaran",
+        pageRoute: "pengeluaran",
+      },
+      {
+        activePage: "/sales-order",
+        pageName: "Sales Order",
+        pageRoute: "sales-order",
+      },
+      {
+        activePage: "/komisi",
+        pageName: "Komisi",
+        pageRoute: "komisi",
+      },
+    ];
+
     switch (isActive) {
       case "/profiling":
         setMenuItemsList(salesMenus);
@@ -95,6 +128,9 @@ const Sidebar = () => {
         break;
       case "/proforma-invoice":
         setMenuItemsList(adminMenus);
+        break;
+      case "/piutang":
+        setMenuItemsList(financeMenus);
         break;
     }
   }, [isActive]);
