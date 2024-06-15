@@ -58,10 +58,44 @@ const Sidebar = () => {
       },
     ];
 
-    if (isActive === "/profiling") {
-      setMenuItemsList(salesMenus);
-    } else if (isActive === "/stok-barang") {
-      setMenuItemsList(logistikMenus);
+    const adminMenus = [
+      {
+        activePage: "/proforma-invoice",
+        pageName: "Proforma Invoice",
+        pageRoute: "proforma-invoice",
+      },
+      {
+        activePage: "/purchase-order",
+        pageName: "Purchase Order",
+        pageRoute: "purchase-order",
+      },
+      {
+        activePage: "/stok-barang",
+        pageName: "Stok Barang",
+        pageRoute: "stok-barang",
+      },
+      {
+        activePage: "/sewa-barang",
+        pageName: "Sewa Barang",
+        pageRoute: "sewa-barang",
+      },
+      {
+        activePage: "/sales-order",
+        pageName: "Sales Order",
+        pageRoute: "sales-order",
+      },
+    ];
+
+    switch (isActive) {
+      case "/profiling":
+        setMenuItemsList(salesMenus);
+        break;
+      case "/stok-barang":
+        setMenuItemsList(logistikMenus);
+        break;
+      case "/proforma-invoice":
+        setMenuItemsList(adminMenus);
+        break;
     }
   }, [isActive]);
 
