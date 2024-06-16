@@ -6,14 +6,21 @@ import SidebarTopItem from "./SidebarTopItem";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@nextui-org/react";
+import { logOut } from "@/redux/features/auth-slice";
+import { useDispatch } from "react-redux";
 
 const Sidebar = () => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const [isActive, setIsActive] = useState("");
   const currentUrl = usePathname();
   const [menuItemsList, setMenuItemsList] = useState([
     { activePage: "", pageName: "", pageRoute: "" },
   ]);
+  const handleLogOut = () => {
+    dispatch(logOut());
+    router.push("/login");
+  };
   useEffect(() => setIsActive(currentUrl), [currentUrl, isActive]);
 
   useEffect(() => {
@@ -148,10 +155,7 @@ const Sidebar = () => {
           />
         ))}
       </SidebarMenuItemsLayout>
-      <Button
-        className="w-full font-bold"
-        onClick={() => router.push("/login")}
-      >
+      <Button className="w-full font-bold" onClick={handleLogOut}>
         Log Out
       </Button>
     </div>
