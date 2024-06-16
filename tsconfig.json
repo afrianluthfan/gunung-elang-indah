@@ -21,6 +21,13 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/Table/EyeIcon.jsx", "components/Table/DeleteIcon.jsx"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "components/Tables/AdminTable/EyeIcon.jsx",
+    "components/Tables/AdminTable/DeleteIcon.jsx"
+  ],
   "exclude": ["node_modules"]
 }
