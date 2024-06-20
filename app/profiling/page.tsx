@@ -10,7 +10,7 @@ const ProfilingPage = () => (
 
     <div className="h-screen w-[82.7vw] bg-[#EFEFEF] text-black">
       {/* top bar that says "Welcome, {user}" */}
-      <WelcomingMessage user="Staff Sales" />
+      <WelcomingMessage />
       {/* main content */}
       <MainContentLayout>
         <MainContent />

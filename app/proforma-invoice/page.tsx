@@ -1,22 +1,37 @@
+"use client";
+
 import Sidebar from "@/components/Sidebar";
-import MainContent from "./MainContent";
 import MainContentLayout from "@/components/layouts/MainContentLayout";
+import AdminMainContent from "../(admin)/AdminMainContent";
+import SalesMainContent from "../(sales)/SalesMainContent";
 import WelcomingMessage from "@/components/WelcomingMessage";
+import { useAppSelector } from "@/redux/store";
 
-const ProfilingPage = () => (
-  <section className="flex max-h-screen">
-    {/* sidebar */}
-    <Sidebar />
+const ProfilingPage = () => {
+  const user = useAppSelector((state) => state.authReducer.value.username);
+  let MainContent = <></>;
+  switch (user) {
+    case "sales":
+      MainContent = <SalesMainContent />;
+      break;
+    case "admin":
+      MainContent = <AdminMainContent />;
+      break;
+  }
 
-    <div className="h-screen w-[82.7vw] bg-[#EFEFEF] text-black">
-      {/* top bar that says "Welcome, {user}" */}
-      <WelcomingMessage user="Staff Admin" />
-      {/* main content */}
-      <MainContentLayout>
-        <MainContent />
-      </MainContentLayout>
-    </div>
-  </section>
-);
+  return (
+    <section className="flex max-h-screen">
+      {/* sidebar */}
+      <Sidebar />
+
+      <div className="h-screen w-[82.7vw] bg-[#EFEFEF] text-black">
+        {/* top bar that says "Welcome, {user}" */}
+        <WelcomingMessage />
+        {/* main content */}
+        <MainContentLayout>{MainContent}</MainContentLayout>
+      </div>
+    </section>
+  );
+};
 
 export default ProfilingPage;

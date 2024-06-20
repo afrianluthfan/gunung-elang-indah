@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@nextui-org/react";
 import { logOut } from "@/redux/features/auth-slice";
 import { useDispatch } from "react-redux";
+import { useAppSelector } from "@/redux/store";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -17,10 +18,14 @@ const Sidebar = () => {
   const [menuItemsList, setMenuItemsList] = useState([
     { activePage: "", pageName: "", pageRoute: "" },
   ]);
+  const activeUser = useAppSelector(
+    (state) => state.authReducer.value.username,
+  );
   const handleLogOut = () => {
     dispatch(logOut());
     router.push("/login");
   };
+
   useEffect(() => setIsActive(currentUrl), [currentUrl, isActive]);
 
   useEffect(() => {
@@ -126,21 +131,21 @@ const Sidebar = () => {
       },
     ];
 
-    switch (isActive) {
-      case "/profiling":
+    switch (activeUser) {
+      case "sales":
         setMenuItemsList(salesMenus);
         break;
-      case "/stok-barang":
+      case "logistik":
         setMenuItemsList(logistikMenus);
         break;
-      case "/proforma-invoice":
+      case "admin":
         setMenuItemsList(adminMenus);
         break;
-      case "/piutang":
+      case "finance":
         setMenuItemsList(financeMenus);
         break;
     }
-  }, [isActive]);
+  }, [activeUser]);
 
   return (
     <div className="flex h-screen w-[17.3vw] min-w-[107px] flex-col items-center justify-between bg-[#011869] p-5">
