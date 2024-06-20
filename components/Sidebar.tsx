@@ -13,40 +13,35 @@ import { useAppSelector } from "@/redux/store";
 const Sidebar = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const [isActive, setIsActive] = useState("");
   const currentUrl = usePathname();
+  const baseUrl = currentUrl.split("/").slice(0, 2).join("/");
   const [menuItemsList, setMenuItemsList] = useState([
-    { activePage: "", pageName: "", pageRoute: "" },
+    { pageName: "", pageRoute: "" },
   ]);
   const activeUser = useAppSelector(
     (state) => state.authReducer.value.username,
   );
+  // logout handler
   const handleLogOut = () => {
     dispatch(logOut());
     router.push("/login");
   };
 
-  useEffect(() => setIsActive(currentUrl), [currentUrl, isActive]);
-
   useEffect(() => {
     const salesMenus = [
       {
-        activePage: "/profiling",
         pageName: "Profiling",
         pageRoute: "profiling",
       },
       {
-        activePage: "/proforma-invoice",
         pageName: "Proforma Invoice",
         pageRoute: "proforma-invoice",
       },
       {
-        activePage: "/stok-barang",
         pageName: "Stok Barang",
         pageRoute: "stok-barang",
       },
       {
-        activePage: "/sewa-alat",
         pageName: "Sewa Alat",
         pageRoute: "sewa-alat",
       },
@@ -54,17 +49,14 @@ const Sidebar = () => {
 
     const logistikMenus = [
       {
-        activePage: "/stok-barang",
         pageName: "Stok Barang",
         pageRoute: "stok-barang",
       },
       {
-        activePage: "/rental-items",
         pageName: "Rental Items",
         pageRoute: "rental-items",
       },
       {
-        activePage: "/documents",
         pageName: "Documents",
         pageRoute: "documents",
       },
@@ -72,27 +64,22 @@ const Sidebar = () => {
 
     const adminMenus = [
       {
-        activePage: "/proforma-invoice",
         pageName: "Proforma Invoice",
         pageRoute: "proforma-invoice",
       },
       {
-        activePage: "/purchase-order",
         pageName: "Purchase Order",
         pageRoute: "purchase-order",
       },
       {
-        activePage: "/stok-barang",
         pageName: "Stok Barang",
         pageRoute: "stok-barang",
       },
       {
-        activePage: "/sewa-barang",
         pageName: "Sewa Barang",
         pageRoute: "sewa-barang",
       },
       {
-        activePage: "/sales-order",
         pageName: "Sales Order",
         pageRoute: "sales-order",
       },
@@ -100,32 +87,26 @@ const Sidebar = () => {
 
     const financeMenus = [
       {
-        activePage: "/piutang",
         pageName: "Piutang",
         pageRoute: "piutang",
       },
       {
-        activePage: "/hutang",
         pageName: "hutang",
         pageRoute: "hutang",
       },
       {
-        activePage: "/pemasukan",
         pageName: "Pemasukan",
         pageRoute: "pemasukan",
       },
       {
-        activePage: "/pengeluaran",
         pageName: "Pengeluaran",
         pageRoute: "pengeluaran",
       },
       {
-        activePage: "/sales-order",
         pageName: "Sales Order",
         pageRoute: "sales-order",
       },
       {
-        activePage: "/komisi",
         pageName: "Komisi",
         pageRoute: "komisi",
       },
@@ -154,7 +135,7 @@ const Sidebar = () => {
         {menuItemsList.map((menuItem, index) => (
           <SidebarMenuItem
             key={index}
-            active={isActive === menuItem.activePage}
+            active={baseUrl === "/" + menuItem.pageRoute}
             pageName={menuItem.pageName}
             pageRoute={menuItem.pageRoute}
           />
