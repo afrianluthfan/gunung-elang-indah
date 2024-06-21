@@ -2,6 +2,7 @@
 
 import { FC, useEffect, useState } from "react";
 import { useAppSelector } from "@/redux/store";
+import Image from "next/image";
 
 const WelcomingMessage: FC = () => {
   const activeUser = useAppSelector(
@@ -33,12 +34,19 @@ const WelcomingMessage: FC = () => {
   }, [activeUser]);
 
   return (
-    <div className="flex h-[11.5vh] w-full bg-white px-10 py-7 text-black">
+    <div className="relative flex h-[11.5vh] w-full bg-white px-10 py-7 text-black">
       <div className="h-full w-[3px] bg-black" />
       <div className="ml-1 flex h-full flex-col justify-between">
         <h1 className="text-[1.3em] font-bold">Selamat Datang</h1>
         <p>{user}</p>
       </div>
+      <Image
+        height={300}
+        width={300}
+        className="absolute right-20 top-0 w-[3vh]"
+        alt="decoration"
+        src="/deco.svg"
+      />
     </div>
   );
 };

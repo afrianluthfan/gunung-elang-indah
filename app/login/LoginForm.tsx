@@ -37,7 +37,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="flex w-[50%] flex-col">
+    <div className="flex h-full w-[50%] flex-col">
       <div>
         <h1 className="text-3xl font-bold">Hello Again!</h1>
         <p>Welcome Back</p>
