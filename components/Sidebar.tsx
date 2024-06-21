@@ -91,7 +91,7 @@ const Sidebar = () => {
         pageRoute: "piutang",
       },
       {
-        pageName: "hutang",
+        pageName: "Hutang",
         pageRoute: "hutang",
       },
       {
