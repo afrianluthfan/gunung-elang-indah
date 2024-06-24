@@ -18,7 +18,7 @@ import {
 } from "@nextui-org/react";
 import { columns, users, statusOptions } from "./data";
 import { DeleteIcon } from "./DeleteIcon";
-import { EyeIcon } from "./EyeIcon";
+import { AcceptIcon } from "./AcceptIcon";
 import { EditIcon } from "./EditIcon";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
@@ -140,19 +140,23 @@ export default function PITableComponent() {
         case "actions":
           return (
             <div className="relative flex items-center gap-2">
-              <Tooltip content="Details" className="text-black">
+              <Tooltip
+                color="success"
+                content="Accept order"
+                className="text-white"
+              >
                 <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                  <EyeIcon />
+                  <AcceptIcon />
                 </span>
               </Tooltip>
-              <Tooltip content="Edit user" className="text-black">
-                <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                  <EditIcon />
-                </span>
-              </Tooltip>
-              <Tooltip color="danger" content="Delete user">
+              <Tooltip color="danger" content="Delete order">
                 <span className="cursor-pointer text-lg text-danger active:opacity-50">
                   <DeleteIcon />
+                </span>
+              </Tooltip>
+              <Tooltip content="Edit order" className="text-black">
+                <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
+                  <EditIcon />
                 </span>
               </Tooltip>
             </div>
