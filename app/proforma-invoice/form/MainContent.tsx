@@ -93,15 +93,6 @@ const MainContent = () => {
           <Input {...register("alamatRumahSakit")} label="Alamat Rumah Sakit" />
         </div>
       </form>
-      <div className="flex justify-end">
-        <Button
-          onClick={handleSubmit(handleSetData)}
-          color="primary"
-          className="min-w-36"
-        >
-          Next
-        </Button>
-      </div>
     </div>
   );
 };

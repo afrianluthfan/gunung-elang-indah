@@ -25,7 +25,6 @@ type FormFields = {
 
 const MainContent = () => {
   const data = useAppSelector((state) => state.itemPIReducer.value);
-  const { register } = useForm<FormFields>();
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
@@ -83,7 +82,7 @@ const MainContent = () => {
       </form>
       <div className="flex justify-end">
         <Button color="primary" className="min-w-36">
-          Next
+          Submit
         </Button>
       </div>
     </div>
