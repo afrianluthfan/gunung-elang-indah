@@ -7,10 +7,10 @@ import { useForm } from "react-hook-form";
 import { data } from "./data";
 import { itemNumber } from "./itemNumber";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
+import { AppDispatch, useAppSelector } from "@/redux/store";
 import { setItemPI } from "@/redux/features/itemPI-slice";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Dropdown from "@/components/Dropdown";
 
 type FormFields = {
@@ -30,14 +30,32 @@ const MainContent = () => {
   const [selectedJumlahBarang, setSelectedJumlahBarang] = useState<string>("");
 
   const { register, handleSubmit, getValues, setValue } = useForm<FormFields>();
+  const inputData = useAppSelector((state) => state.itemPIReducer.value);
 
   const dispatch = useDispatch<AppDispatch>();
-  const router = useRouter();
+  const buttonRef = useRef<JSX.Element | null>(null);
 
-  const handleSetData = () => {
-    dispatch(setItemPI(getValues()));
-    router.push("/proforma-invoice/form/preview");
-  };
+  useEffect(() => {
+    const handleSetData = () => {
+      console.log("awikwok");
+      dispatch(setItemPI(getValues()));
+    };
+    if (inputData.divisi !== "") {
+      buttonRef.current = (
+        <div className="flex justify-end">
+          <Button
+            onClick={handleSubmit(handleSetData)}
+            color="primary"
+            className="min-w-36"
+          >
+            Next
+          </Button>
+        </div>
+      );
+    } else {
+      buttonRef.current = <></>;
+    }
+  }, [dispatch, getValues, handleSubmit, inputData]);
 
   const handleDivisiChange = (selectedItem: string) => {
     setSelectedDivisi(selectedItem);
@@ -93,6 +111,7 @@ const MainContent = () => {
           <Input {...register("alamatRumahSakit")} label="Alamat Rumah Sakit" />
         </div>
       </form>
+      {buttonRef.current}
     </div>
   );
 };

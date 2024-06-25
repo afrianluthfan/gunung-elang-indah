@@ -11,14 +11,17 @@ const Form: FC<pageProps> = ({}) => {
     <section className="flex max-h-screen">
       {/* sidebar */}
       <Sidebar />
-
-      <div className="h-screen w-[82.7vw] bg-[#EFEFEF] text-black">
-        {/* top bar that says "Welcome, {user}" */}
+      <div className="flex max-h-screen w-[82.7vw] flex-col bg-[#EFEFEF] text-black">
         <WelcomingMessage />
-        {/* main content */}
-        <FormMainContentLayout>
-          <MainContent />
-        </FormMainContentLayout>
+        <div className="flex h-[88.5vh] w-full flex-col items-center justify-between px-[1.6vw] pt-[2vh]">
+          <div className="flex w-full flex-col gap-5">
+            {/* top bar that says "Welcome, {user}" */}
+            {/* main content */}
+            <FormMainContentLayout>
+              <MainContent />
+            </FormMainContentLayout>
+          </div>
+        </div>
       </div>
     </section>
   );

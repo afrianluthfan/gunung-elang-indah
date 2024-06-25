@@ -2,29 +2,53 @@
 
 import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
 import TopSectionLeftSide from "../TopSectionLeftSide";
-import { Button, Divider, Input } from "@nextui-org/react";
-import { useForm } from "react-hook-form";
-import Dropdown from "@/components/Dropdown";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
-import { setItemPI } from "@/redux/features/itemPI-slice";
-import { useRouter } from "next/navigation";
+import {
+  Button,
+  Divider,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@nextui-org/react";
 import { useAppSelector } from "@/redux/store";
-
-type FormFields = {
-  divisi: string;
-  nomorInvoice: string;
-  jatuhTempo: string;
-  nomorSI: string;
-  nomorPI: string;
-  namaRumahSakit: string;
-  jumlahBarang: string;
-  tanggal: string;
-  alamatRumahSakit: string;
-};
 
 const MainContent = () => {
   const data = useAppSelector((state) => state.itemPIReducer.value);
+  const dataItem = useAppSelector((state) => state.listItemPIReducer.value);
+  console.log(data);
+
+  const columns = [
+    {
+      key: "no",
+      label: "NO.",
+    },
+    {
+      key: "kat",
+      label: "KAT.",
+    },
+    {
+      key: "namaBarang",
+      label: "NAMA BARANG",
+    },
+    {
+      key: "hSatuan",
+      label: "HARGA SATUAN",
+    },
+    {
+      key: "qty",
+      label: "QTY",
+    },
+    {
+      key: "disc",
+      label: "DISC",
+    },
+    {
+      key: "subTotal",
+      label: "SUB TOTAL",
+    },
+  ];
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
@@ -33,53 +57,42 @@ const MainContent = () => {
         <TopSectionLeftSide />
       </ContentTopSectionLayout>
       <Divider />
-      <form className="grid h-full w-full grid-cols-3 gap-3">
-        {/* first column */}
-        <div className="flex flex-col gap-3">
-          <Input
-            isDisabled
-            label="Divisi"
-            defaultValue={
-              data.divisi.charAt(0).toUpperCase() + data.divisi.slice(1)
-            }
-          />
-          <Input
-            isDisabled
-            label="Nomor Invoice"
-            defaultValue={data.nomorInvoice}
-          />
-          <Input
-            isDisabled
-            label="Jatuh Tempo"
-            defaultValue={data.jatuhTempo}
-          />
-          <Input isDisabled label="Nomor SI" defaultValue={data.nomorSI} />
+      <div className="flex justify-between">
+        <div className="flex flex-col">
+          <h1>Nomor Invoice: {data.nomorInvoice}</h1>
+          <h1>Nomor PI: {data.nomorPI}</h1>
+          <h1>Tanggal: {data.tanggal}</h1>
+          <h1>Jatuh Tempo: {data.jatuhTempo}</h1>
+          <h1>Nomor SI: {data.nomorSI}</h1>
         </div>
-        {/* second column */}
-        <div className="flex flex-col gap-3">
-          <Input label="oadk" className="invisible" />
-          <Input isDisabled label="Nomor PI" defaultValue={data.nomorPI} />
-          <Input
-            isDisabled
-            label="Nama Rumah Sakit"
-            defaultValue={data.namaRumahSakit}
-          />
+        <div className="flex flex-col">
+          <h1>Nama Rumah Sakit: {data.namaRumahSakit}</h1>
+          <h1>Alamat Rumah Sakit: {data.alamatRumahSakit}</h1>
         </div>
-        {/* third column */}
-        <div className="flex flex-col gap-3">
-          <Input
-            isDisabled
-            label="Jumlah Barang"
-            defaultValue={data.jumlahBarang}
-          />
-          <Input isDisabled label="Tanggal" defaultValue={data.tanggal} />
-          <Input
-            isDisabled
-            label="Alamat Rumah Sakit"
-            defaultValue={data.alamatRumahSakit}
-          />
-        </div>
-      </form>
+      </div>
+      <Table removeWrapper aria-label="Example static collection table">
+        <TableHeader>
+          <TableColumn>NO</TableColumn>
+          <TableColumn>KAT.</TableColumn>
+          <TableColumn>NAMA BARANG</TableColumn>
+          <TableColumn>QTY</TableColumn>
+          <TableColumn>H. SATUAN</TableColumn>
+          <TableColumn>DISC</TableColumn>
+          <TableColumn>SUB TOTAL</TableColumn>
+        </TableHeader>
+        <TableBody>
+          <TableRow key="1">
+            <TableCell>1</TableCell>
+            <TableCell>{dataItem.kat}</TableCell>
+            <TableCell>{dataItem.namaBarang}</TableCell>
+            <TableCell>{dataItem.qty}</TableCell>
+            <TableCell>{dataItem.hSatuan}</TableCell>
+            <TableCell>{dataItem.disc}</TableCell>
+            <TableCell>{dataItem.subTotal}</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+
       <div className="flex justify-end">
         <Button color="primary" className="min-w-36">
           Submit
