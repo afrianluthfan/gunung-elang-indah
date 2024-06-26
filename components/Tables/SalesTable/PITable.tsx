@@ -20,18 +20,22 @@ import { columns, users, statusOptions } from "./data";
 import { DeleteIcon } from "./DeleteIcon";
 import { AcceptIcon } from "./AcceptIcon";
 import { EditIcon } from "./EditIcon";
+import { EyeIcon } from "../AdminTable/EyeIcon";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
-  paid: "success",
-  unpaid: "danger",
-  vacation: "warning",
+  diterima: "success",
+  ditolak: "danger",
+  diproses: "primary",
 };
 
 const INITIAL_VISIBLE_COLUMNS = [
   "number",
-  "tanggal",
+  "kat",
   "name",
-  "total",
+  "qty",
+  "hsatuan",
+  "disc",
+  "subtotal",
   "status",
   "actions",
 ];
@@ -138,29 +142,56 @@ export default function PITableComponent() {
             </Chip>
           );
         case "actions":
-          return (
-            <div className="relative flex items-center gap-2">
-              <Tooltip
-                color="success"
-                content="Accept order"
-                className="text-white"
-              >
-                <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                  <AcceptIcon />
-                </span>
-              </Tooltip>
-              <Tooltip color="danger" content="Delete order">
-                <span className="cursor-pointer text-lg text-danger active:opacity-50">
-                  <DeleteIcon />
-                </span>
-              </Tooltip>
-              <Tooltip content="Edit order" className="text-black">
-                <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                  <EditIcon />
-                </span>
-              </Tooltip>
-            </div>
-          );
+          switch (user.status) {
+            case "diterima":
+              return (
+                <div className="relative flex items-center gap-2">
+                  <Tooltip content="Details" className="text-black">
+                    <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
+                      <EyeIcon />
+                    </span>
+                  </Tooltip>
+                </div>
+              );
+            default:
+              return (
+                <div className="relative flex items-center gap-2">
+                  <Tooltip content="Details" className="text-black">
+                    <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
+                      <EyeIcon />
+                    </span>
+                  </Tooltip>
+                  <Tooltip content="Edit user" className="text-black">
+                    <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
+                      <EditIcon />
+                    </span>
+                  </Tooltip>
+                </div>
+              );
+          }
+
+        // <div className="relative flex items-center gap-2">
+        //   <Tooltip
+        //     color="success"
+        //     content="Accept order"
+        //     className="text-white"
+        //   >
+        //     <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
+        //       <AcceptIcon />
+        //     </span>
+        //   </Tooltip>
+        //   <Tooltip color="danger" content="Delete order">
+        //     <span className="cursor-pointer text-lg text-danger active:opacity-50">
+        //       <DeleteIcon />
+        //     </span>
+        //   </Tooltip>
+        //   <Tooltip content="Edit order" className="text-black">
+        //     <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
+        //       <EditIcon />
+        //     </span>
+        //   </Tooltip>
+        // </div>
+
         default:
           return cellValue;
       }

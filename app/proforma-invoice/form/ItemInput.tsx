@@ -8,6 +8,11 @@ import { AppDispatch } from "@/redux/store";
 import { setListItemPI } from "@/redux/features/listItemPI-slice";
 import { useRouter } from "next/navigation";
 import TopSectionItemList from "./TopSectionItemLIst";
+import { FC } from "react";
+
+interface ItemInputProps {
+  itemNumber: number;
+}
 
 type FormFields = {
   kat: string;
@@ -18,7 +23,7 @@ type FormFields = {
   subTotal: string;
 };
 
-const ItemInput = () => {
+const ItemInput: FC<ItemInputProps> = ({ itemNumber }) => {
   const { register, handleSubmit, getValues } = useForm<FormFields>();
 
   const dispatch = useDispatch<AppDispatch>();
@@ -33,7 +38,7 @@ const ItemInput = () => {
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <ContentTopSectionLayout>
         {/* cek profile customer and searchbar */}
-        <TopSectionItemList />
+        <TopSectionItemList itemNumber={itemNumber} />
       </ContentTopSectionLayout>
       <Divider />
       <form className="grid h-full w-full grid-cols-3 gap-3">

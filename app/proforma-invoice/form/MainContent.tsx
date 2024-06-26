@@ -3,14 +3,14 @@
 import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
 import TopSectionLeftSide from "./TopSectionLeftSide";
 import { Button, Divider, Input } from "@nextui-org/react";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { data } from "./data";
 import { itemNumber } from "./itemNumber";
 import { useDispatch } from "react-redux";
-import { AppDispatch, useAppSelector } from "@/redux/store";
+import { AppDispatch } from "@/redux/store";
 import { setItemPI } from "@/redux/features/itemPI-slice";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { setAmount } from "@/redux/features/salesPIItemNumber-slice";
+import { FC, useEffect, useState } from "react";
 import Dropdown from "@/components/Dropdown";
 
 type FormFields = {
@@ -25,53 +25,29 @@ type FormFields = {
   alamatRumahSakit: string;
 };
 
-const MainContent = () => {
+const MainContent: FC = () => {
   const [selectedDivisi, setSelectedDivisi] = useState<string>("");
-  const [selectedJumlahBarang, setSelectedJumlahBarang] = useState<string>("");
+  const [filled, setFilled] = useState<boolean>(false);
 
   const { register, handleSubmit, getValues, setValue } = useForm<FormFields>();
-  const inputData = useAppSelector((state) => state.itemPIReducer.value);
 
   const dispatch = useDispatch<AppDispatch>();
-  const buttonRef = useRef<JSX.Element | null>(null);
 
-  useEffect(() => {
-    const handleSetData = () => {
-      console.log("awikwok");
-      dispatch(setItemPI(getValues()));
-    };
-    if (inputData.divisi !== "") {
-      buttonRef.current = (
-        <div className="flex justify-end">
-          <Button
-            onClick={handleSubmit(handleSetData)}
-            color="primary"
-            className="min-w-36"
-          >
-            Next
-          </Button>
-        </div>
-      );
-    } else {
-      buttonRef.current = <></>;
-    }
-  }, [dispatch, getValues, handleSubmit, inputData]);
+  const handleSetData = () => {
+    dispatch(setItemPI(getValues()));
+    console.log("values: ", getValues());
+  };
 
   const handleDivisiChange = (selectedItem: string) => {
     setSelectedDivisi(selectedItem);
-  };
-
-  const handleJumlahBarangChange = (selectedItem: string) => {
-    setSelectedJumlahBarang(selectedItem);
+    setFilled(true);
+    const amount = parseInt(selectedItem);
+    dispatch(setAmount(amount));
   };
 
   useEffect(() => {
     setValue("divisi", selectedDivisi);
   }, [selectedDivisi, setValue]);
-
-  useEffect(() => {
-    setValue("jumlahBarang", selectedJumlahBarang);
-  }, [selectedJumlahBarang, setValue]);
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
@@ -105,13 +81,22 @@ const MainContent = () => {
             data={itemNumber}
             label="Jumlah Barang"
             placeholder="Pilih jumlah barang"
-            statePassing={handleJumlahBarangChange}
           />
           <Input {...register("tanggal")} label="Tanggal" />
           <Input {...register("alamatRumahSakit")} label="Alamat Rumah Sakit" />
         </div>
       </form>
-      {buttonRef.current}
+      {filled && (
+        <div className="flex justify-end">
+          <Button
+            onClick={handleSubmit(handleSetData)}
+            color="primary"
+            className="min-w-36"
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

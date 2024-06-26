@@ -1,5 +1,8 @@
 import React, { FC } from "react";
 import { Select, SelectItem, Selection } from "@nextui-org/react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { setAmount } from "@/redux/features/salesPIItemNumber-slice";
 
 interface DropdownProps {
   data: { value: string; label: string }[];
@@ -15,10 +18,15 @@ const Dropdown: FC<DropdownProps> = ({
   statePassing,
 }) => {
   const [value, setValue] = React.useState<Selection>(new Set([]));
+  const dispatch = useDispatch<AppDispatch>();
 
-  const handleSelectionChange = (selectedKeys: Selection) => {
+  const handleSelect = (selectedKeys: Selection) => {
     setValue(selectedKeys);
     const selectedValue = Array.from(selectedKeys).join(", "); // Extracting value as string
+    if (!isNaN(Number(selectedValue))) {
+      dispatch(setAmount(Number(selectedValue))); // Dispatch the selected value as number
+    }
+    console.log("selectedKeys: ", selectedValue);
     if (statePassing) {
       statePassing(selectedValue); // Pass the selected value as string
     }
@@ -30,7 +38,7 @@ const Dropdown: FC<DropdownProps> = ({
         label={label}
         placeholder={placeholder}
         selectedKeys={value}
-        onSelectionChange={handleSelectionChange} // Updated function
+        onSelectionChange={handleSelect}
       >
         {data.map((data) => (
           <SelectItem className="text-black" key={data.value}>
