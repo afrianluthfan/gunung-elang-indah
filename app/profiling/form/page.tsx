@@ -12,7 +12,7 @@ const Form: FC<pageProps> = ({}) => {
       {/* sidebar */}
       <Sidebar />
 
-      <div className="h-screen w-[82.7vw] bg-[#EFEFEF] text-black">
+      <div className="ml-[17.3vw] h-screen w-[82.7vw] bg-[#EFEFEF] text-black">
         {/* top bar that says "Welcome, {user}" */}
         <WelcomingMessage />
         {/* main content */}
