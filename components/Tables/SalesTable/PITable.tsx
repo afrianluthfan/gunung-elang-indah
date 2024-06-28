@@ -121,15 +121,6 @@ export default function PITableComponent() {
       switch (columnKey) {
         case "name":
           return cellValue;
-        case "role":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">{cellValue}</p>
-              <p className="text-bold text-tiny capitalize text-default-400">
-                {user.team}
-              </p>
-            </div>
-          );
         case "status":
           return (
             <Chip

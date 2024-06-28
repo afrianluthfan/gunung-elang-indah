@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import Dropdown from "@/components/Dropdown";
 import { tax_codes } from "../../../components/Tables/SalesTable/tax";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 type FormFields = {
   name: string;
@@ -61,7 +62,7 @@ const MainContent = () => {
             label="ALAMAT PENGIRIM FAKTUR"
           />
           <Input {...register("pic_facture")} label="PIC" />
-          <div className="flex justify-between gap-3">
+          <div className="j</div>ustify-between flex gap-3">
             <Input {...register("number_phone_facture")} label="TLP" />
             <Input {...register("fax_facture")} label="FAX" />
           </div>

@@ -15,9 +15,13 @@ const Form: FC = () => {
     (state) => state.salesPIItemNumberReducer.value.amount,
   );
 
+  const fetchData = async () => {
+    console.log(process.env.NEXT_PUBLIC_DB_USER);
+  };
+
   useEffect(() => {
-    console.log("amount: ", amount);
-  });
+    fetchData();
+  }, []);
 
   useEffect(() => {
     contentRef.current = (
