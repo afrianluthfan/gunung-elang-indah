@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import Dropdown from "@/components/Dropdown";
 import { tax_codes } from "../../../components/Tables/SalesTable/tax";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { useAppSelector } from "@/redux/store";
 
 type FormFields = {
   name: string;
@@ -42,6 +42,10 @@ const MainContent = () => {
     setSelectedTaxCode(selectedItem);
   };
 
+  const divisi = useAppSelector(
+    (state) => state.divisiProfilingReducer.value.divisi,
+  );
+
   useEffect(() => {
     setValue("tax_code_id", selectedTaxCode);
   }, [selectedTaxCode, setValue]);
@@ -55,7 +59,13 @@ const MainContent = () => {
       <Divider />
       <form className="grid h-full w-full grid-cols-3 gap-3">
         <div className="flex flex-col gap-3">
-          <Input {...register("name")} label="NAMA" />
+          {/* supplier ga pake nama dokter */}
+
+          {divisi === "customer" ? (
+            <Input {...register("name")} label="NAMA DOKTER" />
+          ) : (
+            <Input className="invisible" label="invisible" />
+          )}
           <Input {...register("npwp")} label="NPWP" />
           <Input
             {...register("facture_address")}
@@ -69,7 +79,7 @@ const MainContent = () => {
           <Input {...register("handphone")} label="HANDPHONE" />
         </div>
         <div className="flex flex-col gap-3">
-          <Input {...register("name")} label="NAMA PERUSAHAAN" />
+          <Input {...register("name")} label="NAMA RUMAH SAKIT" />
           <Input {...register("ipak_number")} label="NO. IPAK" />
           <div className="flex justify-between gap-3">
             <Input {...register("city_facture")} label="KOTA" />
@@ -86,7 +96,7 @@ const MainContent = () => {
           />
         </div>
         <div className="flex flex-col gap-3">
-          <Input {...register("address_company")} label="ALAMAT PERUSAHAAN" />
+          <Input {...register("address_company")} label="ALAMAT RUMAH SAKIT" />
           <Input {...register("npwp_address")} label="ALAMAT NPWP" />
           <div className="flex justify-between gap-3">
             <Input {...register("number_phone_item")} label="TLP" />

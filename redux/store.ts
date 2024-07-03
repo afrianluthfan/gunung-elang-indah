@@ -3,6 +3,7 @@ import authReducer from "./features/auth-slice";
 import itemPIReducer from "./features/itemPI-slice";
 import listItemPIReducer from "./features/listItemPI-slice";
 import salesPIItemNumberReducer from "./features/salesPIItemNumber-slice";
+import divisiProfilingReducer from "./features/divisiProfiling-slice";
 import { TypedUseSelectorHook, useSelector } from "react-redux";
 
 export const store = configureStore({
@@ -11,6 +12,7 @@ export const store = configureStore({
     itemPIReducer,
     listItemPIReducer,
     salesPIItemNumberReducer,
+    divisiProfilingReducer,
   },
 });
 

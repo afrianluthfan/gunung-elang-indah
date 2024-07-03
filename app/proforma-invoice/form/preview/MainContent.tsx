@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@nextui-org/react";
 import { useAppSelector } from "@/redux/store";
+import axios from "axios";
 
 const MainContent = () => {
   const data = useAppSelector((state) => state.itemPIReducer.value);
@@ -50,6 +51,19 @@ const MainContent = () => {
     },
   ];
 
+  const tesButton = async () => {
+    try {
+      const testdata = await axios.post(
+        "http://localhost:8080/api/customer-profilling/get-tax-code",
+        "",
+      );
+      console.log("state: ", dataItem);
+      // console.log(testdata);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <ContentTopSectionLayout>
@@ -63,7 +77,7 @@ const MainContent = () => {
           <h1>Nomor PI: {data.nomorPI}</h1>
           <h1>Tanggal: {data.tanggal}</h1>
           <h1>Jatuh Tempo: {data.jatuhTempo}</h1>
-          <h1>Nomor SI: {data.nomorSI}</h1>
+          <h1>Nomor SI: {data.nomorSuratJalan}</h1>
         </div>
         <div className="flex flex-col">
           <h1>Nama Rumah Sakit: {data.namaRumahSakit}</h1>
@@ -94,8 +108,8 @@ const MainContent = () => {
       </Table>
 
       <div className="flex justify-end">
-        <Button color="primary" className="min-w-36">
-          Submit
+        <Button onClick={tesButton} color="primary" className="min-w-36">
+          tes
         </Button>
       </div>
     </div>

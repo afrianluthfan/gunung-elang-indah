@@ -8,7 +8,7 @@ type ItemPIState = {
   divisi: string;
   nomorInvoice: string;
   jatuhTempo: string;
-  nomorSI: string;
+  nomorSuratJalan: string;
   nomorPI: string;
   namaRumahSakit: string;
   jumlahBarang: string;
@@ -21,7 +21,7 @@ const initialState = {
     divisi: "",
     nomorInvoice: "",
     jatuhTempo: "",
-    nomorSI: "",
+    nomorSuratJalan: "",
     nomorPI: "",
     namaRumahSakit: "",
     jumlahBarang: "",
