@@ -37,9 +37,6 @@ const MainContent: FC = () => {
 
   const { register, setValue, watch } = useForm<FormFields>();
   const dispatch = useDispatch<AppDispatch>();
-  const itemPIState = useSelector(
-    (state: RootState) => state.itemPIReducer.value,
-  );
 
   useEffect(() => {
     const fetchRsData = async () => {

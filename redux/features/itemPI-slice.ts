@@ -10,6 +10,10 @@ type ItemPIState = {
   jumlahBarang: string;
   tanggal: string;
   alamatRumahSakit: string;
+  namaDokter: string;
+  rm: string;
+  namaPasien: string;
+  idRS: string;
 };
 
 type InitialState = {
@@ -27,6 +31,10 @@ const initialState: InitialState = {
     jumlahBarang: "",
     tanggal: "",
     alamatRumahSakit: "",
+    namaDokter: "",
+    rm: "",
+    namaPasien: "",
+    idRS: "",
   },
 };
 

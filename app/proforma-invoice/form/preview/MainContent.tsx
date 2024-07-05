@@ -14,27 +14,70 @@ import {
 } from "@nextui-org/react";
 import { useAppSelector } from "@/redux/store";
 import axios from "axios";
-import { useEffect } from "react";
+import { resetItemPI, setItemPI } from "@/redux/features/itemPI-slice";
+import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
 
 const MainContent = () => {
   const data = useAppSelector((state) => state.itemPIReducer.value);
   const dataItem = useAppSelector((state) => state.listItemPIReducer.value);
 
-  const tesButton = async () => {
-    try {
-      const testdata = await axios.post(
-        "http://localhost:8080/api/customer-profilling/get-tax-code",
-        "",
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const dispatch = useDispatch();
+  const [divisiList, setDivisiList] = useState<{ id: number; name: string }[]>(
+    [],
+  );
 
   useEffect(() => {
-    // Example of performing side effects on component mount
-    tesButton();
+    const fetchDivisiList = async () => {
+      try {
+        const responseDivisi = await axios.post(
+          "http://localhost:8080/api/proforma-invoice/divisi-list",
+          "",
+        );
+        setDivisiList(responseDivisi.data.data);
+      } catch (error) {
+        console.error("Gagal fetching list divisi!");
+      }
+    };
+    fetchDivisiList();
   }, []);
+
+  const submitData = async () => {
+    const requestBody = {
+      id_divisi: findIdByDivisi(data.divisi.toUpperCase()), // Set id_divisi based on divisi value
+      rumah_sakit: data.namaRumahSakit,
+      alamat: data.alamatRumahSakit,
+      jatuh_tempo: data.jatuhTempo,
+      nama_dokter: data.namaDokter,
+      nama_pasien: data.namaPasien, // Fill this as per your application logic
+      rm: data.rm,
+      id_rumah_sakit: data.idRS, // Fill this as per your application logic
+      tanggal_tindakan: data.tanggal,
+      item: dataItem.map((item) => ({
+        kat: item.kat,
+        nama_barang: item.namaBarang,
+        quantity: item.qty,
+        harga_satuan: item.hSatuan,
+        discount: item.disc,
+      })),
+    };
+    console.log("requestBody: ", requestBody);
+    console.log("data.divisi: ", data.divisi);
+    console.log(divisiList);
+
+    const response = await axios.post(
+      "http://localhost:8080/api/proforma-invoice/inquiry",
+      requestBody,
+    );
+
+    // Optionally, reset the form or take other actions upon successful submission
+    dispatch(resetItemPI()); // Clear Redux state after submission if needed
+  };
+
+  const findIdByDivisi = (divisi: string) => {
+    const selectedDivisi = divisiList.find((item) => item.name == divisi);
+    return selectedDivisi ? selectedDivisi.id : null;
+  };
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
@@ -83,8 +126,8 @@ const MainContent = () => {
       </Table>
 
       <div className="flex justify-end">
-        <Button onClick={tesButton} color="primary" className="min-w-36">
-          tes
+        <Button onClick={submitData} color="primary" className="min-w-36">
+          Submit
         </Button>
       </div>
     </div>
