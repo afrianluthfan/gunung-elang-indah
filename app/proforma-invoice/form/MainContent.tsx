@@ -46,13 +46,14 @@ const MainContent: FC = () => {
           "",
         );
         setRsData(response.data.data);
+        console.log("rsData: ", rsData);
       } catch (error) {
         console.error("Error fetching data", error);
       }
     };
 
     fetchRsData();
-  }, []);
+  }, [rsData]);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -63,6 +64,7 @@ const MainContent: FC = () => {
   };
 
   const handleRSChange = (address: string) => {
+    console.log("jalan handleRSChange");
     if (selectedAddress !== address) {
       setSelectedAddress(address);
       setValue("alamatRumahSakit", address);

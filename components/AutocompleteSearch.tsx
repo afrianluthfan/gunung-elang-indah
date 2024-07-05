@@ -1,6 +1,6 @@
 "use client";
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 
 interface AutocompleteSearchProps {
   data: { id: number; name: string; address_company: string }[];
@@ -18,13 +18,26 @@ const AutocompleteSearch: FC<AutocompleteSearchProps> = ({
   // Handle selection change
   const handleSelectionChange = (key: string | number | symbol | null) => {
     if (key === null) {
+      console.log("key null");
       setSelectedValue(null);
       correspondingCity(""); // Clear corresponding city
     } else {
       const selectedValue = key.toString();
+      console.log("Selected value:", selectedValue);
       setSelectedValue(selectedValue); // Update selected value
+
+      const selectedItem = data.find(
+        (item) => item.id === parseInt(selectedValue),
+      );
+      if (selectedItem) {
+        console.log("Selected item:", selectedItem);
+        correspondingCity(selectedItem.address_company); // Pass selected value to parent component
+      } else {
+        console.log("No matching item found in data.");
+      }
     }
   };
+
   return (
     <div>
       <Autocomplete
@@ -34,7 +47,11 @@ const AutocompleteSearch: FC<AutocompleteSearchProps> = ({
         onSelectionChange={handleSelectionChange}
       >
         {data.map((item) => (
-          <AutocompleteItem key={item.id} value={item.name}>
+          <AutocompleteItem
+            className="text-black"
+            key={item.id}
+            value={item.name}
+          >
             {item.name}
           </AutocompleteItem>
         ))}
