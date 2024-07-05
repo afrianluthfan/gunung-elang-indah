@@ -23,14 +23,12 @@ const AutocompleteSearch: FC<AutocompleteSearchProps> = ({
       correspondingCity(""); // Clear corresponding city
     } else {
       const selectedValue = key.toString();
-      console.log("Selected value:", selectedValue);
       setSelectedValue(selectedValue); // Update selected value
 
       const selectedItem = data.find(
         (item) => item.id === parseInt(selectedValue),
       );
       if (selectedItem) {
-        console.log("Selected item:", selectedItem);
         correspondingCity(selectedItem.address_company); // Pass selected value to parent component
       } else {
         console.log("No matching item found in data.");
