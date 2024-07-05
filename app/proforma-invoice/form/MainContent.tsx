@@ -12,6 +12,7 @@ import { setAmount } from "@/redux/features/salesPIItemNumber-slice";
 import { FC, useEffect, useState } from "react";
 import Dropdown from "@/components/Dropdown";
 import axios from "axios";
+import AutocompleteSearch from "@/components/AutocompleteSearch";
 
 type FormFields = {
   divisi: string;
@@ -30,62 +31,41 @@ type FormFields = {
 
 const MainContent: FC = () => {
   const [selectedDivisi, setSelectedDivisi] = useState<string>("");
-  const [filled, setFilled] = useState<boolean>(false);
-  const [dropdownData, setDropdownData] = useState<
-    { value: string; label: string }[]
+  const [rsData, setRsData] = useState<
+    { id: number; name: string; address_company: string }[]
   >([]);
-  const [rsData, setRsData] = useState<any[]>([]); // Store the raw fetched data
+  const [selectedAddress, setSelectedAddress] = useState<string>("");
 
-  const { register, handleSubmit, getValues, setValue, watch } =
-    useForm<FormFields>();
+  const { register, setValue, watch } = useForm<FormFields>();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchRsData = async () => {
       try {
         const response = await axios.post(
           "http://localhost:8080/api/proforma-invoice/rs-list",
           "",
         );
-        return response.data;
+        setRsData(response.data.data);
       } catch (error) {
         console.error("Error fetching data", error);
-        return { data: [] }; // Ensure the data property exists in the fallback
       }
     };
-    const settingDropdownData = async () => {
-      const tempData = await fetchData();
-      if (Array.isArray(tempData.data)) {
-        setRsData(tempData.data); // Store the raw data
-        const transformedData = tempData.data.map((item: any) => ({
-          value: item.name,
-          label: item.name,
-        }));
-        setDropdownData(transformedData);
-        console.log("transformedData: ", transformedData);
-      } else {
-        console.error("Fetched data is not an array", tempData);
-      }
-    };
-    settingDropdownData();
+
+    fetchRsData();
   }, []);
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleSetData = async () => {
-    dispatch(setItemPI(getValues()));
-    axios.post("http://localhost:8080/api/customer-profilling/get-tax-code");
-  };
-
-  const handleDivisiChange = async (selectedItem: string) => {
+  const handleDivisiChange = (selectedItem: string) => {
     setSelectedDivisi(selectedItem);
-    setFilled(true);
     const amount = parseInt(selectedItem);
     dispatch(setAmount(amount));
+  };
 
-    // Find the corresponding address for the selected divisi
-    const selectedRs = rsData.find((rs) => rs.name === selectedItem);
-    if (selectedRs) {
-      setValue("alamatRumahSakit", selectedRs.address_company);
+  const handleRSChange = (address: string) => {
+    if (selectedAddress !== address) {
+      setSelectedAddress(address);
+      setValue("alamatRumahSakit", address);
     }
   };
 
@@ -106,7 +86,10 @@ const MainContent: FC = () => {
         {/* first column */}
         <div className="flex flex-col gap-3">
           <Dropdown
-            data={dropdownData}
+            data={[
+              { value: "radiologi", label: "Radiologi" },
+              { value: "ortopedi", label: "Ortopedi" },
+            ]}
             label="Divisi"
             placeholder="Pilih Divisi"
             statePassing={handleDivisiChange}
@@ -121,6 +104,7 @@ const MainContent: FC = () => {
             <Input {...register("nomorSuratJalan")} label="Nomor Surat Jalan" />
           )}
         </div>
+
         {/* second column */}
         <div className="flex flex-col gap-3">
           <Input label="oadk" className="invisible" />
@@ -130,12 +114,18 @@ const MainContent: FC = () => {
           ) : (
             <Input {...register("tanggalTindakan")} label="Tanggal Tindakan" />
           )}
+          {selectedDivisi === "ortopedi" && (
+            <AutocompleteSearch
+              data={rsData}
+              label="Nama Rumah Sakit"
+              correspondingCity={handleRSChange}
+            />
+          )}
           {selectedDivisi === "radiologi" && (
             <Input {...register("namaDokter")} label="Nama Dokter" />
           )}
-
-          <Input {...register("namaRumahSakit")} label="Nama Rumah Sakit" />
         </div>
+
         {/* third column */}
         <div className="flex flex-col gap-3">
           <Dropdown
@@ -152,17 +142,6 @@ const MainContent: FC = () => {
           />
         </div>
       </form>
-      {filled && (
-        <div className="flex justify-end">
-          <Button
-            onClick={handleSubmit(handleSetData)}
-            color="primary"
-            className="min-w-36"
-          >
-            Next
-          </Button>
-        </div>
-      )}
     </div>
   );
 };

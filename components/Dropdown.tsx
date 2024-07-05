@@ -26,7 +26,6 @@ const Dropdown: FC<DropdownProps> = ({
     if (!isNaN(Number(selectedValue))) {
       dispatch(setAmount(Number(selectedValue))); // Dispatch the selected value as number
     }
-    console.log("selectedKeys: ", selectedValue);
     if (statePassing) {
       statePassing(selectedValue); // Pass the selected value as string
     }

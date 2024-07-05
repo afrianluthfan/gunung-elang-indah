@@ -18,7 +18,6 @@ import axios from "axios";
 const MainContent = () => {
   const data = useAppSelector((state) => state.itemPIReducer.value);
   const dataItem = useAppSelector((state) => state.listItemPIReducer.value);
-  console.log(data);
 
   const columns = [
     {
@@ -57,8 +56,6 @@ const MainContent = () => {
         "http://localhost:8080/api/customer-profilling/get-tax-code",
         "",
       );
-      console.log("state: ", dataItem);
-      // console.log(testdata);
     } catch (error) {
       console.error(error);
     }

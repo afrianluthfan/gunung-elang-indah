@@ -2,7 +2,7 @@
 
 import Sidebar from "@/components/Sidebar";
 import WelcomingMessage from "@/components/WelcomingMessage";
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import MainContent from "./MainContent";
 import FormMainContentLayout from "./FormMainContentLayout";
 import ItemInput from "./ItemInput";
@@ -10,21 +10,19 @@ import { useAppSelector } from "@/redux/store";
 
 const Form: FC = () => {
   const data = useAppSelector((state) => state.itemPIReducer.value);
-  const contentRef = useRef<JSX.Element | null>(null);
   const amount: number = useAppSelector(
     (state) => state.salesPIItemNumberReducer.value.amount,
   );
 
+  const [content, setContent] = useState<JSX.Element[]>([]);
+
   useEffect(() => {
-    contentRef.current = (
-      <>
-        {Array.from({ length: amount }, (_, index) => (
-          <FormMainContentLayout key={index}>
-            <ItemInput itemNumber={index + 1} />
-          </FormMainContentLayout>
-        ))}
-      </>
-    );
+    const newContent = Array.from({ length: amount }, (_, index) => (
+      <FormMainContentLayout key={index}>
+        <ItemInput itemNumber={index + 1} />
+      </FormMainContentLayout>
+    ));
+    setContent(newContent);
   }, [amount, data]);
 
   return (
@@ -41,7 +39,7 @@ const Form: FC = () => {
             <FormMainContentLayout>
               <MainContent />
             </FormMainContentLayout>
-            {data && contentRef.current}
+            {data && content}
           </div>
           <div className="flex h-[4vh] items-center justify-center text-end font-semibold">
             <h1>Supported by PT Gunung Elang Indah</h1>
