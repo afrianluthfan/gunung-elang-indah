@@ -5,10 +5,9 @@ import TopSectionLeftSide from "./TopSectionLeftSide";
 import { Button, Divider, Input } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { itemNumber } from "./itemNumber";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
-import { setItemPI } from "@/redux/features/itemPI-slice";
-import { setAmount } from "@/redux/features/salesPIItemNumber-slice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import { resetItemPI, setItemPI } from "@/redux/features/itemPI-slice";
 import { FC, useEffect, useState } from "react";
 import Dropdown from "@/components/Dropdown";
 import axios from "axios";
@@ -37,6 +36,10 @@ const MainContent: FC = () => {
   const [selectedAddress, setSelectedAddress] = useState<string>("");
 
   const { register, setValue, watch } = useForm<FormFields>();
+  const dispatch = useDispatch<AppDispatch>();
+  const itemPIState = useSelector(
+    (state: RootState) => state.itemPIReducer.value,
+  );
 
   useEffect(() => {
     const fetchRsData = async () => {
@@ -54,24 +57,37 @@ const MainContent: FC = () => {
     fetchRsData();
   }, []);
 
-  const dispatch = useDispatch<AppDispatch>();
-
   const handleDivisiChange = (selectedItem: string) => {
     setSelectedDivisi(selectedItem);
-    const amount = parseInt(selectedItem);
-    dispatch(setAmount(amount));
+    dispatch(setItemPI({ divisi: selectedItem }));
   };
 
-  const handleRSChange = (address: string) => {
+  const handleRSChange = (name: string, address: string) => {
     if (selectedAddress !== address) {
       setSelectedAddress(address);
       setValue("alamatRumahSakit", address);
+      setValue("namaRumahSakit", name);
+      dispatch(setItemPI({ namaRumahSakit: name, alamatRumahSakit: address }));
     }
   };
+
+  const handleInputChange =
+    (field: keyof FormFields) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
+      setValue(field, value);
+      dispatch(setItemPI({ [field]: value }));
+    };
 
   useEffect(() => {
     setValue("divisi", selectedDivisi);
   }, [selectedDivisi, setValue]);
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      dispatch(setItemPI(value));
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, dispatch]);
 
   const alamatRumahSakit = watch("alamatRumahSakit");
 
@@ -95,13 +111,29 @@ const MainContent: FC = () => {
             statePassing={handleDivisiChange}
           />
 
-          <Input {...register("nomorInvoice")} label="Nomor Invoice" />
-          <Input {...register("jatuhTempo")} label="Jatuh Tempo" />
+          <Input
+            {...register("nomorInvoice")}
+            label="Nomor Invoice"
+            onChange={handleInputChange("nomorInvoice")}
+          />
+          <Input
+            {...register("jatuhTempo")}
+            label="Jatuh Tempo"
+            onChange={handleInputChange("jatuhTempo")}
+          />
           {selectedDivisi === "radiologi" && (
-            <Input {...register("rm")} label="RM" />
+            <Input
+              {...register("rm")}
+              label="RM"
+              onChange={handleInputChange("rm")}
+            />
           )}
           {selectedDivisi === "ortopedi" && (
-            <Input {...register("nomorSuratJalan")} label="Nomor Surat Jalan" />
+            <Input
+              {...register("nomorSuratJalan")}
+              label="Nomor Surat Jalan"
+              onChange={handleInputChange("nomorSuratJalan")}
+            />
           )}
         </div>
 
@@ -110,19 +142,31 @@ const MainContent: FC = () => {
           <Input label="oadk" className="invisible" />
 
           {selectedDivisi === "radiologi" ? (
-            <Input {...register("nomorPI")} label="Nomor PI" />
+            <Input
+              {...register("nomorPI")}
+              label="Nomor PI"
+              onChange={handleInputChange("nomorPI")}
+            />
           ) : (
-            <Input {...register("tanggalTindakan")} label="Tanggal Tindakan" />
+            <Input
+              {...register("tanggalTindakan")}
+              label="Tanggal Tindakan"
+              onChange={handleInputChange("tanggalTindakan")}
+            />
           )}
           {selectedDivisi === "ortopedi" && (
             <AutocompleteSearch
               data={rsData}
               label="Nama Rumah Sakit"
-              correspondingCity={handleRSChange}
+              rsData={handleRSChange}
             />
           )}
           {selectedDivisi === "radiologi" && (
-            <Input {...register("namaDokter")} label="Nama Dokter" />
+            <Input
+              {...register("namaDokter")}
+              label="Nama Dokter"
+              onChange={handleInputChange("namaDokter")}
+            />
           )}
         </div>
 
@@ -133,7 +177,11 @@ const MainContent: FC = () => {
             label="Jumlah Barang"
             placeholder="Pilih jumlah barang"
           />
-          <Input {...register("tanggal")} label="Tanggal" />
+          <Input
+            {...register("tanggal")}
+            label="Tanggal"
+            onChange={handleInputChange("tanggal")}
+          />
           <Input
             readOnly
             {...register("alamatRumahSakit")}

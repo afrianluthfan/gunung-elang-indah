@@ -5,13 +5,13 @@ import React, { FC, useState } from "react";
 interface AutocompleteSearchProps {
   data: { id: number; name: string; address_company: string }[];
   label: string;
-  correspondingCity: (address: string) => void;
+  rsData: (rsName: string, address: string) => void;
 }
 
 const AutocompleteSearch: FC<AutocompleteSearchProps> = ({
   data,
   label,
-  correspondingCity,
+  rsData,
 }) => {
   const [selectedValue, setSelectedValue] = useState<string | null>(null); // State to hold selected value
 
@@ -20,7 +20,7 @@ const AutocompleteSearch: FC<AutocompleteSearchProps> = ({
     if (key === null) {
       console.log("key null");
       setSelectedValue(null);
-      correspondingCity(""); // Clear corresponding city
+      rsData("", ""); // Clear corresponding city
     } else {
       const selectedValue = key.toString();
       setSelectedValue(selectedValue); // Update selected value
@@ -29,7 +29,7 @@ const AutocompleteSearch: FC<AutocompleteSearchProps> = ({
         (item) => item.id === parseInt(selectedValue),
       );
       if (selectedItem) {
-        correspondingCity(selectedItem.address_company); // Pass selected value to parent component
+        rsData(selectedItem.name, selectedItem.address_company); // Pass selected value to parent component
       } else {
         console.log("No matching item found in data.");
       }

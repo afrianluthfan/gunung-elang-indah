@@ -7,6 +7,8 @@ import MainContent from "./MainContent";
 import FormMainContentLayout from "./FormMainContentLayout";
 import ItemInput from "./ItemInput";
 import { useAppSelector } from "@/redux/store";
+import { setListItems } from "@/redux/features/listItemPI-slice";
+import { useDispatch } from "react-redux";
 
 const Form: FC = () => {
   const data = useAppSelector((state) => state.itemPIReducer.value);
@@ -15,15 +17,27 @@ const Form: FC = () => {
   );
 
   const [content, setContent] = useState<JSX.Element[]>([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const newContent = Array.from({ length: amount }, (_, index) => (
+    const initialItems = Array.from({ length: amount }, () => ({
+      kat: "",
+      hSatuan: "",
+      namaBarang: "",
+      disc: "",
+      qty: "",
+      subTotal: "",
+    }));
+
+    dispatch(setListItems(initialItems));
+
+    const newContent = initialItems.map((_, index) => (
       <FormMainContentLayout key={index}>
-        <ItemInput itemNumber={index + 1} />
+        <ItemInput itemNumber={index + 1} index={index} />
       </FormMainContentLayout>
     ));
     setContent(newContent);
-  }, [amount, data]);
+  }, [amount, data, dispatch]);
 
   return (
     <section className="flex max-h-screen">

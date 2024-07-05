@@ -1,9 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type InitialState = {
-  value: ListItemPIState;
-};
-
 type ListItemPIState = {
   kat: string;
   hSatuan: string;
@@ -13,28 +9,29 @@ type ListItemPIState = {
   subTotal: string;
 };
 
-const initialState = {
-  value: {
-    kat: "",
-    hSatuan: "",
-    namaBarang: "",
-    disc: "",
-    qty: "",
-    subTotal: "",
-  } as ListItemPIState,
-} as InitialState;
+type InitialState = {
+  value: ListItemPIState[];
+};
+
+const initialState: InitialState = {
+  value: [],
+};
 
 export const listItemPI = createSlice({
   name: "listItemPI",
   initialState,
   reducers: {
-    setListItemPI: (_state, action: PayloadAction<ListItemPIState>) => {
-      return {
-        value: action.payload,
-      };
+    setListItemPI: (
+      state,
+      action: PayloadAction<{ index: number; item: ListItemPIState }>,
+    ) => {
+      state.value[action.payload.index] = action.payload.item;
+    },
+    setListItems: (state, action: PayloadAction<ListItemPIState[]>) => {
+      state.value = action.payload;
     },
   },
 });
 
-export const { setListItemPI } = listItemPI.actions;
+export const { setListItemPI, setListItems } = listItemPI.actions;
 export default listItemPI.reducer;

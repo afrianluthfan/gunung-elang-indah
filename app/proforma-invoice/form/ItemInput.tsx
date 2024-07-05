@@ -2,19 +2,20 @@
 
 import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
 import { Button, Divider, Input } from "@nextui-org/react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { setListItemPI } from "@/redux/features/listItemPI-slice";
 import { useRouter } from "next/navigation";
 import TopSectionItemList from "./TopSectionItemLIst";
-import { FC } from "react";
+import React, { FC, useEffect } from "react";
 
 interface ItemInputProps {
   itemNumber: number;
+  index: number;
 }
 
-type FormFields = {
+type ListItemPIState = {
   kat: string;
   hSatuan: string;
   namaBarang: string;
@@ -23,14 +24,19 @@ type FormFields = {
   subTotal: string;
 };
 
-const ItemInput: FC<ItemInputProps> = ({ itemNumber }) => {
-  const { register, handleSubmit, getValues } = useForm<FormFields>();
-
+const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
+  const { control, handleSubmit, watch } = useForm<ListItemPIState>();
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
 
+  const watchFields = watch();
+
+  useEffect(() => {
+    dispatch(setListItemPI({ index, item: watchFields }));
+  }, [watchFields, index, dispatch]);
+
   const handleSetData = () => {
-    dispatch(setListItemPI(getValues()));
+    dispatch(setListItemPI({ index, item: watchFields }));
     router.push("/proforma-invoice/form/preview");
   };
 
@@ -41,21 +47,48 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber }) => {
         <TopSectionItemList itemNumber={itemNumber} />
       </ContentTopSectionLayout>
       <Divider />
-      <form className="grid h-full w-full grid-cols-3 gap-3">
+      <form
+        className="grid h-full w-full grid-cols-3 gap-3"
+        onSubmit={handleSubmit(handleSetData)}
+      >
         {/* first column */}
         <div className="flex flex-col gap-3">
-          <Input {...register("kat")} label="KAT." />
-          <Input {...register("hSatuan")} label="H. SATUAN" />
+          <Controller
+            name="kat"
+            control={control}
+            render={({ field }) => <Input {...field} label="KAT." />}
+          />
+          <Controller
+            name="hSatuan"
+            control={control}
+            render={({ field }) => <Input {...field} label="H. SATUAN" />}
+          />
         </div>
         {/* second column */}
         <div className="flex flex-col gap-3">
-          <Input {...register("namaBarang")} label="NAMA BARANG" />
-          <Input {...register("disc")} label="DISC" />
+          <Controller
+            name="namaBarang"
+            control={control}
+            render={({ field }) => <Input {...field} label="NAMA BARANG" />}
+          />
+          <Controller
+            name="disc"
+            control={control}
+            render={({ field }) => <Input {...field} label="DISC" />}
+          />
         </div>
         {/* third column */}
         <div className="flex flex-col gap-3">
-          <Input {...register("qty")} label="QTY" />
-          <Input {...register("subTotal")} label="SUB TOTAL" />
+          <Controller
+            name="qty"
+            control={control}
+            render={({ field }) => <Input {...field} label="QTY" />}
+          />
+          <Controller
+            name="subTotal"
+            control={control}
+            render={({ field }) => <Input {...field} label="SUB TOTAL" />}
+          />
         </div>
       </form>
       <div className="flex justify-end">

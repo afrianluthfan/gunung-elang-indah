@@ -14,41 +14,11 @@ import {
 } from "@nextui-org/react";
 import { useAppSelector } from "@/redux/store";
 import axios from "axios";
+import { useEffect } from "react";
 
 const MainContent = () => {
   const data = useAppSelector((state) => state.itemPIReducer.value);
   const dataItem = useAppSelector((state) => state.listItemPIReducer.value);
-
-  const columns = [
-    {
-      key: "no",
-      label: "NO.",
-    },
-    {
-      key: "kat",
-      label: "KAT.",
-    },
-    {
-      key: "namaBarang",
-      label: "NAMA BARANG",
-    },
-    {
-      key: "hSatuan",
-      label: "HARGA SATUAN",
-    },
-    {
-      key: "qty",
-      label: "QTY",
-    },
-    {
-      key: "disc",
-      label: "DISC",
-    },
-    {
-      key: "subTotal",
-      label: "SUB TOTAL",
-    },
-  ];
 
   const tesButton = async () => {
     try {
@@ -61,10 +31,15 @@ const MainContent = () => {
     }
   };
 
+  useEffect(() => {
+    // Example of performing side effects on component mount
+    tesButton();
+  }, []);
+
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <ContentTopSectionLayout>
-        {/* cek profile customer and searchbar */}
+        {/* Check profile customer and searchbar */}
         <TopSectionLeftSide />
       </ContentTopSectionLayout>
       <Divider />
@@ -92,15 +67,18 @@ const MainContent = () => {
           <TableColumn>SUB TOTAL</TableColumn>
         </TableHeader>
         <TableBody>
-          <TableRow key="1">
-            <TableCell>1</TableCell>
-            <TableCell>{dataItem.kat}</TableCell>
-            <TableCell>{dataItem.namaBarang}</TableCell>
-            <TableCell>{dataItem.qty}</TableCell>
-            <TableCell>{dataItem.hSatuan}</TableCell>
-            <TableCell>{dataItem.disc}</TableCell>
-            <TableCell>{dataItem.subTotal}</TableCell>
-          </TableRow>
+          {/* Map over dataItem to render each row */}
+          {dataItem.map((item, index) => (
+            <TableRow key={index}>
+              <TableCell>{index + 1}</TableCell>
+              <TableCell>{item.kat}</TableCell>
+              <TableCell>{item.namaBarang}</TableCell>
+              <TableCell>{item.qty}</TableCell>
+              <TableCell>{item.hSatuan}</TableCell>
+              <TableCell>{item.disc}</TableCell>
+              <TableCell>{item.subTotal}</TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
 

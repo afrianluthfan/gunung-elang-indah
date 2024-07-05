@@ -1,9 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type InitialState = {
-  value: ItemPIState;
-};
-
 type ItemPIState = {
   divisi: string;
   nomorInvoice: string;
@@ -16,7 +12,11 @@ type ItemPIState = {
   alamatRumahSakit: string;
 };
 
-const initialState = {
+type InitialState = {
+  value: ItemPIState;
+};
+
+const initialState: InitialState = {
   value: {
     divisi: "",
     nomorInvoice: "",
@@ -27,20 +27,19 @@ const initialState = {
     jumlahBarang: "",
     tanggal: "",
     alamatRumahSakit: "",
-  } as ItemPIState,
-} as InitialState;
+  },
+};
 
 export const itemPI = createSlice({
   name: "itemPI",
   initialState,
   reducers: {
-    setItemPI: (_state, action: PayloadAction<ItemPIState>) => {
-      return {
-        value: action.payload,
-      };
+    setItemPI: (state, action: PayloadAction<Partial<ItemPIState>>) => {
+      state.value = { ...state.value, ...action.payload };
     },
+    resetItemPI: () => initialState,
   },
 });
 
-export const { setItemPI } = itemPI.actions;
+export const { setItemPI, resetItemPI } = itemPI.actions;
 export default itemPI.reducer;
