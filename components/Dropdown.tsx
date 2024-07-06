@@ -23,7 +23,6 @@ const Dropdown: FC<DropdownProps> = ({
 
   useEffect(() => {
     dispatch(setAmount(0));
-    console.log("set to 0");
   }, [dispatch]);
 
   const handleSelect = (selectedKeys: Selection) => {

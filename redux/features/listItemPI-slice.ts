@@ -30,8 +30,10 @@ export const listItemPI = createSlice({
     setListItems: (state, action: PayloadAction<ListItemPIState[]>) => {
       state.value = action.payload;
     },
+    resetListItemPI: () => initialState,
   },
 });
 
-export const { setListItemPI, setListItems } = listItemPI.actions;
+export const { setListItemPI, setListItems, resetListItemPI } =
+  listItemPI.actions;
 export default listItemPI.reducer;

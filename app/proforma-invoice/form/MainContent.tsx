@@ -36,6 +36,11 @@ const MainContent: FC = () => {
   const { register, setValue, watch } = useForm<FormFields>();
   const dispatch = useDispatch<AppDispatch>();
 
+  const findIdByDivisi = (divisi: string) => {
+    const selectedDivisi = divisiList.find((item) => item.name == divisi);
+    return selectedDivisi ? selectedDivisi.id : null;
+  };
+
   useEffect(() => {
     const fetchRsData = async () => {
       try {

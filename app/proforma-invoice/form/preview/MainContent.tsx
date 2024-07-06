@@ -16,13 +16,84 @@ import { useAppSelector } from "@/redux/store";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
+import { resetItemPI } from "@/redux/features/itemPI-slice";
+import { clearSalesPIInquiry } from "@/redux/features/salesPIInquiry-slice";
+import { resetListItemPI } from "@/redux/features/listItemPI-slice";
+
+type Hospital = {
+  id: number;
+  name: string;
+  address_company: string;
+};
 
 const MainContent = () => {
-  const data = useAppSelector(
+  const [rsData, setRsData] = useState<Hospital[]>([]);
+  const responseData = useAppSelector(
     (state) => state.salesPIInquirySliceReducer.value,
   );
 
+  useEffect(() => {
+    const fetchRsData = async () => {
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/api/proforma-invoice/rs-list",
+          "",
+        );
+        setRsData(response.data.data);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+
+    fetchRsData();
+  }, []);
   const dispatch = useDispatch();
+
+  const submitData = async () => {
+    const selectedHospital = rsData.find(
+      (hospital) => hospital.name === responseData.rumah_sakit,
+    );
+    const idRumahSakit = selectedHospital ? selectedHospital.id.toString() : "";
+
+    const requestBody = {
+      role_name: "SALES",
+      id_divisi: responseData.id_divisi,
+      id_rumah_sakit: idRumahSakit,
+      rumah_sakit: responseData.rumah_sakit,
+      alamat: responseData.alamat,
+      nomor_invoice: responseData.nomor_invoice,
+      nomor_po: responseData.nomor_po,
+      nomor_si: responseData.nomor_si,
+      tanggal: responseData.tanggal,
+      jatuh_tempo: responseData.tanggal,
+      sub_total: responseData.sub_total,
+      pajak_ppn: responseData.pajak_ppn,
+      total: responseData.total,
+      RP_sub_total: responseData.RP_sub_total,
+      RP_pajak_ppn: responseData.RP_pajak_ppn,
+      RP_total: responseData.RP_total,
+      item: responseData.item.map((item) => ({
+        kat: item.kat,
+        nama_barang: item.nama_barang,
+        quantity: item.quantity,
+        harga_satuan: item.harga_satuan,
+        discount: item.discount.toString(),
+      })),
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/proforma-invoice/posting",
+        requestBody,
+      );
+      dispatch(resetItemPI());
+      dispatch(resetListItemPI());
+      dispatch(clearSalesPIInquiry());
+    } catch (error) {
+      console.error("Error inquiring data", error);
+      throw error;
+    }
+  };
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
@@ -33,15 +104,15 @@ const MainContent = () => {
       <Divider />
       <div className="flex justify-between">
         <div className="flex flex-col">
-          <h1>Nomor Invoice: {data.nomor_invoice}</h1>
-          <h1>Nomor PI: {data.nomor_invoice}</h1>
-          <h1>Tanggal: {data.tanggal}</h1>
-          <h1>Jatuh Tempo: {data.jatuh_tempo}</h1>
-          <h1>Nomor SI: {data.nomor_si}</h1>
+          <h1>Nomor Invoice: {responseData.nomor_invoice}</h1>
+          <h1>Nomor Surat Jalan: {responseData.nomor_surat_jalan}</h1>
+          <h1>Tanggal: {responseData.tanggal}</h1>
+          <h1>Jatuh Tempo: {responseData.jatuh_tempo}</h1>
+          <h1>Nomor SI: {responseData.nomor_si}</h1>
         </div>
         <div className="flex flex-col">
-          <h1>Nama Rumah Sakit: {data.rumah_sakit}</h1>
-          <h1>Alamat Rumah Sakit: {data.alamat}</h1>
+          <h1>Nama Rumah Sakit: {responseData.rumah_sakit}</h1>
+          <h1>Alamat Rumah Sakit: {responseData.alamat}</h1>
         </div>
       </div>
       <Table removeWrapper aria-label="Example static collection table">
@@ -56,7 +127,7 @@ const MainContent = () => {
         </TableHeader>
         <TableBody>
           {/* Map over dataItem to render each row */}
-          {data.item.map((item, index) => (
+          {responseData.item.map((item, index) => (
             <TableRow key={index}>
               <TableCell>{index + 1}</TableCell>
               <TableCell>{item.kat}</TableCell>
@@ -70,8 +141,17 @@ const MainContent = () => {
         </TableBody>
       </Table>
 
+      <div className="grid w-[25%] grid-cols-2 self-end text-end text-sm font-bold">
+        <p>Sub Total: </p>
+        <p>{responseData.RP_sub_total}</p>
+        <p>PPN 11%: </p>
+        <p>{responseData.RP_pajak_ppn}</p>
+        <p>Total: </p>
+        <p>{responseData.RP_total}</p>
+      </div>
+
       <div className="flex justify-end">
-        <Button color="primary" className="min-w-36">
+        <Button onClick={submitData} color="primary" className="min-w-36">
           Submit
         </Button>
       </div>

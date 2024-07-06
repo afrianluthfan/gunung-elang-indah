@@ -5,6 +5,7 @@ type SalesPIInquiryState = {
   rumah_sakit: string;
   alamat: string;
   nomor_invoice: string;
+  nomor_surat_jalan: string;
   nomor_po: string;
   nomor_si: string;
   tanggal: string;
@@ -41,6 +42,7 @@ const initialState: InitialState = {
     rumah_sakit: "",
     alamat: "",
     nomor_invoice: "",
+    nomor_surat_jalan: "",
     nomor_po: "",
     nomor_si: "",
     tanggal: "",
