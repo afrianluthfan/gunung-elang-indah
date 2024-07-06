@@ -14,70 +14,15 @@ import {
 } from "@nextui-org/react";
 import { useAppSelector } from "@/redux/store";
 import axios from "axios";
-import { resetItemPI, setItemPI } from "@/redux/features/itemPI-slice";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 
 const MainContent = () => {
-  const data = useAppSelector((state) => state.itemPIReducer.value);
-  const dataItem = useAppSelector((state) => state.listItemPIReducer.value);
-
-  const dispatch = useDispatch();
-  const [divisiList, setDivisiList] = useState<{ id: number; name: string }[]>(
-    [],
+  const data = useAppSelector(
+    (state) => state.salesPIInquirySliceReducer.value,
   );
 
-  useEffect(() => {
-    const fetchDivisiList = async () => {
-      try {
-        const responseDivisi = await axios.post(
-          "http://localhost:8080/api/proforma-invoice/divisi-list",
-          "",
-        );
-        setDivisiList(responseDivisi.data.data);
-      } catch (error) {
-        console.error("Gagal fetching list divisi!");
-      }
-    };
-    fetchDivisiList();
-  }, []);
-
-  const submitData = async () => {
-    const requestBody = {
-      id_divisi: findIdByDivisi(data.divisi.toUpperCase()), // Set id_divisi based on divisi value
-      rumah_sakit: data.namaRumahSakit,
-      alamat: data.alamatRumahSakit,
-      jatuh_tempo: data.jatuhTempo,
-      nama_dokter: data.namaDokter,
-      nama_pasien: data.namaPasien, // Fill this as per your application logic
-      rm: data.rm,
-      id_rumah_sakit: data.idRS, // Fill this as per your application logic
-      tanggal_tindakan: data.tanggal,
-      item: dataItem.map((item) => ({
-        kat: item.kat,
-        nama_barang: item.namaBarang,
-        quantity: item.qty,
-        harga_satuan: item.hSatuan,
-        discount: item.disc,
-      })),
-    };
-    console.log("requestBody: ", requestBody);
-    console.log("data.divisi: ", data.divisi);
-    console.log(divisiList);
-
-    const response = await axios.post(
-      "http://localhost:8080/api/proforma-invoice/inquiry",
-      requestBody,
-    );
-
-    // Optionally, reset the form or take other actions upon successful submission
-    dispatch(resetItemPI()); // Clear Redux state after submission if needed
-  };
-
-  const findIdByDivisi = (divisi: string) => {
-    const selectedDivisi = divisiList.find((item) => item.name == divisi);
-    return selectedDivisi ? selectedDivisi.id : null;
-  };
+  const dispatch = useDispatch();
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
@@ -88,15 +33,15 @@ const MainContent = () => {
       <Divider />
       <div className="flex justify-between">
         <div className="flex flex-col">
-          <h1>Nomor Invoice: {data.nomorInvoice}</h1>
-          <h1>Nomor PI: {data.nomorPI}</h1>
+          <h1>Nomor Invoice: {data.nomor_invoice}</h1>
+          <h1>Nomor PI: {data.nomor_invoice}</h1>
           <h1>Tanggal: {data.tanggal}</h1>
-          <h1>Jatuh Tempo: {data.jatuhTempo}</h1>
-          <h1>Nomor SI: {data.nomorSuratJalan}</h1>
+          <h1>Jatuh Tempo: {data.jatuh_tempo}</h1>
+          <h1>Nomor SI: {data.nomor_si}</h1>
         </div>
         <div className="flex flex-col">
-          <h1>Nama Rumah Sakit: {data.namaRumahSakit}</h1>
-          <h1>Alamat Rumah Sakit: {data.alamatRumahSakit}</h1>
+          <h1>Nama Rumah Sakit: {data.rumah_sakit}</h1>
+          <h1>Alamat Rumah Sakit: {data.alamat}</h1>
         </div>
       </div>
       <Table removeWrapper aria-label="Example static collection table">
@@ -111,22 +56,22 @@ const MainContent = () => {
         </TableHeader>
         <TableBody>
           {/* Map over dataItem to render each row */}
-          {dataItem.map((item, index) => (
+          {data.item.map((item, index) => (
             <TableRow key={index}>
               <TableCell>{index + 1}</TableCell>
               <TableCell>{item.kat}</TableCell>
-              <TableCell>{item.namaBarang}</TableCell>
-              <TableCell>{item.qty}</TableCell>
-              <TableCell>{item.hSatuan}</TableCell>
-              <TableCell>{item.disc}</TableCell>
-              <TableCell>{item.subTotal}</TableCell>
+              <TableCell>{item.nama_barang}</TableCell>
+              <TableCell>{item.quantity}</TableCell>
+              <TableCell>{item.harga_satuan}</TableCell>
+              <TableCell>{item.discount}</TableCell>
+              <TableCell>{item.sub_total_item}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
 
       <div className="flex justify-end">
-        <Button onClick={submitData} color="primary" className="min-w-36">
+        <Button color="primary" className="min-w-36">
           Submit
         </Button>
       </div>

@@ -4,6 +4,7 @@ import itemPIReducer from "./features/itemPI-slice";
 import listItemPIReducer from "./features/listItemPI-slice";
 import salesPIItemNumberReducer from "./features/salesPIItemNumber-slice";
 import divisiProfilingReducer from "./features/divisiProfiling-slice";
+import salesPIInquirySliceReducer from "./features/salesPIInquiry-slice";
 import { TypedUseSelectorHook, useSelector } from "react-redux";
 
 export const store = configureStore({
@@ -13,6 +14,7 @@ export const store = configureStore({
     listItemPIReducer,
     salesPIItemNumberReducer,
     divisiProfilingReducer,
+    salesPIInquirySliceReducer,
   },
 });
 

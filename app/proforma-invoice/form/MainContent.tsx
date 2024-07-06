@@ -15,17 +15,15 @@ import AutocompleteSearch from "@/components/AutocompleteSearch";
 
 type FormFields = {
   divisi: string;
-  nomorInvoice: string;
   jatuhTempo: string;
-  nomorSuratJalan: string;
-  nomorPI: string;
   namaRumahSakit: string;
   jumlahBarang: string;
-  tanggal: string;
   alamatRumahSakit: string;
   rm: string;
   tanggalTindakan: string;
   namaDokter: string;
+  namaPasien: string;
+  tanggalInvoice: string;
 };
 
 const MainContent: FC = () => {
@@ -52,7 +50,7 @@ const MainContent: FC = () => {
     };
 
     fetchRsData();
-  }, []);
+  }, [selectedDivisi]);
 
   const handleDivisiChange = (selectedItem: string) => {
     setSelectedDivisi(selectedItem);
@@ -108,16 +106,14 @@ const MainContent: FC = () => {
             statePassing={handleDivisiChange}
           />
 
-          <Input
-            {...register("nomorInvoice")}
-            label="Nomor Invoice"
-            onChange={handleInputChange("nomorInvoice")}
-          />
-          <Input
-            {...register("jatuhTempo")}
-            label="Jatuh Tempo"
-            onChange={handleInputChange("jatuhTempo")}
-          />
+          {selectedDivisi !== "" && (
+            <Input
+              {...register("jatuhTempo")}
+              label="Jatuh Tempo"
+              onChange={handleInputChange("jatuhTempo")}
+            />
+          )}
+
           {selectedDivisi === "radiologi" && (
             <Input
               {...register("rm")}
@@ -125,67 +121,58 @@ const MainContent: FC = () => {
               onChange={handleInputChange("rm")}
             />
           )}
-          {selectedDivisi === "ortopedi" && (
-            <Input
-              {...register("nomorSuratJalan")}
-              label="Nomor Surat Jalan"
-              onChange={handleInputChange("nomorSuratJalan")}
-            />
-          )}
         </div>
 
         {/* second column */}
-        <div className="flex flex-col gap-3">
-          <Input label="oadk" className="invisible" />
+        {selectedDivisi !== "" && (
+          <div className="flex flex-col gap-3">
+            {selectedDivisi === "radiologi" && (
+              <Input
+                {...register("tanggalTindakan")}
+                label="Tanggal Tindakan"
+                onChange={handleInputChange("tanggalTindakan")}
+              />
+            )}
 
-          {selectedDivisi === "radiologi" ? (
-            <Input
-              {...register("nomorPI")}
-              label="Nomor PI"
-              onChange={handleInputChange("nomorPI")}
-            />
-          ) : (
-            <Input
-              {...register("tanggalTindakan")}
-              label="Tanggal Tindakan"
-              onChange={handleInputChange("tanggalTindakan")}
-            />
-          )}
-          {selectedDivisi === "ortopedi" && (
             <AutocompleteSearch
               data={rsData}
               label="Nama Rumah Sakit"
               rsData={handleRSChange}
             />
-          )}
-          {selectedDivisi === "radiologi" && (
+          </div>
+        )}
+
+        {/* third column */}
+        {selectedDivisi !== "" && (
+          <div className="flex flex-col gap-3">
+            <Dropdown
+              data={itemNumber}
+              label="Jumlah Barang"
+              placeholder="Pilih jumlah barang"
+            />
+
             <Input
               {...register("namaDokter")}
               label="Nama Dokter"
               onChange={handleInputChange("namaDokter")}
             />
-          )}
-        </div>
 
-        {/* third column */}
-        <div className="flex flex-col gap-3">
-          <Dropdown
-            data={itemNumber}
-            label="Jumlah Barang"
-            placeholder="Pilih jumlah barang"
-          />
-          <Input
-            {...register("tanggal")}
-            label="Tanggal"
-            onChange={handleInputChange("tanggal")}
-          />
-          <Input
-            readOnly
-            {...register("alamatRumahSakit")}
-            label="Alamat Rumah Sakit"
-            value={alamatRumahSakit} // This will be automatically updated based on the watch
-          />
-        </div>
+            {selectedDivisi === "radiologi" && (
+              <Input
+                {...register("namaPasien")}
+                label="Nama Pasien"
+                onChange={handleInputChange("namaPasien")}
+              />
+            )}
+
+            <Input
+              readOnly
+              {...register("alamatRumahSakit")}
+              label="Alamat Rumah Sakit"
+              value={alamatRumahSakit} // This will be automatically updated based on the watch
+            />
+          </div>
+        )}
       </form>
     </div>
   );

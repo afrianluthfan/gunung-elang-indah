@@ -17,8 +17,8 @@ import {
   Tooltip,
 } from "@nextui-org/react";
 import { columns, users, statusOptions } from "./data";
-import { DeleteIcon } from "./DeleteIcon";
-import { AcceptIcon } from "./AcceptIcon";
+// import { DeleteIcon } from "./DeleteIcon";
+// import { AcceptIcon } from "./AcceptIcon";
 import { EditIcon } from "./EditIcon";
 import { EyeIcon } from "../AdminTable/EyeIcon";
 

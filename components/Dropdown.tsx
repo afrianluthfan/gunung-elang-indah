@@ -1,8 +1,9 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { Select, SelectItem, Selection } from "@nextui-org/react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { setAmount } from "@/redux/features/salesPIItemNumber-slice";
+import { set } from "react-hook-form";
 
 interface DropdownProps {
   data: { value: string; label: string }[];
@@ -19,6 +20,11 @@ const Dropdown: FC<DropdownProps> = ({
 }) => {
   const [value, setValue] = React.useState<Selection>(new Set([]));
   const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(setAmount(0));
+    console.log("set to 0");
+  }, [dispatch]);
 
   const handleSelect = (selectedKeys: Selection) => {
     setValue(selectedKeys);
