@@ -1,6 +1,4 @@
-"use client";
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -15,19 +13,45 @@ import {
   SortDescriptor,
   Tooltip,
 } from "@nextui-org/react";
-import { columns, users, statusOptions, fetchAllData } from "./data";
-// import { DeleteIcon } from "./DeleteIcon";
-// import { AcceptIcon } from "./AcceptIcon";
 import { EditIcon } from "./EditIcon";
 import { EyeIcon } from "../AdminTable/EyeIcon";
+import axios from "axios";
+
+const columns = [
+  { name: "NO.", uid: "number" },
+  { name: "ID", uid: "id", sortable: true },
+  { name: "KAT.", uid: "kat" },
+  { name: "NAMA BARANG", uid: "name", sortable: true },
+  { name: "QTY", uid: "qty", sortable: true },
+  { name: "H. SATUAN", uid: "hsatuan", sortable: true },
+  { name: "DISC", uid: "disc" },
+  { name: "SUBTOTAL", uid: "subtotal", sortable: true },
+  { name: "STATUS", uid: "status", sortable: true },
+  { name: "ACTIONS", uid: "actions" },
+];
+
+const statusOptions = [
+  { name: "Diterima", uid: "diterima" },
+  { name: "Ditolak", uid: "ditolak" },
+  { name: "Diproses", uid: "diproses" },
+];
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
-  diterima: "success",
-  ditolak: "danger",
-  diproses: "primary",
+  Diterima: "success",
+  Ditolak: "danger",
+  Diproses: "primary",
 };
 
-fetchAllData();
+type ItemData = {
+  id: number;
+  kat: string;
+  name: string;
+  qty: string;
+  hsatuan: string;
+  disc: string;
+  subtotal: string;
+  status: string;
+}[];
 
 const INITIAL_VISIBLE_COLUMNS = [
   "number",
@@ -41,26 +65,78 @@ const INITIAL_VISIBLE_COLUMNS = [
   "actions",
 ];
 
-type User = (typeof users)[0];
+type User = ItemData[0];
 
 export default function PITableComponent() {
-  const [filterValue, setFilterValue] = React.useState("");
-  const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
-    new Set([]),
-  );
-  const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
+  const [users, setUsers] = useState<ItemData>([]);
+  const [filterValue, setFilterValue] = useState("");
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
+  const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS),
   );
-  const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
+  const [statusFilter, setStatusFilter] = useState<Selection>("all");
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: "age",
     direction: "ascending",
   });
+  const [page, setPage] = useState(1);
 
-  //NO, TANGGAL, NAMA PT, JATUH TEMPO, TOTAL(RUPIAH)
+  const fetchItemData1 = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/proforma-invoice/get-all-list",
+        "",
+      );
+      return response.data.data;
+    } catch (error) {
+      console.error("Error fetching data from API 1", error);
+      return [];
+    }
+  };
 
-  const [page, setPage] = React.useState(1);
+  const fetchItemData2 = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/stock-barang/list",
+        "",
+      );
+      return response.data.data;
+    } catch (error) {
+      console.error("Error fetching data from API 2", error);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      const data1 = await fetchItemData1();
+      const data2 = await fetchItemData2();
+
+      if (!Array.isArray(data1) || !Array.isArray(data2)) {
+        console.error("Unexpected data format", { data1, data2 });
+        return;
+      }
+
+      const mergedData = data1.map((item1) => {
+        const item2 = data2.find((item2) => item2.id === item1.id);
+        return {
+          id: item1.id,
+          kat: item1.divisi,
+          name: item2?.name || "",
+          qty: "N/A", // Assuming qty is not available in the provided data
+          hsatuan: item2?.price || "",
+          disc: "N/A", // Assuming disc is not available in the provided data
+          subtotal: item1.sub_total,
+          status: item1.status,
+        };
+      });
+
+      setUsers(mergedData);
+    };
+
+    fetchAllData();
+  }, []);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -90,7 +166,7 @@ export default function PITableComponent() {
     }
 
     return filteredUsers;
-  }, [hasSearchFilter, statusFilter, filterValue]);
+  }, [hasSearchFilter, statusFilter, filterValue, users]);
 
   const sortedItems = React.useMemo(() => {
     return [...filteredItems].sort((a: User, b: User) => {
@@ -123,6 +199,8 @@ export default function PITableComponent() {
         case "name":
           return cellValue;
         case "status":
+          console.log("User Status:", user.status); // Log the status to check the value
+
           return (
             <Chip
               className="capitalize"
@@ -134,56 +212,22 @@ export default function PITableComponent() {
             </Chip>
           );
         case "actions":
-          switch (user.status) {
-            case "diterima":
-              return (
-                <div className="relative flex items-center gap-2">
-                  <Tooltip content="Details" className="text-black">
-                    <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                      <EyeIcon />
-                    </span>
-                  </Tooltip>
-                </div>
-              );
-            default:
-              return (
-                <div className="relative flex items-center gap-2">
-                  <Tooltip content="Details" className="text-black">
-                    <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                      <EyeIcon />
-                    </span>
-                  </Tooltip>
-                  <Tooltip content="Edit user" className="text-black">
-                    <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                      <EditIcon />
-                    </span>
-                  </Tooltip>
-                </div>
-              );
-          }
-
-        // <div className="relative flex items-center gap-2">
-        //   <Tooltip
-        //     color="success"
-        //     content="Accept order"
-        //     className="text-white"
-        //   >
-        //     <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-        //       <AcceptIcon />
-        //     </span>
-        //   </Tooltip>
-        //   <Tooltip color="danger" content="Delete order">
-        //     <span className="cursor-pointer text-lg text-danger active:opacity-50">
-        //       <DeleteIcon />
-        //     </span>
-        //   </Tooltip>
-        //   <Tooltip content="Edit order" className="text-black">
-        //     <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-        //       <EditIcon />
-        //     </span>
-        //   </Tooltip>
-        // </div>
-
+          return (
+            <div className="relative flex items-center gap-2">
+              <Tooltip content="Details" className="text-black">
+                <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
+                  <EyeIcon />
+                </span>
+              </Tooltip>
+              {user.status !== "diterima" && (
+                <Tooltip content="Edit user" className="text-black">
+                  <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
+                    <EditIcon />
+                  </span>
+                </Tooltip>
+              )}
+            </div>
+          );
         default:
           return cellValue;
       }
