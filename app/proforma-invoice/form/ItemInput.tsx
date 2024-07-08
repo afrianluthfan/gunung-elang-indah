@@ -1,18 +1,30 @@
-"use client";
-
 import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
-import { Divider, Input } from "@nextui-org/react";
+import { Button, Divider, Input } from "@nextui-org/react";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { setListItemPI } from "@/redux/features/listItemPI-slice";
+import { useRouter } from "next/navigation";
 import TopSectionItemList from "./TopSectionItemLIst";
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
+import axios from "axios";
+import PiItemAutocompleteSearch from "@/components/PiItemAutocompleteSearch";
 
 interface ItemInputProps {
   itemNumber: number;
   index: number;
 }
+
+type ItemData = {
+  id: string;
+  name: string;
+  total: string;
+  price: string;
+  created_at: string;
+  created_by: string;
+  updated_at: string;
+  updated_by: string;
+};
 
 type ListItemPIState = {
   kat: string;
@@ -24,23 +36,57 @@ type ListItemPIState = {
 };
 
 const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
-  const { control, watch } = useForm<ListItemPIState>();
+  const { control, handleSubmit, watch } = useForm<ListItemPIState>();
+  const [itemData, setItemData] = useState<ItemData[]>([]);
+  const [selectedData, setselectedData] = useState<{}>("");
   const dispatch = useDispatch<AppDispatch>();
-
+  const router = useRouter();
   const watchFields = watch();
+
+  useEffect(() => {
+    const fetchItemData = async () => {
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/api/stock-barang/list",
+          "",
+        );
+        setItemData(response.data.data);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+    fetchItemData();
+  }, []);
 
   useEffect(() => {
     dispatch(setListItemPI({ index, item: watchFields }));
   }, [watchFields, index, dispatch]);
 
+  const handleSetData = () => {
+    dispatch(setListItemPI({ index, item: watchFields }));
+    router.push("/proforma-invoice/form/preview");
+  };
+
+  const findItemByName = (name: string): ItemData | undefined => {
+    return itemData.find((item) => item.name === name);
+  };
+
+  const handleItemSelection = (data: ItemData) => {
+    setselectedData(data);
+    console.log("selectedData: ", selectedData);
+  };
+
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <ContentTopSectionLayout>
-        {/* cek profile customer and searchbar */}
+        {/* Check profile customer and searchbar */}
         <TopSectionItemList itemNumber={itemNumber} />
       </ContentTopSectionLayout>
       <Divider />
-      <form className="grid h-full w-full grid-cols-3 gap-3">
+      <form
+        className="grid h-full w-full grid-cols-3 gap-3"
+        onSubmit={handleSubmit(handleSetData)}
+      >
         {/* first column */}
         <div className="flex flex-col gap-3">
           <Controller
@@ -56,10 +102,10 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
         </div>
         {/* second column */}
         <div className="flex flex-col gap-3">
-          <Controller
-            name="namaBarang"
-            control={control}
-            render={({ field }) => <Input {...field} label="NAMA BARANG" />}
+          <PiItemAutocompleteSearch
+            data={itemData}
+            label="Nama Rumah Sakit"
+            passingFunction={handleItemSelection}
           />
           <Controller
             name="disc"
@@ -74,8 +120,22 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
             control={control}
             render={({ field }) => <Input {...field} label="QTY" />}
           />
+          <Controller
+            name="subTotal"
+            control={control}
+            render={({ field }) => <Input {...field} label="SUB TOTAL" />}
+          />
         </div>
       </form>
+      <div className="flex justify-end">
+        <Button
+          onClick={handleSubmit(handleSetData)}
+          color="primary"
+          className="min-w-36"
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 };

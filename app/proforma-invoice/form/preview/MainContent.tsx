@@ -19,6 +19,7 @@ import { useEffect, useState } from "react";
 import { resetItemPI } from "@/redux/features/itemPI-slice";
 import { clearSalesPIInquiry } from "@/redux/features/salesPIInquiry-slice";
 import { resetListItemPI } from "@/redux/features/listItemPI-slice";
+import { useRouter } from "next/navigation";
 
 type Hospital = {
   id: number;
@@ -27,6 +28,7 @@ type Hospital = {
 };
 
 const MainContent = () => {
+  const router = useRouter();
   const [rsData, setRsData] = useState<Hospital[]>([]);
   const responseData = useAppSelector(
     (state) => state.salesPIInquirySliceReducer.value,
@@ -82,13 +84,14 @@ const MainContent = () => {
     };
 
     try {
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:8080/api/proforma-invoice/posting",
         requestBody,
       );
       dispatch(resetItemPI());
       dispatch(resetListItemPI());
       dispatch(clearSalesPIInquiry());
+      router.push("/proforma-invoice");
     } catch (error) {
       console.error("Error inquiring data", error);
       throw error;

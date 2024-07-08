@@ -2,13 +2,13 @@
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import React, { FC, useState } from "react";
 
-interface AutocompleteSearchProps {
+interface RsAutocompleteSearchProps {
   data: { id: number; name: string; address_company: string }[];
   label: string;
   rsData: (rsName: string, address: string) => void;
 }
 
-const AutocompleteSearch: FC<AutocompleteSearchProps> = ({
+const RsAutocompleteSearch: FC<RsAutocompleteSearchProps> = ({
   data,
   label,
   rsData,
@@ -58,4 +58,4 @@ const AutocompleteSearch: FC<AutocompleteSearchProps> = ({
   );
 };
 
-export default AutocompleteSearch;
+export default RsAutocompleteSearch;

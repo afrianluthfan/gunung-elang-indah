@@ -9,14 +9,13 @@ import {
   TableRow,
   TableCell,
   Chip,
-  User,
   Pagination,
   Selection,
   ChipProps,
   SortDescriptor,
   Tooltip,
 } from "@nextui-org/react";
-import { columns, users, statusOptions } from "./data";
+import { columns, users, statusOptions, fetchAllData } from "./data";
 // import { DeleteIcon } from "./DeleteIcon";
 // import { AcceptIcon } from "./AcceptIcon";
 import { EditIcon } from "./EditIcon";
@@ -27,6 +26,8 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   ditolak: "danger",
   diproses: "primary",
 };
+
+fetchAllData();
 
 const INITIAL_VISIBLE_COLUMNS = [
   "number",

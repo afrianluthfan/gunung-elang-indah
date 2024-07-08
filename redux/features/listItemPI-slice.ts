@@ -6,7 +6,6 @@ type ListItemPIState = {
   namaBarang: string;
   disc: string;
   qty: string;
-  subTotal: string;
 };
 
 type InitialState = {

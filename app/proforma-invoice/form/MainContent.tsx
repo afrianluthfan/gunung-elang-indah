@@ -11,7 +11,7 @@ import { resetItemPI, setItemPI } from "@/redux/features/itemPI-slice";
 import { FC, useEffect, useState } from "react";
 import Dropdown from "@/components/Dropdown";
 import axios from "axios";
-import AutocompleteSearch from "@/components/AutocompleteSearch";
+import RsAutocompleteSearch from "@/components/RsAutocompleteSearch";
 
 type FormFields = {
   divisi: string;
@@ -35,11 +35,6 @@ const MainContent: FC = () => {
 
   const { register, setValue, watch } = useForm<FormFields>();
   const dispatch = useDispatch<AppDispatch>();
-
-  const findIdByDivisi = (divisi: string) => {
-    const selectedDivisi = divisiList.find((item) => item.name == divisi);
-    return selectedDivisi ? selectedDivisi.id : null;
-  };
 
   useEffect(() => {
     const fetchRsData = async () => {
@@ -139,7 +134,7 @@ const MainContent: FC = () => {
               />
             )}
 
-            <AutocompleteSearch
+            <RsAutocompleteSearch
               data={rsData}
               label="Nama Rumah Sakit"
               rsData={handleRSChange}
