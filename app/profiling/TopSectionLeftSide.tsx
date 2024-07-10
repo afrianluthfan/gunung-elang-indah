@@ -5,26 +5,22 @@ import axios from "axios";
 import { FC, useEffect, useState } from "react";
 
 interface TopSectionLeftSideProps {
-  isFound: (isFoundState: boolean) => void;
-  selectedData: (data: { name: string; address: string }) => void;
+  setSelectedData: (data: { name: string; address: string }) => void;
 }
 
 const TopSectionLeftSide: FC<TopSectionLeftSideProps> = ({
-  isFound,
-  selectedData,
+  setSelectedData,
 }) => {
   const [rsData, setRsData] = useState<
     { id: number; name: string; address_company: string }[]
   >([]);
+  const [name, setName] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
 
-  const handleRSChange = (name: string, address: string) => {
-    console.log(name, address);
-    if (name && address) {
-      isFound(true);
-      selectedData({ name, address });
-    } else {
-      isFound(false);
-    }
+  const handleRSChange = (selectedName: string, selectedAddress: string) => {
+    setName(selectedName);
+    setAddress(selectedAddress);
+    setSelectedData({ name: selectedName, address: selectedAddress });
   };
 
   useEffect(() => {

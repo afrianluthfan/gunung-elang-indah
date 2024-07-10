@@ -2,8 +2,13 @@
 
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
+import { FC } from "react";
 
-const TopSectionRightSide = () => {
+interface TopSectionRightSideProps {
+  search: () => void;
+}
+
+const TopSectionRightSide: FC<TopSectionRightSideProps> = ({ search }) => {
   const router = useRouter();
   return (
     <div className="flex w-[8vw] flex-col gap-1">
@@ -13,7 +18,9 @@ const TopSectionRightSide = () => {
       >
         Tambah
       </Button>
-      <Button className="bg-[#00186D] font-bold text-white">Cari/Cek</Button>
+      <Button className="bg-[#00186D] font-bold text-white" onClick={search}>
+        Cari/Cek
+      </Button>
     </div>
   );
 };
