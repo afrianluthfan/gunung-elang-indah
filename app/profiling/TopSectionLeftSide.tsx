@@ -14,12 +14,8 @@ const TopSectionLeftSide: FC<TopSectionLeftSideProps> = ({
   const [rsData, setRsData] = useState<
     { id: number; name: string; address_company: string }[]
   >([]);
-  const [name, setName] = useState<string>("");
-  const [address, setAddress] = useState<string>("");
 
   const handleRSChange = (selectedName: string, selectedAddress: string) => {
-    setName(selectedName);
-    setAddress(selectedAddress);
     setSelectedData({ name: selectedName, address: selectedAddress });
   };
 

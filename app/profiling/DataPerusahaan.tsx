@@ -1,22 +1,64 @@
 "use client";
 
+import axios from "axios";
 import Image from "next/image";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 
 interface DataPerusahaanProps {
   data: {
-    // namaDokter: string;
     name: string;
     address: string;
-    // npwp: string;
-    // noIpak: string;
-    // alamatNpwp: string;
-    // jumlahProformaInvoice: number;
-    // jumlahPurchaseOrder: number;
+    // Add other fields as needed
   };
 }
 
-const DataPerusahaan: FC<DataPerusahaanProps> = (data) => {
+const DataPerusahaan: FC<DataPerusahaanProps> = ({ data }) => {
+  const [rsData, setRsData] = useState<{
+    name: string;
+    address: string;
+    npwp: string;
+    noIpak: string;
+    alamatNpwp: string;
+    jumlahProformaInvoice: number;
+  }>({
+    name: "",
+    address: "",
+    npwp: "",
+    noIpak: "",
+    alamatNpwp: "",
+    jumlahProformaInvoice: 0,
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/api/customer-profilling/get-by-search",
+          data,
+        );
+        if (response.data.status) {
+          const customer = response.data.customer[0];
+          const responseData = response.data;
+          setRsData({
+            name: customer.name,
+            address: customer.address,
+            npwp: customer.npwp,
+            noIpak: customer.ipak_number,
+            alamatNpwp: customer.npwp_address,
+            jumlahProformaInvoice: responseData.jumlah_pi,
+          });
+        } else {
+          console.error("Data not found");
+          // Handle error or set default values
+        }
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+
+    fetchData();
+  }, [data]);
+
   return (
     <section className="flex">
       <Image
@@ -33,19 +75,26 @@ const DataPerusahaan: FC<DataPerusahaanProps> = (data) => {
             NAMA DOKTER
           </h1>
           <h1 className="text-[1.85vh] font-bold leading-[2.5vh]">
-            {data.data.name}
+            {rsData.name}
           </h1>
           <h1 className="text-[1.85vh] font-bold leading-[2.5vh]">
-            {data.data.address}
+            {rsData.address}
           </h1>
-          <h1 className="text-[1.85vh] font-bold leading-[2.5vh]">NPWP</h1>
-          <h1 className="text-[1.85vh] font-bold leading-[2.5vh]">NO. IPAK</h1>
           <h1 className="text-[1.85vh] font-bold leading-[2.5vh]">
-            ALAMAT NPWP
+            {rsData.npwp}
+          </h1>
+          <h1 className="text-[1.85vh] font-bold leading-[2.5vh]">
+            {rsData.noIpak}
+          </h1>
+          <h1 className="text-[1.85vh] font-bold leading-[2.5vh]">
+            {rsData.alamatNpwp}
           </h1>
         </div>
         <div className="mt-4 text-[1.3vh]">
-          <h2 className="font-bold opacity-50">JUMLAH PROFORMA INVOICE</h2>
+          <h2 className="font-bold opacity-50">
+            {rsData.jumlahProformaInvoice}
+          </h2>
+          {/* Add other fields as needed */}
           <h2 className="font-bold opacity-50">JUMLAH PURCHASE ORDER</h2>
         </div>
       </div>

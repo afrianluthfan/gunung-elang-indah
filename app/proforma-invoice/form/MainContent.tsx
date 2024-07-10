@@ -93,6 +93,7 @@ const MainContent: FC = () => {
         <TopSectionLeftSide />
       </ContentTopSectionLayout>
       <Divider />
+      
       <form className="grid h-full w-full grid-cols-3 gap-3">
         {/* first column */}
         <div className="flex flex-col gap-3">

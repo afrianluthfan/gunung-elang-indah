@@ -6,6 +6,7 @@ import salesPIItemNumberReducer from "./features/salesPIItemNumber-slice";
 import divisiProfilingReducer from "./features/divisiProfiling-slice";
 import salesPIInquirySliceReducer from "./features/salesPIInquiry-slice";
 import { TypedUseSelectorHook, useSelector } from "react-redux";
+import itemProfilingReducer from "./features/iitemProfiling-slice";
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
     salesPIItemNumberReducer,
     divisiProfilingReducer,
     salesPIInquirySliceReducer,
+    itemProfilingReducer,
   },
 });
 
