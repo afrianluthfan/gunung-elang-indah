@@ -127,6 +127,15 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
           />
         </div>
       </form>
+      <div className="flex justify-end">
+        <Button
+          onClick={handleSubmit(handleSetData)}
+          color="primary"
+          className="min-w-36"
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 };

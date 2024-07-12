@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -8,94 +8,94 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Button,
   Chip,
-  User,
   Pagination,
-  Selection,
-  ChipProps,
   SortDescriptor,
   Tooltip,
+  ChipProps,
 } from "@nextui-org/react";
-import { columns, users, statusOptions } from "./data";
-import { DeleteIcon } from "./DeleteIcon";
-import { EyeIcon } from "./EyeIcon";
 import { EditIcon } from "./EditIcon";
+import { EyeIcon } from "./EyeIcon";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  active: "success",
-  paused: "danger",
-  vacation: "warning",
-};
-
-const INITIAL_VISIBLE_COLUMNS = [
-  "number",
-  "tanggal",
-  "item",
-  "name",
-  "jumlah",
-  "harga",
-  "actions",
+const columns = [
+  { name: "NO.", uid: "number" },
+  { name: "TANGGAL.", uid: "tanggal" },
+  { name: "NAMA CUSTOMER", uid: "nama_customer", sortable: true },
+  { name: "NAMA BARANG", uid: "name", sortable: true },
+  { name: "JUMLAH ORDER", uid: "jumlah_order", sortable: true },
+  { name: "TOTAL", uid: "total", sortable: true },
+  { name: "STATUS", uid: "status", sortable: true },
+  { name: "ACTIONS", uid: "actions" },
 ];
 
-type User = (typeof users)[0];
+const statusColorMap: Record<string, ChipProps["color"]> = {
+  Diterima: "success",
+  Ditolak: "danger",
+  Diproses: "primary",
+};
 
-export default function TableComponent() {
-  const [filterValue, setFilterValue] = React.useState("");
-  const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
-    new Set([]),
-  );
-  const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
-    new Set(INITIAL_VISIBLE_COLUMNS),
-  );
-  const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
+type ItemData = {
+  id: number;
+  tanggal: string;
+  nama_customer: string;
+  name: string;
+  jumlah_order: string;
+  total: string;
+  status: string;
+  divisi: string;
+}[];
+
+type User = ItemData[0];
+
+export default function PITableComponent() {
+  const [users, setUsers] = useState<ItemData>([]);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: "age",
     direction: "ascending",
   });
+  const [page, setPage] = useState(1);
+  const router = useRouter();
 
-  const [page, setPage] = React.useState(1);
-
-  const hasSearchFilter = Boolean(filterValue);
-
-  const headerColumns = React.useMemo(() => {
-    if (visibleColumns === "all") return columns;
-
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid),
-    );
-  }, [visibleColumns]);
-
-  const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
-
-    if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase()),
+  const fetchItemData = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/proforma-invoice/get-all-list",
+        "",
       );
+      return response.data.data;
+    } catch (error) {
+      console.error("Error fetching data from API", error);
+      return [];
     }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status),
-      );
-    }
+  };
 
-    return filteredUsers;
-  }, [hasSearchFilter, statusFilter, filterValue]);
+  useEffect(() => {
+    const fetchAllData = async () => {
+      const data = await fetchItemData();
+
+      if (!Array.isArray(data)) {
+        console.error("Unexpected data format", { data });
+        return;
+      }
+
+      setUsers(data);
+    };
+
+    fetchAllData();
+  }, []);
 
   const sortedItems = React.useMemo(() => {
-    return [...filteredItems].sort((a: User, b: User) => {
+    return [...users].sort((a: User, b: User) => {
       const first = a[sortDescriptor.column as keyof User] as number;
       const second = b[sortDescriptor.column as keyof User] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
-  }, [sortDescriptor, filteredItems]);
+  }, [sortDescriptor, users]);
 
   const itemsWithIndex = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -105,7 +105,7 @@ export default function TableComponent() {
     }));
   }, [page, sortedItems, rowsPerPage]);
 
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
+  const pages = Math.ceil(users.length / rowsPerPage);
 
   const renderCell = React.useCallback(
     (user: User & { index: number }, columnKey: React.Key) => {
@@ -117,15 +117,6 @@ export default function TableComponent() {
       switch (columnKey) {
         case "name":
           return cellValue;
-        case "role":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">{cellValue}</p>
-              <p className="text-bold text-tiny capitalize text-default-400">
-                {user.team}
-              </p>
-            </div>
-          );
         case "status":
           return (
             <Chip
@@ -145,23 +136,27 @@ export default function TableComponent() {
                   <EyeIcon />
                 </span>
               </Tooltip>
-              <Tooltip content="Edit user" className="text-black">
-                <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                  <EditIcon />
-                </span>
-              </Tooltip>
-              <Tooltip color="danger" content="Delete user">
-                <span className="cursor-pointer text-lg text-danger active:opacity-50">
-                  <DeleteIcon />
-                </span>
-              </Tooltip>
+              {user.status !== "diterima" && (
+                <Tooltip content="Edit user" className="text-black">
+                  <span
+                    onClick={() =>
+                      router.push(
+                        `/proforma-invoice/edit?id=${user.id}&divisi=${user.divisi}`,
+                      )
+                    }
+                    className="cursor-pointer text-lg text-default-400 active:opacity-50"
+                  >
+                    <EditIcon />
+                  </span>
+                </Tooltip>
+              )}
             </div>
           );
         default:
           return cellValue;
       }
     },
-    [],
+    [router],
   );
 
   const onRowsPerPageChange = React.useCallback(
@@ -176,12 +171,10 @@ export default function TableComponent() {
     <div>
       <Table
         aria-label="Example table with custom cells"
-        selectionMode="multiple"
-        onSelectionChange={setSelectedKeys}
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
       >
-        <TableHeader columns={headerColumns}>
+        <TableHeader columns={columns}>
           {(column) => (
             <TableColumn key={column.uid} align="start">
               {column.name}
@@ -198,18 +191,20 @@ export default function TableComponent() {
           )}
         </TableBody>
       </Table>
-      <Pagination
-        total={pages}
-        page={page}
-        onChange={(newPage) => setPage(newPage)}
-      />
-      <select value={rowsPerPage} onChange={onRowsPerPageChange}>
-        {[5, 10, 20].map((pageSize) => (
-          <option key={pageSize} value={pageSize}>
-            {pageSize} per page
-          </option>
-        ))}
-      </select>
+      <div className="mt-5 flex justify-between">
+        <Pagination
+          total={pages}
+          page={page}
+          onChange={(newPage) => setPage(newPage)}
+        />
+        <select value={rowsPerPage} onChange={onRowsPerPageChange}>
+          {[5, 10].map((pageSize) => (
+            <option key={pageSize} value={pageSize}>
+              {pageSize} per page
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 }

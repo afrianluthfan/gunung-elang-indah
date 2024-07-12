@@ -1,17 +1,23 @@
 "use client";
 
 import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
-import TopSectionLeftSide from "./TopSectionLeftSide";
-import { Button, Divider, Input } from "@nextui-org/react";
+import { Divider, Input } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
-import { itemNumber } from "./itemNumber";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/redux/store";
-import { resetItemPI, setItemPI } from "@/redux/features/itemPI-slice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { setItemPI } from "@/redux/features/itemPI-slice";
 import { FC, useEffect, useState } from "react";
 import Dropdown from "@/components/Dropdown";
 import axios from "axios";
 import RsAutocompleteSearch from "@/components/RsAutocompleteSearch";
+import TopSectionLeftSide from "../../TopSectionLeftSide";
+import { itemNumber } from "../../form/itemNumber";
+
+type Key = string | number;
+
+interface MainContentProps {
+  divisi?: string;
+}
 
 type FormFields = {
   divisi: string;
@@ -26,8 +32,8 @@ type FormFields = {
   tanggalInvoice: string;
 };
 
-const MainContent: FC = () => {
-  const [selectedDivisi, setSelectedDivisi] = useState<string>("");
+const MainContent: FC<MainContentProps> = ({ divisi }) => {
+  const [selectedDivisi, setSelectedDivisi] = useState<Set<Key>>(new Set());
   const [rsData, setRsData] = useState<
     { id: number; name: string; address_company: string }[]
   >([]);
@@ -52,9 +58,10 @@ const MainContent: FC = () => {
     fetchRsData();
   }, [selectedDivisi]);
 
-  const handleDivisiChange = (selectedItem: string) => {
+  const handleDivisiChange = (selectedItem: Set<Key>) => {
     setSelectedDivisi(selectedItem);
-    dispatch(setItemPI({ divisi: selectedItem }));
+    const selectedValue = Array.from(selectedItem).join(", ");
+    dispatch(setItemPI({ divisi: selectedValue }));
   };
 
   const handleRSChange = (name: string, address: string) => {
@@ -74,8 +81,11 @@ const MainContent: FC = () => {
     };
 
   useEffect(() => {
-    setValue("divisi", selectedDivisi);
-  }, [selectedDivisi, setValue]);
+    if (divisi) {
+      setSelectedDivisi(new Set([divisi]));
+      setValue("divisi", divisi);
+    }
+  }, [divisi, setValue]);
 
   useEffect(() => {
     const subscription = watch((value) => {
@@ -89,13 +99,11 @@ const MainContent: FC = () => {
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <ContentTopSectionLayout>
-        {/* cek profile customer and searchbar */}
         <TopSectionLeftSide />
       </ContentTopSectionLayout>
       <Divider />
 
       <form className="grid h-full w-full grid-cols-3 gap-3">
-        {/* first column */}
         <div className="flex flex-col gap-3">
           <Dropdown
             data={[
@@ -104,18 +112,19 @@ const MainContent: FC = () => {
             ]}
             label="Divisi"
             placeholder="Pilih Divisi"
-            statePassing={handleDivisiChange}
+            statePassing={(selectedValue) =>
+              handleDivisiChange(new Set([selectedValue]))
+            }
+            selectedKeys={selectedDivisi}
           />
 
-          {selectedDivisi !== "" && (
-            <Input
-              {...register("jatuhTempo")}
-              label="Jatuh Tempo"
-              onChange={handleInputChange("jatuhTempo")}
-            />
-          )}
+          <Input
+            {...register("jatuhTempo")}
+            label="Jatuh Tempo"
+            onChange={handleInputChange("jatuhTempo")}
+          />
 
-          {selectedDivisi === "radiologi" && (
+          {selectedDivisi.has("radiologi") && (
             <Input
               {...register("rm")}
               label="RM"
@@ -124,56 +133,50 @@ const MainContent: FC = () => {
           )}
         </div>
 
-        {/* second column */}
-        {selectedDivisi !== "" && (
-          <div className="flex flex-col gap-3">
-            {selectedDivisi === "radiologi" && (
-              <Input
-                {...register("tanggalTindakan")}
-                label="Tanggal Tindakan"
-                onChange={handleInputChange("tanggalTindakan")}
-              />
-            )}
-
-            <RsAutocompleteSearch
-              data={rsData}
-              label="Nama Rumah Sakit"
-              rsData={handleRSChange}
-            />
-          </div>
-        )}
-
-        {/* third column */}
-        {selectedDivisi !== "" && (
-          <div className="flex flex-col gap-3">
-            <Dropdown
-              data={itemNumber}
-              label="Jumlah Barang"
-              placeholder="Pilih jumlah barang"
-            />
-
+        <div className="flex flex-col gap-3">
+          {selectedDivisi.has("radiologi") && (
             <Input
-              {...register("namaDokter")}
-              label="Nama Dokter"
-              onChange={handleInputChange("namaDokter")}
+              {...register("tanggalTindakan")}
+              label="Tanggal Tindakan"
+              onChange={handleInputChange("tanggalTindakan")}
             />
+          )}
 
-            {selectedDivisi === "radiologi" && (
-              <Input
-                {...register("namaPasien")}
-                label="Nama Pasien"
-                onChange={handleInputChange("namaPasien")}
-              />
-            )}
+          <RsAutocompleteSearch
+            data={rsData}
+            label="Nama Rumah Sakit"
+            rsData={handleRSChange}
+          />
+        </div>
 
+        <div className="flex flex-col gap-3">
+          <Dropdown
+            data={itemNumber}
+            label="Jumlah Barang"
+            placeholder="Pilih jumlah barang"
+          />
+
+          <Input
+            {...register("namaDokter")}
+            label="Nama Dokter"
+            onChange={handleInputChange("namaDokter")}
+          />
+
+          {selectedDivisi.has("radiologi") && (
             <Input
-              readOnly
-              {...register("alamatRumahSakit")}
-              label="Alamat Rumah Sakit"
-              value={alamatRumahSakit} // This will be automatically updated based on the watch
+              {...register("namaPasien")}
+              label="Nama Pasien"
+              onChange={handleInputChange("namaPasien")}
             />
-          </div>
-        )}
+          )}
+
+          <Input
+            readOnly
+            {...register("alamatRumahSakit")}
+            label="Alamat Rumah Sakit"
+            value={alamatRumahSakit}
+          />
+        </div>
       </form>
     </div>
   );

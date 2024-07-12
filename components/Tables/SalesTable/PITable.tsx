@@ -16,6 +16,7 @@ import {
 import { EditIcon } from "./EditIcon";
 import { EyeIcon } from "../AdminTable/EyeIcon";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const columns = [
   { name: "NO.", uid: "number" },
@@ -51,6 +52,7 @@ type ItemData = {
   disc: string;
   subtotal: string;
   status: string;
+  divisi: string;
 }[];
 
 const INITIAL_VISIBLE_COLUMNS = [
@@ -81,6 +83,7 @@ export default function PITableComponent() {
     direction: "ascending",
   });
   const [page, setPage] = useState(1);
+  const router = useRouter();
 
   const fetchItemData1 = async () => {
     try {
@@ -129,6 +132,7 @@ export default function PITableComponent() {
           disc: "N/A", // Assuming disc is not available in the provided data
           subtotal: item1.sub_total,
           status: item1.status,
+          divisi: item1.divisi,
         };
       });
 
@@ -221,7 +225,14 @@ export default function PITableComponent() {
               </Tooltip>
               {user.status !== "diterima" && (
                 <Tooltip content="Edit user" className="text-black">
-                  <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
+                  <span
+                    onClick={() =>
+                      router.push(
+                        `/proforma-invoice/edit?id=${user.id}&divisi=${user.divisi}`,
+                      )
+                    }
+                    className="cursor-pointer text-lg text-default-400 active:opacity-50"
+                  >
                     <EditIcon />
                   </span>
                 </Tooltip>

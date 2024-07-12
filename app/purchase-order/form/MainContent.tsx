@@ -13,17 +13,30 @@ import Dropdown from "@/components/Dropdown";
 import axios from "axios";
 import RsAutocompleteSearch from "@/components/RsAutocompleteSearch";
 
+type ItemDetail = {
+  description: number;
+  price_idr: string;
+  subTotal: string;
+  gudang: string;
+  qty: string;
+  disc: string;
+  ppn_11: string;
+  unit: string;
+  amount_idr: string;
+  total: string;
+};
+
 type FormFields = {
-  divisi: string;
-  jatuhTempo: string;
-  namaRumahSakit: string;
-  jumlahBarang: string;
-  alamatRumahSakit: string;
-  rm: string;
-  tanggalTindakan: string;
-  namaDokter: string;
-  namaPasien: string;
-  tanggalInvoice: string;
+  to_supplier: string;
+  note: string;
+  nomor_po: string;
+  prepared_by: string;
+  jabatan: string;
+  jumlah_barang: string;
+  tanggal: string;
+  approved_by: string;
+  jabatan_approve: string;
+  item: ItemDetail[];
 };
 
 const MainContent: FC = () => {
@@ -57,15 +70,6 @@ const MainContent: FC = () => {
     dispatch(setItemPI({ divisi: selectedItem }));
   };
 
-  const handleRSChange = (name: string, address: string) => {
-    if (selectedAddress !== address) {
-      setSelectedAddress(address);
-      setValue("alamatRumahSakit", address);
-      setValue("namaRumahSakit", name);
-      dispatch(setItemPI({ namaRumahSakit: name, alamatRumahSakit: address }));
-    }
-  };
-
   const handleInputChange =
     (field: keyof FormFields) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
@@ -74,17 +78,11 @@ const MainContent: FC = () => {
     };
 
   useEffect(() => {
-    setValue("divisi", selectedDivisi);
-  }, [selectedDivisi, setValue]);
-
-  useEffect(() => {
     const subscription = watch((value) => {
       dispatch(setItemPI(value));
     });
     return () => subscription.unsubscribe();
   }, [watch, dispatch]);
-
-  const alamatRumahSakit = watch("alamatRumahSakit");
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
@@ -97,7 +95,7 @@ const MainContent: FC = () => {
       <form className="grid h-full w-full grid-cols-3 gap-3">
         {/* first column */}
         <div className="flex flex-col gap-3">
-          <Dropdown
+          {/* <Dropdown
             data={[
               { value: "radiologi", label: "Radiologi" },
               { value: "ortopedi", label: "Ortopedi" },
@@ -105,75 +103,76 @@ const MainContent: FC = () => {
             label="Divisi"
             placeholder="Pilih Divisi"
             statePassing={handleDivisiChange}
+          /> */}
+
+          <Input label="invisible" className="invisible" />
+
+          <Input
+            {...register("to_supplier")}
+            label="To Supplier"
+            onChange={handleInputChange("to_supplier")}
           />
 
-          {selectedDivisi !== "" && (
-            <Input
-              {...register("jatuhTempo")}
-              label="Jatuh Tempo"
-              onChange={handleInputChange("jatuhTempo")}
-            />
-          )}
-
-          {selectedDivisi === "radiologi" && (
-            <Input
-              {...register("rm")}
-              label="RM"
-              onChange={handleInputChange("rm")}
-            />
-          )}
+          <Input
+            {...register("note")}
+            label="Note"
+            onChange={handleInputChange("note")}
+          />
         </div>
 
         {/* second column */}
-        {selectedDivisi !== "" && (
-          <div className="flex flex-col gap-3">
-            {selectedDivisi === "radiologi" && (
-              <Input
-                {...register("tanggalTindakan")}
-                label="Tanggal Tindakan"
-                onChange={handleInputChange("tanggalTindakan")}
-              />
-            )}
 
-            <RsAutocompleteSearch
-              data={rsData}
-              label="Nama Rumah Sakit"
-              rsData={handleRSChange}
+        <div className="flex flex-col gap-3">
+          <Input label="invisible" className="invisible" />
+          <Input
+            {...register("nomor_po")}
+            label="Nomor PO"
+            onChange={handleInputChange("nomor_po")}
+          />
+          <div className="flex w-full gap-3">
+            <Input
+              {...register("prepared_by")}
+              label="Prepared By"
+              onChange={handleInputChange("prepared_by")}
+            />
+            <Input
+              {...register("jabatan")}
+              label="Jabatan"
+              onChange={handleInputChange("jabatan")}
             />
           </div>
-        )}
+        </div>
 
         {/* third column */}
-        {selectedDivisi !== "" && (
-          <div className="flex flex-col gap-3">
-            <Dropdown
-              data={itemNumber}
-              label="Jumlah Barang"
-              placeholder="Pilih jumlah barang"
-            />
 
+        <div className="flex flex-col gap-3">
+          <Dropdown
+            data={itemNumber}
+            label="Jumlah Barang"
+            placeholder="Pilih jumlah barang"
+          />
+
+          <Input
+            {...register("tanggal")}
+            label="Tanggal"
+            onChange={handleInputChange("tanggal")}
+          />
+
+          <div className="flex w-full gap-3">
             <Input
-              {...register("namaDokter")}
-              label="Nama Dokter"
-              onChange={handleInputChange("namaDokter")}
+              {...register("approved_by")}
+              label="Approved By"
+              onChange={handleInputChange("approved_by")}
             />
-
-            {selectedDivisi === "radiologi" && (
-              <Input
-                {...register("namaPasien")}
-                label="Nama Pasien"
-                onChange={handleInputChange("namaPasien")}
-              />
-            )}
 
             <Input
               readOnly
-              {...register("alamatRumahSakit")}
-              label="Alamat Rumah Sakit"
-              value={alamatRumahSakit} // This will be automatically updated based on the watch
+              {...register("jabatan_approve")}
+              label="Jabatan"
+              onChange={handleInputChange("jabatan_approve")}
             />
           </div>
-        )}
+        </div>
       </form>
     </div>
   );

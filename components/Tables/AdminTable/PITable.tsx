@@ -8,10 +8,9 @@ import {
   TableCell,
   Chip,
   Pagination,
-  Selection,
-  ChipProps,
   SortDescriptor,
   Tooltip,
+  ChipProps,
 } from "@nextui-org/react";
 import { EditIcon } from "./EditIcon";
 import { EyeIcon } from "./EyeIcon";
@@ -28,12 +27,6 @@ const columns = [
   { name: "SUBTOTAL", uid: "subtotal", sortable: true },
   { name: "STATUS", uid: "status", sortable: true },
   { name: "ACTIONS", uid: "actions" },
-];
-
-const statusOptions = [
-  { name: "Diterima", uid: "diterima" },
-  { name: "Ditolak", uid: "ditolak" },
-  { name: "Diproses", uid: "diproses" },
 ];
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
@@ -53,28 +46,10 @@ type ItemData = {
   status: string;
 }[];
 
-const INITIAL_VISIBLE_COLUMNS = [
-  "number",
-  "kat",
-  "name",
-  "qty",
-  "hsatuan",
-  "disc",
-  "subtotal",
-  "status",
-  "actions",
-];
-
 type User = ItemData[0];
 
 export default function PITableComponent() {
   const [users, setUsers] = useState<ItemData>([]);
-  const [filterValue, setFilterValue] = useState("");
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
-  const [visibleColumns, setVisibleColumns] = useState<Selection>(
-    new Set(INITIAL_VISIBLE_COLUMNS),
-  );
-  const [statusFilter, setStatusFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: "age",
@@ -138,45 +113,15 @@ export default function PITableComponent() {
     fetchAllData();
   }, []);
 
-  const hasSearchFilter = Boolean(filterValue);
-
-  const headerColumns = React.useMemo(() => {
-    if (visibleColumns === "all") return columns;
-
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid),
-    );
-  }, [visibleColumns]);
-
-  const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
-
-    if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase()),
-      );
-    }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status),
-      );
-    }
-
-    return filteredUsers;
-  }, [hasSearchFilter, statusFilter, filterValue, users]);
-
   const sortedItems = React.useMemo(() => {
-    return [...filteredItems].sort((a: User, b: User) => {
+    return [...users].sort((a: User, b: User) => {
       const first = a[sortDescriptor.column as keyof User] as number;
       const second = b[sortDescriptor.column as keyof User] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
-  }, [sortDescriptor, filteredItems]);
+  }, [sortDescriptor, users]);
 
   const itemsWithIndex = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -186,7 +131,7 @@ export default function PITableComponent() {
     }));
   }, [page, sortedItems, rowsPerPage]);
 
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
+  const pages = Math.ceil(users.length / rowsPerPage);
 
   const renderCell = React.useCallback(
     (user: User & { index: number }, columnKey: React.Key) => {
@@ -247,12 +192,10 @@ export default function PITableComponent() {
     <div>
       <Table
         aria-label="Example table with custom cells"
-        selectionMode="multiple"
-        onSelectionChange={setSelectedKeys}
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
       >
-        <TableHeader columns={headerColumns}>
+        <TableHeader columns={columns}>
           {(column) => (
             <TableColumn key={column.uid} align="start">
               {column.name}

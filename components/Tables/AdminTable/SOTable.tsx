@@ -9,7 +9,6 @@ import {
   TableRow,
   TableCell,
   Pagination,
-  Selection,
   SortDescriptor,
   Tooltip,
 } from "@nextui-org/react";
@@ -47,22 +46,8 @@ type OrderData = {
   RP_total: string;
 };
 
-const INITIAL_VISIBLE_COLUMNS = [
-  "number",
-  "tanggal",
-  "nama_customer",
-  "total",
-  "actions",
-];
-
 export default function SOTableComponent() {
   const [users, setUsers] = useState<OrderData[]>([]);
-  const [filterValue, setFilterValue] = useState("");
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
-  const [visibleColumns, setVisibleColumns] = useState<Selection>(
-    new Set(INITIAL_VISIBLE_COLUMNS),
-  );
-  const [statusFilter, setStatusFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: "age",
@@ -100,39 +85,15 @@ export default function SOTableComponent() {
     [router, users, dispatch],
   );
 
-  const hasSearchFilter = Boolean(filterValue);
-
-  const headerColumns = React.useMemo(() => {
-    if (visibleColumns === "all") return columns;
-
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid),
-    );
-  }, [visibleColumns]);
-
-  const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
-
-    if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter(
-        (user) =>
-          user &&
-          user.doctor_name.toLowerCase().includes(filterValue.toLowerCase()),
-      );
-    }
-
-    return filteredUsers;
-  }, [users, hasSearchFilter, filterValue]);
-
   const sortedItems = React.useMemo(() => {
-    return [...filteredItems].sort((a: OrderData, b: OrderData) => {
+    return [...users].sort((a: OrderData, b: OrderData) => {
       const first = a[sortDescriptor.column as keyof OrderData] as number;
       const second = b[sortDescriptor.column as keyof OrderData] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
-  }, [sortDescriptor, filteredItems]);
+  }, [sortDescriptor, users]);
 
   const itemsWithIndex = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -142,7 +103,7 @@ export default function SOTableComponent() {
     }));
   }, [page, sortedItems, rowsPerPage]);
 
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
+  const pages = Math.ceil(users.length / rowsPerPage);
 
   const renderCell = React.useCallback(
     (user: OrderData & { index: number }, columnKey: React.Key) => {
@@ -204,12 +165,10 @@ export default function SOTableComponent() {
     <div>
       <Table
         aria-label="Example table with custom cells"
-        selectionMode="multiple"
-        onSelectionChange={setSelectedKeys}
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
       >
-        <TableHeader columns={headerColumns}>
+        <TableHeader columns={columns}>
           {(column) => (
             <TableColumn key={column.uid} align="start">
               {column.name}
