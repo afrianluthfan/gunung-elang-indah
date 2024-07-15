@@ -21,13 +21,13 @@ import { useRouter } from "next/navigation";
 const columns = [
   { name: "NO.", uid: "number" },
   { name: "ID", uid: "id", sortable: true },
-  { name: "KAT.", uid: "kat" },
-  { name: "NAMA BARANG", uid: "name", sortable: true },
-  { name: "QTY", uid: "qty", sortable: true },
-  { name: "H. SATUAN", uid: "hsatuan", sortable: true },
-  { name: "DISC", uid: "disc" },
-  { name: "SUBTOTAL", uid: "subtotal", sortable: true },
-  { name: "STATUS", uid: "status", sortable: true },
+  { name: "DIVISI", uid: "divisi" },
+  { name: "NAMA BARANG", uid: "name" },
+  // { name: "QTY", uid: "qty" },
+  { name: "H. SATUAN", uid: "hsatuan" },
+  // { name: "DISC", uid: "disc" },
+  { name: "SUBTOTAL", uid: "subtotal"},
+  { name: "STATUS", uid: "status"},
   { name: "ACTIONS", uid: "actions" },
 ];
 
@@ -57,7 +57,7 @@ type ItemData = {
 
 const INITIAL_VISIBLE_COLUMNS = [
   "number",
-  "kat",
+  "divisi",
   "name",
   "qty",
   "hsatuan",
@@ -80,7 +80,7 @@ export default function PITableComponent() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: "age",
-    direction: "ascending",
+    direction: "descending",
   });
   const [page, setPage] = useState(1);
   const router = useRouter();

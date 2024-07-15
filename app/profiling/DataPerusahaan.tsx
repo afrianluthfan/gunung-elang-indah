@@ -72,27 +72,27 @@ const DataPerusahaan: FC<DataPerusahaanProps> = ({ data }) => {
       <div className="ml-8 flex flex-col justify-between">
         <div>
           <h1 className="text-[1.85vh] font-bold leading-[2.5vh]">
-            NAMA DOKTER
+            Nama Dokter : {rsData.name}
           </h1>
           <h1 className="text-[1.85vh] font-bold leading-[2.5vh]">
-            {rsData.name}
+            Nama Company : {rsData.name}
           </h1>
           <h1 className="text-[1.85vh] font-bold leading-[2.5vh]">
-            {rsData.address}
+            Alamat : {rsData.address}
           </h1>
           <h1 className="text-[1.85vh] font-bold leading-[2.5vh]">
-            {rsData.npwp}
+            NPWP : {rsData.npwp}
           </h1>
           <h1 className="text-[1.85vh] font-bold leading-[2.5vh]">
-            {rsData.noIpak}
+            No. IPAK : {rsData.noIpak}
           </h1>
           <h1 className="text-[1.85vh] font-bold leading-[2.5vh]">
-            {rsData.alamatNpwp}
+            Alamat NPWP : {rsData.alamatNpwp}
           </h1>
         </div>
         <div className="mt-4 text-[1.3vh]">
           <h2 className="font-bold opacity-50">
-            {rsData.jumlahProformaInvoice}
+            JUMLAH PROFORMA INVOICE : {rsData.jumlahProformaInvoice}
           </h2>
           {/* Add other fields as needed */}
           <h2 className="font-bold opacity-50">JUMLAH PURCHASE ORDER</h2>

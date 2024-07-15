@@ -41,10 +41,10 @@ const Sidebar = () => {
         pageName: "Stok Barang",
         pageRoute: "stok-barang",
       },
-      {
-        pageName: "Sewa Alat",
-        pageRoute: "sewa-alat",
-      },
+      // {
+      //   pageName: "Sewa Alat",
+      //   pageRoute: "sewa-alat",
+      // },
     ];
 
     const logistikMenus = [
@@ -105,6 +105,10 @@ const Sidebar = () => {
       {
         pageName: "Sales Order",
         pageRoute: "sales-order",
+      },
+      {
+        pageName: "Purchase Order",
+        pageRoute: "purchase-order",
       },
       // {
       //   pageName: "Komisi",
