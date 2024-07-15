@@ -106,10 +106,10 @@ const Sidebar = () => {
         pageName: "Sales Order",
         pageRoute: "sales-order",
       },
-      {
-        pageName: "Komisi",
-        pageRoute: "komisi",
-      },
+      // {
+      //   pageName: "Komisi",
+      //   pageRoute: "komisi",
+      // },
     ];
 
     switch (activeUser) {

@@ -60,7 +60,7 @@ export default function TableComponent() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post("http://localhost:8080/api/piutang/list", {});
+        const response = await axios.post("http://localhost:8080/api/pemasukan/list", {});
         setUsers(response.data.data);
       } catch (error) {
         setError("Error fetching data");
