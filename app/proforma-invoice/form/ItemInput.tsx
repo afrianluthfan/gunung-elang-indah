@@ -10,11 +10,6 @@ import React, { FC, useEffect, useState } from "react";
 import axios from "axios";
 import PiItemAutocompleteSearch from "@/components/PiItemAutocompleteSearch";
 
-interface ItemInputProps {
-  itemNumber: number;
-  index: number;
-}
-
 type ItemData = {
   id: string;
   name: string;
@@ -32,30 +27,62 @@ type ListItemPIState = {
   namaBarang: string;
   disc: string;
   qty: string;
-  subTotal: string;
 };
 
-const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
-  const { control, handleSubmit, watch } = useForm<ListItemPIState>();
-  const [itemData, setItemData] = useState<ItemData[]>([]);
+type EditPIState = {
+  kat: string;
+  nama_barang: string;
+  quantity: string;
+  harga_satuan: string;
+  discount: string;
+};
+
+interface ItemInputProps {
+  itemNumber: number;
+  index: number;
+  itemData: EditPIState;
+}
+
+const ItemInput: FC<ItemInputProps> = ({ itemNumber, index, itemData }) => {
+  const { control, handleSubmit, watch, setValue } = useForm<ListItemPIState>();
+  const [itemListData, setItemListData] = useState<ItemData[]>([]);
   const [selectedData, setselectedData] = useState<{}>("");
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const watchFields = watch();
 
   useEffect(() => {
-    const fetchItemData = async () => {
+    if (itemData.nama_barang) {
+      setValue("kat", itemData.kat);
+      setselectedData(itemData.nama_barang);
+      setValue("qty", itemData.quantity);
+      setValue("hSatuan", itemData.harga_satuan);
+      setValue("disc", itemData.discount);
+    }
+    console.log("ini jalan", selectedData);
+  }, [
+    itemData.nama_barang,
+    itemData.kat,
+    itemData.quantity,
+    itemData.harga_satuan,
+    itemData.discount,
+    setValue,
+    selectedData,
+  ]);
+
+  useEffect(() => {
+    const fetchItemListData = async () => {
       try {
         const response = await axios.post(
           "http://localhost:8080/api/stock-barang/list",
           "",
         );
-        setItemData(response.data.data);
+        setItemListData(response.data.data);
       } catch (error) {
         console.error("Error fetching data", error);
       }
     };
-    fetchItemData();
+    fetchItemListData();
   }, []);
 
   useEffect(() => {
@@ -68,7 +95,7 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
   };
 
   const findItemByName = (name: string): ItemData | undefined => {
-    return itemData.find((item) => item.name === name);
+    return itemListData.find((item) => item.name === name);
   };
 
   const handleItemSelection = (data: ItemData) => {
@@ -79,7 +106,6 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <ContentTopSectionLayout>
-        {/* Check profile customer and searchbar */}
         <TopSectionItemList itemNumber={itemNumber} />
       </ContentTopSectionLayout>
       <Divider />
@@ -87,7 +113,6 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
         className="grid h-full w-full grid-cols-3 gap-3"
         onSubmit={handleSubmit(handleSetData)}
       >
-        {/* first column */}
         <div className="flex flex-col gap-3">
           <Controller
             name="kat"
@@ -100,11 +125,10 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
             render={({ field }) => <Input {...field} label="H. SATUAN" />}
           />
         </div>
-        {/* second column */}
         <div className="flex flex-col gap-3">
           <PiItemAutocompleteSearch
-            data={itemData}
-            label="Nama Rumah Sakit"
+            data={itemListData}
+            label="Nama Barang"
             passingFunction={handleItemSelection}
           />
           <Controller
@@ -113,17 +137,11 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
             render={({ field }) => <Input {...field} label="DISC" />}
           />
         </div>
-        {/* third column */}
         <div className="flex flex-col gap-3">
           <Controller
             name="qty"
             control={control}
             render={({ field }) => <Input {...field} label="QTY" />}
-          />
-          <Controller
-            name="subTotal"
-            control={control}
-            render={({ field }) => <Input {...field} label="SUB TOTAL" />}
           />
         </div>
       </form>
