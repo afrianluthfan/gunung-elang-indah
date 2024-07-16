@@ -15,14 +15,14 @@ interface DataPerusahaanProps {
 const DataPerusahaan: FC<DataPerusahaanProps> = ({ data }) => {
   const [rsData, setRsData] = useState<{
     name: string;
-    address: string;
+    address_company: string;
     npwp: string;
     noIpak: string;
     alamatNpwp: string;
     jumlahProformaInvoice: number;
   }>({
     name: "",
-    address: "",
+    address_company: "",
     npwp: "",
     noIpak: "",
     alamatNpwp: "",
@@ -41,7 +41,7 @@ const DataPerusahaan: FC<DataPerusahaanProps> = ({ data }) => {
           const responseData = response.data;
           setRsData({
             name: customer.name,
-            address: customer.address,
+            address_company: customer.address_company,
             npwp: customer.npwp,
             noIpak: customer.ipak_number,
             alamatNpwp: customer.npwp_address,
@@ -78,7 +78,7 @@ const DataPerusahaan: FC<DataPerusahaanProps> = ({ data }) => {
             Nama Company : {rsData.name}
           </h1>
           <h1 className="text-[1.85vh] font-bold leading-[2.5vh]">
-            Alamat : {rsData.address}
+            Alamat : {rsData.address_company}
           </h1>
           <h1 className="text-[1.85vh] font-bold leading-[2.5vh]">
             NPWP : {rsData.npwp}
