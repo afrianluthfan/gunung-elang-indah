@@ -47,13 +47,13 @@ const Form: FC = () => {
           "",
         );
         setItemListData(response.data.data);
-        const newContent = itemDetail.map((_item, index) => (
+        const newContent = itemDetail.map((item, index) => (
           <FormMainContentLayout key={index}>
             <ItemInput
               itemNumber={index + 1}
               index={index}
-              itemData={itemDetail[index]}
-              autocompleteData={itemListData}
+              itemData={item}
+              autocompleteData={response.data.data} // Pass autocompleteData here
             />
           </FormMainContentLayout>
         ));
@@ -63,7 +63,6 @@ const Form: FC = () => {
       }
     };
     fetchItemListData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemDetail]);
 
   return (

@@ -1,7 +1,6 @@
 "use client";
-import { Autocomplete, AutocompleteItem, select } from "@nextui-org/react";
-import axios from "axios";
-import React, { FC, useEffect, useState } from "react";
+import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import React, { FC, useEffect, useState, useCallback } from "react";
 
 interface PiItemAutocompleteSearchProps {
   label: string;
@@ -48,8 +47,10 @@ const PiItemAutocompleteSearch: FC<PiItemAutocompleteSearchProps> = ({
   >([]);
 
   useEffect(() => {
-    setData(selectData || []);
-  });
+    if (selectData) {
+      setData(selectData);
+    }
+  }, [selectData]); // Only run when selectData changes
 
   useEffect(() => {
     if (assignedValue && data.length > 0) {
@@ -58,16 +59,19 @@ const PiItemAutocompleteSearch: FC<PiItemAutocompleteSearchProps> = ({
         passingFunction(selectedItem);
       }
     }
-  }, [assignedValue, data, passingFunction]); // This effect runs when assignedValue or data changes
+  }, [assignedValue, data]); // This effect runs when assignedValue or data changes
 
-  const handleSelectionChange = (value: string) => {
-    const selectedItem = data.find((item) => item.name === value);
-    if (selectedItem) {
-      passingFunction(selectedItem);
-    } else {
-      console.log("No matching item found in data.");
-    }
-  };
+  const handleSelectionChange = useCallback(
+    (value: string) => {
+      const selectedItem = data.find((item) => item.name === value);
+      if (selectedItem) {
+        passingFunction(selectedItem);
+      } else {
+        console.log("No matching item found in data.");
+      }
+    },
+    [data, passingFunction],
+  );
 
   return (
     <div>

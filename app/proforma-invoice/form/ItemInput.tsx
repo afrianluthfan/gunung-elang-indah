@@ -1,5 +1,5 @@
 import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
-import { Button, Divider, Input } from "@nextui-org/react";
+import { Divider, Input } from "@nextui-org/react";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
@@ -10,7 +10,7 @@ import React, { FC, useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import PiItemAutocompleteSearch from "@/components/PiItemAutocompleteSearch";
 
-type ItemDataType = {
+type ItemData = {
   id: number;
   name: string;
   total: string;
@@ -41,12 +41,17 @@ interface ItemInputProps {
   itemNumber: number;
   index: number;
   itemData: EditPIState;
-  autocompleteData?: ItemDataType[];
+  autocompleteData: ItemData[];
 }
 
-const ItemInput: FC<ItemInputProps> = ({ itemNumber, index, itemData }) => {
+const ItemInput: FC<ItemInputProps> = ({
+  itemNumber,
+  index,
+  itemData,
+  autocompleteData,
+}) => {
   const { control, handleSubmit, watch, setValue } = useForm<ListItemPIState>();
-  const [itemListData, setItemListData] = useState<ItemDataType[]>([]);
+  const [selectedData, setSelectedData] = useState<ItemData | null>(null);
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const watchFields = watch();
@@ -69,10 +74,6 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index, itemData }) => {
   ]);
 
   useEffect(() => {
-    setItemListData(itemListData);
-  }, [itemListData]);
-
-  useEffect(() => {
     dispatch(setListItemPI({ index, item: watchFields }));
   }, [watchFields, index, dispatch]);
 
@@ -82,7 +83,8 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index, itemData }) => {
   };
 
   const handleItemSelection = useCallback(
-    (data: ItemDataType) => {
+    (data: ItemData) => {
+      setSelectedData(data);
       setValue("namaBarang", data.name); // Update form with selected item name
       setValue("kat", data.total); // Update form with item total or other properties
       setValue("hSatuan", data.price); // Update form with item price or other properties
@@ -117,7 +119,7 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index, itemData }) => {
             label="Nama Barang"
             passingFunction={handleItemSelection}
             assignedValue={itemData.nama_barang}
-            selectData={itemListData}
+            selectData={autocompleteData} // Pass autocompleteData here
           />
           <Controller
             name="disc"
