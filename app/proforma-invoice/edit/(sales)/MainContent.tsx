@@ -3,7 +3,7 @@
 import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
 import { Divider, Input } from "@nextui-org/react";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/redux/store";
+import { AppDispatch, RootState, useAppSelector } from "@/redux/store";
 import { FC, useEffect, useState } from "react";
 import Dropdown from "@/components/Dropdown";
 import axios from "axios";
@@ -39,6 +39,7 @@ const MainContent: FC<MainContentProps> = ({ divisi }) => {
 
   const dispatch = useDispatch<AppDispatch>();
   const formData = useSelector((state: RootState) => state.editPIReducer);
+  const editData = useAppSelector((state) => state.editPIItems.value);
 
   const getParams = useSearchParams();
 
@@ -46,8 +47,6 @@ const MainContent: FC<MainContentProps> = ({ divisi }) => {
     const fetchRsData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/proforma-invoice/rs-list",
-          "",
         );
         setRsData(response.data.data);
       } catch (error) {
@@ -69,7 +68,6 @@ const MainContent: FC<MainContentProps> = ({ divisi }) => {
           },
         );
         const data = response.data.data;
-        console.log("data: ", data);
 
         dispatch(
           setEditPIData({
@@ -89,7 +87,6 @@ const MainContent: FC<MainContentProps> = ({ divisi }) => {
         setSelectedDivisi(new Set([divisiMapping[data.divisi]]));
         dispatch(setEditPIItems(data.item_detail_pi));
         setSelectedAddress(data.alamat_rumah_sakit);
-        console.log("data.divisi: ", data.divisi);
       } catch (error) {
         console.error("Error fetching data", error);
       }
@@ -126,7 +123,7 @@ const MainContent: FC<MainContentProps> = ({ divisi }) => {
         setEditPIField({ field: "divisi", value: divisiMapping[divisi] }),
       );
     }
-  }, [divisi, dispatch]);
+  }, [divisi, dispatch, editData]);
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">

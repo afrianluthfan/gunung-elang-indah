@@ -6,12 +6,12 @@ import { AppDispatch } from "@/redux/store";
 import { setListItemPI } from "@/redux/features/listItemPI-slice";
 import { useRouter } from "next/navigation";
 import TopSectionItemList from "./TopSectionItemLIst";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import PiItemAutocompleteSearch from "@/components/PiItemAutocompleteSearch";
 
-type ItemData = {
-  id: string;
+type ItemDataType = {
+  id: number;
   name: string;
   total: string;
   price: string;
@@ -41,12 +41,12 @@ interface ItemInputProps {
   itemNumber: number;
   index: number;
   itemData: EditPIState;
+  autocompleteData?: ItemDataType[];
 }
 
 const ItemInput: FC<ItemInputProps> = ({ itemNumber, index, itemData }) => {
   const { control, handleSubmit, watch, setValue } = useForm<ListItemPIState>();
-  const [itemListData, setItemListData] = useState<ItemData[]>([]);
-  const [selectedData, setselectedData] = useState<{}>("");
+  const [itemListData, setItemListData] = useState<ItemDataType[]>([]);
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const watchFields = watch();
@@ -54,12 +54,11 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index, itemData }) => {
   useEffect(() => {
     if (itemData.nama_barang) {
       setValue("kat", itemData.kat);
-      setselectedData(itemData.nama_barang);
+      setValue("namaBarang", itemData.nama_barang); // Ensure this is set if needed
       setValue("qty", itemData.quantity);
       setValue("hSatuan", itemData.harga_satuan);
       setValue("disc", itemData.discount);
     }
-    console.log("ini jalan", selectedData);
   }, [
     itemData.nama_barang,
     itemData.kat,
@@ -67,23 +66,11 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index, itemData }) => {
     itemData.harga_satuan,
     itemData.discount,
     setValue,
-    selectedData,
   ]);
 
   useEffect(() => {
-    const fetchItemListData = async () => {
-      try {
-        const response = await axios.post(
-          "http://localhost:8080/api/stock-barang/list",
-          "",
-        );
-        setItemListData(response.data.data);
-      } catch (error) {
-        console.error("Error fetching data", error);
-      }
-    };
-    fetchItemListData();
-  }, []);
+    setItemListData(itemListData);
+  }, [itemListData]);
 
   useEffect(() => {
     dispatch(setListItemPI({ index, item: watchFields }));
@@ -94,14 +81,14 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index, itemData }) => {
     router.push("/proforma-invoice/form/preview");
   };
 
-  const findItemByName = (name: string): ItemData | undefined => {
-    return itemListData.find((item) => item.name === name);
-  };
-
-  const handleItemSelection = (data: ItemData) => {
-    setselectedData(data);
-    console.log("selectedData: ", selectedData);
-  };
+  const handleItemSelection = useCallback(
+    (data: ItemDataType) => {
+      setValue("namaBarang", data.name); // Update form with selected item name
+      setValue("kat", data.total); // Update form with item total or other properties
+      setValue("hSatuan", data.price); // Update form with item price or other properties
+    },
+    [setValue],
+  );
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
@@ -127,9 +114,10 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index, itemData }) => {
         </div>
         <div className="flex flex-col gap-3">
           <PiItemAutocompleteSearch
-            data={itemListData}
             label="Nama Barang"
             passingFunction={handleItemSelection}
+            assignedValue={itemData.nama_barang}
+            selectData={itemListData}
           />
           <Controller
             name="disc"
