@@ -46,40 +46,53 @@ const PiItemAutocompleteSearch: FC<PiItemAutocompleteSearchProps> = ({
     }[]
   >([]);
 
+  const [inputValue, setInputValue] = useState<string>(assignedValue || "");
+  const [selectedKey, setSelectedKey] = useState<string>(assignedValue || "");
+
   useEffect(() => {
     if (selectData) {
       setData(selectData);
     }
-  }, [selectData]); // Only run when selectData changes
+  }, [selectData]);
 
   useEffect(() => {
     if (assignedValue && data.length > 0) {
       const selectedItem = data.find((item) => item.name === assignedValue);
       if (selectedItem) {
         passingFunction(selectedItem);
+        setInputValue(assignedValue);
+        setSelectedKey(assignedValue);
       }
     }
-  }, [assignedValue, data]); // This effect runs when assignedValue or data changes
+  }, [assignedValue, data, passingFunction]);
 
   const handleSelectionChange = useCallback(
-    (value: string) => {
-      const selectedItem = data.find((item) => item.name === value);
+    (key: React.Key) => {
+      const selectedItem = data.find((item) => item.name === key);
       if (selectedItem) {
         passingFunction(selectedItem);
-      } else {
-        console.log("No matching item found in data.");
+        setSelectedKey(key as string);
+        setInputValue(selectedItem.name);
       }
     },
     [data, passingFunction],
   );
+
+  const handleInputChange = (value: string) => {
+    setInputValue(value);
+    setSelectedKey(""); // Clear selected key when input changes
+  };
 
   return (
     <div>
       <Autocomplete
         labelPlacement="inside"
         label={label}
-        defaultInputValue={assignedValue || ""}
-        onSelectionChange={(key) => handleSelectionChange(key as string)}
+        inputValue={inputValue}
+        selectedKey={selectedKey}
+        onInputChange={handleInputChange}
+        onSelectionChange={handleSelectionChange}
+        allowsCustomValue
       >
         {data.map((item) => (
           <AutocompleteItem
