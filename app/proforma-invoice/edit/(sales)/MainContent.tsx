@@ -46,7 +46,10 @@ const MainContent: FC<MainContentProps> = ({ divisi }) => {
   useEffect(() => {
     const fetchRsData = async () => {
       try {
-        const response = await axios.post();
+        const response = await axios.post(
+          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
+          "",
+        );
         setRsData(response.data.data);
       } catch (error) {
         console.error("Error fetching data", error);

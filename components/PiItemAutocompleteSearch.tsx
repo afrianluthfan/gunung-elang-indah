@@ -67,7 +67,11 @@ const PiItemAutocompleteSearch: FC<PiItemAutocompleteSearchProps> = ({
   }, [assignedValue, data, passingFunction]);
 
   const handleSelectionChange = useCallback(
-    (key: React.Key) => {
+    (key: React.Key | null) => {
+      if (key === null) {
+        setSelectedKey("");
+        return;
+      }
       const selectedItem = data.find((item) => item.name === key);
       if (selectedItem) {
         passingFunction(selectedItem);

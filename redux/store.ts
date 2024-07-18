@@ -1,61 +1,69 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
-import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
 import { TypedUseSelectorHook, useSelector } from "react-redux";
-
-// Import reducers
-import auth from "./features/auth-slice";
-import itemPI from "./features/itemPI-slice";
-import listItemPI from "./features/listItemPI-slice";
-import salesPIItemNumber from "./features/salesPIItemNumber-slice";
-import divisiProfiling from "./features/divisiProfiling-slice";
-import salesPIInquiry from "./features/salesPIInquiry-slice";
-import itemProfiling from "./features/iitemProfiling-slice";
-import detailSO from "./features/detailSO-slice";
-import editPI from "./features/editPI-slice";
+import authReducer from "./features/auth-slice";
+import itemPIReducer from "./features/itemPI-slice";
+import listItemPIReducer from "./features/listItemPI-slice";
+import salesPIItemNumberReducer from "./features/salesPIItemNumber-slice";
+import divisiProfilingReducer from "./features/divisiProfiling-slice";
+import salesPIInquirySliceReducer from "./features/salesPIInquiry-slice";
+import itemProfilingReducer from "./features/iitemProfiling-slice";
+import detailSOReducer from "./features/detailSO-slice";
+import editPIReducer from "./features/editPI-slice";
 import editPIItems from "./features/editPIItems-slice";
-import itemPO from "./features/itemPo-slice";
-import listItemPO from "./features/listItemPO-slice";
-import salesPOItemNumber from "./features/salesPOItemNumber-slice";
-import salesPOInquiry from "./features/salesPOInquiry-slice";
+import itemPOReducer from "./features/itemPo-slice";
+import listItemPOReducer from "./features/listItemPO-slice";
+import salesPOItemNumberReducer from "./features/salesPOItemNumber-slice";
+import salesPOInquirySliceReducer from "./features/salesPOInquiry-slice";
 
-// Combine all reducers
 const rootReducer = combineReducers({
-  auth: auth,
-  itemPI: itemPI,
-  listItemPI: listItemPI,
-  salesPIItemNumber: salesPIItemNumber,
-  divisiProfiling: divisiProfiling,
-  salesPIInquiry: salesPIInquiry,
-  itemProfiling: itemProfiling,
-  detailSO: detailSO,
-  editPI: editPI,
+  auth: authReducer,
+  itemPI: itemPIReducer,
+  listItemPI: listItemPIReducer,
+  salesPIItemNumber: salesPIItemNumberReducer,
+  divisiProfiling: divisiProfilingReducer,
+  salesPIInquiry: salesPIInquirySliceReducer,
+  itemProfiling: itemProfilingReducer,
+  detailSO: detailSOReducer,
+  editPI: editPIReducer,
   editPIItems: editPIItems,
-  itemPO: itemPO,
-  listItemPO: listItemPO,
-  salesPOItemNumber: salesPOItemNumber,
-  salesPOInquiry: salesPOInquiry,
+  itemPO: itemPOReducer,
+  listItemPO: listItemPOReducer,
+  salesPOItemNumber: salesPOItemNumberReducer,
+  salesPOInquiry: salesPOInquirySliceReducer,
 });
 
-// Persist configuration
 const persistConfig = {
   key: "root",
   storage,
+  blacklist: [], // Optionally blacklist any keys that don't need to be persisted
 };
 
-// Persisted reducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-// Configure store with persisted reducer
 export const store = configureStore({
   reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
 });
 
 export const persistor = persistStore(store);
 
-// Type declarations
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-// Custom hook for using selectors with typed state
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

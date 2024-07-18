@@ -85,6 +85,7 @@ export default function TableComponent() {
     return columns.filter((column) =>
       Array.from(visibleColumns).includes(column.uid),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
