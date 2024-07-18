@@ -93,7 +93,7 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
             render={({ field }) => <Input {...field} label="NAMA BARANG" />}
           />
           <Controller
-            name="quantity" 
+            name="quantity"
             control={control}
             render={({ field }) => <Input {...field} label="QUANTITY" />}
           />
@@ -115,7 +115,6 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
           />
         </div>
       </form>
-
     </div>
   );
 };

@@ -34,12 +34,29 @@ const MainContent = () => {
     (state) => state.salesPIInquirySliceReducer.value,
   );
 
+  useEffect(() => {
+    const fetchRsData = async () => {
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/api/proforma-invoice/rs-list",
+          "",
+        );
+        setRsData(response.data.data);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+
+    fetchRsData();
+  }, []);
+
   const dispatch = useDispatch();
 
   const submitData = async () => {
     const selectedHospital = rsData.find(
       (hospital) => hospital.name === responseData.rumah_sakit,
     );
+
     const idRumahSakit = selectedHospital ? selectedHospital.id.toString() : "";
 
     const requestBody = {

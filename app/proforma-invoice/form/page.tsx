@@ -89,6 +89,7 @@ const Form: FC = () => {
     };
 
     try {
+      console.log("requestBody: ", requestBody);
       const response = await axios.post(
         "http://localhost:8080/api/proforma-invoice/inquiry",
         requestBody,

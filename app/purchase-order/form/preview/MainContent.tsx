@@ -20,7 +20,6 @@ import { clearSalesPOInquiry } from "@/redux/features/salesPOInquiry-slice";
 import { resetListItemPO } from "@/redux/features/listItemPO-slice";
 import { useRouter } from "next/navigation";
 
-
 const MainContent = () => {
   const router = useRouter();
   const responseData = useAppSelector(
@@ -46,10 +45,10 @@ const MainContent = () => {
   };
 
   const cancelData = async () => {
-      dispatch(resetItemPO());
-      dispatch(resetListItemPO());
-      dispatch(clearSalesPOInquiry());
-      router.push("/purchase-order");
+    dispatch(resetItemPO());
+    dispatch(resetListItemPO());
+    dispatch(clearSalesPOInquiry());
+    router.push("/purchase-order");
   };
 
   return (
