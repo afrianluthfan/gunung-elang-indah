@@ -22,7 +22,7 @@ const Form: FC = () => {
     updated_by: string;
   };
 
-  const user = useAppSelector((state) => state.authReducer.value).username;
+  const user = useAppSelector((state) => state.auth.value).username;
   const itemDetail = useAppSelector((state) => state.editPIItems.value);
   const [itemListData, setItemListData] = useState<ItemDataType[]>([]);
   const [content, setContent] = useState<JSX.Element[]>([]);
@@ -43,7 +43,7 @@ const Form: FC = () => {
     const fetchItemListData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/stock-barang/list",
+          "http://209.182.237.155:8080/api/stock-barang/list",
           "",
         );
         setItemListData(response.data.data);

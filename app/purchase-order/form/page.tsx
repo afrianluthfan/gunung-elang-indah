@@ -16,10 +16,10 @@ import { setSalesPOInquiry } from "@/redux/features/salesPOInquiry-slice";
 import { setSalesPIInquiry } from "@/redux/features/salesPIInquiry-slice";
 
 const Form: FC = () => {
-  const data = useAppSelector((state) => state.itemPOReducer.value);
-  const dataItem = useAppSelector((state) => state.listItemPOReducer.value);
+  const data = useAppSelector((state) => state.itemPO.value);
+  const dataItem = useAppSelector((state) => state.listItemPO.value);
   const amount: number = useAppSelector(
-    (state) => state.salesPIItemNumberReducer.value.amount,
+    (state) => state.salesPIItemNumber.value.amount,
   );
 
   const [content, setContent] = useState<JSX.Element[]>([]);
@@ -58,7 +58,7 @@ const Form: FC = () => {
     const fetchDivisiList = async () => {
       try {
         const responseDivisi = await axios.post(
-          "http://localhost:8080/api/proforma-invoice/divisi-list",
+          "http://209.182.237.155:8080/api/proforma-invoice/divisi-list",
           "",
         );
         setDivisiList(responseDivisi.data.data);
@@ -96,19 +96,19 @@ const Form: FC = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/purchase-order/inquiry",
+        "http://209.182.237.155:8080/api/purchase-order/inquiry",
         requestBody,
       );
       // if (response.status === 200) {
-        // Clear requestBody
-        requestBody.catatan_po = '';
-        requestBody.prepared_by = '';
-        requestBody.prepared_jabatan = '';
-        requestBody.approved_by = '';
-        requestBody.approved_jabatan = '';
-        requestBody.nama_suplier = '';
-        requestBody.item = [];
-        console.log("Request body cleared successfully.");
+      // Clear requestBody
+      requestBody.catatan_po = "";
+      requestBody.prepared_by = "";
+      requestBody.prepared_jabatan = "";
+      requestBody.approved_by = "";
+      requestBody.approved_jabatan = "";
+      requestBody.nama_suplier = "";
+      requestBody.item = [];
+      console.log("Request body cleared successfully.");
       // }
       return response.data.data;
     } catch (error) {

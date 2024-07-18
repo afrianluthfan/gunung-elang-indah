@@ -38,7 +38,7 @@ const MainContent: FC<MainContentProps> = ({ divisi }) => {
   const [selectedAddress, setSelectedAddress] = useState<string>("");
 
   const dispatch = useDispatch<AppDispatch>();
-  const formData = useSelector((state: RootState) => state.editPIReducer);
+  const formData = useSelector((state: RootState) => state.editPI);
   const editData = useAppSelector((state) => state.editPIItems.value);
 
   const getParams = useSearchParams();
@@ -46,8 +46,7 @@ const MainContent: FC<MainContentProps> = ({ divisi }) => {
   useEffect(() => {
     const fetchRsData = async () => {
       try {
-        const response = await axios.post(
-        );
+        const response = await axios.post();
         setRsData(response.data.data);
       } catch (error) {
         console.error("Error fetching data", error);
@@ -61,7 +60,7 @@ const MainContent: FC<MainContentProps> = ({ divisi }) => {
     const fetchInvoiceData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/proforma-invoice/detailPI",
+          "http://209.182.237.155:8080/api/proforma-invoice/detailPI",
           {
             id: getParams.get("id"),
             divisi: getParams.get("divisi"),

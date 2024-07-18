@@ -5,9 +5,7 @@ import { useAppSelector } from "@/redux/store";
 import Image from "next/image";
 
 const WelcomingMessage: FC = () => {
-  const activeUser = useAppSelector(
-    (state) => state.authReducer.value.username,
-  );
+  const activeUser = useAppSelector((state) => state.auth.value.username);
   const [user, setUser] = useState("");
 
   useEffect(() => {

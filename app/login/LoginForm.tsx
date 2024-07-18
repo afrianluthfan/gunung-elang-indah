@@ -1,40 +1,46 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Input } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { logIn } from "@/redux/features/auth-slice";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
-
-const WarningDialog = () => <dialog open>username salah!</dialog>;
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
 
 const LoginForm = () => {
   const router = useRouter();
   const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const dispatch = useDispatch<AppDispatch>();
+  const isAuth = useSelector((state: RootState) => state.auth.value.isAuth);
+  const loggedInUser = useSelector(
+    (state: RootState) => state.auth.value.username,
+  );
 
   const handleLogin = () => {
-    dispatch(logIn(username));
-    switch (username) {
-      case "":
-        break;
-      case "sales":
-        router.push("/profiling");
-        break;
-      case "admin":
-        router.push("/proforma-invoice");
-        break;
-      case "logistik":
-        router.push("/stok-barang");
-        break;
-      case "finance":
-        router.push("/piutang");
-      default:
-        WarningDialog();
-        break;
-    }
+    dispatch(logIn({ username, password }));
   };
+
+  useEffect(() => {
+    if (isAuth) {
+      switch (loggedInUser) {
+        case "sales":
+          router.push("/profiling");
+          break;
+        case "admin":
+          router.push("/proforma-invoice");
+          break;
+        case "logistik":
+          router.push("/stok-barang");
+          break;
+        case "finance":
+          router.push("/piutang");
+          break;
+        default:
+          break;
+      }
+    }
+  }, [isAuth, loggedInUser, router]);
 
   return (
     <div className="flex h-full w-[50%] flex-col">
@@ -50,7 +56,13 @@ const LoginForm = () => {
             setUsername(e.target.value);
           }}
         />
-        <Input type="password" placeholder="Password" />
+        <Input
+          type="password"
+          placeholder="Password"
+          onChange={(e) => {
+            setPassword(e.target.value);
+          }}
+        />
         <Button
           className="bg-[#00186D] font-bold text-white"
           onClick={handleLogin}

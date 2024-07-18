@@ -9,7 +9,7 @@ interface ChildWrapperProps {
 }
 
 const ChildWrapper: FC<ChildWrapperProps> = ({ children }) => {
-  const username = useAppSelector((state) => state.authReducer.value.username);
+  const username = useAppSelector((state) => state.auth.value.username);
   const router = useRouter();
 
   useEffect(() => {

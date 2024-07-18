@@ -30,15 +30,13 @@ type Hospital = {
 const MainContent = () => {
   const router = useRouter();
   const [rsData, setRsData] = useState<Hospital[]>([]);
-  const responseData = useAppSelector(
-    (state) => state.salesPIInquirySliceReducer.value,
-  );
+  const responseData = useAppSelector((state) => state.salesPIInquiry.value);
 
   useEffect(() => {
     const fetchRsData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/proforma-invoice/rs-list",
+          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
           "",
         );
         setRsData(response.data.data);
@@ -87,7 +85,7 @@ const MainContent = () => {
 
     try {
       await axios.post(
-        "http://localhost:8080/api/proforma-invoice/posting",
+        "http://209.182.237.155:8080/api/proforma-invoice/posting",
         requestBody,
       );
       dispatch(resetItemPI());

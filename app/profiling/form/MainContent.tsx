@@ -47,9 +47,7 @@ const MainContent = () => {
   const [selectedTaxCode, setSelectedTaxCode] = useState<string>("");
   const { register, setValue } = useForm<FormFields>();
   const dispatch = useDispatch<AppDispatch>();
-  const profilingInput = useAppSelector(
-    (state) => state.itemProfilingReducer.value,
-  );
+  const profilingInput = useAppSelector((state) => state.itemProfiling.value);
   const router = useRouter();
 
   const handleSubmit = async () => {
@@ -82,7 +80,7 @@ const MainContent = () => {
 
     try {
       await axios.post(
-        "http://localhost:8080/api/customer-profilling/add",
+        "http://209.182.237.155:8080/api/customer-profilling/add",
         requestBody,
       );
       dispatch(resetItemProfiling());
@@ -97,9 +95,7 @@ const MainContent = () => {
     dispatch(setItemProfiling({ tax_code_id: selectedItem }));
   };
 
-  const divisi = useAppSelector(
-    (state) => state.divisiProfilingReducer.value.divisi,
-  );
+  const divisi = useAppSelector((state) => state.divisiProfiling.value.divisi);
 
   useEffect(() => {
     setValue("tax_code_id", selectedTaxCode);

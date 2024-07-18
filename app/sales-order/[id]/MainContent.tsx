@@ -15,7 +15,7 @@ import {
 import { useAppSelector } from "@/redux/store";
 
 const MainContent = () => {
-  const data = useAppSelector((state) => state.detailSOReducer.value);
+  const data = useAppSelector((state) => state.detailSO.value);
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">

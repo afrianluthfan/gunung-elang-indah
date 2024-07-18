@@ -18,9 +18,7 @@ const Sidebar = () => {
   const [menuItemsList, setMenuItemsList] = useState([
     { pageName: "", pageRoute: "" },
   ]);
-  const activeUser = useAppSelector(
-    (state) => state.authReducer.value.username,
-  );
+  const activeUser = useAppSelector((state) => state.auth.value.username);
   // logout handler
   const handleLogOut = () => {
     dispatch(logOut());

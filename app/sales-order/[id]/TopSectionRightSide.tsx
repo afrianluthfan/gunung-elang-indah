@@ -6,7 +6,7 @@ import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 
 const TopSectionRightSide = () => {
-  const user = useAppSelector((state) => state.authReducer.value.username);
+  const user = useAppSelector((state) => state.auth.value.username);
   const router = useRouter();
   let ButtonContent = <></>;
 

@@ -47,7 +47,7 @@ export default function TableComponent() {
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
-    new Set(INITIAL_VISIBLE_COLUMNS)
+    new Set(INITIAL_VISIBLE_COLUMNS),
   );
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
@@ -60,7 +60,10 @@ export default function TableComponent() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post("http://localhost:8080/api/piutang/list", {});
+        const response = await axios.post(
+          "http://209.182.237.155:8080/api/piutang/list",
+          {},
+        );
         setUsers(response.data.data);
       } catch (error) {
         setError("Error fetching data");
@@ -84,7 +87,7 @@ export default function TableComponent() {
     if (visibleColumns === "all") return columns;
 
     return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid)
+      Array.from(visibleColumns).includes(column.uid),
     );
   }, [visibleColumns]);
 
@@ -93,7 +96,7 @@ export default function TableComponent() {
 
     if (filterValue) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.nama.toLowerCase().includes(filterValue.toLowerCase())
+        user.nama.toLowerCase().includes(filterValue.toLowerCase()),
       );
     }
 
@@ -152,7 +155,7 @@ export default function TableComponent() {
           return cellValue;
       }
     },
-    []
+    [],
   );
 
   const onRowsPerPageChange = useCallback(
@@ -160,7 +163,7 @@ export default function TableComponent() {
       setRowsPerPage(Number(e.target.value));
       setPage(1);
     },
-    []
+    [],
   );
 
   if (error) {
