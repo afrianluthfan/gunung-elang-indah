@@ -9,6 +9,12 @@ import { TypedUseSelectorHook, useSelector } from "react-redux";
 import itemProfilingReducer from "./features/iitemProfiling-slice";
 import detailSOReducer from "./features/detailSO-slice";
 
+// PO STATE INPORT FOR REDUXER ADIT 
+import itemPOReducer from "./features/itemPo-slice";
+import listItemPOReducer from "./features/listItemPO-slice";
+import salesPOItemNumberReducer from "./features/salesPOItemNumber-slice";
+import salesPOInquirySliceReducer from "./features/salesPOInquiry-slice";
+
 export const store = configureStore({
   reducer: {
     authReducer,
@@ -19,6 +25,10 @@ export const store = configureStore({
     salesPIInquirySliceReducer,
     itemProfilingReducer,
     detailSOReducer,
+    itemPOReducer,
+    listItemPOReducer,
+    salesPOItemNumberReducer,
+    salesPOInquirySliceReducer,
   },
 });
 

@@ -9,13 +9,15 @@ import ItemInput from "./ItemInput";
 import { useAppSelector } from "@/redux/store";
 import { setListItems } from "@/redux/features/listItemPI-slice";
 import { useDispatch } from "react-redux";
-import { Button, Input } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { setSalesPOInquiry } from "@/redux/features/salesPOInquiry-slice";
 import { setSalesPIInquiry } from "@/redux/features/salesPIInquiry-slice";
 
 const Form: FC = () => {
-  const dataItem = useAppSelector((state) => state.listItemPIReducer.value);
+  const data = useAppSelector((state) => state.itemPOReducer.value);
+  const dataItem = useAppSelector((state) => state.listItemPOReducer.value);
   const amount: number = useAppSelector(
     (state) => state.salesPIItemNumberReducer.value.amount,
   );
@@ -50,7 +52,7 @@ const Form: FC = () => {
       </FormMainContentLayout>
     ));
     setContent(newContent);
-  }, [amount, dispatch]);
+  }, [amount, data, dispatch]);
 
   useEffect(() => {
     const fetchDivisiList = async () => {
@@ -67,44 +69,85 @@ const Form: FC = () => {
     fetchDivisiList();
   }, []);
 
-  // const inquireData = async () => {
-  //   const requestBody = {
-  //     id_divisi: findIdByDivisi(data.divisi.toUpperCase())?.toString(), // Set id_divisi based on divisi value
-  //     rumah_sakit: data.namaRumahSakit,
-  //     alamat: data.alamatRumahSakit,
-  //     jatuh_tempo: data.jatuhTempo,
-  //     nama_dokter: data.namaDokter,
-  //     nama_pasien: data.namaPasien, // Fill this as per your application logic
-  //     rm: data.rm,
-  //     id_rumah_sakit: data.idRS, // Fill this as per your application logic
-  //     tanggal_tindakan: data.tanggal,
-  //     item: dataItem.map((item) => ({
-  //       kat: item.kat,
-  //       nama_barang: item.namaBarang,
-  //       quantity: item.qty,
-  //       harga_satuan: item.hSatuan,
-  //       discount: item.disc.toString(),
-  //     })),
-  //   };
+  const inquireData = async () => {
+    const requestBody = {
+      // id_divisi: findIdByDivisi(data.divisi.toUpperCase())?.toString(), // Set id_divisi based on divisi value
+      catatan_po: data.note,
+      prepared_by: data.prepared_by,
+      prepared_jabatan: data.jabatan,
+      approved_by: data.approved_by,
+      approved_jabatan: data.jabatan_approve, // Fill this as per your application logic
+      nama_suplier: data.to_supplier,
+      // id_rumah_sakit: data.idRS, // Fill this as per your application logic
+      // tanggal_tindakan: data.tanggal,
+      item: dataItem.map((item) => ({
+        // kat: item.kat,
+        // nama_barang: item.namaBarang,
+        // quantity: item.qty,
+        // harga_satuan: item.hSatuan,
+        // discount: item.disc.toString(),
 
-  //   try {
-  //     const response = await axios.post(
-  //       "http://localhost:8080/api/proforma-invoice/inquiry",
-  //       requestBody,
-  //     );
-  //     return response.data.data;
-  //   } catch (error) {
-  //     console.error("Error inquiring data", error);
-  //     throw error;
-  //   }
-  // };
+        price: item.price,
+        quantity: item.quantity,
+        name: item.name,
+        discount: item.discount,
+      })),
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/purchase-order/inquiry",
+        requestBody,
+      );
+      // if (response.status === 200) {
+        // Clear requestBody
+        requestBody.catatan_po = '';
+        requestBody.prepared_by = '';
+        requestBody.prepared_jabatan = '';
+        requestBody.approved_by = '';
+        requestBody.approved_jabatan = '';
+        requestBody.nama_suplier = '';
+        requestBody.item = [];
+        console.log("Request body cleared successfully.");
+      // }
+      return response.data.data;
+    } catch (error) {
+      console.error("Error inquiring data", error);
+      throw error;
+    }
+  };
+
+  const handleSetData = async () => {
+    try {
+      const responseData = await inquireData();
+      console.log("response data: ", responseData);
+      dispatch(setSalesPOInquiry(responseData));
+      router.push("/purchase-order/form/preview");
+    } catch (error) {
+      console.error("Error inquiring data");
+      throw error;
+    }
+  };
 
   // const handleSetData = async () => {
+  //   const router = useRouter();
+
   //   try {
   //     const responseData = await inquireData();
   //     console.log("response data: ", responseData);
-  //     dispatch(setSalesPIInquiry(responseData));
-  //     router.push("/proforma-invoice/form/preview");
+
+  //     // Convert responseData to a JSON string
+  //     const query: Record<string, string> = {
+  //       data: JSON.stringify(responseData.data),
+  //       message: responseData.message,
+  //       status: responseData.status.toString(),
+  //     };
+
+  //     // Navigate to the new route with query parameters
+  //     router.push({
+  //       pathname: '/proforma-invoice/form/preview',
+  //       query: query,
+  //     } as any);
   //   } catch (error) {
   //     console.error("Error inquiring data");
   //     throw error;
@@ -125,12 +168,14 @@ const Form: FC = () => {
             <FormMainContentLayout>
               <MainContent />
             </FormMainContentLayout>
-            <FormMainContentLayout>
-              <Input>asd</Input>
-            </FormMainContentLayout>
+            {data && content}
           </div>
           <div className="flex w-full justify-end">
-            <Button color="primary" className="min-w-36">
+            <Button
+              onClick={handleSetData}
+              color="primary"
+              className="min-w-36"
+            >
               Next
             </Button>
           </div>

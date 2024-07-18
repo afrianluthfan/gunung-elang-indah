@@ -3,7 +3,7 @@ import { Button, Divider, Input } from "@nextui-org/react";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
-import { setListItemPI } from "@/redux/features/listItemPI-slice";
+import { setListItemPO } from "@/redux/features/listItemPO-slice";
 import { useRouter } from "next/navigation";
 import TopSectionItemList from "./TopSectionItemLIst";
 import React, { FC, useEffect, useState } from "react";
@@ -26,17 +26,15 @@ type ItemData = {
   updated_by: string;
 };
 
-type ListItemPIState = {
-  kat: string;
-  hSatuan: string;
-  namaBarang: string;
-  disc: string;
-  qty: string;
-  subTotal: string;
+type ListItemPOState = {
+  price: string;
+  quantity: string;
+  name: string;
+  discount: string;
 };
 
 const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
-  const { control, handleSubmit, watch } = useForm<ListItemPIState>();
+  const { control, handleSubmit, watch } = useForm<ListItemPOState>();
   const [itemData, setItemData] = useState<ItemData[]>([]);
   const [selectedData, setselectedData] = useState<{}>("");
   const dispatch = useDispatch<AppDispatch>();
@@ -59,11 +57,11 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
   }, []);
 
   useEffect(() => {
-    dispatch(setListItemPI({ index, item: watchFields }));
+    dispatch(setListItemPO({ index, item: watchFields }));
   }, [watchFields, index, dispatch]);
 
   const handleSetData = () => {
-    dispatch(setListItemPI({ index, item: watchFields }));
+    dispatch(setListItemPO({ index, item: watchFields }));
     router.push("/proforma-invoice/form/preview");
   };
 
@@ -90,52 +88,34 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
         {/* first column */}
         <div className="flex flex-col gap-3">
           <Controller
-            name="kat"
+            name="name"
             control={control}
-            render={({ field }) => <Input {...field} label="KAT." />}
+            render={({ field }) => <Input {...field} label="NAMA BARANG" />}
           />
           <Controller
-            name="hSatuan"
+            name="quantity" 
             control={control}
-            render={({ field }) => <Input {...field} label="H. SATUAN" />}
+            render={({ field }) => <Input {...field} label="QUANTITY" />}
           />
         </div>
         {/* second column */}
         <div className="flex flex-col gap-3">
-          <PiItemAutocompleteSearch
-            data={itemData}
-            label="Nama Rumah Sakit"
-            passingFunction={handleItemSelection}
-          />
           <Controller
-            name="disc"
+            name="discount"
             control={control}
-            render={({ field }) => <Input {...field} label="DISC" />}
+            render={({ field }) => <Input {...field} label="DISCOUNT" />}
           />
         </div>
         {/* third column */}
         <div className="flex flex-col gap-3">
           <Controller
-            name="qty"
+            name="price"
             control={control}
-            render={({ field }) => <Input {...field} label="QTY" />}
-          />
-          <Controller
-            name="subTotal"
-            control={control}
-            render={({ field }) => <Input {...field} label="SUB TOTAL" />}
+            render={({ field }) => <Input {...field} label="PRICE" />}
           />
         </div>
       </form>
-      <div className="flex justify-end">
-        <Button
-          onClick={handleSubmit(handleSetData)}
-          color="primary"
-          className="min-w-36"
-        >
-          Next
-        </Button>
-      </div>
+
     </div>
   );
 };
