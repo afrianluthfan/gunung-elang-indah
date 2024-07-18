@@ -144,8 +144,6 @@ export default function PITableComponent() {
         case "name":
           return cellValue;
         case "status":
-          console.log("User Status:", user.status); // Log the status to check the value
-
           return (
             <Chip
               className="capitalize"

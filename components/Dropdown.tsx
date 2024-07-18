@@ -21,7 +21,9 @@ const Dropdown: FC<DropdownProps> = ({
   statePassing,
   selectedKeys,
 }) => {
-  const [value, setValue] = React.useState<Selection>(new Set([]));
+  const [value, setValue] = React.useState<Selection>(
+    selectedKeys || new Set([]),
+  );
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -44,7 +46,7 @@ const Dropdown: FC<DropdownProps> = ({
       <Select
         label={label}
         placeholder={placeholder}
-        selectedKeys={selectedKeys}
+        selectedKeys={selectedKeys || value}
         onSelectionChange={handleSelect}
       >
         {data.map((item) => (

@@ -26,8 +26,8 @@ const columns = [
   // { name: "QTY", uid: "qty" },
   { name: "H. SATUAN", uid: "hsatuan" },
   // { name: "DISC", uid: "disc" },
-  { name: "SUBTOTAL", uid: "subtotal"},
-  { name: "STATUS", uid: "status"},
+  { name: "SUBTOTAL", uid: "subtotal" },
+  { name: "STATUS", uid: "status" },
   { name: "ACTIONS", uid: "actions" },
 ];
 
@@ -197,14 +197,11 @@ export default function PITableComponent() {
       if (columnKey === "number") {
         return user.index;
       }
-
       const cellValue = user[columnKey as keyof User];
       switch (columnKey) {
         case "name":
           return cellValue;
         case "status":
-          console.log("User Status:", user.status); // Log the status to check the value
-
           return (
             <Chip
               className="capitalize"
@@ -243,7 +240,7 @@ export default function PITableComponent() {
           return cellValue;
       }
     },
-    [],
+    [router],
   );
 
   const onRowsPerPageChange = React.useCallback(

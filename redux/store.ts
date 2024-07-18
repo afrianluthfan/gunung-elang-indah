@@ -1,36 +1,43 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import authReducer from "./features/auth-slice";
 import itemPIReducer from "./features/itemPI-slice";
 import listItemPIReducer from "./features/listItemPI-slice";
 import salesPIItemNumberReducer from "./features/salesPIItemNumber-slice";
 import divisiProfilingReducer from "./features/divisiProfiling-slice";
 import salesPIInquirySliceReducer from "./features/salesPIInquiry-slice";
-import { TypedUseSelectorHook, useSelector } from "react-redux";
 import itemProfilingReducer from "./features/iitemProfiling-slice";
 import detailSOReducer from "./features/detailSO-slice";
+import editPIReducer from "./features/editPI-slice";
+import editPIItems from "./features/editPIItems-slice";
+import { TypedUseSelectorHook, useSelector } from "react-redux";
+import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
+import { persistStore, persistReducer } from "redux-persist";
 
-// PO STATE INPORT FOR REDUXER ADIT 
-import itemPOReducer from "./features/itemPo-slice";
-import listItemPOReducer from "./features/listItemPO-slice";
-import salesPOItemNumberReducer from "./features/salesPOItemNumber-slice";
-import salesPOInquirySliceReducer from "./features/salesPOInquiry-slice";
+const rootReducer = combineReducers({
+  authReducer,
+  itemPIReducer,
+  listItemPIReducer,
+  salesPIItemNumberReducer,
+  divisiProfilingReducer,
+  salesPIInquirySliceReducer,
+  itemProfilingReducer,
+  detailSOReducer,
+  editPIReducer,
+  editPIItems,
+});
+
+const persistConfig = {
+  key: "root",
+  storage,
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-  reducer: {
-    authReducer,
-    itemPIReducer,
-    listItemPIReducer,
-    salesPIItemNumberReducer,
-    divisiProfilingReducer,
-    salesPIInquirySliceReducer,
-    itemProfilingReducer,
-    detailSOReducer,
-    itemPOReducer,
-    listItemPOReducer,
-    salesPOItemNumberReducer,
-    salesPOInquirySliceReducer,
-  },
+  reducer: persistedReducer,
 });
+
+export const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
