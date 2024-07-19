@@ -62,7 +62,7 @@ export default function PITableComponent() {
   const fetchItemData = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/purchase-order/list",
+        "http://209.182.237.155:8080/api/purchase-order/list",
         "",
       );
       return response.data.data;
