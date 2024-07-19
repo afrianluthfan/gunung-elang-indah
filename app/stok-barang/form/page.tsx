@@ -12,11 +12,12 @@ import { useDispatch } from "react-redux";
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { setSalesPOInquiry } from "@/redux/features/salesPOInquiry-slice";
 import { setSalesPIInquiry } from "@/redux/features/salesPIInquiry-slice";
 
 const Form: FC = () => {
-  const data = useAppSelector((state) => state.itemPI.value);
-  const dataItem = useAppSelector((state) => state.listItemPI.value);
+  const data = useAppSelector((state) => state.itemPO.value);
+  const dataItem = useAppSelector((state) => state.listItemPO.value);
   const amount: number = useAppSelector(
     (state) => state.salesPIItemNumber.value.amount,
   );
@@ -70,30 +71,45 @@ const Form: FC = () => {
 
   const inquireData = async () => {
     const requestBody = {
-      id_divisi: findIdByDivisi(data.divisi.toUpperCase())?.toString(), // Set id_divisi based on divisi value
-      rumah_sakit: data.namaRumahSakit,
-      alamat: data.alamatRumahSakit,
-      jatuh_tempo: data.jatuhTempo,
-      nama_dokter: data.namaDokter,
-      nama_pasien: data.namaPasien, // Fill this as per your application logic
-      rm: data.rm,
-      id_rumah_sakit: data.idRS, // Fill this as per your application logic
-      tanggal_tindakan: data.tanggal,
+      // id_divisi: findIdByDivisi(data.divisi.toUpperCase())?.toString(), // Set id_divisi based on divisi value
+      catatan_po: data.note,
+      prepared_by: data.prepared_by,
+      prepared_jabatan: data.jabatan,
+      approved_by: data.approved_by,
+      approved_jabatan: data.jabatan_approve, // Fill this as per your application logic
+      nama_suplier: data.to_supplier,
+      // id_rumah_sakit: data.idRS, // Fill this as per your application logic
+      // tanggal_tindakan: data.tanggal,
       item: dataItem.map((item) => ({
-        kat: item.kat,
-        nama_barang: item.namaBarang,
-        quantity: item.qty,
-        harga_satuan: item.hSatuan,
-        discount: item.disc.toString(),
+        // kat: item.kat,
+        // nama_barang: item.namaBarang,
+        // quantity: item.qty,
+        // harga_satuan: item.hSatuan,
+        // discount: item.disc.toString(),
+
+        price: item.price,
+        quantity: item.quantity,
+        name: item.name,
+        discount: item.discount,
       })),
     };
 
     try {
-      console.log("requestBody: ", requestBody);
       const response = await axios.post(
-        "http://localhost:8080/api/proforma-invoice/inquiry",
+        "http://localhost:8080/api/purchase-order/inquiry",
         requestBody,
       );
+      // if (response.status === 200) {
+      // Clear requestBody
+      requestBody.catatan_po = "";
+      requestBody.prepared_by = "";
+      requestBody.prepared_jabatan = "";
+      requestBody.approved_by = "";
+      requestBody.approved_jabatan = "";
+      requestBody.nama_suplier = "";
+      requestBody.item = [];
+      console.log("Request body cleared successfully.");
+      // }
       return response.data.data;
     } catch (error) {
       console.error("Error inquiring data", error);
@@ -105,13 +121,38 @@ const Form: FC = () => {
     try {
       const responseData = await inquireData();
       console.log("response data: ", responseData);
-      dispatch(setSalesPIInquiry(responseData));
-      router.push("/proforma-invoice/form/preview");
+      dispatch(setSalesPOInquiry(responseData));
+      router.push("/purchase-order/form/preview");
     } catch (error) {
       console.error("Error inquiring data");
       throw error;
     }
   };
+
+  // const handleSetData = async () => {
+  //   const router = useRouter();
+
+  //   try {
+  //     const responseData = await inquireData();
+  //     console.log("response data: ", responseData);
+
+  //     // Convert responseData to a JSON string
+  //     const query: Record<string, string> = {
+  //       data: JSON.stringify(responseData.data),
+  //       message: responseData.message,
+  //       status: responseData.status.toString(),
+  //     };
+
+  //     // Navigate to the new route with query parameters
+  //     router.push({
+  //       pathname: '/proforma-invoice/form/preview',
+  //       query: query,
+  //     } as any);
+  //   } catch (error) {
+  //     console.error("Error inquiring data");
+  //     throw error;
+  //   }
+  // };
 
   return (
     <section className="flex max-h-screen">
@@ -130,13 +171,13 @@ const Form: FC = () => {
             {data && content}
           </div>
           <div className="flex w-full justify-end">
-            <Button
+            {/* <Button
               onClick={handleSetData}
               color="primary"
               className="min-w-36"
             >
               Next
-            </Button>
+            </Button> */}
           </div>
           <div className="flex h-[4vh] items-center justify-center text-end font-semibold">
             <h1>Supported by PT Gunung Elang Indah</h1>

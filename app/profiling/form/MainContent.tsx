@@ -80,7 +80,7 @@ const MainContent = () => {
 
     try {
       await axios.post(
-        "http://209.182.237.155:8080/api/customer-profilling/add",
+        "http://localhost:8080/api/customer-profilling/add",
         requestBody,
       );
       dispatch(resetItemProfiling());

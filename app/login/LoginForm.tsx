@@ -11,14 +11,24 @@ const LoginForm = () => {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [alert, setAlert] = useState<{ visible: boolean; message: string }>({
+    visible: false,
+    message: "",
+  });
   const dispatch = useDispatch<AppDispatch>();
   const isAuth = useSelector((state: RootState) => state.auth.value.isAuth);
   const loggedInUser = useSelector(
-    (state: RootState) => state.auth.value.username,
+    (state: RootState) => state.auth.value.username
   );
 
-  const handleLogin = () => {
-    dispatch(logIn({ username, password }));
+  const handleLogin = async () => {
+    const result = await dispatch(logIn({ username, password }));
+    if (!result.payload) {
+      setAlert({ visible: true, message: "Incorrect username or password" });
+      setTimeout(() => {
+        setAlert({ visible: false, message: "" });
+      }, 3000); // Hide alert after 3 seconds
+    }
   };
 
   useEffect(() => {
