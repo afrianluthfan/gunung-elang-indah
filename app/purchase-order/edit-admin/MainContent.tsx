@@ -84,7 +84,7 @@ const AdminMainContent = () => {
       try {
         const response = await axios.post(
           "http://localhost:8080/api/purchase-order/detail",
-          { id: id }
+          { id: id },
         );
         setResponseData(response.data.data);
       } catch (error) {
@@ -101,7 +101,7 @@ const AdminMainContent = () => {
         try {
           await axios.post(
             "http://localhost:8080/api/purchase-order/edit/inquiry",
-            responseData
+            responseData,
           );
           Swal.fire({
             title: "Success!",
@@ -123,10 +123,8 @@ const AdminMainContent = () => {
   }, [shouldSubmit, responseData]);
 
   const handleDelete = (id: number) => {
-
-
     if (id !== undefined) {
-      console.log("ID tidak undefined: ", id)
+      console.log("ID tidak undefined: ", id);
 
       Swal.fire({
         title: "Apakah Kamu Yakin ?",
@@ -138,7 +136,6 @@ const AdminMainContent = () => {
         confirmButtonText: "Yes, accept it!",
       }).then((result) => {
         if (result.isConfirmed) {
-
           setResponseData((prevData) => ({
             ...prevData,
             item: prevData.item.filter((item) => item.id !== id),
@@ -146,21 +143,22 @@ const AdminMainContent = () => {
               ? [...prevData.item_deleted, { id }]
               : [{ id }],
           }));
-
         }
       });
     }
-
   };
 
-  const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>, itemId?: number) => {
+  const handleFieldChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    itemId?: number,
+  ) => {
     const { name, value } = e.target;
 
     if (itemId !== undefined) {
       setResponseData((prevData) => ({
         ...prevData,
         item: prevData.item.map((item) =>
-          item.id === itemId ? { ...item, [name]: value } : item
+          item.id === itemId ? { ...item, [name]: value } : item,
         ),
       }));
     } else {
@@ -189,9 +187,7 @@ const AdminMainContent = () => {
     }));
   };
 
-  const deleteItem = () => {
-
-  }
+  // const deleteItem = () => {};
 
   const submitAcc = () => {
     Swal.fire({
@@ -223,25 +219,25 @@ const AdminMainContent = () => {
         <TopSectionLeftSide />
       </ContentTopSectionLayout>
       <Divider />
-      <div className="flex flex gap-4">
-        <div className="flex flex-col space-y-2 w-full md:w-1/3">
+      <div className="flex gap-4">
+        <div className="flex w-full flex-col space-y-2 md:w-1/3">
           <label className="text-left">Supplier:</label>
           <Input
             value={responseData.nama_suplier}
             name="nama_suplier"
             onChange={(e) => handleFieldChange(e)}
             placeholder="Nama Suplier"
-            className="p-2 border border-gray-300 rounded"
+            className="rounded border border-gray-300 p-2"
           />
         </div>
-        <div className="flex flex-col space-y-2 w-full md:w-1/3">
+        <div className="flex w-full flex-col space-y-2 md:w-1/3">
           <label className="text-left">Prepared by:</label>
           <Input
             value={responseData.prepared_by}
             name="prepared_by"
             onChange={(e) => handleFieldChange(e)}
             placeholder="Prepared by"
-            className="p-2 border border-gray-300 rounded"
+            className="rounded border border-gray-300 p-2"
           />
           <label className="text-left">Jabatan Prepared:</label>
           <Input
@@ -249,17 +245,17 @@ const AdminMainContent = () => {
             name="prepared_jabatan"
             onChange={(e) => handleFieldChange(e)}
             placeholder="Jabatan Prepared"
-            className="p-2 border border-gray-300 rounded"
+            className="rounded border border-gray-300 p-2"
           />
         </div>
-        <div className="flex flex-col space-y-2 w-full md:w-1/3">
+        <div className="flex w-full flex-col space-y-2 md:w-1/3">
           <label className="text-left">Approved by:</label>
           <Input
             value={responseData.approved_by}
             name="approved_by"
             onChange={(e) => handleFieldChange(e)}
             placeholder="Approved by"
-            className="p-2 border border-gray-300 rounded"
+            className="rounded border border-gray-300 p-2"
           />
           <label className="text-left">Jabatan Approvel:</label>
           <Input
@@ -267,13 +263,13 @@ const AdminMainContent = () => {
             name="approved_jabatan"
             onChange={(e) => handleFieldChange(e)}
             placeholder="Jabatan Approved"
-            className="p-2 border border-gray-300 rounded"
+            className="rounded border border-gray-300 p-2"
           />
         </div>
       </div>
       <hr className="border-t-2 border-gray-200" />
       <div className="flex justify-between gap-3">
-        <h1 className="font-semibold mt-2">Data Barang</h1>
+        <h1 className="mt-2 font-semibold">Data Barang</h1>
         <Button
           onClick={handleAddItem}
           color="primary"
@@ -285,9 +281,13 @@ const AdminMainContent = () => {
       <Table removeWrapper aria-label="Purchase Order Details">
         <TableHeader>
           <TableColumn className="bg-blue-900 text-white">NO</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">NAMA BARANG</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">
+            NAMA BARANG
+          </TableColumn>
           <TableColumn className="bg-blue-900 text-white">QUANTITY</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">HARGA SATUAN</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">
+            HARGA SATUAN
+          </TableColumn>
           <TableColumn className="bg-blue-900 text-white">DISCOUNT</TableColumn>
           <TableColumn className="bg-blue-900 text-white">AKSI</TableColumn>
         </TableHeader>
@@ -321,7 +321,7 @@ const AdminMainContent = () => {
               </TableCell>
               <TableCell>
                 <Input
-                  value={item.discount.replace(/%/g, '')} // Remove '%' from display
+                  value={item.discount.replace(/%/g, "")} // Remove '%' from display
                   name="discount"
                   onChange={(e) => handleFieldChange(e, item.id)}
                   placeholder="Discount"

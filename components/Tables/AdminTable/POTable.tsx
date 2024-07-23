@@ -59,10 +59,13 @@ export default function PITableComponent() {
   const [username, setUsername] = useState<string | null>(null);
   const router = useRouter();
 
+  const namaUser = localStorage.getItem("username");
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post("http://209.182.237.155:8080/api/purchase-order/list");
+        const response = await axios.post(
+          "http://209.182.237.155:8080/api/purchase-order/list",
+        );
         if (response.data.status) {
           setUsers(response.data.data);
         } else {
@@ -73,37 +76,43 @@ export default function PITableComponent() {
       }
     };
 
-    const fetchPersistedData = () => {
-      const persistedData = localStorage.getItem('persist:root');
-      if (persistedData) {
-        try {
-          const parsedData = JSON.parse(persistedData);
-          const authData = parsedData.auth && JSON.parse(parsedData.auth.value);
-          if (authData) {
-            setUsername(authData.username);
-          }
-        } catch (error) {
-          console.error("Failed to parse persisted data:", error);
-        }
-      }
-    };
+    // const fetchPersistedData = () => {
+    //   const persistedData = localStorage.getItem("persist:root");
+    //   if (persistedData) {
+    //     try {
+    //       const parsedData = JSON.parse(persistedData);
+    //       const authData = parsedData.auth && JSON.parse(parsedData.auth.value);
+    //       if (authData) {
+    //         setUsername(authData.username);
+    //       }
+    //     } catch (error) {
+    //       console.error("Failed to parse persisted data:", error);
+    //     }
+    //   }
+    // };
 
-    fetchPersistedData();
+    // fetchPersistedData();
+
     fetchData();
   }, []);
 
   const sortedItems = React.useMemo(() => {
     return [...users].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] !== undefined ? String(a[sortDescriptor.column as keyof User]) : '';
-      const second = b[sortDescriptor.column as keyof User] !== undefined ? String(b[sortDescriptor.column as keyof User]) : '';
-  
+      const first =
+        a[sortDescriptor.column as keyof User] !== undefined
+          ? String(a[sortDescriptor.column as keyof User])
+          : "";
+      const second =
+        b[sortDescriptor.column as keyof User] !== undefined
+          ? String(b[sortDescriptor.column as keyof User])
+          : "";
+
       // Ensure both values are strings before comparing
       const cmp = first.localeCompare(second);
-  
+
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, users]);
-  
 
   const itemsWithIndex = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -147,9 +156,9 @@ export default function PITableComponent() {
                   <span
                     onClick={() =>
                       router.push(
-                        username === "admin"
+                        namaUser === "admin"
                           ? `/purchase-order/edit-admin?id=${user.id}`
-                          : `/purchase-order/edit?id=${user.id}`
+                          : `/purchase-order/edit?id=${user.id}`,
                       )
                     }
                     className="cursor-pointer text-lg text-default-400 active:opacity-50"
@@ -164,7 +173,7 @@ export default function PITableComponent() {
           return cellValue;
       }
     },
-    [router, username],
+    [namaUser, router],
   );
 
   const onRowsPerPageChange = React.useCallback(
@@ -189,7 +198,10 @@ export default function PITableComponent() {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"No purchase orders found"} items={itemsWithIndex}>
+        <TableBody
+          emptyContent={"No purchase orders found"}
+          items={itemsWithIndex}
+        >
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (

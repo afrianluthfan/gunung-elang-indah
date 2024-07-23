@@ -30,7 +30,6 @@ const Form: FC = () => {
 
   mainContent = <MainContent />;
 
-
   useEffect(() => {
     const fetchItemListData = async () => {
       try {
@@ -44,8 +43,8 @@ const Form: FC = () => {
             <ItemInput
               itemNumber={index + 1}
               index={index}
-            // itemData={item}
-            // autocompleteData={response.data.data} // Pass autocompleteData here
+              // itemData={item}
+              // autocompleteData={response.data.data} // Pass autocompleteData here
             />
           </FormMainContentLayout>
         ));
