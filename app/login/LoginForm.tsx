@@ -23,22 +23,16 @@ const LoginForm = () => {
 
   const handleLogin = async () => {
     const result = await dispatch(logIn({ username, password }));
-    if (!result.payload) {
-      setAlert({ visible: true, message: "Incorrect username or password" });
-      setTimeout(() => {
-        setAlert({ visible: false, message: "" });
-      }, 3000); // Hide alert after 3 seconds
-    }
-  };
-
-  useEffect(() => {
-    if (isAuth) {
-      switch (loggedInUser) {
+    if (result.payload) {
+      // Save username in localStorage
+      localStorage.setItem('username', username);
+      // Redirect based on user role
+      switch (username) {
         case "sales":
-          router.push("/profiling");
+          router.push("/proforma-invoice");
           break;
         case "admin":
-          router.push("/proforma-invoice");
+          router.push("/profiling");
           break;
         case "logistik":
           router.push("/stok-barang");
@@ -49,8 +43,38 @@ const LoginForm = () => {
         default:
           break;
       }
+    } else {
+      setAlert({ visible: true, message: "Incorrect username or password" });
+      setTimeout(() => {
+        setAlert({ visible: false, message: "" });
+      }, 3000); // Hide alert after 3 seconds
     }
-  }, [isAuth, loggedInUser, router]);
+  };
+
+  useEffect(() => {
+    // Check if user is already authenticated
+    if (isAuth) {
+      const storedUsername = localStorage.getItem('username');
+      if (storedUsername) {
+        switch (storedUsername) {
+          case "sales":
+            router.push("/proforma-invoice");
+            break;
+          case "admin":
+            router.push("/profiling");
+            break;
+          case "logistik":
+            router.push("/stok-barang");
+            break;
+          case "finance":
+            router.push("/piutang");
+            break;
+          default:
+            break;
+        }
+      }
+    }
+  }, [isAuth, router]);
 
   return (
     <div className="flex h-full w-[50%] flex-col">
@@ -79,6 +103,7 @@ const LoginForm = () => {
         >
           Login
         </Button>
+        {alert.visible && <p className="text-red-500 mt-2">{alert.message}</p>}
       </div>
     </div>
   );

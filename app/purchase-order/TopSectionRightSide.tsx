@@ -6,16 +6,25 @@ import { useRouter } from "next/navigation";
 const TopSectionRightSide = () => {
   const router = useRouter();
   return (
-    <div className="flex w-[8vw] flex-col gap-1">
+    <div className="flex justify-normal gap-2">
+
+      <Button
+        onClick={() => window.location.reload()}
+        className="bg-blue-900 font-semibold text-white"
+      >
+        Segarkan
+      </Button>
+
       <Button
         onClick={() => router.push("/purchase-order/form")}
-        className="bg-[#00DC16] font-bold text-white"
+        className="bg-[#00a110] font-semibold text-white"
       >
         Tambah
       </Button>
-      <Button className="bg-[#00186D] font-bold text-white">Cari/Cek</Button>
     </div>
   );
+
+
 };
 
 export default TopSectionRightSide;

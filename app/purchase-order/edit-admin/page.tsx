@@ -5,10 +5,10 @@ import WelcomingMessage from "@/components/WelcomingMessage";
 import React, { FC, useEffect, useState } from "react";
 import FormMainContentLayout from "../form/FormMainContentLayout";
 import { useAppSelector } from "@/redux/store";
-import AdminMainContent from "./(admin)/MainContent";
-import SalesMainContent from "./(sales)/MainContent";
+import MainContent from "./MainContent";
 import ItemInput from "../form/ItemInput";
 import axios from "axios";
+// import MainContent from "../MainContent";
 
 const Form: FC = () => {
   type ItemDataType = {
@@ -28,16 +28,8 @@ const Form: FC = () => {
   const [content, setContent] = useState<JSX.Element[]>([]);
   let mainContent = <></>;
 
-  switch (user) {
-    case "admin":
-      mainContent = <AdminMainContent />;
-      break;
-    case "sales":
-      mainContent = <SalesMainContent />;
-      break;
-    default:
-      mainContent = <></>;
-  }
+  mainContent = <MainContent />;
+
 
   useEffect(() => {
     const fetchItemListData = async () => {
@@ -52,8 +44,8 @@ const Form: FC = () => {
             <ItemInput
               itemNumber={index + 1}
               index={index}
-              // itemData={item}
-              // autocompleteData={response.data.data} // Pass autocompleteData here
+            // itemData={item}
+            // autocompleteData={response.data.data} // Pass autocompleteData here
             />
           </FormMainContentLayout>
         ));

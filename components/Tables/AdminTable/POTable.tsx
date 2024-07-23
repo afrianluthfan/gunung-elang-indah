@@ -44,7 +44,6 @@ type ItemData = {
   sub_total: string;
   total: string;
   status: string;
-  divisi: string;
 }[];
 
 type User = ItemData[0];
@@ -53,49 +52,58 @@ export default function PITableComponent() {
   const [users, setUsers] = useState<ItemData>([]);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "age",
+    column: "tanggal",
     direction: "ascending",
   });
   const [page, setPage] = useState(1);
+  const [username, setUsername] = useState<string | null>(null);
   const router = useRouter();
 
-  const fetchItemData = async () => {
-    try {
-      const response = await axios.post(
-        "http://209.182.237.155:8080/api/purchase-order/list",
-        "",
-      );
-      return response.data.data;
-    } catch (error) {
-      console.error("Error fetching data from API", error);
-      return [];
-    }
-  };
-
   useEffect(() => {
-    const fetchAllData = async () => {
-      const data = await fetchItemData();
-
-      if (!Array.isArray(data)) {
-        console.error("Unexpected data format", { data });
-        return;
+    const fetchData = async () => {
+      try {
+        const response = await axios.post("http://209.182.237.155:8080/api/purchase-order/list");
+        if (response.data.status) {
+          setUsers(response.data.data);
+        } else {
+          console.error("Failed to fetch data:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching data from API:", error);
       }
-
-      setUsers(data);
     };
 
-    fetchAllData();
+    const fetchPersistedData = () => {
+      const persistedData = localStorage.getItem('persist:root');
+      if (persistedData) {
+        try {
+          const parsedData = JSON.parse(persistedData);
+          const authData = parsedData.auth && JSON.parse(parsedData.auth.value);
+          if (authData) {
+            setUsername(authData.username);
+          }
+        } catch (error) {
+          console.error("Failed to parse persisted data:", error);
+        }
+      }
+    };
+
+    fetchPersistedData();
+    fetchData();
   }, []);
 
   const sortedItems = React.useMemo(() => {
     return [...users].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] as number;
-      const second = b[sortDescriptor.column as keyof User] as number;
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-
+      const first = a[sortDescriptor.column as keyof User] !== undefined ? String(a[sortDescriptor.column as keyof User]) : '';
+      const second = b[sortDescriptor.column as keyof User] !== undefined ? String(b[sortDescriptor.column as keyof User]) : '';
+  
+      // Ensure both values are strings before comparing
+      const cmp = first.localeCompare(second);
+  
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, users]);
+  
 
   const itemsWithIndex = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -115,8 +123,6 @@ export default function PITableComponent() {
 
       const cellValue = user[columnKey as keyof User];
       switch (columnKey) {
-        case "name":
-          return cellValue;
         case "status":
           return (
             <Chip
@@ -136,12 +142,14 @@ export default function PITableComponent() {
                   <EyeIcon />
                 </span>
               </Tooltip>
-              {user.status !== "diterima" && (
-                <Tooltip content="Edit user" className="text-black">
+              {user.status !== "DITERIMA" && (
+                <Tooltip content="Edit" className="text-black">
                   <span
                     onClick={() =>
                       router.push(
-                        `/proforma-invoice/edit?id=${user.id}&divisi=${user.divisi}`,
+                        username === "admin"
+                          ? `/purchase-order/edit-admin?id=${user.id}`
+                          : `/purchase-order/edit?id=${user.id}`
                       )
                     }
                     className="cursor-pointer text-lg text-default-400 active:opacity-50"
@@ -156,7 +164,7 @@ export default function PITableComponent() {
           return cellValue;
       }
     },
-    [router],
+    [router, username],
   );
 
   const onRowsPerPageChange = React.useCallback(
@@ -170,7 +178,7 @@ export default function PITableComponent() {
   return (
     <div>
       <Table
-        aria-label="Example table with custom cells"
+        aria-label="Purchase Order Table"
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
       >
@@ -181,7 +189,7 @@ export default function PITableComponent() {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"No users found"} items={itemsWithIndex}>
+        <TableBody emptyContent={"No purchase orders found"} items={itemsWithIndex}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (

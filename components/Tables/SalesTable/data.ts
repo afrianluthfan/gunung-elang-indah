@@ -36,7 +36,7 @@ let users: ItemData = [];
 const fetchItemData1 = async () => {
   try {
     const response = await axios.post(
-      "http://209.182.237.155:8080/api/proforma-invoice/get-all-list",
+      "http://localhost:8080/api/proforma-invoice/get-all-list",
       "",
     );
     users = response.data.map((item: any) => {
@@ -55,7 +55,7 @@ const fetchItemData1 = async () => {
 const fetchItemData2 = async () => {
   try {
     const response = await axios.post(
-      "http://209.182.237.155:8080/api/stock-barang/list",
+      "http://localhost:8080/api/stock-barang/list",
       "",
     );
     users = response.data.map((item: any) => {

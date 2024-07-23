@@ -2,8 +2,8 @@ import { Input } from "@nextui-org/react";
 
 const TopSectionLeftSide = () => (
   <div className="flex w-full flex-col justify-between">
-    <h1 className="text-xl font-bold lg:text-[1.85vh]">Cari Barang</h1>
-    <Input type="text" placeholder="Masukan ID Purchase Order" />
+    <h1 className="text-xl font-bold lg:text-[1.85vh] mt-2">Form Tambah Purchase Order</h1>
+    
   </div>
 );
 

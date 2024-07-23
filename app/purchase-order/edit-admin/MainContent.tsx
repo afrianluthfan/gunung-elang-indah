@@ -72,13 +72,35 @@ const AdminMainContent = () => {
   const [shouldSubmit, setShouldSubmit] = useState(false);
 
   const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+
+  useEffect(() => {
+    if (!id) {
+      console.error("ID is missing");
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/api/purchase-order/detail",
+          { id: id }
+        );
+        setResponseData(response.data.data);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   useEffect(() => {
     if (shouldSubmit) {
       const submitData = async () => {
         try {
-          const res = await axios.post(
-            "http://localhost:8080/api/purchase-order/inquiry",
+          await axios.post(
+            "http://localhost:8080/api/purchase-order/edit/inquiry",
             responseData
           );
           Swal.fire({
@@ -87,12 +109,7 @@ const AdminMainContent = () => {
             icon: "success",
             confirmButtonText: "OK",
           });
-
-          // set local storage
-          localStorage.setItem("purchaseOrder", JSON.stringify(res));
-
-          router.push("/purchase-order/form/preview");
-          
+          // router.push("/purchase-order");
           setIsRejected(false);
         } catch (error) {
           console.error("Error submitting data", error);
@@ -172,6 +189,10 @@ const AdminMainContent = () => {
     }));
   };
 
+  const deleteItem = () => {
+
+  }
+
   const submitAcc = () => {
     Swal.fire({
       title: "Apakah Kamu Yakin ?",
@@ -202,21 +223,12 @@ const AdminMainContent = () => {
         <TopSectionLeftSide />
       </ContentTopSectionLayout>
       <Divider />
-      
       <div className="flex flex gap-4">
         <div className="flex flex-col space-y-2 w-full md:w-1/3">
           <label className="text-left">Supplier:</label>
           <Input
             value={responseData.nama_suplier}
             name="nama_suplier"
-            onChange={(e) => handleFieldChange(e)}
-            placeholder="Nama Suplier"
-            className="p-2 border border-gray-300 rounded"
-          />
-          <label className="text-left">Catatan PO:</label>
-          <Input
-            value={responseData.catatan_po}
-            name="catatan_po"
             onChange={(e) => handleFieldChange(e)}
             placeholder="Nama Suplier"
             className="p-2 border border-gray-300 rounded"

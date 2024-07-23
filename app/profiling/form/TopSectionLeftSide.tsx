@@ -14,6 +14,10 @@ const TopSectionLeftSide = () => {
       label: "Customer",
       value: "customer",
     },
+    {
+      label: "Customer Non Rumah Sakit",
+      value: "customer non rumah sakit",
+    },
   ];
 
   const dispatch = useDispatch<AppDispatch>();

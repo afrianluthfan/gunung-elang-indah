@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
 import TopSectionLeftSide from "../TopSectionLeftSide";
 import {
@@ -12,65 +13,86 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import { useAppSelector } from "@/redux/store";
-import axios from "axios";
-import { useDispatch } from "react-redux";
-import { resetItemPO } from "@/redux/features/itemPo-slice";
-import { clearSalesPOInquiry } from "@/redux/features/salesPOInquiry-slice";
-import { resetListItemPO } from "@/redux/features/listItemPO-slice";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 const MainContent = () => {
   const router = useRouter();
-  const responseData = useAppSelector((state) => state.salesPOInquiry.value);
+  const [data, setData] = useState<any>(null);
 
-  const dispatch = useDispatch();
+  useEffect(() => {
+    // Retrieve data from localStorage
+    const storedData = localStorage.getItem("purchaseOrder");
+    if (storedData) {
+      setData(JSON.parse(storedData));
+    }
+  }, []);
 
   const submitData = async () => {
-    try {
-      await axios.post(
-        "http://209.182.237.155:8080/api/purchase-order/posting",
-        responseData,
-      );
-      dispatch(resetItemPO());
-      dispatch(resetListItemPO());
-      dispatch(clearSalesPOInquiry());
-      router.push("/purchase-order");
-    } catch (error) {
-      console.error("Error inquiring data", error);
-      throw error;
-    }
+    Swal.fire({
+      title: "Apakah Kamu Yakin ?",
+      text: "Apakah kamu yakin ingin menerima purchase order ini!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, accept it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        try {
+          if (data && data.data && data.data.data) {
+            axios.post("http://localhost:8080/api/purchase-order/posting", data.data.data);
+             // Replace with your desired route
+          } else {
+            console.error("Data is not available");
+          }
+        } catch (error) {
+          console.error("Error inquiring data", error);
+          throw error;
+        }
+        router.push("/purchase-order");
+      }
+    });
+
+
   };
 
   const cancelData = async () => {
-    dispatch(resetItemPO());
-    dispatch(resetListItemPO());
-    dispatch(clearSalesPOInquiry());
     router.push("/purchase-order");
   };
+
+  if (!data || !data.data) {
+    return <div>Loading...</div>;
+  }
+
+  // Destructure the inner data object
+  const {
+    nama_suplier, nomor_po, tanggal, catatan_po, prepared_by, prepared_jabatan,
+    approved_by, approved_jabatan, sub_total, pajak, total, item
+  } = data.data.data || {};
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <ContentTopSectionLayout>
-        {/* Check profile customer and searchbar */}
         <TopSectionLeftSide />
       </ContentTopSectionLayout>
       <Divider />
       <div className="flex justify-between">
         <div className="flex flex-col">
-          <h1>Nomor Purchase Order: {responseData.nomor_po}</h1>
-          {/* <h1>Nomor Surat Jalan: {responseData.nomor_surat_jalan}</h1> */}
-          <h1>Tanggal: {responseData.tanggal}</h1>
-          {/* <h1>Jatuh Tempo: {responseData.jatuh_tempo}</h1> */}
-          <h1>Catatan Purchase Order: {responseData.catatan_po}</h1>
+          <h1>Nama Supplier: {nama_suplier}</h1>
+          <h1>Nomor Purchase Order: {nomor_po}</h1>
+          <h1>Tanggal: {tanggal}</h1>
+          <h1>Catatan Purchase Order: {catatan_po}</h1>
         </div>
         <div className="flex flex-col">
-          <h1>Prepared By: {responseData.prepared_by}</h1>
-          <h1>Prepared Jabatan: {responseData.prepared_jabatan}</h1>
-          <h1>Approved By: {responseData.approved_by}</h1>
-          <h1>Approved Jabatan: {responseData.approved_jabatan}</h1>
+          <h1>Prepared By: {prepared_by}</h1>
+          <h1>Prepared Jabatan: {prepared_jabatan}</h1>
+          <h1>Approved By: {approved_by}</h1>
+          <h1>Approved Jabatan: {approved_jabatan}</h1>
         </div>
       </div>
+      <Divider />
       <Table removeWrapper aria-label="Example static collection table">
         <TableHeader>
           <TableColumn>NO</TableColumn>
@@ -78,11 +100,10 @@ const MainContent = () => {
           <TableColumn>QUANTITY</TableColumn>
           <TableColumn>HARGA SATUAN</TableColumn>
           <TableColumn>DISCOUNT</TableColumn>
-          <TableColumn>AMMOUNT</TableColumn>
+          <TableColumn>AMOUNT</TableColumn>
         </TableHeader>
         <TableBody>
-          {/* Map over dataItem to render each row */}
-          {responseData.item.map((item, index) => (
+          {item?.map((item: { name: string; quantity: number; price: number; discount: number; amount: number }, index: number) => (
             <TableRow key={index}>
               <TableCell>{index + 1}</TableCell>
               <TableCell>{item.name}</TableCell>
@@ -97,11 +118,11 @@ const MainContent = () => {
 
       <div className="grid w-[25%] grid-cols-2 self-end text-end text-sm font-bold">
         <p>Sub Total: </p>
-        <p>{responseData.sub_total}</p>
+        <p>{sub_total}</p>
         <p>PPN 11%: </p>
-        <p>{responseData.pajak}</p>
+        <p>{pajak}</p>
         <p>Total: </p>
-        <p>{responseData.total}</p>
+        <p>{total}</p>
       </div>
 
       <div className="flex justify-end gap-4">

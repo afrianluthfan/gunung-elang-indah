@@ -54,20 +54,20 @@ const Form: FC = () => {
     setContent(newContent);
   }, [amount, data, dispatch]);
 
-  useEffect(() => {
-    const fetchDivisiList = async () => {
-      try {
-        const responseDivisi = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/divisi-list",
-          "",
-        );
-        setDivisiList(responseDivisi.data.data);
-      } catch (error) {
-        console.error("Gagal fetching list divisi!");
-      }
-    };
-    fetchDivisiList();
-  }, []);
+  // useEffect(() => {
+  //   const fetchDivisiList = async () => {
+  //     try {
+  //       const responseDivisi = await axios.post(
+  //         "http://localhost:8080/api/proforma-invoice/divisi-list",
+  //         "",
+  //       );
+  //       setDivisiList(responseDivisi.data.data);
+  //     } catch (error) {
+  //       console.error("Gagal fetching list divisi!");
+  //     }
+  //   };
+  //   fetchDivisiList();
+  // }, []);
 
   const inquireData = async () => {
     const requestBody = {
@@ -96,7 +96,7 @@ const Form: FC = () => {
 
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/purchase-order/inquiry",
+        "http://localhost:8080/api/purchase-order/inquiry",
         requestBody,
       );
       // if (response.status === 200) {
@@ -168,9 +168,9 @@ const Form: FC = () => {
             <FormMainContentLayout>
               <MainContent />
             </FormMainContentLayout>
-            {data && content}
+            {/* {data && content} */}
           </div>
-          <div className="flex w-full justify-end">
+          {/* <div className="flex w-full justify-end">
             <Button
               onClick={handleSetData}
               color="primary"
@@ -178,7 +178,7 @@ const Form: FC = () => {
             >
               Next
             </Button>
-          </div>
+          </div> */}
           <div className="flex h-[4vh] items-center justify-center text-end font-semibold">
             <h1>Supported by PT Gunung Elang Indah</h1>
           </div>

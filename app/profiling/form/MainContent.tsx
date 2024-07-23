@@ -80,7 +80,7 @@ const MainContent = () => {
 
     try {
       await axios.post(
-        "http://209.182.237.155:8080/api/customer-profilling/add",
+        "http://localhost:8080/api/customer-profilling/add",
         requestBody,
       );
       dispatch(resetItemProfiling());
@@ -131,6 +131,7 @@ const MainContent = () => {
             label="NPWP"
             onChange={handleInputChange("npwp")}
           />
+
           <Input
             {...register("facture_address")}
             label="ALAMAT PENGIRIM FAKTUR"
@@ -160,11 +161,20 @@ const MainContent = () => {
           />
         </div>
         <div className="col-span-1 flex flex-col gap-3">
-          <Input
-            {...register("nama_company")}
-            label="NAMA RUMAH SAKIT"
-            onChange={handleInputChange("nama_company")}
-          />
+          {divisi === "customer" ? (
+            <Input
+              {...register("nama_company")}
+              label="NAMA RUMAH SAKIT"
+              onChange={handleInputChange("nama_company")}
+            />
+          ) : (
+            <Input
+              {...register("nama_company")}
+              label="NAMA PERUSAHAAN"
+              onChange={handleInputChange("nama_company")}
+            />
+          )}
+
           <Input
             {...register("ipak_number")}
             label="NO. IPAK"
@@ -188,6 +198,8 @@ const MainContent = () => {
             onChange={handleInputChange("item_address")}
           />
           <Input label="PIC" onChange={handleInputChange("pic_item")} />
+
+
           <Dropdown
             {...register("tax_code_id")}
             data={tax_codes}
@@ -197,11 +209,20 @@ const MainContent = () => {
           />
         </div>
         <div className="col-span-1 flex flex-col gap-3">
-          <Input
-            {...register("address_company")}
-            label="ALAMAT RUMAH SAKIT"
-            onChange={handleInputChange("address_company")}
-          />
+          {divisi === "customer" ? (
+            <Input
+              {...register("address_company")}
+              label="ALAMAT RUMAH SAKIT"
+              onChange={handleInputChange("address_company")}
+            />
+          ) : (
+            <Input
+              {...register("address_company")}
+              label="ALAMAT PERUSAHAAN"
+              onChange={handleInputChange("address_company")}
+            />
+          )}
+
           <Input
             {...register("npwp_address")}
             label="ALAMAT NPWP"

@@ -27,10 +27,10 @@ const Sidebar = () => {
 
   useEffect(() => {
     const salesMenus = [
-      {
-        pageName: "Profiling",
-        pageRoute: "profiling",
-      },
+      // {
+      //   pageName: "Profiling",
+      //   pageRoute: "profiling",
+      // },
       {
         pageName: "Proforma Invoice",
         pageRoute: "proforma-invoice",
@@ -61,6 +61,10 @@ const Sidebar = () => {
     ];
 
     const adminMenus = [
+      {
+        pageName: "Profiling",
+        pageRoute: "profiling",
+      },
       {
         pageName: "Proforma Invoice",
         pageRoute: "proforma-invoice",
