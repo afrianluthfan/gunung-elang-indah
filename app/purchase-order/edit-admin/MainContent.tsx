@@ -65,7 +65,7 @@ const AdminMainContent = () => {
     status: "",
     reason: "",
     item: [],
-    item_deleted: [], // Initialize as empty array
+    item_deleted: [],
   });
 
   const [isRejected, setIsRejected] = useState(false);
@@ -84,7 +84,7 @@ const AdminMainContent = () => {
       try {
         const response = await axios.post(
           "http://localhost:8080/api/purchase-order/detail",
-          { id: id },
+          { id: id }
         );
         setResponseData(response.data.data);
       } catch (error) {
@@ -101,9 +101,9 @@ const AdminMainContent = () => {
         try {
           const res = await axios.post(
             "http://localhost:8080/api/purchase-order/edit/inquiry",
-            responseData,
+            responseData
           );
-          
+
           localStorage.setItem("purchaseOrder", JSON.stringify(res));
           localStorage.setItem("aksi", "update");
           router.push("/purchase-order/form/preview");
@@ -148,7 +148,7 @@ const AdminMainContent = () => {
 
   const handleFieldChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    itemIndex?: number,
+    itemIndex?: number
   ) => {
     const { name, value } = e.target;
 
@@ -156,7 +156,7 @@ const AdminMainContent = () => {
       setResponseData((prevData) => ({
         ...prevData,
         item: prevData.item.map((item, index) =>
-          index === itemIndex ? { ...item, [name]: value } : item,
+          index === itemIndex ? { ...item, [name]: value } : item
         ),
       }));
     } else {
@@ -173,7 +173,7 @@ const AdminMainContent = () => {
       item: [
         ...prevData.item,
         {
-          id: 0, // Generate a unique ID for new items
+          id: 0,
           po_id: 0,
           name: "",
           quantity: "",
@@ -186,35 +186,15 @@ const AdminMainContent = () => {
   };
 
   const submitAcc = () => {
-
     setResponseData((prevData) => ({
       ...prevData,
       status: "DIPROSES",
     }));
     setShouldSubmit(true);
-
   };
 
   const tolak = () => {
-    // Swal.fire({
-    //   title: "Apakah Kamu Yakin ?",
-    //   text: "Apakah kamu yakin ingin mengubah purchase order ini!",
-    //   icon: "warning",
-    //   showCancelButton: true,
-    //   confirmButtonColor: "#3085d6",
-    //   cancelButtonColor: "#d33",
-    //   confirmButtonText: "Yes, accept it!",
-    // }).then((result) => {
-    //   if (result.isConfirmed) {
-    //     setResponseData((prevData) => ({
-    //       ...prevData,
-    //       status: "DIPROSES",
-    //     }));
-    //     setShouldSubmit(true);
-    //   }
-    // });
-
-    router.push("/purchase-order")
+    router.push("/purchase-order");
   };
 
   const cancelReject = () => {
@@ -222,15 +202,30 @@ const AdminMainContent = () => {
   };
 
   return (
+
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
-      <ContentTopSectionLayout>
-        <TopSectionLeftSide />
-      </ContentTopSectionLayout>
+      {responseData.reason && (
+        <div>
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+            <p className="font-bold">Alasan Penolakan:</p>
+            <p>{responseData.reason}</p>
+
+          </div>
+
+          {/* <div className="mt-4">
+            <Divider />
+          </div> */}
+        </div>
+
+      )}
+
+      <h1 className="font-semibold text-xl">Edit Purchase Order</h1>
 
       <Divider />
 
-      <div className="flex gap-4">
 
+
+      <div className="flex gap-4">
         <div className="flex w-full flex-col space-y-2 md:w-1/3">
           <label className="text-left">Supplier:</label>
           <Input
@@ -238,7 +233,7 @@ const AdminMainContent = () => {
             name="nama_suplier"
             onChange={(e) => handleFieldChange(e)}
             placeholder="Nama Suplier"
-            className="rounded border border-gray-300 p-2"
+            className="rounded py-2"
           />
         </div>
         <div className="flex w-full flex-col space-y-2 md:w-1/3">
@@ -248,7 +243,7 @@ const AdminMainContent = () => {
             name="prepared_by"
             onChange={(e) => handleFieldChange(e)}
             placeholder="Prepared by"
-            className="rounded border border-gray-300 p-2"
+            className="rounded py-2"
           />
           <label className="text-left">Jabatan Prepared:</label>
           <Input
@@ -256,7 +251,7 @@ const AdminMainContent = () => {
             name="prepared_jabatan"
             onChange={(e) => handleFieldChange(e)}
             placeholder="Jabatan Prepared"
-            className="rounded border border-gray-300 p-2"
+            className="rounded py-2"
           />
         </div>
         <div className="flex w-full flex-col space-y-2 md:w-1/3">
@@ -266,7 +261,7 @@ const AdminMainContent = () => {
             name="approved_by"
             onChange={(e) => handleFieldChange(e)}
             placeholder="Approved by"
-            className="rounded border border-gray-300 p-2"
+            className="rounded py-2"
           />
           <label className="text-left">Jabatan Approved:</label>
           <Input
@@ -274,89 +269,85 @@ const AdminMainContent = () => {
             name="approved_jabatan"
             onChange={(e) => handleFieldChange(e)}
             placeholder="Jabatan Approved"
-            className="rounded border border-gray-300 p-2"
+            className="rounded py-2"
           />
         </div>
       </div>
 
+      <Divider />
 
 
-      {/* Bagian Barang Dan Hargannya */}
-
-      <div className="rounded-lg border p-4">
-        <div className="flex justify-between items-center">
-          <h3 className="mb-4 text-left text-lg font-bold">Barang:</h3>
-          <div className="mb-4 flex justify-center">
-            <Button className="bg-blue-900 text-white" onClick={handleAddItem}>
-              Tambah Barang
-            </Button>
-          </div>
-
+      <div className="flex justify-between items-center">
+        <h3 className="mb-2 text-left text-lg font-semibold">Barang:</h3>
+        <div className="mb-2 flex justify-center">
+          <Button className="bg-blue-900 text-white" onClick={handleAddItem}>
+            Tambah Barang
+          </Button>
         </div>
-
-        {/* <h3 className="mb-4 text-left text-lg font-bold">Barang:</h3> */}
-
-        <Table>
-          <TableHeader>
-            <TableColumn className="bg-blue-900 text-white border-spacing-1">No</TableColumn>
-            <TableColumn className="bg-blue-900 text-white border-spacing-1">Nama Barang</TableColumn>
-            <TableColumn className="bg-blue-900 text-white border-spacing-1">Quantity</TableColumn>
-            <TableColumn className="bg-blue-900 text-white border-spacing-1">Harga Satuan</TableColumn>
-            <TableColumn className="bg-blue-900 text-white border-spacing-1">Discount</TableColumn>
-            <TableColumn className="bg-blue-900 text-white border-spacing-1">Action</TableColumn>
-          </TableHeader>
-          <TableBody >
-            {responseData.item.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>
-                  <Input
-                    value={item.name}
-                    name="name"
-                    onChange={(e) => handleFieldChange(e, index)}
-                    placeholder="Nama Barang"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Input
-                    value={item.quantity}
-                    name="quantity"
-                    onChange={(e) => handleFieldChange(e, index)}
-                    placeholder="Quantity"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Input
-                    value={item.price}
-                    name="price"
-                    onChange={(e) => handleFieldChange(e, index)}
-                    placeholder="Harga Satuan"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Input
-                    value={item.discount.replace(/%/g, "")} // Remove '%' from display
-                    name="discount"
-                    onChange={(e) => handleFieldChange(e, index)}
-                    placeholder="Discount"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Tooltip content="Delete" className="text-black">
-                    <span
-                      className="cursor-pointer text-lg text-default-400 active:opacity-50"
-                      onClick={() => handleDelete(index)} // Use index here
-                    >
-                      <DeleteIcon />
-                    </span>
-                  </Tooltip>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-
       </div>
+
+
+
+      <Table removeWrapper className="mb-4">
+        <TableHeader>
+          <TableColumn className="bg-blue-900 text-white text-center">No</TableColumn>
+          <TableColumn className="bg-blue-900 text-white ">Nama Barang</TableColumn>
+          <TableColumn className="bg-blue-900 text-white ">Quantity</TableColumn>
+          <TableColumn className="bg-blue-900 text-white ">Harga Satuan</TableColumn>
+          <TableColumn className="bg-blue-900 text-white ">Discount</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">Action</TableColumn>
+        </TableHeader>
+        <TableBody>
+          {responseData.item.map((item, index) => (
+            <TableRow key={index}>
+              <TableCell className="text-center">{index + 1}</TableCell>
+              <TableCell>
+                <Input
+                  value={item.name}
+                  name="name"
+                  onChange={(e) => handleFieldChange(e, index)}
+                  placeholder="Nama Barang"
+                />
+              </TableCell>
+              <TableCell>
+                <Input
+                  value={item.quantity}
+                  name="quantity"
+                  onChange={(e) => handleFieldChange(e, index)}
+                  placeholder="Quantity"
+                />
+              </TableCell>
+              <TableCell>
+                <Input
+                  value={item.price}
+                  name="price"
+                  onChange={(e) => handleFieldChange(e, index)}
+                  placeholder="Harga Satuan"
+                />
+              </TableCell>
+              <TableCell>
+                <Input
+                  value={item.discount.replace(/%/g, "")} // Remove '%' from display
+                  name="discount"
+                  onChange={(e) => handleFieldChange(e, index)}
+                  placeholder="Discount"
+                />
+              </TableCell>
+              <TableCell >
+                <Tooltip content="Delete" className="text-black">
+                  <span
+                    className="cursor-pointer text-lg text-default-400 active:opacity-50"
+                    onClick={() => handleDelete(index)}
+                  >
+                    <DeleteIcon />
+                  </span>
+                </Tooltip>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
       <div className="flex justify-end gap-4">
         <Button className="bg-red-600 text-white" onClick={tolak}>
           Batalkan

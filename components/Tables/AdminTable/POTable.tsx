@@ -59,40 +59,32 @@ export default function PITableComponent() {
   const [username, setUsername] = useState<string | null>(null);
   const router = useRouter();
 
-  const namaUser = localStorage.getItem("username");
+  // Fetch username from localStorage
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.post(
-          "http://209.182.237.155:8080/api/purchase-order/list",
-        );
-        if (response.data.status) {
-          setUsers(response.data.data);
-        } else {
-          console.error("Failed to fetch data:", response.data.message);
-        }
-      } catch (error) {
-        console.error("Error fetching data from API:", error);
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
+
+  // Function to fetch data from API
+  const fetchData = async () => {
+    try {
+      const response = await axios.post(
+        "http://209.182.237.155:8080/api/purchase-order/list",
+      );
+      if (response.data.status) {
+        setUsers(response.data.data);
+      } else {
+        console.error("Failed to fetch data:", response.data.message);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching data from API:", error);
+    }
+  };
 
-    // const fetchPersistedData = () => {
-    //   const persistedData = localStorage.getItem("persist:root");
-    //   if (persistedData) {
-    //     try {
-    //       const parsedData = JSON.parse(persistedData);
-    //       const authData = parsedData.auth && JSON.parse(parsedData.auth.value);
-    //       if (authData) {
-    //         setUsername(authData.username);
-    //       }
-    //     } catch (error) {
-    //       console.error("Failed to parse persisted data:", error);
-    //     }
-    //   }
-    // };
-
-    // fetchPersistedData();
-
+  // Fetch data on component mount and when navigating back
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -146,17 +138,17 @@ export default function PITableComponent() {
         case "actions":
           return (
             <div className="relative flex items-center gap-2">
-              <Tooltip content="Details" className="text-black">
+              <Tooltip content="Details" className="text-black text-center">
                 <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                  <EyeIcon />
+                  <EyeIcon className="items-center" />
                 </span>
               </Tooltip>
               {user.status !== "DITERIMA" && (
-                <Tooltip content="Edit" className="text-black">
+                <Tooltip content="Edit" className="text-black text-center">
                   <span
                     onClick={() =>
                       router.push(
-                        namaUser === "admin"
+                        username === "admin"
                           ? `/purchase-order/edit-admin?id=${user.id}`
                           : `/purchase-order/edit?id=${user.id}`,
                       )
@@ -173,7 +165,7 @@ export default function PITableComponent() {
           return cellValue;
       }
     },
-    [namaUser, router],
+    [username, router],
   );
 
   const onRowsPerPageChange = React.useCallback(
@@ -191,9 +183,9 @@ export default function PITableComponent() {
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
       >
-        <TableHeader  columns={columns}>
+        <TableHeader columns={columns}>
           {(column) => (
-            <TableColumn className="bg-blue-900 text-white" key={column.uid} align="start">
+            <TableColumn className="bg-blue-900 text-white text-center" key={column.uid} align="start">
               {column.name}
             </TableColumn>
           )}
@@ -202,10 +194,10 @@ export default function PITableComponent() {
           emptyContent={"No purchase orders found"}
           items={itemsWithIndex}
         >
-          {(item) => (
+          {(item) => (  
             <TableRow key={item.id}>
               {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
+                <TableCell className="text-center items-center">{renderCell(item, columnKey)}</TableCell>
               )}
             </TableRow>
           )}

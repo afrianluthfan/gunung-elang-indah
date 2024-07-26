@@ -1,9 +1,7 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
-import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
+import Swal from "sweetalert2";
 import {
   Button,
   Divider,
@@ -15,8 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import TopSectionLeftSide from "../TopSectionLeftSide";
-import Swal from "sweetalert2";
 
 type ItemDetail = {
   id: number;
@@ -41,6 +37,9 @@ type PurchaseOrder = {
   sub_total: string;
   pajak: string;
   total: string;
+  sub_total_rp: string;
+  pajak_rp: string;
+  total_rp: string;
   status: string;
   reason?: string;
   item: ItemDetail[];
@@ -61,12 +60,14 @@ const AdminMainContent = () => {
     sub_total: "",
     pajak: "",
     total: "",
+    sub_total_rp: "",
+    pajak_rp: "",
+    total_rp: "",
     status: "",
     reason: "",
     item: [],
   });
 
-  const [isRejected, setIsRejected] = useState(false);
   const [shouldSubmit, setShouldSubmit] = useState(false);
 
   const searchParams = useSearchParams();
@@ -82,9 +83,7 @@ const AdminMainContent = () => {
       try {
         const response = await axios.post(
           "http://localhost:8080/api/purchase-order/detail",
-          {
-            id: id,
-          }
+          { id: id }
         );
         setResponseData(response.data.data);
       } catch (error) {
@@ -105,13 +104,11 @@ const AdminMainContent = () => {
           );
           Swal.fire({
             title: "Success!",
-            text: "Purchase order berhasil di "+ responseData.status +".",
+            text: "Purchase order berhasil di " + responseData.status + ".",
             icon: "success",
             confirmButtonText: "OK"
           });
           router.push("/purchase-order");
-          setIsRejected(false);
-          
         } catch (error) {
           console.error("Error submitting data", error);
         } finally {
@@ -145,130 +142,170 @@ const AdminMainContent = () => {
 
   const submitReject = () => {
     Swal.fire({
-      title: 'Apakah Kamu Yakin ?',
-      text: "Apakah kamu yakin ingin menolak purchase order ini!",
-      icon: 'warning',
+      title: 'Alasan Penolakan',
+      input: 'textarea',
+      inputLabel: 'Masukkan alasan penolakan',
+      inputPlaceholder: 'Alasan penolakan...',
+      inputAttributes: {
+        'aria-label': 'Masukkan alasan penolakan'
+      },
       showCancelButton: true,
+      confirmButtonText: 'Kirim',
+      cancelButtonText: 'Batal',
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, accept it!'
+      inputValidator: (value) => {
+        if (!value) {
+          return 'Alasan penolakan tidak boleh kosong!';
+        }
+        return null;
+      }
     }).then((result) => {
       if (result.isConfirmed) {
         setResponseData((prevData) => ({
           ...prevData,
           status: "DITOLAK",
+          reason: result.value
         }));
         setShouldSubmit(true);
       }
     });
   };
 
-  const rejectData = () => {
-    setIsRejected(true);
-  };
-
-  const cancelReject = () => {
-    setIsRejected(false);
-  };
-
-  const handleReasonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newReason = e.target.value;
-    setResponseData((prevData) => ({
-      ...prevData,
-      reason: newReason,
-    }));
-  };
-
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
-      <ContentTopSectionLayout>
-        <TopSectionLeftSide />
-      </ContentTopSectionLayout>
+      <h1 className="font-semibold lg:text-[1.85vh]">Detail Pembuatan Purchase Order</h1>
       <Divider />
       <div className="flex justify-between">
-        <div className="flex flex-col">
-          <h1>Nomor PO: {responseData.nomor_po}</h1>
-          <h1>Tanggal: {responseData.tanggal}</h1>
-          <h1>Supplier: {responseData.nama_suplier}</h1>
-          <h1>Prepared by: {responseData.prepared_by} ({responseData.prepared_jabatan})</h1>
-          <h1>Approved by: {responseData.approved_by} ({responseData.approved_jabatan})</h1>
-        </div>
-        <div className="flex flex-col">
-          <h1>Sub Total: {responseData.sub_total}</h1>
-          <h1>Pajak: {responseData.pajak}</h1>
-          <h1>Total: {responseData.total}</h1>
-        </div>
+        <table className="">
+          <tbody>
+            <tr>
+              <td className=" text-left">
+                <h1 className=" font-medium">Nama Supplier</h1>
+              </td>
+              <td className="w-10 text-center">:</td>
+              <td className="">
+                <h1>{responseData.nama_suplier}</h1>
+              </td>
+            </tr>
+            <tr>
+              <td className=" text-left">
+                <h1 className=" font-medium">Nomor Purchase Order</h1>
+              </td>
+              <td className="w-10 text-center">:</td>
+              <td className="">
+                <h1>{responseData.nomor_po}</h1>
+              </td>
+            </tr>
+            <tr>
+              <td className=" text-left">
+                <h1 className=" font-medium">Tanggal</h1>
+              </td>
+              <td className="w-10 text-center">:</td>
+              <td className="">
+                <h1>{responseData.tanggal}</h1>
+              </td>
+            </tr>
+            <tr>
+              <td className=" text-left">
+                <h1 className="font-medium">Catatan Purchase Order</h1>
+              </td>
+              <td className="w-10 text-center">:</td>
+              <td className="">
+                <h1>{responseData.catatan_po}</h1>
+              </td>
+            </tr>
+            <tr>
+              <td className=" text-left">
+                <h1 className=" font-medium">Prepared By</h1>
+              </td>
+              <td className="w-10 text-center">:</td>
+              <td className="">
+                <h1>{responseData.prepared_by}</h1>
+              </td>
+            </tr>
+            <tr>
+              <td className=" text-left">
+                <h1 className=" font-medium">Prepared Jabatan</h1>
+              </td>
+              <td className="w-10 text-center">:</td>
+              <td className="">
+                <h1>{responseData.prepared_jabatan}</h1>
+              </td>
+            </tr>
+            <tr>
+              <td className=" text-left">
+                <h1 className=" font-medium">Approved By</h1>
+              </td>
+              <td className="w-10 text-center">:</td>
+              <td className="">
+                <h1>{responseData.approved_by}</h1>
+              </td>
+            </tr>
+            <tr>
+              <td className=" text-left">
+                <h1 className=" font-medium">Approved Jabatan</h1>
+              </td>
+              <td className="w-10 text-center">:</td>
+              <td className="">
+                <h1>{responseData.approved_jabatan}</h1>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <Table removeWrapper aria-label="Purchase Order Details">
-        <TableHeader>
-          <TableColumn className="bg-blue-900 text-white">NO</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">NAMA BARANG</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">QTY</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">HARGA SATUAN</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">DISC</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">SUB TOTAL</TableColumn>
-        </TableHeader>
-        <TableBody>
-          {responseData.item.map((item, index) => (
-            <TableRow key={item.id}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>{item.name}</TableCell>
-              <TableCell>{item.quantity}</TableCell>
-              <TableCell>{item.price}</TableCell>
-              <TableCell>{item.discount}</TableCell>
-              <TableCell>{item.amount}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
 
-      <div className="grid w-[25%] grid-cols-2 self-end text-end text-sm font-bold">
-        <p>Sub Total: </p>
-        <p>{responseData.sub_total}</p>
-        <p>PPN 11%: </p>
-        <p>{responseData.pajak}</p>
-        <p>Total: </p>
-        <p>{responseData.total}</p>
+      <Divider />
+
+      <div className="flex justify-start my-1">
+        <h1 className="font-semibold lg:text-[1.4vh]">List Harga Barang</h1>
       </div>
 
-      {!isRejected && (
-        <div className="flex justify-end gap-3">
-          <Button onClick={rejectData} color="danger" className="min-w-36">
-            Ditolak
-          </Button>
-          <Button
-            onClick={submitAcc}
-            color="success"
-            className="min-w-36 text-white"
-          >
-            Diterima
-          </Button>
-        </div>
-      )}
-      {isRejected && (
-        <div className="rounded-md  p-2 text-white">
-          <Input
-            label="Alasan Penolakan"
-            value={responseData.reason ?? ""}
-            onChange={handleReasonChange}
-          />
-          <div className="mt-4 flex justify-end gap-3">
-            <Button
-              onClick={submitReject}
-              color="danger"
-              className="min-w-36"
-              disabled={
-                !responseData.reason || responseData.reason.length === 0
-              }
-            >
-              Setujui Penolakan
-            </Button>
-            <Button onClick={cancelReject} className="min-w-36">
-              Batal Penolakan
-            </Button>
-          </div>
-        </div>
-      )}
+      {/* Bagian Table */}
+      <div className="flex justify-between items-center">
+        <Table removeWrapper>
+          <TableHeader>
+            <TableColumn className="bg-blue-900 text-white text-center">NO</TableColumn>
+            <TableColumn className="bg-blue-900 text-white text-center">NAMA BARANG</TableColumn>
+            <TableColumn className="bg-blue-900 text-white text-center">QTY</TableColumn>
+            <TableColumn className="bg-blue-900 text-white text-center">HARGA SATUAN</TableColumn>
+            <TableColumn className="bg-blue-900 text-white text-center">DISC</TableColumn>
+            <TableColumn className="bg-blue-900 text-white text-center">SUB TOTAL</TableColumn>
+          </TableHeader>
+          <TableBody>
+            {responseData.item.map((item, index) => (
+              <TableRow key={item.id}>
+                <TableCell className="text-center">{index + 1}</TableCell>
+                <TableCell className="text-center">{item.name}</TableCell>
+                <TableCell className="text-center">{item.quantity}</TableCell>
+                <TableCell className="text-center">{item.price}</TableCell>
+                <TableCell className="text-center">{item.discount}</TableCell>
+                <TableCell className="text-center">{item.amount}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <Divider />
+
+      <div className="grid w-[25%] grid-cols-2 gap-2 self-end text-sm font-bold">
+        <p className="text-end">Sub Total : </p>
+        <p className="text-start">{responseData.sub_total_rp}</p>
+        <p className="text-end">PPN 11% : </p>
+        <p className="text-start">{responseData.pajak_rp}</p>
+        <p className="text-end">Total : </p>
+        <p className="text-start">{responseData.total_rp}</p>
+      </div>
+
+      <div className="flex justify-end gap-3">
+        <Button onClick={submitReject} color="danger" className="min-w-36">
+          Ditolak
+        </Button>
+        <Button onClick={submitAcc} color="success" className="min-w-36 text-white">
+          Diterima
+        </Button>
+      </div>
     </div>
   );
 };

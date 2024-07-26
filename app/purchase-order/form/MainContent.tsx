@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
 import {
@@ -44,7 +44,7 @@ type PurchaseOrder = {
   status: string;
   reason?: string;
   item: ItemDetail[];
-  item_deleted: { id: number }[]; // Ensure this is an array
+  item_deleted: { id: number }[];
 };
 
 const AdminMainContent = () => {
@@ -65,29 +65,43 @@ const AdminMainContent = () => {
     status: "",
     reason: "",
     item: [],
-    item_deleted: [], // Initialize as empty array
+    item_deleted: [],
   });
 
   const [isRejected, setIsRejected] = useState(false);
   const [shouldSubmit, setShouldSubmit] = useState(false);
+  const [stockData, setStockData] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [currentInput, setCurrentInput] = useState<string>("");
+  const [itemSuggestions, setItemSuggestions] = useState<{ [key: number]: string[] }>({});
 
-  const searchParams = useSearchParams();
+  useEffect(() => {
+    const fetchStockData = async () => {
+      try {
+        const res = await axios.post("http://localhost:8080/api/stock-barang/list");
+        console.log(res.data); // Log the response data
+        setStockData(res.data.data);
+      } catch (error) {
+        console.error("Error fetching stock data", error);
+      }
+    };
+
+    fetchStockData();
+  }, []);
 
   useEffect(() => {
     if (shouldSubmit) {
       const submitData = async () => {
+        console.log("Submitting data:", responseData); // Log data before sending
         try {
           const res = await axios.post(
             "http://localhost:8080/api/purchase-order/inquiry",
             responseData
           );
 
-
-          // set local storage
           localStorage.setItem("purchaseOrder", JSON.stringify(res));
 
           router.push("/purchase-order/form/preview");
-          
           setIsRejected(false);
         } catch (error) {
           console.error("Error submitting data", error);
@@ -101,13 +115,11 @@ const AdminMainContent = () => {
   }, [shouldSubmit, responseData]);
 
   const handleDelete = (id: number) => {
-
-
     if (id !== undefined) {
-      console.log("ID tidak undefined: ", id)
+      console.log("ID tidak undefined: ", id);
 
       Swal.fire({
-        title: "Apakah Kamu Yakin ?",
+        title: "Apakah Kamu Yakin?",
         text: "Apakah kamu yakin ingin menerima purchase order ini!",
         icon: "warning",
         showCancelButton: true,
@@ -116,7 +128,6 @@ const AdminMainContent = () => {
         confirmButtonText: "Yes, accept it!",
       }).then((result) => {
         if (result.isConfirmed) {
-
           setResponseData((prevData) => ({
             ...prevData,
             item: prevData.item.filter((item) => item.id !== id),
@@ -124,15 +135,31 @@ const AdminMainContent = () => {
               ? [...prevData.item_deleted, { id }]
               : [{ id }],
           }));
-
         }
       });
     }
-
   };
 
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>, itemId?: number) => {
     const { name, value } = e.target;
+
+    if (name === "name") {
+      setCurrentInput(value);
+      if (value.length > 1) {
+        const filteredSuggestions = stockData
+          .filter((item: { name: string }) => item.name.toLowerCase().includes(value.toLowerCase()))
+          .map((item: { name: string }) => item.name);
+        setItemSuggestions((prevSuggestions) => ({
+          ...prevSuggestions,
+          [itemId!]: filteredSuggestions,
+        }));
+      } else {
+        setItemSuggestions((prevSuggestions) => ({
+          ...prevSuggestions,
+          [itemId!]: [],
+        }));
+      }
+    }
 
     if (itemId !== undefined) {
       setResponseData((prevData) => ({
@@ -168,15 +195,37 @@ const AdminMainContent = () => {
   };
 
   const submitAcc = () => {
-        setResponseData((prevData) => ({
-          ...prevData,
-          status: "DITERIMA",
-        }));
-        setShouldSubmit(true);
+    setResponseData((prevData) => ({
+      ...prevData,
+      status: "DITERIMA",
+    }));
+    setShouldSubmit(true);
   };
 
   const cancelReject = () => {
     setIsRejected(false);
+  };
+
+  const handleSuggestionClick = (suggestion: string, itemId: number) => {
+    const selectedItem = stockData.find((item) => item.name === suggestion);
+    if (selectedItem) {
+      setResponseData((prevData) => ({
+        ...prevData,
+        item: prevData.item.map((item) =>
+          item.id === itemId
+            ? {
+                ...item,
+                name: selectedItem.name,
+                price: selectedItem.price.toString(), // Convert to string if needed
+              }
+            : item
+        ),
+      }));
+      setItemSuggestions((prevSuggestions) => ({
+        ...prevSuggestions,
+        [itemId]: [],
+      }));
+    }
   };
 
   return (
@@ -185,7 +234,7 @@ const AdminMainContent = () => {
         <TopSectionLeftSide />
       </ContentTopSectionLayout>
       <Divider />
-      
+
       <div className="flex flex gap-4">
         <div className="flex flex-col space-y-2 w-full md:w-1/3">
           <label className="text-left">Supplier:</label>
@@ -201,7 +250,7 @@ const AdminMainContent = () => {
             value={responseData.catatan_po}
             name="catatan_po"
             onChange={(e) => handleFieldChange(e)}
-            placeholder="Nama Suplier"
+            placeholder="Catatan PO"
             className="p-2 border border-gray-300 rounded"
           />
         </div>
@@ -244,35 +293,42 @@ const AdminMainContent = () => {
       </div>
       <hr className="border-t-2 border-gray-200" />
       <div className="flex justify-between gap-3">
-        <h1 className="font-semibold mt-2">Data Barang</h1>
-        <Button
-          onClick={handleAddItem}
-          color="primary"
-          className="min-w-10 text-white"
-        >
-          Tambah Barang
-        </Button>
+        <h1 className="text-xl text-black font-semibold mt-2">Data Barang</h1>
+        <Button onClick={handleAddItem} className="bg-blue-900 text-white">Tambah Barang</Button>
       </div>
-      <Table removeWrapper aria-label="Purchase Order Details">
+      <Table aria-label="Example static collection table">
         <TableHeader>
-          <TableColumn className="bg-blue-900 text-white">NO</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">NAMA BARANG</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">QUANTITY</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">HARGA SATUAN</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">DISCOUNT</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">AKSI</TableColumn>
+          <TableColumn className="bg-blue-900 text-white text-center">No</TableColumn>
+          <TableColumn className="bg-blue-900 text-white text-center">Nama Barang</TableColumn>
+          <TableColumn className="bg-blue-900 text-white text-center">Quantity</TableColumn>
+          <TableColumn className="bg-blue-900 text-white text-center">Harga Satuan</TableColumn>
+          <TableColumn className="bg-blue-900 text-white text-center">Discount</TableColumn>
+          <TableColumn className="bg-blue-900 text-white text-center">Aksi</TableColumn>
         </TableHeader>
         <TableBody>
           {responseData.item.map((item, index) => (
             <TableRow key={item.id}>
               <TableCell>{index + 1}</TableCell>
-              <TableCell>
+              <TableCell className="relative">
                 <Input
                   value={item.name}
                   name="name"
                   onChange={(e) => handleFieldChange(e, item.id)}
                   placeholder="Nama Barang"
                 />
+                {itemSuggestions[item.id]?.length > 0 && (
+                  <ul className="absolute top-full left-0 w-full bg-white border border-gray-300 z-10">
+                    {itemSuggestions[item.id].map((suggestion, idx) => (
+                      <li
+                        key={idx}
+                        className="cursor-pointer p-2 hover:bg-gray-200"
+                        onClick={() => handleSuggestionClick(suggestion, item.id)}
+                      >
+                        {suggestion}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </TableCell>
               <TableCell>
                 <Input
@@ -302,7 +358,7 @@ const AdminMainContent = () => {
                 <Tooltip content="Delete" className="text-black">
                   <span
                     className="cursor-pointer text-lg text-default-400 active:opacity-50"
-                    onClick={() => item.id && handleDelete(item.id)} // Ensure item.id is defined
+                    onClick={() => handleDelete(item.id)}
                   >
                     <DeleteIcon />
                   </span>
@@ -319,14 +375,14 @@ const AdminMainContent = () => {
             color="danger"
             className="min-w-36 text-white"
           >
-            Cancel
+            Kembali
           </Button>
           <Button
             onClick={submitAcc}
             color="success"
             className="min-w-36 text-white"
           >
-            Next
+            Lanjutkan
           </Button>
         </div>
       )}

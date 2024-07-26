@@ -65,7 +65,7 @@ const Form: FC = () => {
         <div className="flex h-[88.5vh] w-full flex-col items-center justify-between px-[1.6vw] pt-[2vh]">
           <div className="flex w-full flex-col gap-5">
             <FormMainContentLayout>{mainContent}</FormMainContentLayout>
-            {itemDetail && content}
+            {/* {itemDetail && content} */}
           </div>
         </div>
       </div>

@@ -23,8 +23,6 @@ const MainContent = () => (
     {/* dividing line */}
     <Divider />
 
-
-
     <div className="h-full">
       <TableComponent />
     </div>
