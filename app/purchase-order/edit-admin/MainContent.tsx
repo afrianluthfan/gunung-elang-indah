@@ -44,7 +44,7 @@ type PurchaseOrder = {
   status: string;
   reason?: string;
   item: ItemDetail[];
-  item_deleted: { id: number }[]; // Ensure this is an array
+  item_deleted: { id: number }[];
 };
 
 const AdminMainContent = () => {
@@ -99,17 +99,14 @@ const AdminMainContent = () => {
     if (shouldSubmit) {
       const submitData = async () => {
         try {
-          await axios.post(
+          const res = await axios.post(
             "http://localhost:8080/api/purchase-order/edit/inquiry",
             responseData,
           );
-          Swal.fire({
-            title: "Success!",
-            text: "Purchase order berhasil di " + responseData.status + ".",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
-          // router.push("/purchase-order");
+          
+          localStorage.setItem("purchaseOrder", JSON.stringify(res));
+          localStorage.setItem("aksi", "update");
+          router.push("/purchase-order/form/preview");
           setIsRejected(false);
         } catch (error) {
           console.error("Error submitting data", error);
@@ -122,43 +119,44 @@ const AdminMainContent = () => {
     }
   }, [shouldSubmit, responseData]);
 
-  const handleDelete = (id: number) => {
-    if (id !== undefined) {
-      console.log("ID tidak undefined: ", id);
+  const handleDelete = (index: number) => {
+    Swal.fire({
+      title: "Apakah Kamu Yakin ?",
+      text: "Apakah kamu yakin ingin menghapus barang ini!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setResponseData((prevData) => {
+          const itemToDelete = prevData.item[index];
+          const updatedItemDeleted = Array.isArray(prevData.item_deleted)
+            ? [...prevData.item_deleted, { id: itemToDelete.id }]
+            : [{ id: itemToDelete.id }];
 
-      Swal.fire({
-        title: "Apakah Kamu Yakin ?",
-        text: "Apakah kamu yakin ingin menerima purchase order ini!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, accept it!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          setResponseData((prevData) => ({
+          return {
             ...prevData,
-            item: prevData.item.filter((item) => item.id !== id),
-            item_deleted: Array.isArray(prevData.item_deleted)
-              ? [...prevData.item_deleted, { id }]
-              : [{ id }],
-          }));
-        }
-      });
-    }
+            item: prevData.item.filter((_, i) => i !== index),
+            item_deleted: updatedItemDeleted,
+          };
+        });
+      }
+    });
   };
 
   const handleFieldChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    itemId?: number,
+    itemIndex?: number,
   ) => {
     const { name, value } = e.target;
 
-    if (itemId !== undefined) {
+    if (itemIndex !== undefined) {
       setResponseData((prevData) => ({
         ...prevData,
-        item: prevData.item.map((item) =>
-          item.id === itemId ? { ...item, [name]: value } : item,
+        item: prevData.item.map((item, index) =>
+          index === itemIndex ? { ...item, [name]: value } : item,
         ),
       }));
     } else {
@@ -175,8 +173,8 @@ const AdminMainContent = () => {
       item: [
         ...prevData.item,
         {
-          id: Date.now(), // Generate a unique ID for new items
-          po_id: Date.now(),
+          id: 0, // Generate a unique ID for new items
+          po_id: 0,
           name: "",
           quantity: "",
           price: "",
@@ -187,26 +185,36 @@ const AdminMainContent = () => {
     }));
   };
 
-  // const deleteItem = () => {};
-
   const submitAcc = () => {
-    Swal.fire({
-      title: "Apakah Kamu Yakin ?",
-      text: "Apakah kamu yakin ingin menerima purchase order ini!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, accept it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setResponseData((prevData) => ({
-          ...prevData,
-          status: "DITERIMA",
-        }));
-        setShouldSubmit(true);
-      }
-    });
+
+    setResponseData((prevData) => ({
+      ...prevData,
+      status: "DIPROSES",
+    }));
+    setShouldSubmit(true);
+
+  };
+
+  const tolak = () => {
+    // Swal.fire({
+    //   title: "Apakah Kamu Yakin ?",
+    //   text: "Apakah kamu yakin ingin mengubah purchase order ini!",
+    //   icon: "warning",
+    //   showCancelButton: true,
+    //   confirmButtonColor: "#3085d6",
+    //   cancelButtonColor: "#d33",
+    //   confirmButtonText: "Yes, accept it!",
+    // }).then((result) => {
+    //   if (result.isConfirmed) {
+    //     setResponseData((prevData) => ({
+    //       ...prevData,
+    //       status: "DIPROSES",
+    //     }));
+    //     setShouldSubmit(true);
+    //   }
+    // });
+
+    router.push("/purchase-order")
   };
 
   const cancelReject = () => {
@@ -218,8 +226,11 @@ const AdminMainContent = () => {
       <ContentTopSectionLayout>
         <TopSectionLeftSide />
       </ContentTopSectionLayout>
+
       <Divider />
+
       <div className="flex gap-4">
+
         <div className="flex w-full flex-col space-y-2 md:w-1/3">
           <label className="text-left">Supplier:</label>
           <Input
@@ -257,7 +268,7 @@ const AdminMainContent = () => {
             placeholder="Approved by"
             className="rounded border border-gray-300 p-2"
           />
-          <label className="text-left">Jabatan Approvel:</label>
+          <label className="text-left">Jabatan Approved:</label>
           <Input
             value={responseData.approved_jabatan}
             name="approved_jabatan"
@@ -267,98 +278,93 @@ const AdminMainContent = () => {
           />
         </div>
       </div>
-      <hr className="border-t-2 border-gray-200" />
-      <div className="flex justify-between gap-3">
-        <h1 className="mt-2 font-semibold">Data Barang</h1>
-        <Button
-          onClick={handleAddItem}
-          color="primary"
-          className="min-w-10 text-white"
-        >
-          Tambah Barang
+
+
+
+      {/* Bagian Barang Dan Hargannya */}
+
+      <div className="rounded-lg border p-4">
+        <div className="flex justify-between items-center">
+          <h3 className="mb-4 text-left text-lg font-bold">Barang:</h3>
+          <div className="mb-4 flex justify-center">
+            <Button className="bg-blue-900 text-white" onClick={handleAddItem}>
+              Tambah Barang
+            </Button>
+          </div>
+
+        </div>
+
+        {/* <h3 className="mb-4 text-left text-lg font-bold">Barang:</h3> */}
+
+        <Table>
+          <TableHeader>
+            <TableColumn className="bg-blue-900 text-white border-spacing-1">No</TableColumn>
+            <TableColumn className="bg-blue-900 text-white border-spacing-1">Nama Barang</TableColumn>
+            <TableColumn className="bg-blue-900 text-white border-spacing-1">Quantity</TableColumn>
+            <TableColumn className="bg-blue-900 text-white border-spacing-1">Harga Satuan</TableColumn>
+            <TableColumn className="bg-blue-900 text-white border-spacing-1">Discount</TableColumn>
+            <TableColumn className="bg-blue-900 text-white border-spacing-1">Action</TableColumn>
+          </TableHeader>
+          <TableBody >
+            {responseData.item.map((item, index) => (
+              <TableRow key={index}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>
+                  <Input
+                    value={item.name}
+                    name="name"
+                    onChange={(e) => handleFieldChange(e, index)}
+                    placeholder="Nama Barang"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    value={item.quantity}
+                    name="quantity"
+                    onChange={(e) => handleFieldChange(e, index)}
+                    placeholder="Quantity"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    value={item.price}
+                    name="price"
+                    onChange={(e) => handleFieldChange(e, index)}
+                    placeholder="Harga Satuan"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    value={item.discount.replace(/%/g, "")} // Remove '%' from display
+                    name="discount"
+                    onChange={(e) => handleFieldChange(e, index)}
+                    placeholder="Discount"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Tooltip content="Delete" className="text-black">
+                    <span
+                      className="cursor-pointer text-lg text-default-400 active:opacity-50"
+                      onClick={() => handleDelete(index)} // Use index here
+                    >
+                      <DeleteIcon />
+                    </span>
+                  </Tooltip>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
+      </div>
+      <div className="flex justify-end gap-4">
+        <Button className="bg-red-600 text-white" onClick={tolak}>
+          Batalkan
+        </Button>
+        <Button className="bg-green-500 text-white" onClick={submitAcc}>
+          Lanjutkan
         </Button>
       </div>
-      <Table removeWrapper aria-label="Purchase Order Details">
-        <TableHeader>
-          <TableColumn className="bg-blue-900 text-white">NO</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">
-            NAMA BARANG
-          </TableColumn>
-          <TableColumn className="bg-blue-900 text-white">QUANTITY</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">
-            HARGA SATUAN
-          </TableColumn>
-          <TableColumn className="bg-blue-900 text-white">DISCOUNT</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">AKSI</TableColumn>
-        </TableHeader>
-        <TableBody>
-          {responseData.item.map((item, index) => (
-            <TableRow key={item.id}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>
-                <Input
-                  value={item.name}
-                  name="name"
-                  onChange={(e) => handleFieldChange(e, item.id)}
-                  placeholder="Nama Barang"
-                />
-              </TableCell>
-              <TableCell>
-                <Input
-                  value={item.quantity}
-                  name="quantity"
-                  onChange={(e) => handleFieldChange(e, item.id)}
-                  placeholder="Quantity"
-                />
-              </TableCell>
-              <TableCell>
-                <Input
-                  value={item.price}
-                  name="price"
-                  onChange={(e) => handleFieldChange(e, item.id)}
-                  placeholder="Harga Satuan"
-                />
-              </TableCell>
-              <TableCell>
-                <Input
-                  value={item.discount.replace(/%/g, "")} // Remove '%' from display
-                  name="discount"
-                  onChange={(e) => handleFieldChange(e, item.id)}
-                  placeholder="Discount"
-                />
-              </TableCell>
-              <TableCell>
-                <Tooltip content="Delete" className="text-black">
-                  <span
-                    className="cursor-pointer text-lg text-default-400 active:opacity-50"
-                    onClick={() => item.id && handleDelete(item.id)} // Ensure item.id is defined
-                  >
-                    <DeleteIcon />
-                  </span>
-                </Tooltip>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      {!isRejected && (
-        <div className="flex justify-end gap-3">
-          <Button
-            onClick={cancelReject}
-            color="danger"
-            className="min-w-36 text-white"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={submitAcc}
-            color="success"
-            className="min-w-36 text-white"
-          >
-            Next
-          </Button>
-        </div>
-      )}
     </div>
   );
 };

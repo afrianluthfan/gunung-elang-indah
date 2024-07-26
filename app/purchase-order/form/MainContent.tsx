@@ -81,12 +81,7 @@ const AdminMainContent = () => {
             "http://localhost:8080/api/purchase-order/inquiry",
             responseData
           );
-          Swal.fire({
-            title: "Success!",
-            text: "Purchase order berhasil di " + responseData.status + ".",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
+
 
           // set local storage
           localStorage.setItem("purchaseOrder", JSON.stringify(res));
@@ -173,23 +168,11 @@ const AdminMainContent = () => {
   };
 
   const submitAcc = () => {
-    Swal.fire({
-      title: "Apakah Kamu Yakin ?",
-      text: "Apakah kamu yakin ingin menerima purchase order ini!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, accept it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
         setResponseData((prevData) => ({
           ...prevData,
           status: "DITERIMA",
         }));
         setShouldSubmit(true);
-      }
-    });
   };
 
   const cancelReject = () => {

@@ -27,23 +27,30 @@ const MainContent = () => {
     if (storedData) {
       setData(JSON.parse(storedData));
     }
+    // localStorage.removeItem("purchaseOrder");
   }, []);
 
   const submitData = async () => {
+    const aksi = localStorage.getItem("aksi");  
     Swal.fire({
       title: "Apakah Kamu Yakin ?",
-      text: "Apakah kamu yakin ingin menerima purchase order ini!",
+      text: "Apakah kamu yakin ingin mengubah purchase order ini?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, accept it!",
+      confirmButtonText: "Ya, Terima!",
     }).then((result) => {
       if (result.isConfirmed) {
         try {
           if (data && data.data && data.data.data) {
-            axios.post("http://localhost:8080/api/purchase-order/posting", data.data.data);
-             // Replace with your desired route
+            
+            if (aksi === "update") {
+              axios.post("http://localhost:8080/api/purchase-order/edit/posting-edit-admin", data.data.data);
+            } else {
+              axios.post("http://localhost:8080/api/purchase-order/posting", data.data.data);
+            }
+            // Replace with your desired route
           } else {
             console.error("Data is not available");
           }
@@ -51,6 +58,27 @@ const MainContent = () => {
           console.error("Error inquiring data", error);
           throw error;
         }
+
+        if (aksi === "update") {
+          Swal.fire({
+            title: "Success!",
+            text: "Purchase order berhasil di Ubah",
+            icon: "success",
+            confirmButtonText: "OK",
+            confirmButtonColor: "#3085d6",
+          });
+        } else {
+          Swal.fire({
+            title: "Success!",
+            text: "Purchase order berhasil di Tambah",
+            icon: "success",
+            confirmButtonText: "OK",
+            confirmButtonColor: "#3085d6",
+          });
+        }
+        
+        localStorage.removeItem("purchaseOrder");
+        localStorage.removeItem("aksi");
         router.push("/purchase-order");
       }
     });
@@ -79,58 +107,145 @@ const MainContent = () => {
       </ContentTopSectionLayout>
       <Divider />
       <div className="flex justify-between">
-        <div className="flex flex-col">
-          <h1>Nama Supplier: {nama_suplier}</h1>
-          <h1>Nomor Purchase Order: {nomor_po}</h1>
-          <h1>Tanggal: {tanggal}</h1>
-          <h1>Catatan Purchase Order: {catatan_po}</h1>
-        </div>
-        <div className="flex flex-col">
-          <h1>Prepared By: {prepared_by}</h1>
-          <h1>Prepared Jabatan: {prepared_jabatan}</h1>
-          <h1>Approved By: {approved_by}</h1>
-          <h1>Approved Jabatan: {approved_jabatan}</h1>
-        </div>
+        <table className="w-full">
+          <tbody>
+            <td>
+              <tr>
+                <td className=" text-left">
+                  <h1 className=" font-medium">Nama Supplier:</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{nama_suplier}</h1>
+                </td>
+              </tr>
+              <tr>
+                <td className=" text-left">
+                  <h1 className=" font-medium">Nomor Purchase Order:</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{nomor_po}</h1>
+                </td>
+              </tr>
+              <tr>
+                <td className=" text-left">
+                  <h1 className=" font-medium">Tanggal:</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{tanggal}</h1>
+                </td>
+              </tr>
+              <tr>
+                <td className=" text-left">
+                  <h1 className=" font-medium">Catatan Purchase Order:</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{catatan_po}</h1>
+                </td>
+              </tr>
+            </td>
+            <td className="">
+              <tr>
+                <td className=" text-left">
+                  <h1 className=" font-medium">Prepared By:</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{prepared_by}</h1>
+                </td>
+              </tr>
+              <tr>
+                <td className=" text-left">
+                  <h1 className=" font-medium">Prepared Jabatan:</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{prepared_jabatan}</h1>
+                </td>
+              </tr>
+              <tr>
+                <td className=" text-left">
+                  <h1 className=" font-medium">Approved By:</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{approved_by}</h1>
+                </td>
+              </tr>
+              <tr>
+                <td className=" text-left">
+                  <h1 className=" font-medium">Approved Jabatan:</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{approved_jabatan}</h1>
+                </td>
+              </tr>
+            </td>
+          </tbody>
+        </table>
       </div>
-      <Divider />
-      <Table removeWrapper aria-label="Example static collection table">
-        <TableHeader>
-          <TableColumn>NO</TableColumn>
-          <TableColumn>NAMA BARANG</TableColumn>
-          <TableColumn>QUANTITY</TableColumn>
-          <TableColumn>HARGA SATUAN</TableColumn>
-          <TableColumn>DISCOUNT</TableColumn>
-          <TableColumn>AMOUNT</TableColumn>
-        </TableHeader>
-        <TableBody>
-          {item?.map((item: { name: string; quantity: number; price: number; discount: number; amount: number }, index: number) => (
-            <TableRow key={index}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>{item.name}</TableCell>
-              <TableCell>{item.quantity}</TableCell>
-              <TableCell>{item.price}</TableCell>
-              <TableCell>{item.discount}</TableCell>
-              <TableCell>{item.amount}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
 
-      <div className="grid w-[25%] grid-cols-2 self-end text-end text-sm font-bold">
-        <p>Sub Total: </p>
+      <Divider />
+
+
+
+
+      {/* Bagian Table  */}
+
+        <div className="flex justify-start my-1">
+          <h1 className="font-semibold lg:text-[1.85vh]">List Harga Barang</h1>
+        </div>
+
+        {/* Bagian Table */}
+        <div className="flex justify-between items-center">
+          <Table >
+            <TableHeader>
+              <TableColumn className="bg-blue-900 text-white text-center">NO</TableColumn>
+              <TableColumn className="bg-blue-900 text-white text-center">NAMA BARANG</TableColumn>
+              <TableColumn className="bg-blue-900 text-white text-center">QUANTITY</TableColumn>
+              <TableColumn className="bg-blue-900 text-white text-center">HARGA SATUAN</TableColumn>
+              <TableColumn className="bg-blue-900 text-white text-center">DISCOUNT</TableColumn>
+              <TableColumn className="bg-blue-900 text-white text-center">AMOUNT</TableColumn>
+            </TableHeader>
+            <TableBody>
+              {item?.map((item: { name: string; quantity: number; price: number; discount: number; amount: number }, index: number) => (
+                <TableRow key={index} className="">
+                  <TableCell className="text-center">{index + 1}</TableCell>
+                  <TableCell className="text-center">{item.name}</TableCell>
+                  <TableCell className="text-center">{item.quantity}</TableCell>
+                  <TableCell className="text-center">{item.price}</TableCell>
+                  <TableCell className="text-center">{item.discount}</TableCell>
+                  <TableCell className="text-center">{item.amount}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+      <div className="py-4 grid w-[25%] grid-cols-2 self-end text-end text-sm font-bold">
+
+
+        <p>Sub Total  : </p>
         <p>{sub_total}</p>
-        <p>PPN 11%: </p>
+        <p>PPN 11%  : </p>
         <p>{pajak}</p>
-        <p>Total: </p>
+        <p>Total : </p>
         <p>{total}</p>
       </div>
 
+
+
+
       <div className="flex justify-end gap-4">
-        <Button onClick={cancelData} color="danger" className="min-w-36">
-          Cancel
+        <Button onClick={cancelData}  className="min-w-36 bg-red-600 text-white">
+          Batalkan
         </Button>
-        <Button onClick={submitData} color="primary" className="min-w-36">
-          Submit
+        <Button onClick={submitData}  className="min-w-36 bg-green-500 text-white">
+          Konfirmasi
         </Button>
       </div>
     </div>

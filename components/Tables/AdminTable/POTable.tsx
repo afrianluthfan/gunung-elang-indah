@@ -191,9 +191,9 @@ export default function PITableComponent() {
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
       >
-        <TableHeader columns={columns}>
+        <TableHeader  columns={columns}>
           {(column) => (
-            <TableColumn key={column.uid} align="start">
+            <TableColumn className="bg-blue-900 text-white" key={column.uid} align="start">
               {column.name}
             </TableColumn>
           )}

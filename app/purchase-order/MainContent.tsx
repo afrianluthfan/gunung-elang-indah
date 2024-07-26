@@ -6,26 +6,30 @@ import TableComponent from "@/components/Tables/AdminTable/POTable";
 
 const MainContent = () => (
   <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
-    
+
     <ContentTopSectionLayout>
       {/* cek profile customer and searchbar */}
       <TopSectionLeftSide />
-      
+
       {/* the two buttons on the right */}
       <TopSectionRightSide />
-      
+
     </ContentTopSectionLayout>
-    <Input type="text" placeholder="Masukan ID Purchase Order" />
-    <Button className="bg-[#00186D] font-bold text-white">Cari/Cek</Button>
+    <div className="flex justify-between gap-4">
+      <Input type="text" placeholder="Masukan ID Purchase Order" />
+      <Button className="bg-blue-900 w-10 font-bold text-white">Cari/Cek</Button>
+    </div>
+
     {/* dividing line */}
     <Divider />
 
 
-    
+
     <div className="h-full">
       <TableComponent />
     </div>
   </div>
+
 );
 
 export default MainContent;

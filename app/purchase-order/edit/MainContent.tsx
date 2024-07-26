@@ -201,12 +201,12 @@ const AdminMainContent = () => {
       </div>
       <Table removeWrapper aria-label="Purchase Order Details">
         <TableHeader>
-          <TableColumn>NO</TableColumn>
-          <TableColumn>NAMA BARANG</TableColumn>
-          <TableColumn>QTY</TableColumn>
-          <TableColumn>HARGA SATUAN</TableColumn>
-          <TableColumn>DISC</TableColumn>
-          <TableColumn>SUB TOTAL</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">NO</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">NAMA BARANG</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">QTY</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">HARGA SATUAN</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">DISC</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">SUB TOTAL</TableColumn>
         </TableHeader>
         <TableBody>
           {responseData.item.map((item, index) => (
