@@ -13,6 +13,9 @@ import {
   SortDescriptor,
   Tooltip,
   ChipProps,
+  Input,
+  Button,
+  Divider,
 } from "@nextui-org/react";
 import { EditIcon } from "./EditIcon";
 import { EyeIcon } from "./EyeIcon";
@@ -56,6 +59,7 @@ export default function PITableComponent() {
     direction: "ascending",
   });
   const [page, setPage] = useState(1);
+  const [searchText, setSearchText] = useState<string>(""); // State for search text
   const [username, setUsername] = useState<string | null>(null);
   const router = useRouter();
 
@@ -67,11 +71,16 @@ export default function PITableComponent() {
     }
   }, []);
 
+  // Refresh page on navigation
+  useEffect(() => {
+    router.refresh();
+  }, []);
+
   // Function to fetch data from API
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/purchase-order/list",
+        "http://209.182.237.155:8080/api/purchase-order/list"
       );
       if (response.data.status) {
         setUsers(response.data.data);
@@ -88,8 +97,14 @@ export default function PITableComponent() {
     fetchData();
   }, []);
 
+  const filteredUsers = React.useMemo(() => {
+    return users.filter((user) =>
+      user.nama_suplier.toLowerCase().includes(searchText.toLowerCase())
+    );
+  }, [users, searchText]);
+
   const sortedItems = React.useMemo(() => {
-    return [...users].sort((a: User, b: User) => {
+    return [...filteredUsers].sort((a: User, b: User) => {
       const first =
         a[sortDescriptor.column as keyof User] !== undefined
           ? String(a[sortDescriptor.column as keyof User])
@@ -104,7 +119,7 @@ export default function PITableComponent() {
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
-  }, [sortDescriptor, users]);
+  }, [sortDescriptor, filteredUsers]);
 
   const itemsWithIndex = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -114,7 +129,7 @@ export default function PITableComponent() {
     }));
   }, [page, sortedItems, rowsPerPage]);
 
-  const pages = Math.ceil(users.length / rowsPerPage);
+  const pages = Math.ceil(filteredUsers.length / rowsPerPage);
 
   const renderCell = React.useCallback(
     (user: User & { index: number }, columnKey: React.Key) => {
@@ -150,7 +165,7 @@ export default function PITableComponent() {
                       router.push(
                         username === "admin"
                           ? `/purchase-order/edit-admin?id=${user.id}`
-                          : `/purchase-order/edit?id=${user.id}`,
+                          : `/purchase-order/edit?id=${user.id}`
                       )
                     }
                     className="cursor-pointer text-lg text-default-400 active:opacity-50"
@@ -165,7 +180,7 @@ export default function PITableComponent() {
           return cellValue;
       }
     },
-    [username, router],
+    [username, router]
   );
 
   const onRowsPerPageChange = React.useCallback(
@@ -173,36 +188,57 @@ export default function PITableComponent() {
       setRowsPerPage(Number(e.target.value));
       setPage(1);
     },
-    [],
+    []
   );
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+  };
 
   return (
     <div>
-      <Table
-        aria-label="Purchase Order Table"
-        sortDescriptor={sortDescriptor}
-        onSortChange={setSortDescriptor}
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn className="bg-blue-900 text-white text-center" key={column.uid} align="start">
-              {column.name}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody
-          emptyContent={"No purchase orders found"}
-          items={itemsWithIndex}
+      <div className="flex justify-between gap-4 mb-5">
+        <Input
+          type="text"
+          placeholder="Masukan Nama Supplier"
+          value={searchText}
+          onChange={handleSearchChange}
+        />
+        <Button className="bg-blue-900 w-10 font-bold text-white">Cari/Cek</Button>
+      </div>
+
+      <div className="mb-5">
+        <Divider />
+      </div>
+
+      <div>
+        <Table
+          removeWrapper
+          aria-label="Purchase Order Table"
+          sortDescriptor={sortDescriptor}
+          onSortChange={setSortDescriptor}
         >
-          {(item) => (  
-            <TableRow key={item.id}>
-              {(columnKey) => (
-                <TableCell className="text-center items-center">{renderCell(item, columnKey)}</TableCell>
-              )}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          <TableHeader columns={columns}>
+            {(column) => (
+              <TableColumn className="bg-blue-900 text-white text-center" key={column.uid} align="start">
+                {column.name}
+              </TableColumn>
+            )}
+          </TableHeader>
+          <TableBody
+            emptyContent={"No purchase orders found"}
+            items={itemsWithIndex}
+          >
+            {(item) => (
+              <TableRow key={item.id}>
+                {(columnKey) => (
+                  <TableCell className="text-center items-center">{renderCell(item, columnKey)}</TableCell>
+                )}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
       <div className="mt-5 flex justify-between">
         <Pagination
           total={pages}

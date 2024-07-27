@@ -47,6 +47,17 @@ type PurchaseOrder = {
   item_deleted: { id: number }[];
 };
 
+function debounce(func: (...args: any[]) => void, wait: number) {
+  let timeout: NodeJS.Timeout | null = null;
+
+  return (...args: any[]) => {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => func(...args), wait);
+  };
+}
+
 const AdminMainContent = () => {
   const router = useRouter();
   const [responseData, setResponseData] = useState<PurchaseOrder>({
@@ -70,6 +81,9 @@ const AdminMainContent = () => {
 
   const [isRejected, setIsRejected] = useState(false);
   const [shouldSubmit, setShouldSubmit] = useState(false);
+  const [stockItems, setStockItems] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<Record<number, string[]>>({});
+  const [prices, setPrices] = useState<Record<string, string>>({}); // To store item prices
 
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
@@ -94,6 +108,58 @@ const AdminMainContent = () => {
 
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    const fetchStockItems = async () => {
+      try {
+        const response = await axios.post("http://localhost:8080/api/stock-barang/list");
+        const items = response.data.data;
+        setStockItems(items.map((item: { name: string }) => item.name));
+        // Initialize prices map
+        const pricesMap = items.reduce((acc: Record<string, string>, item: { name: string, price: string }) => {
+          acc[item.name] = item.price;
+          return acc;
+        }, {});
+        setPrices(pricesMap);
+      } catch (error) {
+        console.error("Error fetching stock items", error);
+      }
+    };
+
+    fetchStockItems();
+  }, []);
+
+  const showSuggestions = async (query: string, index: number) => {
+    if (!query) {
+      setSuggestions((prev) => ({ ...prev, [index]: [] }));
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/api/stock-barang/list?query=${query}`
+      );
+      const filteredSuggestions = response.data.data
+        .filter((item: { name: string }) =>
+          item.name.toLowerCase().includes(query.toLowerCase())
+        )
+        .map((item: { name: string }) => item.name);
+
+      setSuggestions((prev) => ({ ...prev, [index]: filteredSuggestions }));
+    } catch (error) {
+      console.error("Error fetching suggestions", error);
+    }
+  };
+
+  const updatePriceForItem = (itemIndex: number, itemName: string) => {
+    const price = prices[itemName] || "";
+    setResponseData((prevData) => ({
+      ...prevData,
+      item: prevData.item.map((item, index) =>
+        index === itemIndex ? { ...item, price: price } : item
+      ),
+    }));
+  };
 
   useEffect(() => {
     if (shouldSubmit) {
@@ -153,12 +219,16 @@ const AdminMainContent = () => {
     const { name, value } = e.target;
 
     if (itemIndex !== undefined) {
-      setResponseData((prevData) => ({
-        ...prevData,
-        item: prevData.item.map((item, index) =>
+      setResponseData((prevData) => {
+        const updatedItems = prevData.item.map((item, index) =>
           index === itemIndex ? { ...item, [name]: value } : item
-        ),
-      }));
+        );
+        if (name === "name") {
+          updatePriceForItem(itemIndex, value);
+        }
+        return { ...prevData, item: updatedItems };
+      });
+      showSuggestions(value, itemIndex); // Update suggestions for specific item
     } else {
       setResponseData((prevData) => ({
         ...prevData,
@@ -202,29 +272,18 @@ const AdminMainContent = () => {
   };
 
   return (
-
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       {responseData.reason && (
         <div>
           <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
             <p className="font-bold">Alasan Penolakan:</p>
             <p>{responseData.reason}</p>
-
           </div>
-
-          {/* <div className="mt-4">
-            <Divider />
-          </div> */}
         </div>
-
       )}
 
       <h1 className="font-semibold text-xl">Edit Purchase Order</h1>
-
       <Divider />
-
-
-
       <div className="flex gap-4">
         <div className="flex w-full flex-col space-y-2 md:w-1/3">
           <label className="text-left">Supplier:</label>
@@ -234,6 +293,14 @@ const AdminMainContent = () => {
             onChange={(e) => handleFieldChange(e)}
             placeholder="Nama Suplier"
             className="rounded py-2"
+          />
+          <label className="text-left">Catatan PO:</label>
+          <Input
+            value={responseData.catatan_po}
+            name="catatan_po"
+            onChange={(e) => handleFieldChange(e)}
+            placeholder="Catatan PO"
+            className="py-2 rounded"
           />
         </div>
         <div className="flex w-full flex-col space-y-2 md:w-1/3">
@@ -276,7 +343,6 @@ const AdminMainContent = () => {
 
       <Divider />
 
-
       <div className="flex justify-between items-center">
         <h3 className="mb-2 text-left text-lg font-semibold">Barang:</h3>
         <div className="mb-2 flex justify-center">
@@ -286,15 +352,13 @@ const AdminMainContent = () => {
         </div>
       </div>
 
-
-
       <Table removeWrapper className="mb-4">
         <TableHeader>
           <TableColumn className="bg-blue-900 text-white text-center">No</TableColumn>
-          <TableColumn className="bg-blue-900 text-white ">Nama Barang</TableColumn>
-          <TableColumn className="bg-blue-900 text-white ">Quantity</TableColumn>
-          <TableColumn className="bg-blue-900 text-white ">Harga Satuan</TableColumn>
-          <TableColumn className="bg-blue-900 text-white ">Discount</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">Nama Barang</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">Quantity</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">Harga Satuan</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">Discount</TableColumn>
           <TableColumn className="bg-blue-900 text-white">Action</TableColumn>
         </TableHeader>
         <TableBody>
@@ -302,12 +366,36 @@ const AdminMainContent = () => {
             <TableRow key={index}>
               <TableCell className="text-center">{index + 1}</TableCell>
               <TableCell>
-                <Input
-                  value={item.name}
-                  name="name"
-                  onChange={(e) => handleFieldChange(e, index)}
-                  placeholder="Nama Barang"
-                />
+                <div className="relative">
+                  <Input
+                    value={item.name}
+                    name="name"
+                    onChange={(e) => handleFieldChange(e, index)}
+                    placeholder="Nama Barang"
+                    autoComplete="off"
+                  />
+                  {suggestions[index]?.length > 0 && (
+                    <div className="absolute bg-white border mt-2 w-full shadow-lg z-10">
+                      {suggestions[index].map((suggestion, i) => (
+                        <div
+                          key={i}
+                          className="cursor-pointer p-2 hover:bg-gray-100"
+                          onClick={() => {
+                            setResponseData((prevData) => {
+                              const updatedItems = [...prevData.item];
+                              updatedItems[index].name = suggestion;
+                              return { ...prevData, item: updatedItems };
+                            });
+                            updatePriceForItem(index, suggestion);
+                            setSuggestions((prev) => ({ ...prev, [index]: [] }));
+                          }}
+                        >
+                          {suggestion}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </TableCell>
               <TableCell>
                 <Input
@@ -327,13 +415,13 @@ const AdminMainContent = () => {
               </TableCell>
               <TableCell>
                 <Input
-                  value={item.discount.replace(/%/g, "")} // Remove '%' from display
+                  value={item.discount.replace(/%/g, "")}
                   name="discount"
                   onChange={(e) => handleFieldChange(e, index)}
                   placeholder="Discount"
                 />
               </TableCell>
-              <TableCell >
+              <TableCell>
                 <Tooltip content="Delete" className="text-black">
                   <span
                     className="cursor-pointer text-lg text-default-400 active:opacity-50"

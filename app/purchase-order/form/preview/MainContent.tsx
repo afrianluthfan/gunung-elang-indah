@@ -40,15 +40,50 @@ const MainContent = () => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Ya, Terima!",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
         try {
           if (data && data.data && data.data.data) {
             
             if (aksi === "update") {
-              axios.post("http://localhost:8080/api/purchase-order/edit/posting-edit-admin", data.data.data);
+              const res = await axios.post("http://localhost:8080/api/purchase-order/edit/posting-edit-admin", data.data.data);
+              console.log(res);
+              if (res.data.status === true) {
+                Swal.fire({
+                  title: "Success",
+                  text: "Purchase Order berhasil diubah",
+                  icon: "success",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    router.push("/purchase-order");
+                  }
+                });
+              } else {
+                Swal.fire({
+                  title: "Failed",
+                  text: "Purchase Order gagal diubah",
+                  icon: "error",
+                });
+              }
             } else {
-              axios.post("http://localhost:8080/api/purchase-order/posting", data.data.data);
+              const res = await axios.post("http://localhost:8080/api/purchase-order/posting", data.data.data);
+              if (res.data.status === true) {
+                Swal.fire({
+                  title: "Success",
+                  text: "Purchase Order berhasil diubah",
+                  icon: "success",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    router.push("/purchase-order");
+                  }
+                });
+              } else {
+                Swal.fire({
+                  title: "Failed",
+                  text: "Purchase Order gagal diubah",
+                  icon: "error",
+                });
+              }
             }
             // Replace with your desired route
           } else {
@@ -59,27 +94,10 @@ const MainContent = () => {
           throw error;
         }
 
-        if (aksi === "update") {
-          Swal.fire({
-            title: "Success!",
-            text: "Purchase order berhasil di Ubah",
-            icon: "success",
-            confirmButtonText: "OK",
-            confirmButtonColor: "#3085d6",
-          });
-        } else {
-          Swal.fire({
-            title: "Success!",
-            text: "Purchase order berhasil di Tambah",
-            icon: "success",
-            confirmButtonText: "OK",
-            confirmButtonColor: "#3085d6",
-          });
-        }
         
         localStorage.removeItem("purchaseOrder");
         localStorage.removeItem("aksi");
-        router.push("/purchase-order");
+        
       }
     });
 

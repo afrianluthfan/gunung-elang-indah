@@ -71,15 +71,12 @@ const AdminMainContent = () => {
   const [isRejected, setIsRejected] = useState(false);
   const [shouldSubmit, setShouldSubmit] = useState(false);
   const [stockData, setStockData] = useState<any[]>([]);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [currentInput, setCurrentInput] = useState<string>("");
   const [itemSuggestions, setItemSuggestions] = useState<{ [key: number]: string[] }>({});
 
   useEffect(() => {
     const fetchStockData = async () => {
       try {
         const res = await axios.post("http://localhost:8080/api/stock-barang/list");
-        console.log(res.data); // Log the response data
         setStockData(res.data.data);
       } catch (error) {
         console.error("Error fetching stock data", error);
@@ -92,7 +89,6 @@ const AdminMainContent = () => {
   useEffect(() => {
     if (shouldSubmit) {
       const submitData = async () => {
-        console.log("Submitting data:", responseData); // Log data before sending
         try {
           const res = await axios.post(
             "http://localhost:8080/api/purchase-order/inquiry",
@@ -100,7 +96,6 @@ const AdminMainContent = () => {
           );
 
           localStorage.setItem("purchaseOrder", JSON.stringify(res));
-
           router.push("/purchase-order/form/preview");
           setIsRejected(false);
         } catch (error) {
@@ -116,8 +111,6 @@ const AdminMainContent = () => {
 
   const handleDelete = (id: number) => {
     if (id !== undefined) {
-      console.log("ID tidak undefined: ", id);
-
       Swal.fire({
         title: "Apakah Kamu Yakin?",
         text: "Apakah kamu yakin ingin menerima purchase order ini!",
@@ -144,7 +137,6 @@ const AdminMainContent = () => {
     const { name, value } = e.target;
 
     if (name === "name") {
-      setCurrentInput(value);
       if (value.length > 1) {
         const filteredSuggestions = stockData
           .filter((item: { name: string }) => item.name.toLowerCase().includes(value.toLowerCase()))
@@ -214,10 +206,10 @@ const AdminMainContent = () => {
         item: prevData.item.map((item) =>
           item.id === itemId
             ? {
-                ...item,
-                name: selectedItem.name,
-                price: selectedItem.price.toString(), // Convert to string if needed
-              }
+              ...item,
+              name: selectedItem.name,
+              price: selectedItem.price.toString(), // Convert to string if needed
+            }
             : item
         ),
       }));
@@ -235,7 +227,7 @@ const AdminMainContent = () => {
       </ContentTopSectionLayout>
       <Divider />
 
-      <div className="flex flex gap-4">
+      <div className="flex gap-4">
         <div className="flex flex-col space-y-2 w-full md:w-1/3">
           <label className="text-left">Supplier:</label>
           <Input
@@ -296,7 +288,7 @@ const AdminMainContent = () => {
         <h1 className="text-xl text-black font-semibold mt-2">Data Barang</h1>
         <Button onClick={handleAddItem} className="bg-blue-900 text-white">Tambah Barang</Button>
       </div>
-      <Table aria-label="Example static collection table">
+      <Table removeWrapper>
         <TableHeader>
           <TableColumn className="bg-blue-900 text-white text-center">No</TableColumn>
           <TableColumn className="bg-blue-900 text-white text-center">Nama Barang</TableColumn>
@@ -309,26 +301,28 @@ const AdminMainContent = () => {
           {responseData.item.map((item, index) => (
             <TableRow key={item.id}>
               <TableCell>{index + 1}</TableCell>
-              <TableCell className="relative">
-                <Input
-                  value={item.name}
-                  name="name"
-                  onChange={(e) => handleFieldChange(e, item.id)}
-                  placeholder="Nama Barang"
-                />
-                {itemSuggestions[item.id]?.length > 0 && (
-                  <ul className="absolute top-full left-0 w-full bg-white border border-gray-300 z-10">
-                    {itemSuggestions[item.id].map((suggestion, idx) => (
-                      <li
-                        key={idx}
-                        className="cursor-pointer p-2 hover:bg-gray-200"
-                        onClick={() => handleSuggestionClick(suggestion, item.id)}
-                      >
-                        {suggestion}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+              <TableCell >
+                <div className="relative">
+                  <Input
+                    value={item.name}
+                    name="name"
+                    onChange={(e) => handleFieldChange(e, item.id)}
+                    placeholder="Nama Barang"
+                  />
+                  {itemSuggestions[item.id]?.length > 0 && (
+                    <div className="absolute bg-white border mt-2 w-full shadow-lg z-10">
+                      {itemSuggestions[item.id].map((suggestion, idx) => (
+                        <div
+                          key={idx}
+                          className="cursor-pointer p-2 hover:bg-gray-100"
+                          onClick={() => handleSuggestionClick(suggestion, item.id)}
+                        >
+                          {suggestion}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </TableCell>
               <TableCell>
                 <Input

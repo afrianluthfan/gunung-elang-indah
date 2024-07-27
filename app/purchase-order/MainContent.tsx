@@ -15,13 +15,7 @@ const MainContent = () => (
       <TopSectionRightSide />
 
     </ContentTopSectionLayout>
-    <div className="flex justify-between gap-4">
-      <Input type="text" placeholder="Masukan ID Purchase Order" />
-      <Button className="bg-blue-900 w-10 font-bold text-white">Cari/Cek</Button>
-    </div>
 
-    {/* dividing line */}
-    <Divider />
 
     <div className="h-full">
       <TableComponent />
