@@ -33,7 +33,7 @@ pipeline {
                         sh 'pwd'
                         sh 'echo "-------------"'
                         sh 'ls -al'
-                        sh 'echo "-------------"'
+                        sh 'echo "--------------"'
                         sh 'whoami'
 
                     
