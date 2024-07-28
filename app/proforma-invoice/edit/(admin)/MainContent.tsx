@@ -91,7 +91,7 @@ const AdminMainContent = () => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/proforma-invoice/detailPI",
+          "http://209.182.237.155:8080/api/proforma-invoice/detailPI",
           {
             id,
             divisi,
@@ -111,7 +111,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           await axios.post(
-            "http://localhost:8080/api/proforma-invoice/editPI-admin",
+            "http://209.182.237.155:8080/api/proforma-invoice/editPI-admin",
             responseData,
           );
           setIsRejected(false);
