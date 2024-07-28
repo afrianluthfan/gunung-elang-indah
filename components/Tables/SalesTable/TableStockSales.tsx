@@ -58,7 +58,7 @@ export default function TableComponent() {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/stock-barang/list",
+          "http://localhost:8080/api/stock-barang/list",
           {},
         );
         setUsers(response.data.data);

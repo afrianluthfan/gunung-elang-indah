@@ -27,13 +27,13 @@ const Sidebar = () => {
 
   useEffect(() => {
     const salesMenus = [
-      {
-        pageName: "Profiling",
-        pageRoute: "profiling",
-      },
+      // {
+      //   pageName: "Profiling",
+      //   pageRoute: "profiling",
+      // },
       {
         pageName: "Proforma Invoice",
-        pageRoute: "proforma-invoice",
+        pageRoute: "proforma-invoice-dua",
       },
       {
         pageName: "Stok Barang",
@@ -61,6 +61,10 @@ const Sidebar = () => {
     ];
 
     const adminMenus = [
+      {
+        pageName: "Profiling",
+        pageRoute: "profiling",
+      },
       {
         pageName: "Proforma Invoice",
         pageRoute: "proforma-invoice",

@@ -32,19 +32,21 @@ const WelcomingMessage: FC = () => {
   }, [activeUser]);
 
   return (
-    <div className="relative flex h-[11.5vh] w-full bg-white px-10 py-7 text-black">
-      <div className="h-full w-[3px] bg-black" />
-      <div className="ml-1 flex h-full flex-col justify-between">
-        <h1 className="text-[1.3em] font-bold">Selamat Datang</h1>
-        <p>{user}</p>
+    <div className="relative flex items-center justify-between h-[11.5vh] w-full bg-white px-10 py-5 text-black">
+      <div className="flex-grow border-l-2 border-black pl-4">
+        <p className="text-l font-semibold">Selamat Datang</p>
+        <p className="text-m">{user}</p>
       </div>
-      <Image
-        height={300}
-        width={300}
-        className="absolute right-20 top-0 w-[3vh]"
-        alt="decoration"
-        src="/deco.svg"
-      />
+
+      <div className="absolute right-20 top-0">
+        <Image
+          height={200}
+          width={200}
+          className="w-[3vh]"
+          alt="decoration"
+          src="/deco.svg"
+        />
+      </div>
     </div>
   );
 };
