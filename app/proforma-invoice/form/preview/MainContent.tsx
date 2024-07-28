@@ -36,7 +36,7 @@ const MainContent = () => {
     const fetchRsData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
+          "http://localhost:8080/api/proforma-invoice/rs-list",
           "",
         );
         setRsData(response.data.data);
@@ -85,7 +85,7 @@ const MainContent = () => {
 
     try {
       await axios.post(
-        "http://209.182.237.155:8080/api/proforma-invoice/posting",
+        "http://localhost:8080/api/proforma-invoice/posting",
         requestBody,
       );
       dispatch(resetItemPI());

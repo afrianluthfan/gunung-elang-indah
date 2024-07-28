@@ -66,7 +66,7 @@ const AdminMainContent = () => {
   useEffect(() => {
     const fetchStockData = async () => {
       try {
-        const res = await axios.post("http://209.182.237.155:8080/api/stock-barang/list");
+        const res = await axios.post("http://localhost:8080/api/stock-barang/list");
         setStockData(res.data.data);
       } catch (error) {
         console.error("Error fetching stock data", error);
@@ -75,7 +75,7 @@ const AdminMainContent = () => {
 
     const fetchHospitalData = async () => {
       try {
-        const res = await axios.post("http://209.182.237.155:8080/api/proforma-invoice/rs-list");
+        const res = await axios.post("http://localhost:8080/api/proforma-invoice/rs-list");
         setHospitalData(res.data.data);
       } catch (error) {
         console.error("Error fetching hospital data", error);
@@ -91,7 +91,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/proforma-invoice/inquiry",
+            "http://localhost:8080/api/proforma-invoice/inquiry",
             responseData
           );
 
@@ -286,17 +286,17 @@ const AdminMainContent = () => {
         </div>
       </ContentTopSectionLayout>
       <Divider />
-      {selectedDivisi && (
+      {selectedDivisi == "Ortopedi" && (
         <>
           <div className="flex gap-4">
             <div className="flex flex-col space-y-2 w-full md:w-1/3">
-              <label className="text-left">Nama Rumah Sakit:</label>
+              <label className="text-left">Nama Perusahaan</label>
               <Input
                 value={responseData.rumah_sakit}
                 name="rumah_sakit"
                 onChange={(e) => handleFieldChange(e, -1)}
-                placeholder="Nama Rumah Sakit"
-                className="p-2 border border-gray-300 rounded"
+                placeholder="Nama Perusahaan"
+                className="py-2"
               />
               {hospitalSuggestions.length > 0 && (
                 <ul className="absolute z-10 bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto">
@@ -319,7 +319,7 @@ const AdminMainContent = () => {
                 name="alamat"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="Alamat"
-                className="p-2 border border-gray-300 rounded"
+                className="py-2"
               />
             </div>
             <div className="flex flex-col space-y-2 w-full md:w-1/3">
@@ -329,11 +329,11 @@ const AdminMainContent = () => {
                 value={responseData.jatuh_tempo}
                 name="jatuh_tempo"
                 onChange={(e) => handleFieldChange(e, -1)}
-                className="p-2 border border-gray-300 rounded"
+                className="py-2"
               />
             </div>
           </div>
-          <div className="flex gap-4 mt-4">
+          <div className="flex gap-4 ">
             <div className="flex flex-col space-y-2 w-full md:w-1/3">
               <label className="text-left">Nama Dokter:</label>
               <Input
@@ -341,7 +341,7 @@ const AdminMainContent = () => {
                 name="nama_dokter"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="Nama Dokter"
-                className="p-2 border border-gray-300 rounded"
+                className="py-2"
               />
             </div>
             <div className="flex flex-col space-y-2 w-full md:w-1/3">
@@ -351,7 +351,7 @@ const AdminMainContent = () => {
                 name="nama_pasien"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="Nama Pasien"
-                className="p-2 border border-gray-300 rounded"
+                className="py-2"
               />
             </div>
             <div className="flex flex-col space-y-2 w-full md:w-1/3">
@@ -361,11 +361,11 @@ const AdminMainContent = () => {
                 name="rm"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="RM"
-                className="p-2 border border-gray-300 rounded"
+                className="py-2"
               />
             </div>
           </div>
-          <div className="flex gap-4 mt-4">
+          <div className="flex gap-4 ">
             <div className="flex flex-col space-y-2 w-full md:w-1/3">
               <label className="text-left">Tanggal Tindakan:</label>
               <Input
@@ -373,11 +373,20 @@ const AdminMainContent = () => {
                 value={responseData.tanggal_tindakan}
                 name="tanggal_tindakan"
                 onChange={(e) => handleFieldChange(e, -1)}
-                className="p-2 border border-gray-300 rounded"
+                className="py-2"
               />
             </div>
           </div>
-          <div className="mt-6">
+
+          <Divider />
+
+          <div className="flex justify-end">
+            <Button className="  bg-blue-900 text-white" onClick={handleAddItem}>
+              Tambah Barang
+            </Button>
+          </div>
+
+          <div className="">
             <Table
               aria-label="Table Barang"
               className="min-w-full divide-y divide-gray-200"
@@ -386,12 +395,12 @@ const AdminMainContent = () => {
 
             >
               <TableHeader>
-                <TableColumn>Nomor Katalog</TableColumn>
-                <TableColumn>Nama Barang</TableColumn>
-                <TableColumn>Quantity</TableColumn>
-                <TableColumn>Harga Satuan</TableColumn>
-                <TableColumn>Diskon</TableColumn>
-                <TableColumn>Action</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Nomor Katalog</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Nama Barang</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Quantity</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Harga Satuan</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Diskon</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Action</TableColumn>
               </TableHeader>
               <TableBody>
                 {responseData.item.map((row, index) => (
@@ -402,7 +411,7 @@ const AdminMainContent = () => {
                         name="kat"
                         onChange={(e) => handleFieldChange(e, index)}
                         placeholder="Nomor Katalog"
-                        className="p-2 border border-gray-300 rounded"
+                        className="py-2"
                       />
                     </TableCell>
                     <TableCell>
@@ -411,7 +420,7 @@ const AdminMainContent = () => {
                         name="nama_barang"
                         onChange={(e) => handleFieldChange(e, index)}
                         placeholder="Nama Barang"
-                        className="p-2 border border-gray-300 rounded"
+                        className="py-2"
                       />
                       {itemSuggestions[index] && itemSuggestions[index].length > 0 && (
                         <ul className="absolute z-10 bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto">
@@ -433,7 +442,7 @@ const AdminMainContent = () => {
                         name="quantity"
                         onChange={(e) => handleFieldChange(e, index)}
                         placeholder="Quantity"
-                        className="p-2 border border-gray-300 rounded"
+                        className="py-2"
                       />
                     </TableCell>
                     <TableCell>
@@ -442,7 +451,7 @@ const AdminMainContent = () => {
                         name="harga_satuan"
                         onChange={(e) => handleFieldChange(e, index)}
                         placeholder="Harga Satuan"
-                        className="p-2 border border-gray-300 rounded"
+                        className="py-2"
                       />
                     </TableCell>
                     <TableCell>
@@ -451,7 +460,7 @@ const AdminMainContent = () => {
                         name="discount"
                         onChange={(e) => handleFieldChange(e, index)}
                         placeholder="Diskon"
-                        className="p-2 border border-gray-300 rounded"
+                        className="py-2"
                       />
                     </TableCell>
                     <TableCell>
@@ -468,9 +477,8 @@ const AdminMainContent = () => {
                 ))}
               </TableBody>
             </Table>
-            <Button className="mt-4" onClick={handleAddItem}>
-              Tambah Barang
-            </Button>
+
+
           </div>
           <div className="flex justify-end mt-4">
             <Button color="primary" onClick={submitAcc}>
@@ -482,6 +490,203 @@ const AdminMainContent = () => {
       {selectedDivisi === "Radiologi" && (
         <>
           {/* Konten untuk divisi Radiologi */}
+          <div className="flex gap-4">
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Nama Perusahaan</label>
+              <Input
+                value={responseData.rumah_sakit}
+                name="rumah_sakit"
+                onChange={(e) => handleFieldChange(e, -1)}
+                placeholder="Nama Perusahaan"
+                className="py-2"
+              />
+              {hospitalSuggestions.length > 0 && (
+                <ul className="absolute z-10 bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto">
+                  {hospitalSuggestions.map((suggestion, idx) => (
+                    <li
+                      key={idx}
+                      onClick={() => handleHospitalSuggestionClick(suggestion)}
+                      className="p-2 cursor-pointer hover:bg-gray-200"
+                    >
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Alamat:</label>
+              <Input
+                value={responseData.alamat}
+                name="alamat"
+                onChange={(e) => handleFieldChange(e, -1)}
+                placeholder="Alamat"
+                className="py-2"
+              />
+            </div>
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Tanggal Jatuh Tempo:</label>
+              <Input
+                type="date"
+                value={responseData.jatuh_tempo}
+                name="jatuh_tempo"
+                onChange={(e) => handleFieldChange(e, -1)}
+                className="py-2"
+              />
+            </div>
+          </div>
+          <div className="flex gap-4 ">
+            {/* <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Nama Dokter:</label>
+              <Input
+                value={responseData.nama_dokter}
+                name="nama_dokter"
+                onChange={(e) => handleFieldChange(e, -1)}
+                placeholder="Nama Dokter"
+                className="py-2"
+              />
+            </div>
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Nama Pasien:</label>
+              <Input
+                value={responseData.nama_pasien}
+                name="nama_pasien"
+                onChange={(e) => handleFieldChange(e, -1)}
+                placeholder="Nama Pasien"
+                className="py-2"
+              />
+            </div> */}
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">RM:</label>
+              <Input
+                value={responseData.rm}
+                name="rm"
+                onChange={(e) => handleFieldChange(e, -1)}
+                placeholder="RM"
+                className="py-2"
+              />
+            </div>
+          </div>
+          {/* <div className="flex gap-4 ">
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Tanggal Tindakan:</label>
+              <Input
+                type="date"
+                value={responseData.tanggal_tindakan}
+                name="tanggal_tindakan"
+                onChange={(e) => handleFieldChange(e, -1)}
+                className="py-2"
+              />
+            </div>
+          </div> */}
+
+          <Divider />
+
+          <div className="flex justify-end">
+            <Button className="  bg-blue-900 text-white" onClick={handleAddItem}>
+              Tambah Barang
+            </Button>
+          </div>
+
+          <div className="">
+            <Table
+              aria-label="Table Barang"
+              className="min-w-full divide-y divide-gray-200"
+              isHeaderSticky
+              removeWrapper
+
+            >
+              <TableHeader>
+                <TableColumn className="bg-blue-900 text-white">Nomor Katalog</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Nama Barang</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Quantity</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Harga Satuan</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Diskon</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Action</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {responseData.item.map((row, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <Input
+                        value={row.kat}
+                        name="kat"
+                        onChange={(e) => handleFieldChange(e, index)}
+                        placeholder="Nomor Katalog"
+                        className="py-2"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={row.nama_barang}
+                        name="nama_barang"
+                        onChange={(e) => handleFieldChange(e, index)}
+                        placeholder="Nama Barang"
+                        className="py-2"
+                      />
+                      {itemSuggestions[index] && itemSuggestions[index].length > 0 && (
+                        <ul className="absolute z-10 bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto">
+                          {itemSuggestions[index].map((suggestion, idx) => (
+                            <li
+                              key={idx}
+                              onClick={() => handleSuggestionClick(suggestion, index)}
+                              className="p-2 cursor-pointer hover:bg-gray-200"
+                            >
+                              {suggestion}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={row.quantity}
+                        name="quantity"
+                        onChange={(e) => handleFieldChange(e, index)}
+                        placeholder="Quantity"
+                        className="py-2"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={row.harga_satuan}
+                        name="harga_satuan"
+                        onChange={(e) => handleFieldChange(e, index)}
+                        placeholder="Harga Satuan"
+                        className="py-2"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={row.discount}
+                        name="discount"
+                        onChange={(e) => handleFieldChange(e, index)}
+                        placeholder="Diskon"
+                        className="py-2"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip content="Delete item">
+                        <span
+                          className="cursor-pointer text-lg text-red-600"
+                          onClick={() => handleDelete(index)}
+                        >
+                          <DeleteIcon />
+                        </span>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+
+          </div>
+          <div className="flex justify-end mt-4">
+            <Button color="primary" onClick={submitAcc}>
+              Simpan
+            </Button>
+          </div>
         </>
       )}
     </div>

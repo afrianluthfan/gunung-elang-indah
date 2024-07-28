@@ -67,7 +67,7 @@ const Sidebar = () => {
       },
       {
         pageName: "Proforma Invoice",
-        pageRoute: "proforma-invoice",
+        pageRoute: "proforma-invoice-dua",
       },
       {
         pageName: "Purchase Order",

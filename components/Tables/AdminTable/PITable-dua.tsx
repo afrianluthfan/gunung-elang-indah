@@ -25,9 +25,8 @@ import { useRouter } from "next/navigation";
 const columns = [
   { name: "NO.", uid: "number" },
   { name: "TANGGAL", uid: "created_at", sortable: true },
-  { name: "NAMA COMPANY", uid: "nama_company", sortable: true },
+  { name: "NAMA PERUSAHAAN", uid: "nama_company", sortable: true },
   { name: "NOMOR PI", uid: "invoice_number", sortable: true },
-  { name: "SUB TOTAL", uid: "sub_total", sortable: true },
   { name: "TOTAL", uid: "total", sortable: true },
   { name: "STATUS", uid: "status", sortable: true },
   { name: "ACTIONS", uid: "actions" },
@@ -47,6 +46,7 @@ type User = {
   sub_total: string;
   total: string;
   status: string;
+  nama_company: string;
 };
 
 export default function PITableComponent() {
@@ -78,7 +78,7 @@ export default function PITableComponent() {
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/proforma-invoice/get-all-list"
+        "http://localhost:8080/api/proforma-invoice/get-all-list"
       );
       console.log("API response:", response.data); // Log the API response
       if (response.data.status) {
@@ -100,7 +100,7 @@ export default function PITableComponent() {
 
   const filteredUsers = React.useMemo(() => {
     return users.filter((user) =>
-      user.divisi?.toLowerCase().includes(searchText.toLowerCase())
+      user.nama_company?.toLowerCase().includes(searchText.toLowerCase())
     );
   }, [users, searchText]);
 
@@ -141,10 +141,11 @@ export default function PITableComponent() {
       const cellValue = user[columnKey as keyof User];
       switch (columnKey) {
         case "status":
+          const status = user.status ? user.status.toUpperCase() : "UNKNOWN";
           return (
             <Chip
               className="capitalize"
-              color={statusColorMap[user.status.toUpperCase()]}
+              color={statusColorMap[status] || "default"}
               size="sm"
               variant="flat"
             >
@@ -210,7 +211,7 @@ export default function PITableComponent() {
       <div className="flex justify-between gap-4 mb-5">
         <Input
           type="text"
-          placeholder="Masukan Nama Supplier"
+          placeholder="Masukan Nama Perusahaan"
           value={searchText}
           onChange={handleSearchChange}
         />

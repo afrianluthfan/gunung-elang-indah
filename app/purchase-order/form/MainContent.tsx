@@ -76,7 +76,7 @@ const AdminMainContent = () => {
   useEffect(() => {
     const fetchStockData = async () => {
       try {
-        const res = await axios.post("http://209.182.237.155:8080/api/stock-barang/list");
+        const res = await axios.post("http://localhost:8080/api/stock-barang/list");
         setStockData(res.data.data);
       } catch (error) {
         console.error("Error fetching stock data", error);
@@ -91,7 +91,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/purchase-order/inquiry",
+            "http://localhost:8080/api/purchase-order/inquiry",
             responseData
           );
 

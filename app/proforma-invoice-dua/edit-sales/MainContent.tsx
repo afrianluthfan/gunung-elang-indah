@@ -97,7 +97,7 @@ const AdminMainContent = () => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/purchase-order/detail",
+          "http://localhost:8080/api/purchase-order/detail",
           { id: id }
         );
         setResponseData(response.data.data);
@@ -112,7 +112,7 @@ const AdminMainContent = () => {
   useEffect(() => {
     const fetchStockItems = async () => {
       try {
-        const response = await axios.post("http://209.182.237.155:8080/api/stock-barang/list");
+        const response = await axios.post("http://localhost:8080/api/stock-barang/list");
         const items = response.data.data;
         setStockItems(items.map((item: { name: string }) => item.name));
         // Initialize prices map
@@ -137,7 +137,7 @@ const AdminMainContent = () => {
 
     try {
       const response = await axios.post(
-        `http://209.182.237.155:8080/api/stock-barang/list?query=${query}`
+        `http://localhost:8080/api/stock-barang/list?query=${query}`
       );
       const filteredSuggestions = response.data.data
         .filter((item: { name: string }) =>
@@ -166,7 +166,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/purchase-order/edit/inquiry",
+            "http://localhost:8080/api/purchase-order/edit/inquiry",
             responseData
           );
 
