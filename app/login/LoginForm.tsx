@@ -79,7 +79,7 @@ const LoginForm = () => {
       // Redirect based on user role
       switch (username) {
         case "sales":
-          router.push("/proforma-invoice");
+          router.push("/proforma-invoice-dua");
           break;
         case "admin":
           router.push("/profiling");

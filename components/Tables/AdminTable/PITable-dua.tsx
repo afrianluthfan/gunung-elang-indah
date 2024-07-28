@@ -24,9 +24,9 @@ import { useRouter } from "next/navigation";
 
 const columns = [
   { name: "NO.", uid: "number" },
-  { name: "TANGGAL.", uid: "tanggal" },
-  { name: "NAMA SUPLIER", uid: "nama_suplier", sortable: true },
-  { name: "NOMOR PO", uid: "nomor_po", sortable: true },
+  { name: "TANGGAL", uid: "created_at", sortable: true },
+  { name: "NAMA COMPANY", uid: "nama_company", sortable: true },
+  { name: "NOMOR PI", uid: "invoice_number", sortable: true },
   { name: "SUB TOTAL", uid: "sub_total", sortable: true },
   { name: "TOTAL", uid: "total", sortable: true },
   { name: "STATUS", uid: "status", sortable: true },
@@ -39,23 +39,21 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   DIPROSES: "primary",
 };
 
-type ItemData = {
+type User = {
   id: number;
-  tanggal: string;
-  nama_suplier: string;
-  nomor_po: string;
+  created_at: string;
+  divisi: string;
+  invoice_number: string;
   sub_total: string;
   total: string;
   status: string;
-}[];
-
-type User = ItemData[0];
+};
 
 export default function PITableComponent() {
-  const [users, setUsers] = useState<ItemData>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "tanggal",
+    column: "created_at",
     direction: "ascending",
   });
   const [page, setPage] = useState(1);
@@ -80,10 +78,13 @@ export default function PITableComponent() {
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/purchase-order/list"
+        "http://localhost:8080/api/proforma-invoice/get-all-list"
       );
+      console.log("API response:", response.data); // Log the API response
       if (response.data.status) {
+        // Update state with fetched data
         setUsers(response.data.data);
+        console.log("Users set:", response.data.data); // Log the data set to users
       } else {
         console.error("Failed to fetch data:", response.data.message);
       }
@@ -99,7 +100,7 @@ export default function PITableComponent() {
 
   const filteredUsers = React.useMemo(() => {
     return users.filter((user) =>
-      user.nama_suplier.toLowerCase().includes(searchText.toLowerCase())
+      user.divisi?.toLowerCase().includes(searchText.toLowerCase())
     );
   }, [users, searchText]);
 
@@ -143,7 +144,7 @@ export default function PITableComponent() {
           return (
             <Chip
               className="capitalize"
-              color={statusColorMap[user.status]}
+              color={statusColorMap[user.status.toUpperCase()]}
               size="sm"
               variant="flat"
             >
@@ -153,28 +154,28 @@ export default function PITableComponent() {
         case "actions":
           return (
             <div className="relative flex items-center gap-2">
-
               <Tooltip content="Details" className="text-black text-center">
                 <span
                   onClick={() =>
                     router.push(
-                      username === "admin"
-                        ? ``
+                      username === "sales"
+                        ? ""
                         : `/purchase-order/edit?id=${user.id}`
                     )
                   }
-                  className="cursor-pointer text-lg text-default-400 active:opacity-50">
+                  className="cursor-pointer text-lg text-default-400 active:opacity-50"
+                >
                   <EyeIcon className="items-center" />
                 </span>
               </Tooltip>
-              {user.status !== "DITERIMA" && username === "admin" && (
+              {user.status !== "DITERIMA" && username === "sales" && (
                 <Tooltip content="Edit" className="text-black text-center">
                   <span
                     onClick={() =>
                       router.push(
-                        username === "admin"
-                          ? `/purchase-order/edit-admin?id=${user.id}`
-                          : ``
+                        username === "sales"
+                          ? `/proforma-invoice-dua/edit-sales?id=${user.id}&divisi=${user.divisi}`
+                          : ""
                       )
                     }
                     className="cursor-pointer text-lg text-default-400 active:opacity-50"
@@ -213,7 +214,9 @@ export default function PITableComponent() {
           value={searchText}
           onChange={handleSearchChange}
         />
-        <Button className="bg-blue-900 w-10 font-bold text-white">Cari/Cek</Button>
+        <Button className="bg-blue-900 w-10 font-bold text-white">
+          Cari/Cek
+        </Button>
       </div>
 
       <div className="mb-5">
@@ -229,19 +232,22 @@ export default function PITableComponent() {
         >
           <TableHeader columns={columns}>
             {(column) => (
-              <TableColumn className="bg-blue-900 text-white text-center" key={column.uid} align="start">
+              <TableColumn
+                className="bg-blue-900 text-white text-center"
+                key={column.uid}
+                align="start"
+              >
                 {column.name}
               </TableColumn>
             )}
           </TableHeader>
-          <TableBody
-            emptyContent={"No purchase orders found"}
-            items={itemsWithIndex}
-          >
+          <TableBody emptyContent={"No purchase orders found"} items={itemsWithIndex}>
             {(item) => (
               <TableRow key={item.id}>
                 {(columnKey) => (
-                  <TableCell className="text-center items-center">{renderCell(item, columnKey)}</TableCell>
+                  <TableCell className="text-center items-center">
+                    {renderCell(item, columnKey)}
+                  </TableCell>
                 )}
               </TableRow>
             )}
@@ -265,3 +271,6 @@ export default function PITableComponent() {
     </div>
   );
 }
+
+
+
