@@ -69,7 +69,9 @@ const Form: FC = () => {
           </div>
         </div>
       </div>
+
     </section>
+
   );
 };
 

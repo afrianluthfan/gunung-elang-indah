@@ -160,8 +160,8 @@ export default function PITableComponent() {
                   onClick={() =>
                     router.push(
                       username === "sales"
-                        ? ""
-                        : `/purchase-order/edit?id=${user.id}`
+                        ? `/proforma-invoice-dua/edit?id=${user.id}&divisi=${user.divisi}`
+                        : `/proforma-invoice-dua/edit?id=${user.id}&divisi=${user.divisi}`
                     )
                   }
                   className="cursor-pointer text-lg text-default-400 active:opacity-50"
