@@ -88,6 +88,16 @@ const AdminMainContent = () => {
 
   useEffect(() => {
     if (shouldSubmit) {
+
+      if (responseData.item.length === 0) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Tidak ada item yang dipilih",
+        });
+        return ;
+      }
+
       const submitData = async () => {
         try {
           const res = await axios.post(

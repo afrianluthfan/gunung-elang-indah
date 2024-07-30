@@ -159,7 +159,7 @@ export default function PITableComponent() {
                   onClick={() =>
                     router.push(
                       username === "admin"
-                        ? ``
+                        ? `/purchase-order/edit?id=${user.id}`
                         : `/purchase-order/edit?id=${user.id}`
                     )
                   }

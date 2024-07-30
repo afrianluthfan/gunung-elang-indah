@@ -125,6 +125,8 @@ const MainContent = () => {
     nama_pasien,
     nama_dokter,
 
+    status,
+
     rumah_sakit, jatuh_tempo, nomor_invoice, nomor_si, tanggal
   } = data.data.data || {};
 
@@ -208,7 +210,7 @@ const MainContent = () => {
                       <h1>{nomor_si}</h1>
                     </td>
                   </tr>
-                  
+
                   <tr>
                     <td className=" text-left">
                       <h1 className=" font-medium">Nama Dokter</h1>
@@ -218,7 +220,7 @@ const MainContent = () => {
                       <h1>{nama_dokter}</h1>
                     </td>
                   </tr>
-                  
+
                   <tr>
                     <td className=" text-left">
                       <h1 className=" font-medium">Nama Pasien</h1>
@@ -352,14 +354,10 @@ const MainContent = () => {
         <p>{RP_total}</p>
       </div>
 
-      <div className="flex justify-end gap-4">
-        <Button onClick={cancelData} className="min-w-36 bg-red-600 text-white">
-          Batalkan
-        </Button>
-        <Button onClick={submitData} className="min-w-36 bg-green-500 text-white">
-          Konfirmasi
-        </Button>
-      </div>
+
+      
+
+
     </div>
   );
 };

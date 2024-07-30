@@ -69,9 +69,16 @@ const AdminMainContent = () => {
   });
 
   const [shouldSubmit, setShouldSubmit] = useState(false);
-
+  const [username, setUsername] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
 
   useEffect(() => {
     if (!id) {
@@ -298,14 +305,24 @@ const AdminMainContent = () => {
         <p className="text-start">{responseData.total_rp}</p>
       </div>
 
-      <div className="flex justify-end gap-3">
-        <Button onClick={submitReject} color="danger" className="min-w-36">
-          Ditolak
-        </Button>
-        <Button onClick={submitAcc} color="success" className="min-w-36 text-white">
-          Diterima
-        </Button>
-      </div>
+
+      {
+        username !== "admin" && (
+
+          responseData.status !== "DITERIMA" && (
+            <div className="flex justify-end gap-3">
+              <Button onClick={submitReject} color="danger" className="min-w-36">
+                Ditolak
+              </Button>
+              <Button onClick={submitAcc} color="success" className="min-w-36 text-white">
+                Diterima
+              </Button>
+            </div>
+          )
+
+
+        )
+      }
     </div>
   );
 };

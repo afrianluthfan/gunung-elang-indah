@@ -167,10 +167,11 @@ export default function SOTableComponent() {
         aria-label="Example table with custom cells"
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
+        removeWrapper
       >
         <TableHeader columns={columns}>
           {(column) => (
-            <TableColumn key={column.uid} align="start">
+            <TableColumn className="bg-blue-900 text-white" key={column.uid} align="start">
               {column.name}
             </TableColumn>
           )}

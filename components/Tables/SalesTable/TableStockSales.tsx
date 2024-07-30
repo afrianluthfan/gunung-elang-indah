@@ -171,14 +171,15 @@ export default function TableComponent() {
     <div>
       <Table
         aria-label="Example table with custom cells"
-        selectionMode="multiple"
+        
         onSelectionChange={setSelectedKeys}
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
+        removeWrapper
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
-            <TableColumn key={column.uid} align="start">
+            <TableColumn className="bg-blue-900 text-white" key={column.uid} align="start">
               {column.name}
             </TableColumn>
           )}
