@@ -27,7 +27,7 @@ const TopSectionRightSide = () => {
 
       {username === "admin" && (
         <Button
-          onClick={() => router.push("/proforma-invoice-dua/form")}
+          onClick={() => router.push("/purchase-order/form")}
           className="bg-[#00a110] font-semibold text-white"
         >
           Tambah
