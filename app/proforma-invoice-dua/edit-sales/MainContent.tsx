@@ -89,7 +89,7 @@ const AdminMainContent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.post("http://localhost:8080/api/proforma-invoice/detailPI", {
+        const res = await axios.post("http://209.182.237.155:8080/api/proforma-invoice/detailPI", {
           id: id,
           divisi: divisi,
         });
@@ -145,7 +145,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://localhost:8080/api/proforma-invoice/editPI-inquiry",
+            "http://209.182.237.155:8080/api/proforma-invoice/editPI-inquiry",
             responseData
           );
 
