@@ -7,12 +7,13 @@ const TopSectionRightSide = () => {
   const router = useRouter();
   return (
     <div className="flex w-[8vw] flex-col gap-1">
-      <Button
+      {/* <Button
         onClick={() => router.push("/stok-barang/form")}
         className="bg-[#00DC16] font-bold text-white"
       >
         Tambah
-      </Button>
+      </Button> */}
+      <div className="mb-6  "></div>
       <Button className="bg-[#00186D] font-bold text-white">Cari/Cek</Button>
     </div>
   );

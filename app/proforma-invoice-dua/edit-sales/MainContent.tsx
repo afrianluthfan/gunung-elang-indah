@@ -14,166 +14,144 @@ import {
   TableRow,
   Tooltip,
 } from "@nextui-org/react";
-// import TopSectionLeftSide from "../TopSectionLeftSide";
 import Swal from "sweetalert2";
 import { DeleteIcon } from "../../../components/Tables/AdminTable/DeleteIcon";
 
-type ItemDetail = {
+interface ItemDetailPI {
   id: number;
-  po_id: number;
-  name: string;
+  kat: string;
+  nama_barang: string;
   quantity: string;
-  price: string;
+  harga_satuan: string;
   discount: string;
-  amount: string;
-};
+  sub_total_item: string;
+}
 
 type PurchaseOrder = {
   id: number;
-  nama_suplier: string;
-  nomor_po: string;
-  tanggal: string;
-  catatan_po: string;
-  prepared_by: string;
-  prepared_jabatan: string;
-  approved_by: string;
-  approved_jabatan: string;
+  customer_id: number;
+  status: string;
+  divisi: string;
+  invoice_number: string;
+  due_date: string;
+  doctor_name: string;
+  patient_name: string;
+  tanggal_tindakan: string;
+  rm: string;
+  number_si: string;
   sub_total: string;
   pajak: string;
   total: string;
-  status: string;
-  reason?: string;
-  item: ItemDetail[];
-  item_deleted: { id: number }[];
+  nama_customer: string;
+  alamat_customer: string;
+  reason: string;
+  item_detail_pi: ItemDetailPI[];
+  item_deleted: { kat: string }[];
 };
-
-function debounce(func: (...args: any[]) => void, wait: number) {
-  let timeout: NodeJS.Timeout | null = null;
-
-  return (...args: any[]) => {
-    if (timeout) {
-      clearTimeout(timeout);
-    }
-    timeout = setTimeout(() => func(...args), wait);
-  };
-}
 
 const AdminMainContent = () => {
   const router = useRouter();
   const [responseData, setResponseData] = useState<PurchaseOrder>({
     id: 0,
-    nama_suplier: "",
-    nomor_po: "",
-    tanggal: "",
-    catatan_po: "",
-    prepared_by: "",
-    prepared_jabatan: "",
-    approved_by: "",
-    approved_jabatan: "",
+    customer_id: 0,
+    status: "",
+    divisi: "",
+    invoice_number: "",
+    due_date: "",
+    doctor_name: "",
+    patient_name: "",
+    tanggal_tindakan: "",
+    rm: "",
+    number_si: "",
     sub_total: "",
     pajak: "",
     total: "",
-    status: "",
+    nama_customer: "",
+    alamat_customer: "",
     reason: "",
-    item: [],
+    item_detail_pi: [],
     item_deleted: [],
   });
 
-  const [isRejected, setIsRejected] = useState(false);
   const [shouldSubmit, setShouldSubmit] = useState(false);
-  const [stockItems, setStockItems] = useState<string[]>([]);
-  const [suggestions, setSuggestions] = useState<Record<number, string[]>>({});
-  const [prices, setPrices] = useState<Record<string, string>>({}); // To store item prices
+  const [stockData, setStockData] = useState<any[]>([]);
+  const [hospitalData, setHospitalData] = useState<any[]>([]);
+  const [itemSuggestions, setItemSuggestions] = useState<{ [key: string]: string[] }>({});
+  const [hospitalSuggestions, setHospitalSuggestions] = useState<string[]>([]);
+  const [selectedDivisi, setSelectedDivisi] = useState<string>("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  // get query url id dan divisi 
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
+  const divisi = searchParams.get("divisi");
 
   useEffect(() => {
-    if (!id) {
-      console.error("ID is missing");
-      return;
-    }
-
     const fetchData = async () => {
       try {
-        const response = await axios.post(
-          "http://209.182.237.155:8080/api/purchase-order/detail",
-          { id: id }
-        );
-        setResponseData(response.data.data);
+        const res = await axios.post("http://localhost:8080/api/proforma-invoice/detailPI", {
+          id: id,
+          divisi: divisi,
+        });
+
+        console.log("Nama Docter", res.data.data.doctor_name);
+        // Deklarasi variabel dengan type purchase order 
+
+        setResponseData(res.data.data);
       } catch (error) {
         console.error("Error fetching data", error);
       }
-    };
+    }
 
     fetchData();
-  }, [id]);
+  }, [])
+
 
   useEffect(() => {
-    const fetchStockItems = async () => {
+    const fetchStockData = async () => {
       try {
-        const response = await axios.post("http://209.182.237.155:8080/api/stock-barang/list");
-        const items = response.data.data;
-        setStockItems(items.map((item: { name: string }) => item.name));
-        // Initialize prices map
-        const pricesMap = items.reduce((acc: Record<string, string>, item: { name: string, price: string }) => {
-          acc[item.name] = item.price;
-          return acc;
-        }, {});
-        setPrices(pricesMap);
+        const res = await axios.post("http://209.182.237.155:8080/api/stock-barang/list");
+        setStockData(res.data.data);
       } catch (error) {
-        console.error("Error fetching stock items", error);
+        console.error("Error fetching stock data", error);
       }
     };
 
-    fetchStockItems();
+    const fetchHospitalData = async () => {
+      try {
+        const res = await axios.post("http://209.182.237.155:8080/api/proforma-invoice/rs-list");
+        setHospitalData(res.data.data);
+      } catch (error) {
+        console.error("Error fetching hospital data", error);
+      }
+    };
+
+    fetchStockData();
+    fetchHospitalData();
   }, []);
-
-  const showSuggestions = async (query: string, index: number) => {
-    if (!query) {
-      setSuggestions((prev) => ({ ...prev, [index]: [] }));
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        `http://209.182.237.155:8080/api/stock-barang/list?query=${query}`
-      );
-      const filteredSuggestions = response.data.data
-        .filter((item: { name: string }) =>
-          item.name.toLowerCase().includes(query.toLowerCase())
-        )
-        .map((item: { name: string }) => item.name);
-
-      setSuggestions((prev) => ({ ...prev, [index]: filteredSuggestions }));
-    } catch (error) {
-      console.error("Error fetching suggestions", error);
-    }
-  };
-
-  const updatePriceForItem = (itemIndex: number, itemName: string) => {
-    const price = prices[itemName] || "";
-    setResponseData((prevData) => ({
-      ...prevData,
-      item: prevData.item.map((item, index) =>
-        index === itemIndex ? { ...item, price: price } : item
-      ),
-    }));
-  };
 
   useEffect(() => {
     if (shouldSubmit) {
+
+      if (responseData.item_detail_pi.length === 0) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Tidak ada item yang dipilih",
+        });
+        return;
+      }
+
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/purchase-order/edit/inquiry",
+            "http://localhost:8080/api/proforma-invoice/editPI-inquiry",
             responseData
           );
 
           localStorage.setItem("purchaseOrder", JSON.stringify(res));
           localStorage.setItem("aksi", "update");
-          router.push("/purchase-order/form/preview");
-          setIsRejected(false);
+          router.push("/proforma-invoice-dua/form/preview");
         } catch (error) {
           console.error("Error submitting data", error);
         } finally {
@@ -186,89 +164,129 @@ const AdminMainContent = () => {
   }, [shouldSubmit, responseData]);
 
   const handleDelete = (index: number) => {
-    Swal.fire({
-      title: "Apakah Kamu Yakin ?",
-      text: "Apakah kamu yakin ingin menghapus barang ini!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setResponseData((prevData) => {
-          const itemToDelete = prevData.item[index];
-          const updatedItemDeleted = Array.isArray(prevData.item_deleted)
-            ? [...prevData.item_deleted, { id: itemToDelete.id }]
-            : [{ id: itemToDelete.id }];
-
-          return {
+    if (index !== undefined) {
+      Swal.fire({
+        title: "Apakah Kamu Yakin?",
+        text: "Apakah kamu yakin ingin menghapus ini?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const deletedItem = responseData.item_detail_pi[index];
+          setResponseData((prevData) => ({
             ...prevData,
-            item: prevData.item.filter((_, i) => i !== index),
-            item_deleted: updatedItemDeleted,
-          };
-        });
-      }
-    });
+            item_detail_pi: prevData.item_detail_pi.filter((_, idx) => idx !== index),
+            item_deleted: Array.isArray(prevData.item_deleted)
+              ? [...prevData.item_deleted, { kat: deletedItem.kat }]
+              : [{ kat: deletedItem.kat }],
+          }));
+        }
+      });
+    }
   };
 
-  const handleFieldChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    itemIndex?: number
-  ) => {
+  const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const { name, value } = e.target;
 
-    if (itemIndex !== undefined) {
-      setResponseData((prevData) => {
-        const updatedItems = prevData.item.map((item, index) =>
-          index === itemIndex ? { ...item, [name]: value } : item
-        );
-        if (name === "name") {
-          updatePriceForItem(itemIndex, value);
-        }
-        return { ...prevData, item: updatedItems };
-      });
-      showSuggestions(value, itemIndex); // Update suggestions for specific item
-    } else {
-      setResponseData((prevData) => ({
-        ...prevData,
-        [name]: value,
+    setResponseData((prevData) => {
+      if (index === -1) {
+        return {
+          ...prevData,
+          [name]: value,
+        };
+      } else {
+        return {
+          ...prevData,
+          item_detail_pi: prevData.item_detail_pi.map((item_detail_pi, idx) =>
+            idx === index ? { ...item_detail_pi, [name]: value } : item_detail_pi
+          ),
+        };
+      }
+    });
+
+    if (name === "nama_barang" && value.length > 1) {
+      const filteredSuggestions = stockData
+        .filter((item_detail_pi: { name: string }) => item_detail_pi.name && item_detail_pi.name.toLowerCase().includes(value.toLowerCase()))
+        .map((item_detail_pi: { name: string }) => item_detail_pi.name);
+      setItemSuggestions((prevSuggestions) => ({
+        ...prevSuggestions,
+        [index]: filteredSuggestions,
       }));
+    } else if (name === "nama_barang") {
+      setItemSuggestions((prevSuggestions) => ({
+        ...prevSuggestions,
+        [index]: [],
+      }));
+    }
+
+    if (name === "nama_customer" && value.length > 1) {
+      const filteredHospitalSuggestions = hospitalData
+        .filter((hospital: { name: string }) => hospital.name && hospital.name.toLowerCase().includes(value.toLowerCase()))
+        .map((hospital: { name: string }) => hospital.name);
+      setHospitalSuggestions(filteredHospitalSuggestions);
+    } else if (name === "nama_customer") {
+      setHospitalSuggestions([]);
     }
   };
 
   const handleAddItem = () => {
-    setResponseData((prevData) => ({
+    setResponseData((prevData: PurchaseOrder) => ({
       ...prevData,
-      item: [
-        ...prevData.item,
+      item_detail_pi: [
+        ...prevData.item_detail_pi,
         {
-          id: 0,
-          po_id: 0,
-          name: "",
+          id: 0, // Assuming 0 is a valid temporary ID
+          kat: "",
+          nama_barang: "",
           quantity: "",
-          price: "",
+          harga_satuan: "",
           discount: "",
-          amount: "",
+          sub_total_item: "0", // Changed to string to match ItemDetailPI type
         },
       ],
     }));
   };
 
   const submitAcc = () => {
-    setResponseData((prevData) => ({
-      ...prevData,
-      status: "DIPROSES",
-    }));
     setShouldSubmit(true);
   };
 
-  const tolak = () => {
-    router.push("/purchase-order");
+  const handleSuggestionClick = (suggestion: string, index: number) => {
+    const selectedItem = stockData.find((item_detail_pi) => item_detail_pi.name === suggestion);
+    if (selectedItem) {
+      setResponseData((prevData) => ({
+        ...prevData,
+        item_detail_pi: prevData.item_detail_pi.map((item_detail_pi, idx) =>
+          idx === index
+            ? {
+              ...item_detail_pi,
+              nama_barang: selectedItem.name,
+              harga_satuan: selectedItem.price.toString(), // Convert to string if needed
+            }
+            : item_detail_pi
+        ),
+      }));
+      setItemSuggestions((prevSuggestions) => ({
+        ...prevSuggestions,
+        [index]: [],
+      }));
+    }
   };
 
-  const cancelReject = () => {
-    setIsRejected(false);
+  const handleHospitalSuggestionClick = (suggestion: string) => {
+    const selectedHospital = hospitalData.find((hospital) => hospital.name === suggestion);
+    if (selectedHospital) {
+      setResponseData((prevData) => ({
+        ...prevData,
+        nama_customer: selectedHospital.name,
+        alamat_customer: selectedHospital.address_company,
+        customer_id: selectedHospital.id, // Menyetel ID Rumah Sakit secara otomatis
+      }));
+      setHospitalSuggestions([]);
+    }
   };
 
   return (
@@ -284,166 +302,409 @@ const AdminMainContent = () => {
 
       <h1 className="font-semibold text-xl">Edit Purchase Order</h1>
       <Divider />
-      <div className="flex gap-4">
-        <div className="flex w-full flex-col space-y-2 md:w-1/3">
-          <label className="text-left">Supplier:</label>
-          <Input
-            value={responseData.nama_suplier}
-            name="nama_suplier"
-            onChange={(e) => handleFieldChange(e)}
-            placeholder="Nama Suplier"
-            className="rounded py-2"
-          />
-          <label className="text-left">Catatan PO:</label>
-          <Input
-            value={responseData.catatan_po}
-            name="catatan_po"
-            onChange={(e) => handleFieldChange(e)}
-            placeholder="Catatan PO"
-            className="py-2 rounded"
-          />
-        </div>
-        <div className="flex w-full flex-col space-y-2 md:w-1/3">
-          <label className="text-left">Prepared by:</label>
-          <Input
-            value={responseData.prepared_by}
-            name="prepared_by"
-            onChange={(e) => handleFieldChange(e)}
-            placeholder="Prepared by"
-            className="rounded py-2"
-          />
-          <label className="text-left">Jabatan Prepared:</label>
-          <Input
-            value={responseData.prepared_jabatan}
-            name="prepared_jabatan"
-            onChange={(e) => handleFieldChange(e)}
-            placeholder="Jabatan Prepared"
-            className="rounded py-2"
-          />
-        </div>
-        <div className="flex w-full flex-col space-y-2 md:w-1/3">
-          <label className="text-left">Approved by:</label>
-          <Input
-            value={responseData.approved_by}
-            name="approved_by"
-            onChange={(e) => handleFieldChange(e)}
-            placeholder="Approved by"
-            className="rounded py-2"
-          />
-          <label className="text-left">Jabatan Approved:</label>
-          <Input
-            value={responseData.approved_jabatan}
-            name="approved_jabatan"
-            onChange={(e) => handleFieldChange(e)}
-            placeholder="Jabatan Approved"
-            className="rounded py-2"
-          />
-        </div>
-      </div>
+      {divisi == "Ortopedi" && (
+        <>
+          <div className="flex gap-4">
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Nama Perusahaan</label>
+              <Input
+                value={responseData.nama_customer}
+                name="nama_customer"
+                onChange={(e) => handleFieldChange(e, -1)}
+                placeholder="Nama Perusahaan"
+                className="py-2"
+              />
+              {hospitalSuggestions.length > 0 && (
+                <ul className="absolute z-10 bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto">
+                  {hospitalSuggestions.map((suggestion, idx) => (
+                    <li
+                      key={idx}
+                      onClick={() => handleHospitalSuggestionClick(suggestion)}
+                      className="p-2 cursor-pointer hover:bg-gray-200"
+                    >
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Alamat:</label>
+              <Input
+                value={responseData.alamat_customer}
+                name="alamat_customer"
+                onChange={(e) => handleFieldChange(e, -1)}
+                placeholder="Alamat"
+                className="py-2"
+              />
+            </div>
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Tanggal Jatuh Tempo:</label>
+              <Input
+                type="date"
+                value={responseData.due_date}
+                name="due_date"
+                onChange={(e) => handleFieldChange(e, -1)}
+                className="py-2"
+              />
+            </div>
+          </div>
+          <div className="flex gap-4 ">
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Nama Dokter:</label>
+              <Input
+                value={responseData.doctor_name}
+                name="doctor_name"
+                onChange={(e) => handleFieldChange(e, -1)}
+                placeholder="Nama Dokter"
+                className="py-2"
+              />
+            </div>
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Nama Pasien:</label>
+              <Input
+                value={responseData.patient_name}
+                name="patient_name"
+                onChange={(e) => handleFieldChange(e, -1)}
+                placeholder="Nama Pasien"
+                className="py-2"
+              />
+            </div>
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">RM:</label>
+              <Input
+                value={responseData.rm}
+                name="rm"
+                onChange={(e) => handleFieldChange(e, -1)}
+                placeholder="RM"
+                className="py-2"
+              />
+            </div>
+          </div>
+          <div className="flex gap-4 ">
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Tanggal Tindakan:</label>
+              <Input
+                type="date"
+                value={responseData.tanggal_tindakan}
+                name="tanggal_tindakan"
+                onChange={(e) => handleFieldChange(e, -1)}
+                className="py-2"
+              />
+            </div>
+          </div>
 
-      <Divider />
+          <Divider />
 
-      <div className="flex justify-between items-center">
-        <h3 className="mb-2 text-left text-lg font-semibold">Barang:</h3>
-        <div className="mb-2 flex justify-center">
-          <Button className="bg-blue-900 text-white" onClick={handleAddItem}>
-            Tambah Barang
-          </Button>
-        </div>
-      </div>
+          <div className="flex justify-end">
+            <Button className="  bg-blue-900 text-white" onClick={handleAddItem}>
+              Tambah Barang
+            </Button>
+          </div>
 
-      <Table removeWrapper className="mb-4">
-        <TableHeader>
-          <TableColumn className="bg-blue-900 text-white text-center">No</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">Nama Barang</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">Quantity</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">Harga Satuan</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">Discount</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">Action</TableColumn>
-        </TableHeader>
-        <TableBody>
-          {responseData.item.map((item, index) => (
-            <TableRow key={index}>
-              <TableCell className="text-center">{index + 1}</TableCell>
-              <TableCell>
-                <div className="relative">
-                  <Input
-                    value={item.name}
-                    name="name"
-                    onChange={(e) => handleFieldChange(e, index)}
-                    placeholder="Nama Barang"
-                    autoComplete="off"
-                  />
-                  {suggestions[index]?.length > 0 && (
-                    <div className="absolute bg-white border mt-2 w-full shadow-lg z-10">
-                      {suggestions[index].map((suggestion, i) => (
-                        <div
-                          key={i}
-                          className="cursor-pointer p-2 hover:bg-gray-100"
-                          onClick={() => {
-                            setResponseData((prevData) => {
-                              const updatedItems = [...prevData.item];
-                              updatedItems[index].name = suggestion;
-                              return { ...prevData, item: updatedItems };
-                            });
-                            updatePriceForItem(index, suggestion);
-                            setSuggestions((prev) => ({ ...prev, [index]: [] }));
-                          }}
+          <div className="">
+            <Table
+              aria-label="Table Barang"
+              className="min-w-full divide-y divide-gray-200"
+              isHeaderSticky
+              removeWrapper
+
+            >
+              <TableHeader>
+                <TableColumn className="bg-blue-900 text-white">Nomor Katalog</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Nama Barang</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Quantity</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Harga Satuan</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Diskon</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Action</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {responseData.item_detail_pi.map((row, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <Input
+                        value={row.kat}
+                        name="kat"
+                        onChange={(e) => handleFieldChange(e, index)}
+                        placeholder="Nomor Katalog"
+                        className="py-2"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={row.nama_barang}
+                        name="nama_barang"
+                        onChange={(e) => handleFieldChange(e, index)}
+                        placeholder="Nama Barang"
+                        className="py-2"
+                      />
+                      {itemSuggestions[index] && itemSuggestions[index].length > 0 && (
+                        <ul className="absolute z-10 bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto">
+                          {itemSuggestions[index].map((suggestion, idx) => (
+                            <li
+                              key={idx}
+                              onClick={() => handleSuggestionClick(suggestion, index)}
+                              className="p-2 cursor-pointer hover:bg-gray-200"
+                            >
+                              {suggestion}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={row.quantity}
+                        name="quantity"
+                        onChange={(e) => handleFieldChange(e, index)}
+                        placeholder="Quantity"
+                        className="py-2"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={row.harga_satuan}
+                        name="harga_satuan"
+                        onChange={(e) => handleFieldChange(e, index)}
+                        placeholder="Harga Satuan"
+                        className="py-2"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={row.discount}
+                        name="discount"
+                        onChange={(e) => handleFieldChange(e, index)}
+                        placeholder="Diskon"
+                        className="py-2"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip content="Delete item">
+                        <span
+                          className="cursor-pointer text-lg text-red-600"
+                          onClick={() => handleDelete(index)}
                         >
-                          {suggestion}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </TableCell>
-              <TableCell>
-                <Input
-                  value={item.quantity}
-                  name="quantity"
-                  onChange={(e) => handleFieldChange(e, index)}
-                  placeholder="Quantity"
-                />
-              </TableCell>
-              <TableCell>
-                <Input
-                  value={item.price}
-                  name="price"
-                  onChange={(e) => handleFieldChange(e, index)}
-                  placeholder="Harga Satuan"
-                />
-              </TableCell>
-              <TableCell>
-                <Input
-                  value={item.discount.replace(/%/g, "")}
-                  name="discount"
-                  onChange={(e) => handleFieldChange(e, index)}
-                  placeholder="Discount"
-                />
-              </TableCell>
-              <TableCell>
-                <Tooltip content="Delete" className="text-black">
-                  <span
-                    className="cursor-pointer text-lg text-default-400 active:opacity-50"
-                    onClick={() => handleDelete(index)}
-                  >
-                    <DeleteIcon />
-                  </span>
-                </Tooltip>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+                          <DeleteIcon />
+                        </span>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
 
-      <div className="flex justify-end gap-4">
-        <Button className="bg-red-600 text-white" onClick={tolak}>
-          Batalkan
-        </Button>
-        <Button className="bg-green-500 text-white" onClick={submitAcc}>
-          Lanjutkan
-        </Button>
-      </div>
+
+          </div>
+          <div className="flex justify-end mt-4">
+            <Button color="primary" onClick={submitAcc}>
+              Simpan
+            </Button>
+          </div>
+        </>
+      )}
+      {divisi === "Radiologi" && (
+        <>
+          {/* Konten untuk divisi Radiologi */}
+          <div className="flex gap-4">
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Nama Perusahaan</label>
+              <Input
+                value={responseData.nama_customer}
+                name="nama_customer"
+                onChange={(e) => handleFieldChange(e, -1)}
+                placeholder="Nama Perusahaan"
+                className="py-2"
+              />
+              {hospitalSuggestions.length > 0 && (
+                <ul className="absolute z-10 bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto">
+                  {hospitalSuggestions.map((suggestion, idx) => (
+                    <li
+                      key={idx}
+                      onClick={() => handleHospitalSuggestionClick(suggestion)}
+                      className="p-2 cursor-pointer hover:bg-gray-200"
+                    >
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Alamat:</label>
+              <Input
+                value={responseData.alamat_customer}
+                name="alamat_customer"
+                onChange={(e) => handleFieldChange(e, -1)}
+                placeholder="Alamat"
+                className="py-2"
+              />
+            </div>
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Tanggal Jatuh Tempo:</label>
+              <Input
+                type="date"
+                value={responseData.due_date}
+                name="due_date"
+                onChange={(e) => handleFieldChange(e, -1)}
+                className="py-2"
+              />
+            </div>
+          </div>
+          <div className="flex gap-4 ">
+            {/* <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Nama Dokter:</label>
+              <Input
+                value={responseData.nama_dokter}
+                name="nama_dokter"
+                onChange={(e) => handleFieldChange(e, -1)}
+                placeholder="Nama Dokter"
+                className="py-2"
+              />
+            </div>
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Nama Pasien:</label>
+              <Input
+                value={responseData.nama_pasien}
+                name="nama_pasien"
+                onChange={(e) => handleFieldChange(e, -1)}
+                placeholder="Nama Pasien"
+                className="py-2"
+              />
+            </div> */}
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">RM:</label>
+              <Input
+                value={responseData.rm}
+                name="rm"
+                onChange={(e) => handleFieldChange(e, -1)}
+                placeholder="RM"
+                className="py-2"
+              />
+            </div>
+          </div>
+          {/* <div className="flex gap-4 ">
+            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+              <label className="text-left">Tanggal Tindakan:</label>
+              <Input
+                type="date"
+                value={responseData.tanggal_tindakan}
+                name="tanggal_tindakan"
+                onChange={(e) => handleFieldChange(e, -1)}
+                className="py-2"
+              />
+            </div>
+          </div> */}
+
+          <Divider />
+
+          <div className="flex justify-end">
+            <Button className="  bg-blue-900 text-white" onClick={handleAddItem}>
+              Tambah Barang
+            </Button>
+          </div>
+
+          <div className="">
+            <Table
+              aria-label="Table Barang"
+              className="min-w-full divide-y divide-gray-200"
+              isHeaderSticky
+              removeWrapper
+
+            >
+              <TableHeader>
+                <TableColumn className="bg-blue-900 text-white">Nomor Katalog</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Nama Barang</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Quantity</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Harga Satuan</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Diskon</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Action</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {responseData.item_detail_pi.map((row, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <Input
+                        value={row.kat}
+                        name="kat"
+                        onChange={(e) => handleFieldChange(e, index)}
+                        placeholder="Nomor Katalog"
+                        className="py-2"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={row.nama_barang}
+                        name="nama_barang"
+                        onChange={(e) => handleFieldChange(e, index)}
+                        placeholder="Nama Barang"
+                        className="py-2"
+                      />
+                      {itemSuggestions[index] && itemSuggestions[index].length > 0 && (
+                        <ul className="absolute z-10 bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto">
+                          {itemSuggestions[index].map((suggestion, idx) => (
+                            <li
+                              key={idx}
+                              onClick={() => handleSuggestionClick(suggestion, index)}
+                              className="p-2 cursor-pointer hover:bg-gray-200"
+                            >
+                              {suggestion}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={row.quantity}
+                        name="quantity"
+                        onChange={(e) => handleFieldChange(e, index)}
+                        placeholder="Quantity"
+                        className="py-2"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={row.harga_satuan}
+                        name="harga_satuan"
+                        onChange={(e) => handleFieldChange(e, index)}
+                        placeholder="Harga Satuan"
+                        className="py-2"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={row.discount}
+                        name="discount"
+                        onChange={(e) => handleFieldChange(e, index)}
+                        placeholder="Diskon"
+                        className="py-2"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip content="Delete item">
+                        <span
+                          className="cursor-pointer text-lg text-red-600"
+                          onClick={() => handleDelete(index)}
+                        >
+                          <DeleteIcon />
+                        </span>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+
+          </div>
+          <div className="flex justify-end mt-4">
+            <Button color="primary" onClick={submitAcc}>
+              Simpan
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
 };

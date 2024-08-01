@@ -28,11 +28,15 @@ const INITIAL_VISIBLE_COLUMNS = [
   "name",
   "total",
   "price",
+  "katalog",
+  "gudang",
   // "actions",
 ];
 
 type User = {
   id: number;
+  katalog: string;
+  gudang: string;
   name: string;
   total: string;
   price: string;
@@ -58,7 +62,7 @@ export default function TableComponent() {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/stock-barang/list",
+          "http://localhost:8080/api/stock-barang/list",
           {},
         );
         setUsers(response.data.data);
@@ -76,6 +80,9 @@ export default function TableComponent() {
     { name: "Nama", uid: "name" },
     { name: "Jumlah Barang", uid: "total" },
     { name: "Harga Satuan", uid: "price" },
+    { name: "Katalog", uid: "katalog" },
+    { name: "Gudang", uid: "gudang" },
+    
     // { name: "Actions", uid: "actions" }
   ];
 
