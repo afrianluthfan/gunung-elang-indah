@@ -172,7 +172,7 @@ const AdminMainContent = () => {
           <h1>Nomor Surat Jalan: {responseData.po_number}</h1>
           <h1>Tanggal: {responseData.tanggal}</h1>
           <h1>Jatuh Tempo: {responseData.due_date}</h1>
-          <h1>Nomor SI: {responseData.number_si}</h1>
+          <h1>Nomor Surat Jalan: {responseData.number_si}</h1>
         </div>
         <div className="flex flex-col">
           <h1>Nama Rumah Sakit: {responseData.nama_rs}</h1>

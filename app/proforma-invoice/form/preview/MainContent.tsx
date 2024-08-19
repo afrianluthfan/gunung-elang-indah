@@ -111,7 +111,7 @@ const MainContent = () => {
           <h1>Nomor Surat Jalan: {responseData.nomor_surat_jalan}</h1>
           <h1>Tanggal: {responseData.tanggal}</h1>
           <h1>Jatuh Tempo: {responseData.jatuh_tempo}</h1>
-          <h1>Nomor SI: {responseData.nomor_si}</h1>
+          <h1>Nomor Surat Jalan: {responseData.nomor_si}</h1>
         </div>
         <div className="flex flex-col">
           <h1>Nama Rumah Sakit: {responseData.rumah_sakit}</h1>

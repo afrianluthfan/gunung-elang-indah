@@ -29,7 +29,7 @@ const MainContent = () => {
           <h1>Nomor Surat Jalan: {data.nomor_surat_jalan}</h1>
           <h1>Tanggal: {data.tanggal}</h1>
           <h1>Jatuh Tempo: {data.due_date}</h1>
-          <h1>Nomor SI: {data.number_si}</h1>
+          <h1>Nomor Surat Jalan: {data.number_si}</h1>
         </div>
         <div className="flex flex-col">
           <h1>Nama Rumah Sakit: {data.nama_customer}</h1>

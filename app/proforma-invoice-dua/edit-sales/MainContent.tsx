@@ -411,7 +411,7 @@ const AdminMainContent = () => {
 
             >
               <TableHeader>
-                <TableColumn className="bg-blue-900 text-white">Nomor Katalog</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Kode Barang</TableColumn>
                 <TableColumn className="bg-blue-900 text-white">Nama Barang</TableColumn>
                 <TableColumn className="bg-blue-900 text-white">Quantity</TableColumn>
                 <TableColumn className="bg-blue-900 text-white">Harga Satuan</TableColumn>
@@ -426,7 +426,7 @@ const AdminMainContent = () => {
                         value={row.kat}
                         name="kat"
                         onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Nomor Katalog"
+                        placeholder="Kode Barang"
                         className="py-2"
                       />
                     </TableCell>
@@ -613,7 +613,7 @@ const AdminMainContent = () => {
 
             >
               <TableHeader>
-                <TableColumn className="bg-blue-900 text-white">Nomor Katalog</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Kode Barang</TableColumn>
                 <TableColumn className="bg-blue-900 text-white">Nama Barang</TableColumn>
                 <TableColumn className="bg-blue-900 text-white">Quantity</TableColumn>
                 <TableColumn className="bg-blue-900 text-white">Harga Satuan</TableColumn>
@@ -628,7 +628,7 @@ const AdminMainContent = () => {
                         value={row.kat}
                         name="kat"
                         onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Nomor Katalog"
+                        placeholder="Kode Barang"
                         className="py-2"
                       />
                     </TableCell>
