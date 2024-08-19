@@ -150,7 +150,7 @@ const MainContent = () => {
             />
             <Input
               {...register("fax_facture")}
-              label="FAX"
+              label="EMAIL"
               onChange={handleInputChange("fax_facture")}
             />
           </div>
@@ -236,7 +236,7 @@ const MainContent = () => {
             />
             <Input
               {...register("fax_item")}
-              label="FAX"
+              label="EMAIL"
               onChange={handleInputChange("fax_item")}
             />
           </div>

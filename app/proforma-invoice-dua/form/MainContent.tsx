@@ -333,11 +333,19 @@ const AdminMainContent = () => {
               />
             </div>
             <div className="flex flex-col space-y-2 w-full md:w-1/3">
-              <label className="text-left">Tanggal Jatuh Tempo:</label>
+              {/* <label className="text-left">Tanggal Jatuh Tempo:</label>
               <Input
                 type="date"
                 value={responseData.jatuh_tempo}
                 name="jatuh_tempo"
+                onChange={(e) => handleFieldChange(e, -1)}
+                className="py-2"
+              /> */}
+              <label className="text-left">Tanggal Tindakan:</label>
+              <Input
+                type="date"
+                value={responseData.tanggal_tindakan}
+                name="tanggal_tindakan"
                 onChange={(e) => handleFieldChange(e, -1)}
                 className="py-2"
               />
@@ -365,7 +373,7 @@ const AdminMainContent = () => {
               />
             </div>
             <div className="flex flex-col space-y-2 w-full md:w-1/3">
-              <label className="text-left">RM:</label>
+              <label className="text-left">Rekam Medis:</label>
               <Input
                 value={responseData.rm}
                 name="rm"
@@ -377,14 +385,7 @@ const AdminMainContent = () => {
           </div>
           <div className="flex gap-4 ">
             <div className="flex flex-col space-y-2 w-full md:w-1/3">
-              <label className="text-left">Tanggal Tindakan:</label>
-              <Input
-                type="date"
-                value={responseData.tanggal_tindakan}
-                name="tanggal_tindakan"
-                onChange={(e) => handleFieldChange(e, -1)}
-                className="py-2"
-              />
+              
             </div>
           </div>
 
@@ -405,7 +406,7 @@ const AdminMainContent = () => {
 
             >
               <TableHeader>
-                <TableColumn className="bg-blue-900 text-white">Nomor Katalog</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Kode Barang</TableColumn>
                 <TableColumn className="bg-blue-900 text-white">Nama Barang</TableColumn>
                 <TableColumn className="bg-blue-900 text-white">Quantity</TableColumn>
                 <TableColumn className="bg-blue-900 text-white">Harga Satuan</TableColumn>
@@ -420,7 +421,7 @@ const AdminMainContent = () => {
                         value={row.kat}
                         name="kat"
                         onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Nomor Katalog"
+                        placeholder="Kode Barang"
                         className="py-2"
                       />
                     </TableCell>
@@ -535,12 +536,20 @@ const AdminMainContent = () => {
               />
             </div>
             <div className="flex flex-col space-y-2 w-full md:w-1/3">
-              <label className="text-left">Tanggal Jatuh Tempo:</label>
-              <Input
+              {/* <label className="text-left">Tanggal Jatuh Tempo:</label> */}
+              {/* <Input
                 type="date"
                 value={responseData.jatuh_tempo}
                 name="jatuh_tempo"
                 onChange={(e) => handleFieldChange(e, -1)}
+                className="py-2"
+              /> */}
+              <label className="text-left">Rekam Medis:</label>
+              <Input
+                value={responseData.rm}
+                name="rm"
+                onChange={(e) => handleFieldChange(e, -1)}
+                placeholder="RM"
                 className="py-2"
               />
             </div>
@@ -567,14 +576,14 @@ const AdminMainContent = () => {
               />
             </div> */}
             <div className="flex flex-col space-y-2 w-full md:w-1/3">
-              <label className="text-left">RM:</label>
+              {/* <label className="text-left">Rekam Medis:</label>
               <Input
                 value={responseData.rm}
                 name="rm"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="RM"
                 className="py-2"
-              />
+              /> */}
             </div>
           </div>
           {/* <div className="flex gap-4 ">
@@ -607,7 +616,7 @@ const AdminMainContent = () => {
 
             >
               <TableHeader>
-                <TableColumn className="bg-blue-900 text-white">Nomor Katalog</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">Kode Barang</TableColumn>
                 <TableColumn className="bg-blue-900 text-white">Nama Barang</TableColumn>
                 <TableColumn className="bg-blue-900 text-white">Quantity</TableColumn>
                 <TableColumn className="bg-blue-900 text-white">Harga Satuan</TableColumn>
@@ -622,7 +631,7 @@ const AdminMainContent = () => {
                         value={row.kat}
                         name="kat"
                         onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Nomor Katalog"
+                        placeholder="Kode Barang"
                         className="py-2"
                       />
                     </TableCell>

@@ -118,6 +118,54 @@ const Sidebar = () => {
       // },
     ];
 
+    // buatkan untuk super admin dan munculin semua navigasi routennya 
+    const superAdmin = [
+      {
+        pageName: "Profiling",
+        pageRoute: "profiling",
+      },
+      {
+        pageName: "Proforma Invoice",
+        pageRoute: "proforma-invoice-dua",
+      },
+      {
+        pageName: "Purchase Order",
+        pageRoute: "purchase-order",
+      },
+      {
+        pageName: "Stok Barang",
+        pageRoute: "stok-barang",
+      },
+      {
+        pageName: "Sewa Barang",
+        pageRoute: "sewa-barang",
+      },
+      {
+        pageName: "Sales Order",
+        pageRoute: "sales-order",
+      },
+      {
+        pageName: "Piutang",
+        pageRoute: "piutang",
+      },
+      {
+        pageName: "Hutang",
+        pageRoute: "hutang",
+      },
+      {
+        pageName: "Pemasukan",
+        pageRoute: "pemasukan",
+      },
+      {
+        pageName: "Pengeluaran",
+        pageRoute: "pengeluaran",
+      },
+      // {
+      //   pageName: "Komisi",
+      //   pageRoute: "komisi",
+      // },
+    ];
+
     switch (activeUser) {
       case "sales":
         setMenuItemsList(salesMenus);

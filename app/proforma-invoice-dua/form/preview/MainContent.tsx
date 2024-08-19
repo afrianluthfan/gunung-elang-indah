@@ -32,9 +32,16 @@ const MainContent = () => {
 
   const submitData = async () => {
     const aksi = localStorage.getItem("aksi");
+    let pesan = ""
+    if (aksi === "update") { 
+      pesan = "Mengubah"
+    } else {
+      pesan = "membuat"
+    }
+
     Swal.fire({
       title: "Apakah Kamu Yakin ?",
-      text: "Apakah kamu yakin ingin mengubah Proforma Invoice ini?",
+      text: "Apakah kamu yakin ingin "+pesan+" Proforma Invoice ini?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -72,7 +79,7 @@ const MainContent = () => {
               if (res.data.status === true) {
                 Swal.fire({
                   title: "Success",
-                  text: "Purchase Order berhasil diubah",
+                  text: "Purchase Order berhasil dibuat",
                   icon: "success",
                 }).then((result) => {
                   if (result.isConfirmed) {
@@ -84,7 +91,7 @@ const MainContent = () => {
               } else {
                 Swal.fire({
                   title: "Failed",
-                  text: "Purchase Order gagal diubah",
+                  text: "Purchase Order gagal dibuat",
                   icon: "error",
                 });
               }
@@ -190,7 +197,7 @@ const MainContent = () => {
                       <h1>{tanggal_tindakan}</h1>
                     </td>
                   </tr>
-                  <tr>
+                  {/* <tr>
                     <td className=" text-left">
                       <h1 className=" font-medium">Jatuh Tempo</h1>
                     </td>
@@ -198,7 +205,7 @@ const MainContent = () => {
                     <td className="">
                       <h1>{jatuh_tempo}</h1>
                     </td>
-                  </tr>
+                  </tr> */}
                   <tr>
                     <td className=" text-left">
                       <h1 className=" font-medium">Nomor Invoice</h1>
@@ -210,7 +217,7 @@ const MainContent = () => {
                   </tr>
                   <tr>
                     <td className=" text-left">
-                      <h1 className=" font-medium">Nomor SI</h1>
+                      <h1 className=" font-medium">Nomor Surat Jalan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -279,7 +286,7 @@ const MainContent = () => {
                       <h1>{tanggal}</h1>
                     </td>
                   </tr>
-                  <tr>
+                  {/* <tr>
                     <td className=" text-left">
                       <h1 className=" font-medium">Jatuh Tempo</h1>
                     </td>
@@ -287,7 +294,7 @@ const MainContent = () => {
                     <td className="">
                       <h1>{jatuh_tempo}</h1>
                     </td>
-                  </tr>
+                  </tr> */}
                   <tr>
                     <td className=" text-left">
                       <h1 className=" font-medium">Nomor Invoice</h1>
@@ -299,7 +306,7 @@ const MainContent = () => {
                   </tr>
                   <tr>
                     <td className=" text-left">
-                      <h1 className=" font-medium">Nomor SI</h1>
+                      <h1 className=" font-medium">Nomor Surat Jalan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -356,7 +363,7 @@ const MainContent = () => {
                       <h1>{tanggal_tindakan}</h1>
                     </td>
                   </tr>
-                  <tr>
+                  {/* <tr>
                     <td className=" text-left">
                       <h1 className=" font-medium">Jatuh Tempo</h1>
                     </td>
@@ -364,7 +371,7 @@ const MainContent = () => {
                     <td className="">
                       <h1>{due_date}</h1>
                     </td>
-                  </tr>
+                  </tr> */}
                   <tr>
                     <td className=" text-left">
                       <h1 className=" font-medium">Nomor Invoice</h1>
@@ -376,7 +383,7 @@ const MainContent = () => {
                   </tr>
                   <tr>
                     <td className=" text-left">
-                      <h1 className=" font-medium">Nomor SI</h1>
+                      <h1 className=" font-medium">Nomor Surat Jalan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -445,7 +452,7 @@ const MainContent = () => {
                       <h1>{tanggal}</h1>
                     </td>
                   </tr>
-                  <tr>
+                  {/* <tr>
                     <td className=" text-left">
                       <h1 className=" font-medium">Jatuh Tempo</h1>
                     </td>
@@ -453,7 +460,7 @@ const MainContent = () => {
                     <td className="">
                       <h1>{due_date}</h1>
                     </td>
-                  </tr>
+                  </tr> */}
                   <tr>
                     <td className=" text-left">
                       <h1 className=" font-medium">Nomor Invoice</h1>
@@ -465,7 +472,7 @@ const MainContent = () => {
                   </tr>
                   <tr>
                     <td className=" text-left">
-                      <h1 className=" font-medium">Nomor SI</h1>
+                      <h1 className=" font-medium">Nomor Surat Jalan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
