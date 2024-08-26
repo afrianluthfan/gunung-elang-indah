@@ -78,7 +78,7 @@ export default function PITableComponent() {
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/proforma-invoice/get-all-list"
+        "http://localhost:8080/api/proforma-invoice/get-all-list"
       );
       console.log("API response:", response.data); // Log the API response
       if (response.data.status) {
@@ -242,7 +242,7 @@ export default function PITableComponent() {
               </TableColumn>
             )}
           </TableHeader>
-          <TableBody emptyContent={"No purchase orders found"} items={itemsWithIndex}>
+          <TableBody emptyContent={"No Proforma Invoice found"} items={itemsWithIndex}>
             {(item) => (
               <TableRow key={item.id}>
                 {(columnKey) => (
