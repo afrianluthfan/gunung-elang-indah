@@ -89,7 +89,7 @@ const MainContent: FC<MainContentProps> = ({ divisi }) => {
     const fetchRsData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/proforma-invoice/rs-list",
+          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
           "",
         );
         setRsData(response.data.data);
@@ -105,7 +105,7 @@ const MainContent: FC<MainContentProps> = ({ divisi }) => {
     const fetchInvoiceData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/proforma-invoice/detailPI",
+          "http://209.182.237.155:8080/api/proforma-invoice/detailPI",
           {
             id: getParams.get("id"),
             divisi: getParams.get("divisi"),
