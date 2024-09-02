@@ -23,7 +23,7 @@ const TopSectionLeftSide: FC<TopSectionLeftSideProps> = ({
     const fetchRsData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/proforma-invoice/rs-list",
+          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
           "",
         );
         setRsData(response.data.data);
