@@ -180,7 +180,9 @@ const Form: FC = () => {
             </Button>
           </div> */}
           <div className="flex h-[4vh] items-center justify-center text-end font-semibold">
-            <h1>Supported by PT Gunung Elang Indah</h1>
+            <h1 className="text-sm lg:text-lg">
+              Supported by PT Gunung Elang Indah
+            </h1>
           </div>
         </div>
       </div>

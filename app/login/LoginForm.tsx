@@ -133,7 +133,7 @@ const LoginForm = () => {
   }, [isAuth, router]);
 
   return (
-    <div className="absolute flex h-full w-[50%] flex-col items-center justify-center p-8">
+    <div className="absolute flex h-full lg:w-[50%] flex-col items-center justify-center p-8">
       <div className="text-center">
         <h1 className="mb-2 text-3xl font-bold">Hello Again!</h1>
         <p className="text-lg text-gray-600">Welcome Back</p>

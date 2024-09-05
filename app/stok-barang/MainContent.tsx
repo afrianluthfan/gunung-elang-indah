@@ -14,7 +14,7 @@ const MainContent = () => (
     </ContentTopSectionLayout>
     {/* dividing line */}
     <Divider />
-    <div className="h-full">
+    <div className="h-full overflow-x-scroll">
       <TableComponent />
     </div>
   </div>

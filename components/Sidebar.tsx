@@ -118,7 +118,7 @@ const Sidebar = () => {
       // },
     ];
 
-    // buatkan untuk super admin dan munculin semua navigasi routennya 
+    // buatkan untuk super admin dan munculin semua navigasi routennya
     const superAdmin = [
       {
         pageName: "Profiling",
@@ -183,7 +183,7 @@ const Sidebar = () => {
   }, [activeUser]);
 
   return (
-    <div className="fixed z-50 flex h-screen w-[17.3vw] min-w-[107px] flex-col items-center justify-between bg-[#011869] p-5">
+    <div className="fixed z-50 flex h-screen w-[17.3vw] flex-col items-center justify-between bg-[#011869] p-1 lg:p-5">
       <SidebarTopItem />
       <SidebarMenuItemsLayout>
         {menuItemsList.map((menuItem, index) => (
@@ -195,7 +195,10 @@ const Sidebar = () => {
           />
         ))}
       </SidebarMenuItemsLayout>
-      <Button className="w-full font-bold" onClick={handleLogOut}>
+      <Button
+        className="w-fit min-w-16 px-0 text-xs font-bold lg:w-full lg:px-4 lg:text-sm"
+        onClick={handleLogOut}
+      >
         Log Out
       </Button>
     </div>
