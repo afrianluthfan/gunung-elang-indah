@@ -37,7 +37,7 @@ const LoginPage = () => {
           </div>
           <LoginForm />
           <div className="flex h-full items-end pb-5 text-center">
-            <p className="text-xs font-bold">
+            <p className="text-[10px] font-bold">
               Supported by PT Gunung Elang Indah
             </p>
           </div>
