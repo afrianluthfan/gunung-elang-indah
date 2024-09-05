@@ -3,9 +3,7 @@
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 
-
-
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 const TopSectionRightSide = () => {
   const [username, setUsername] = useState<string | null>(null);
@@ -20,7 +18,6 @@ const TopSectionRightSide = () => {
   const router = useRouter();
   return (
     <div className="flex justify-normal gap-2">
-
       <Button
         onClick={() => window.location.reload()}
         className="bg-blue-900 font-semibold text-white"
@@ -36,8 +33,6 @@ const TopSectionRightSide = () => {
           Tambah
         </Button>
       )}
-
-
     </div>
   );
 };

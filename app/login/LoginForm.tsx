@@ -31,7 +31,7 @@ const LoginForm = () => {
     if (!password && !username) {
       setAlert({
         visible: true,
-        message: "Uername dan Password Masih Kosong!",
+        message: "Username dan Password Masih Kosong!",
       });
       setTimeout(() => {
         setAlert({ visible: false, message: "" });
@@ -57,7 +57,6 @@ const LoginForm = () => {
       return;
     }
 
-
     // Validate password based on username
     const expectedPassword = roleBasedPasswords[username];
     if (expectedPassword && password !== expectedPassword) {
@@ -75,7 +74,7 @@ const LoginForm = () => {
     const result = await dispatch(logIn({ username, password }));
     if (result.payload) {
       // Save username in localStorage
-      localStorage.setItem('username', username);
+      localStorage.setItem("username", username);
       // Redirect based on user role
       switch (username) {
         case "sales":
@@ -111,7 +110,7 @@ const LoginForm = () => {
   useEffect(() => {
     // Check if user is already authenticated
     if (isAuth) {
-      const storedUsername = localStorage.getItem('username');
+      const storedUsername = localStorage.getItem("username");
       if (storedUsername) {
         switch (storedUsername) {
           case "sales":
@@ -136,7 +135,7 @@ const LoginForm = () => {
   return (
     <div className="absolute flex h-full w-[50%] flex-col items-center justify-center p-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold mb-2">Hello Again!</h1>
+        <h1 className="mb-2 text-3xl font-bold">Hello Again!</h1>
         <p className="text-lg text-gray-600">Welcome Back</p>
       </div>
       <div className="mt-10 flex flex-col gap-5">
@@ -158,7 +157,6 @@ const LoginForm = () => {
         >
           Login
         </Button>
-
       </div>
       {alert.visible && (
         <div
@@ -176,9 +174,7 @@ const LoginForm = () => {
           <strong>Error:</strong> {alert.message}
         </div>
       )}
-
     </div>
-
   );
 };
 

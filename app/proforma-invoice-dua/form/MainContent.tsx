@@ -58,7 +58,9 @@ const AdminMainContent = () => {
   const [shouldSubmit, setShouldSubmit] = useState(false);
   const [stockData, setStockData] = useState<any[]>([]);
   const [hospitalData, setHospitalData] = useState<any[]>([]);
-  const [itemSuggestions, setItemSuggestions] = useState<{ [key: string]: string[] }>({});
+  const [itemSuggestions, setItemSuggestions] = useState<{
+    [key: string]: string[];
+  }>({});
   const [hospitalSuggestions, setHospitalSuggestions] = useState<string[]>([]);
   const [selectedDivisi, setSelectedDivisi] = useState<string>("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -66,7 +68,9 @@ const AdminMainContent = () => {
   useEffect(() => {
     const fetchStockData = async () => {
       try {
-        const res = await axios.post("http://209.182.237.155:8080/api/stock-barang/list");
+        const res = await axios.post(
+          "http://209.182.237.155:8080/api/stock-barang/list",
+        );
         setStockData(res.data.data);
       } catch (error) {
         console.error("Error fetching stock data", error);
@@ -75,7 +79,9 @@ const AdminMainContent = () => {
 
     const fetchHospitalData = async () => {
       try {
-        const res = await axios.post("http://209.182.237.155:8080/api/proforma-invoice/rs-list");
+        const res = await axios.post(
+          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
+        );
         setHospitalData(res.data.data);
       } catch (error) {
         console.error("Error fetching hospital data", error);
@@ -88,21 +94,20 @@ const AdminMainContent = () => {
 
   useEffect(() => {
     if (shouldSubmit) {
-
       if (responseData.item.length === 0) {
         Swal.fire({
           icon: "error",
           title: "Oops...",
           text: "Tidak ada item yang dipilih",
         });
-        return ;
+        return;
       }
 
       const submitData = async () => {
         try {
           const res = await axios.post(
             "http://209.182.237.155:8080/api/proforma-invoice/inquiry",
-            responseData
+            responseData,
           );
 
           localStorage.setItem("purchaseOrder", JSON.stringify(res));
@@ -116,7 +121,7 @@ const AdminMainContent = () => {
 
       submitData();
     }
-  }, [shouldSubmit, responseData]);
+  }, [shouldSubmit, responseData, router]);
 
   const handleDelete = (index: number) => {
     if (index !== undefined) {
@@ -143,7 +148,10 @@ const AdminMainContent = () => {
     }
   };
 
-  const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleFieldChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number,
+  ) => {
     const { name, value } = e.target;
 
     setResponseData((prevData) => {
@@ -156,16 +164,19 @@ const AdminMainContent = () => {
         return {
           ...prevData,
           item: prevData.item.map((item, idx) =>
-            idx === index ? { ...item, [name]: value } : item
+            idx === index ? { ...item, [name]: value } : item,
           ),
         };
       }
     });
 
-    if (name === "nama_barang" && value.length > 1) {
+    if (name === "nama_barang" && value.length > 0) {
       const filteredSuggestions = stockData
-        .filter((item: { name: string }) => item.name && item.name.toLowerCase().includes(value.toLowerCase()))
+        .filter((item: { name: string }) =>
+          item.name.toLowerCase().includes(value.toLowerCase()),
+        )
         .map((item: { name: string }) => item.name);
+
       setItemSuggestions((prevSuggestions) => ({
         ...prevSuggestions,
         [index]: filteredSuggestions,
@@ -179,7 +190,11 @@ const AdminMainContent = () => {
 
     if (name === "rumah_sakit" && value.length > 1) {
       const filteredHospitalSuggestions = hospitalData
-        .filter((hospital: { name: string }) => hospital.name && hospital.name.toLowerCase().includes(value.toLowerCase()))
+        .filter(
+          (hospital: { name: string }) =>
+            hospital.name &&
+            hospital.name.toLowerCase().includes(value.toLowerCase()),
+        )
         .map((hospital: { name: string }) => hospital.name);
       setHospitalSuggestions(filteredHospitalSuggestions);
     } else if (name === "rumah_sakit") {
@@ -215,11 +230,11 @@ const AdminMainContent = () => {
         item: prevData.item.map((item, idx) =>
           idx === index
             ? {
-              ...item,
-              nama_barang: selectedItem.name,
-              harga_satuan: selectedItem.price.toString(), // Convert to string if needed
-            }
-            : item
+                ...item,
+                nama_barang: selectedItem.name,
+                harga_satuan: selectedItem.price.toString(), // Convert to string if needed
+              }
+            : item,
         ),
       }));
       setItemSuggestions((prevSuggestions) => ({
@@ -230,7 +245,9 @@ const AdminMainContent = () => {
   };
 
   const handleHospitalSuggestionClick = (suggestion: string) => {
-    const selectedHospital = hospitalData.find((hospital) => hospital.name === suggestion);
+    const selectedHospital = hospitalData.find(
+      (hospital) => hospital.name === suggestion,
+    );
     if (selectedHospital) {
       setResponseData((prevData) => ({
         ...prevData,
@@ -264,28 +281,30 @@ const AdminMainContent = () => {
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <ContentTopSectionLayout>
-        <div className="flex w-full  justify-between">
-          <h1 className="text-xl font-bold lg:text-[1.85vh] mt-2">Form Tambah Proforma Invoice</h1>
+        <div className="flex w-full justify-between">
+          <h1 className="mt-2 text-xl font-bold lg:text-[1.85vh]">
+            Form Tambah Proforma Invoice
+          </h1>
 
           <div className="flex justify-start">
             <div className="relative">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="p-2 border border-blue-900 rounded-lg bg-blue-900 text-white"
+                className="rounded-lg border border-blue-900 bg-blue-900 p-2 text-white"
               >
                 {selectedDivisi ? selectedDivisi : "Pilih Divisi"}
               </button>
               {dropdownOpen && (
-                <ul className="absolute z-10 bg-white border border-gray-300 rounded mt-1 w-full">
+                <ul className="absolute z-10 mt-1 w-full rounded border border-gray-300 bg-white">
                   <li
                     onClick={() => handleDivisiChange("Ortopedi")}
-                    className="p-2 cursor-pointer hover:bg-gray-200"
+                    className="cursor-pointer p-2 hover:bg-gray-200"
                   >
                     Ortopedi
                   </li>
                   <li
                     onClick={() => handleDivisiChange("Radiologi")}
-                    className="p-2 cursor-pointer hover:bg-gray-200"
+                    className="cursor-pointer p-2 hover:bg-gray-200"
                   >
                     Radiologi
                   </li>
@@ -299,22 +318,42 @@ const AdminMainContent = () => {
       {selectedDivisi == "Ortopedi" && (
         <>
           <div className="flex gap-4">
-            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+            <div className="relative flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Nama Perusahaan</label>
+
               <Input
                 value={responseData.rumah_sakit}
                 name="rumah_sakit"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="Nama Perusahaan"
-                className="py-2"
+                className="flex-1 border-none px-2 py-2 outline-none"
+                endContent={
+                  <button
+                    className="opacity-75"
+                    type="button"
+                    onClick={() => {
+                      const allSuggestions = hospitalData.map(
+                        (hospital: { name: string }) => hospital.name,
+                      );
+                      setHospitalSuggestions(
+                        (prevSuggestions) =>
+                          prevSuggestions.length > 0 ? [] : allSuggestions, // Toggle suggestions
+                      );
+                    }}
+                  >
+                    ▼
+                  </button>
+                }
               />
+
+              {/* Dropdown Suggestions */}
               {hospitalSuggestions.length > 0 && (
-                <ul className="absolute z-10 bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto">
+                <ul className="absolute top-[4.8rem] z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
                   {hospitalSuggestions.map((suggestion, idx) => (
                     <li
                       key={idx}
                       onClick={() => handleHospitalSuggestionClick(suggestion)}
-                      className="p-2 cursor-pointer hover:bg-gray-200"
+                      className="cursor-pointer p-2 hover:bg-gray-200"
                     >
                       {suggestion}
                     </li>
@@ -322,7 +361,8 @@ const AdminMainContent = () => {
                 </ul>
               )}
             </div>
-            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+
+            <div className="flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Alamat:</label>
               <Input
                 value={responseData.alamat}
@@ -332,7 +372,7 @@ const AdminMainContent = () => {
                 className="py-2"
               />
             </div>
-            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+            <div className="flex w-full flex-col space-y-2 md:w-1/3">
               {/* <label className="text-left">Tanggal Jatuh Tempo:</label>
               <Input
                 type="date"
@@ -351,8 +391,8 @@ const AdminMainContent = () => {
               />
             </div>
           </div>
-          <div className="flex gap-4 ">
-            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+          <div className="flex gap-4">
+            <div className="flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Nama Dokter:</label>
               <Input
                 value={responseData.nama_dokter}
@@ -362,7 +402,7 @@ const AdminMainContent = () => {
                 className="py-2"
               />
             </div>
-            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+            <div className="flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Nama Pasien:</label>
               <Input
                 value={responseData.nama_pasien}
@@ -372,7 +412,7 @@ const AdminMainContent = () => {
                 className="py-2"
               />
             </div>
-            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+            <div className="flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Rekam Medis:</label>
               <Input
                 value={responseData.rm}
@@ -383,16 +423,14 @@ const AdminMainContent = () => {
               />
             </div>
           </div>
-          <div className="flex gap-4 ">
-            <div className="flex flex-col space-y-2 w-full md:w-1/3">
-              
-            </div>
+          <div className="flex gap-4">
+            <div className="flex w-full flex-col space-y-2 md:w-1/3"></div>
           </div>
 
           <Divider />
 
           <div className="flex justify-end">
-            <Button className="  bg-blue-900 text-white" onClick={handleAddItem}>
+            <Button className="bg-blue-900 text-white" onClick={handleAddItem}>
               Tambah Barang
             </Button>
           </div>
@@ -403,15 +441,26 @@ const AdminMainContent = () => {
               className="min-w-full divide-y divide-gray-200"
               isHeaderSticky
               removeWrapper
-
             >
               <TableHeader>
-                <TableColumn className="bg-blue-900 text-white">Kode Barang</TableColumn>
-                <TableColumn className="bg-blue-900 text-white">Nama Barang</TableColumn>
-                <TableColumn className="bg-blue-900 text-white">Quantity</TableColumn>
-                <TableColumn className="bg-blue-900 text-white">Harga Satuan</TableColumn>
-                <TableColumn className="bg-blue-900 text-white">Diskon</TableColumn>
-                <TableColumn className="bg-blue-900 text-white">Action</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">
+                  Kode Barang
+                </TableColumn>
+                <TableColumn className="bg-blue-900 text-white">
+                  Nama Barang
+                </TableColumn>
+                <TableColumn className="bg-blue-900 text-white">
+                  Quantity
+                </TableColumn>
+                <TableColumn className="bg-blue-900 text-white">
+                  Harga Satuan
+                </TableColumn>
+                <TableColumn className="bg-blue-900 text-white">
+                  Diskon
+                </TableColumn>
+                <TableColumn className="bg-blue-900 text-white">
+                  Action
+                </TableColumn>
               </TableHeader>
               <TableBody>
                 {responseData.item.map((row, index) => (
@@ -422,30 +471,58 @@ const AdminMainContent = () => {
                         name="kat"
                         onChange={(e) => handleFieldChange(e, index)}
                         placeholder="Kode Barang"
-                        className="py-2"
+                        className="pt-2"
                       />
                     </TableCell>
                     <TableCell>
-                      <Input
-                        value={row.nama_barang}
-                        name="nama_barang"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Nama Barang"
-                        className="py-2"
-                      />
-                      {itemSuggestions[index] && itemSuggestions[index].length > 0 && (
-                        <ul className="absolute z-10 bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto">
-                          {itemSuggestions[index].map((suggestion, idx) => (
-                            <li
-                              key={idx}
-                              onClick={() => handleSuggestionClick(suggestion, index)}
-                              className="p-2 cursor-pointer hover:bg-gray-200"
+                      <div className="relative w-full">
+                        {/* Wrapper for Input and Dropdown Button */}
+                        <Input
+                          value={row.nama_barang}
+                          name="nama_barang"
+                          onChange={(e) => handleFieldChange(e, index)}
+                          placeholder="Nama Barang"
+                          className="flex-1 border-none px-2 py-2 outline-none"
+                          endContent={
+                            <button
+                              className="opacity-75"
+                              type="button"
+                              onClick={() => {
+                                const allSuggestions = stockData.map(
+                                  (item: { name: string }) => item.name,
+                                );
+                                setItemSuggestions((prevSuggestions) => ({
+                                  ...prevSuggestions,
+                                  [index]:
+                                    prevSuggestions[index] &&
+                                    prevSuggestions[index].length > 0
+                                      ? []
+                                      : allSuggestions, // Toggle suggestions
+                                }));
+                              }}
                             >
-                              {suggestion}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                              ▼
+                            </button>
+                          }
+                        />
+                        {/* Dropdown Suggestions */}
+                        {itemSuggestions[index] &&
+                          itemSuggestions[index].length > 0 && (
+                            <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                              {itemSuggestions[index].map((suggestion, idx) => (
+                                <li
+                                  key={idx}
+                                  onClick={() =>
+                                    handleSuggestionClick(suggestion, index)
+                                  }
+                                  className="cursor-pointer p-2 hover:bg-gray-200"
+                                >
+                                  {suggestion}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <Input
@@ -453,7 +530,7 @@ const AdminMainContent = () => {
                         name="quantity"
                         onChange={(e) => handleFieldChange(e, index)}
                         placeholder="Quantity"
-                        className="py-2"
+                        className="pt-2"
                       />
                     </TableCell>
                     <TableCell>
@@ -462,7 +539,7 @@ const AdminMainContent = () => {
                         name="harga_satuan"
                         onChange={(e) => handleFieldChange(e, index)}
                         placeholder="Harga Satuan"
-                        className="py-2"
+                        className="pt-2"
                       />
                     </TableCell>
                     <TableCell>
@@ -471,7 +548,7 @@ const AdminMainContent = () => {
                         name="discount"
                         onChange={(e) => handleFieldChange(e, index)}
                         placeholder="Diskon"
-                        className="py-2"
+                        className="pt-2"
                       />
                     </TableCell>
                     <TableCell>
@@ -488,10 +565,8 @@ const AdminMainContent = () => {
                 ))}
               </TableBody>
             </Table>
-
-
           </div>
-          <div className="flex justify-end mt-4">
+          <div className="mt-4 flex justify-end">
             <Button color="primary" onClick={submitAcc}>
               Simpan
             </Button>
@@ -502,7 +577,7 @@ const AdminMainContent = () => {
         <>
           {/* Konten untuk divisi Radiologi */}
           <div className="flex gap-4">
-            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+            <div className="flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Nama Perusahaan</label>
               <Input
                 value={responseData.rumah_sakit}
@@ -512,12 +587,12 @@ const AdminMainContent = () => {
                 className="py-2"
               />
               {hospitalSuggestions.length > 0 && (
-                <ul className="absolute z-10 bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto">
+                <ul className="absolute z-10 mt-1 max-h-48 overflow-y-auto rounded border border-gray-300 bg-white">
                   {hospitalSuggestions.map((suggestion, idx) => (
                     <li
                       key={idx}
                       onClick={() => handleHospitalSuggestionClick(suggestion)}
-                      className="p-2 cursor-pointer hover:bg-gray-200"
+                      className="cursor-pointer p-2 hover:bg-gray-200"
                     >
                       {suggestion}
                     </li>
@@ -525,7 +600,7 @@ const AdminMainContent = () => {
                 </ul>
               )}
             </div>
-            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+            <div className="flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Alamat:</label>
               <Input
                 value={responseData.alamat}
@@ -535,7 +610,7 @@ const AdminMainContent = () => {
                 className="py-2"
               />
             </div>
-            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+            <div className="flex w-full flex-col space-y-2 md:w-1/3">
               {/* <label className="text-left">Tanggal Jatuh Tempo:</label> */}
               {/* <Input
                 type="date"
@@ -554,7 +629,7 @@ const AdminMainContent = () => {
               />
             </div>
           </div>
-          <div className="flex gap-4 ">
+          <div className="flex gap-4">
             {/* <div className="flex flex-col space-y-2 w-full md:w-1/3">
               <label className="text-left">Nama Dokter:</label>
               <Input
@@ -575,7 +650,7 @@ const AdminMainContent = () => {
                 className="py-2"
               />
             </div> */}
-            <div className="flex flex-col space-y-2 w-full md:w-1/3">
+            <div className="flex w-full flex-col space-y-2 md:w-1/3">
               {/* <label className="text-left">Rekam Medis:</label>
               <Input
                 value={responseData.rm}
@@ -602,7 +677,7 @@ const AdminMainContent = () => {
           <Divider />
 
           <div className="flex justify-end">
-            <Button className="  bg-blue-900 text-white" onClick={handleAddItem}>
+            <Button className="bg-blue-900 text-white" onClick={handleAddItem}>
               Tambah Barang
             </Button>
           </div>
@@ -613,15 +688,26 @@ const AdminMainContent = () => {
               className="min-w-full divide-y divide-gray-200"
               isHeaderSticky
               removeWrapper
-
             >
               <TableHeader>
-                <TableColumn className="bg-blue-900 text-white">Kode Barang</TableColumn>
-                <TableColumn className="bg-blue-900 text-white">Nama Barang</TableColumn>
-                <TableColumn className="bg-blue-900 text-white">Quantity</TableColumn>
-                <TableColumn className="bg-blue-900 text-white">Harga Satuan</TableColumn>
-                <TableColumn className="bg-blue-900 text-white">Diskon</TableColumn>
-                <TableColumn className="bg-blue-900 text-white">Action</TableColumn>
+                <TableColumn className="bg-blue-900 text-white">
+                  Kode Barang
+                </TableColumn>
+                <TableColumn className="bg-blue-900 text-white">
+                  Nama Barang
+                </TableColumn>
+                <TableColumn className="bg-blue-900 text-white">
+                  Quantity
+                </TableColumn>
+                <TableColumn className="bg-blue-900 text-white">
+                  Harga Satuan
+                </TableColumn>
+                <TableColumn className="bg-blue-900 text-white">
+                  Diskon
+                </TableColumn>
+                <TableColumn className="bg-blue-900 text-white">
+                  Action
+                </TableColumn>
               </TableHeader>
               <TableBody>
                 {responseData.item.map((row, index) => (
@@ -643,19 +729,22 @@ const AdminMainContent = () => {
                         placeholder="Nama Barang"
                         className="py-2"
                       />
-                      {itemSuggestions[index] && itemSuggestions[index].length > 0 && (
-                        <ul className="absolute z-10 bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto">
-                          {itemSuggestions[index].map((suggestion, idx) => (
-                            <li
-                              key={idx}
-                              onClick={() => handleSuggestionClick(suggestion, index)}
-                              className="p-2 cursor-pointer hover:bg-gray-200"
-                            >
-                              {suggestion}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                      {itemSuggestions[index] &&
+                        itemSuggestions[index].length > 0 && (
+                          <ul className="absolute z-10 mt-1 max-h-48 overflow-y-auto rounded border border-gray-300 bg-white">
+                            {itemSuggestions[index].map((suggestion, idx) => (
+                              <li
+                                key={idx}
+                                onClick={() =>
+                                  handleSuggestionClick(suggestion, index)
+                                }
+                                className="cursor-pointer p-2 hover:bg-gray-200"
+                              >
+                                {suggestion}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
                     </TableCell>
                     <TableCell>
                       <Input
@@ -698,10 +787,8 @@ const AdminMainContent = () => {
                 ))}
               </TableBody>
             </Table>
-
-
           </div>
-          <div className="flex justify-end mt-4">
+          <div className="mt-4 flex justify-end">
             <Button color="primary" onClick={submitAcc}>
               Simpan
             </Button>
