@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Input } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { logIn } from "@/redux/features/auth-slice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
+import axios from "axios";
+import { logIn } from "@/redux/features/auth-slice";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -18,82 +19,64 @@ const LoginForm = () => {
   const dispatch = useDispatch<AppDispatch>();
   const isAuth = useSelector((state: RootState) => state.auth.value.isAuth);
 
-  // Define role-based passwords
-  const roleBasedPasswords: Record<string, string> = {
-    sales: "@FismedSales2024",
-    admin: "@AdminFismed24",
-    finance: "@KeuanganFismed224",
-    logistik: "@BagianGudan002024",
-  };
-
   const handleLogin = async () => {
-    // Check if the password field is empty
-    if (!password && !username) {
+    if (!password || !username) {
       setAlert({
         visible: true,
-        message: "Username dan Password Masih Kosong!",
+        message: !username ? "Username Masih Kosong!" : "Password Masih Kosong!",
       });
       setTimeout(() => {
         setAlert({ visible: false, message: "" });
-      }, 5000); // Hide alert after 3 seconds
-      return;
-    } else if (!username) {
-      setAlert({
-        visible: true,
-        message: "Username Masih Kosong!",
-      });
-      setTimeout(() => {
-        setAlert({ visible: false, message: "" });
-      }, 5000); // Hide alert after 3 seconds
-      return;
-    } else if (!password) {
-      setAlert({
-        visible: true,
-        message: "Password Masih Kosong!",
-      });
-      setTimeout(() => {
-        setAlert({ visible: false, message: "" });
-      }, 5000); // Hide alert after 3 seconds
+      }, 5000); // Hide alert after 5 seconds
       return;
     }
 
-    // Validate password based on username
-    const expectedPassword = roleBasedPasswords[username];
-    if (expectedPassword && password !== expectedPassword) {
-      setAlert({
-        visible: true,
-        message: "Username atau Password Salah!",
+    try {
+      // Perform login request
+      const response = await axios.post("http://209.182.237.155:8080/api/login", {
+        username,
+        password,
       });
-      setTimeout(() => {
-        setAlert({ visible: false, message: "" });
-      }, 3000); // Hide alert after 3 seconds
-      return;
-    }
 
-    // Proceed with login if password is correct
-    const result = await dispatch(logIn({ username, password }));
-    if (result.payload) {
-      // Save username in localStorage
-      localStorage.setItem("username", username);
-      // Redirect based on user role
-      switch (username) {
-        case "sales":
-          router.push("/proforma-invoice-dua");
-          break;
-        case "admin":
-          router.push("/profiling");
-          break;
-        case "logistik":
-          router.push("/stok-barang");
-          break;
-        case "finance":
-          router.push("/piutang");
-          break;
-        default:
-          break;
+      console.log("API Response:", response.data); // Debug API response
+
+      const { data, message, status } = response.data;
+
+      if (status) {
+        // Store token and user data
+        localStorage.setItem("username", data[0].username);
+        localStorage.setItem("token", data[0].token);
+        localStorage.setItem("statusAccount", data[0].role_name);
+
+        // Dispatch login action
+        dispatch(logIn({ username, password, statusAccount: data[0].role_name }));
+
+        // Redirect based on user role
+        switch (data[0].role_name.toLowerCase()) {
+          case "sales":
+            router.push("/proforma-invoice-dua");
+            break;
+          case "admin":
+            router.push("/profiling");
+            break;
+          case "logistik":
+            router.push("/stok-barang");
+            break;
+          case "finance":
+            router.push("/piutang");
+            break;
+          default:
+            break;
+        }
+      } else {
+        setAlert({ visible: true, message: "Username atau Password Salah!" });
+        setTimeout(() => {
+          setAlert({ visible: false, message: "" });
+        }, 3000); // Hide alert after 3 seconds
       }
-    } else {
-      setAlert({ visible: true, message: "Incorrect username or password" });
+    } catch (error) {
+      console.error("Login Error:", error); // Debugging the error
+      setAlert({ visible: true, message: "Terjadi kesalahan saat login!" });
       setTimeout(() => {
         setAlert({ visible: false, message: "" });
       }, 3000); // Hide alert after 3 seconds
@@ -108,7 +91,6 @@ const LoginForm = () => {
   };
 
   useEffect(() => {
-    // Check if user is already authenticated
     if (isAuth) {
       const storedUsername = localStorage.getItem("username");
       if (storedUsername) {

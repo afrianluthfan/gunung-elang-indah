@@ -18,7 +18,7 @@ const Sidebar = () => {
   const [menuItemsList, setMenuItemsList] = useState([
     { pageName: "", pageRoute: "" },
   ]);
-  const activeUser = useAppSelector((state) => state.auth.value.username);
+  const activeUser = useAppSelector((state) => state.auth.value.statusAcount);
   // logout handler
   const handleLogOut = () => {
     dispatch(logOut());
@@ -167,16 +167,16 @@ const Sidebar = () => {
     ];
 
     switch (activeUser) {
-      case "sales":
+      case "SALES":
         setMenuItemsList(salesMenus);
         break;
-      case "logistik":
+      case "LOGISTIK":
         setMenuItemsList(logistikMenus);
         break;
-      case "admin":
+      case "ADMIN":
         setMenuItemsList(adminMenus);
         break;
-      case "finance":
+      case "FINANCE":
         setMenuItemsList(financeMenus);
         break;
     }
