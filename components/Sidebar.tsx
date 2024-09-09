@@ -18,7 +18,7 @@ const Sidebar = () => {
   const [menuItemsList, setMenuItemsList] = useState([
     { pageName: "", pageRoute: "" },
   ]);
-  const activeUser = useAppSelector((state) => state.auth.value.username);
+  const activeUser = useAppSelector((state) => state.auth.value.statusAcount);
   // logout handler
   const handleLogOut = () => {
     dispatch(logOut());
@@ -167,23 +167,23 @@ const Sidebar = () => {
     ];
 
     switch (activeUser) {
-      case "sales":
+      case "SALES":
         setMenuItemsList(salesMenus);
         break;
-      case "logistik":
+      case "LOGISTIK":
         setMenuItemsList(logistikMenus);
         break;
-      case "admin":
+      case "ADMIN":
         setMenuItemsList(adminMenus);
         break;
-      case "finance":
+      case "FINANCE":
         setMenuItemsList(financeMenus);
         break;
     }
   }, [activeUser]);
 
   return (
-    <div className="fixed z-50 flex h-screen w-[17.3vw] flex-col items-center justify-between bg-[#011869] p-1 lg:p-5">
+    <div className="fixed z-50 flex h-screen w-full md:w-[17.3vw] flex-col items-center justify-between bg-[#011869] p-1 md:p-5">
       <SidebarTopItem />
       <SidebarMenuItemsLayout>
         {menuItemsList.map((menuItem, index) => (

@@ -4,6 +4,7 @@ type AuthState = {
   isAuth: boolean;
   username: string;
   password: string;
+  statusAcount: string;
   isSA: boolean;
 };
 
@@ -16,6 +17,7 @@ const initialState: InitialState = {
     isAuth: false,
     username: "",
     password: "",
+    statusAcount: "",
     isSA: false,
   },
 };
@@ -29,11 +31,12 @@ export const auth = createSlice({
     },
     logIn: (
       state,
-      action: PayloadAction<{ username: string; password: string }>,
+      action: PayloadAction<{ username: string; password: string; statusAccount: string }>,
     ) => {
       state.value = {
         isAuth: action.payload.password === "qwerty12345", // Example check, replace with real authentication logic
         username: action.payload.username,
+        statusAcount: action.payload.statusAccount,
         password: action.payload.password,
         isSA: false,
       };
