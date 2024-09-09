@@ -183,7 +183,7 @@ const Sidebar = () => {
   }, [activeUser]);
 
   return (
-    <div className="fixed z-50 flex h-screen w-[17.3vw] flex-col items-center justify-between bg-[#011869] p-1 lg:p-5">
+    <div className="fixed z-50 flex h-screen w-full md:w-[17.3vw] flex-col items-center justify-between bg-[#011869] p-1 md:p-5">
       <SidebarTopItem />
       <SidebarMenuItemsLayout>
         {menuItemsList.map((menuItem, index) => (
