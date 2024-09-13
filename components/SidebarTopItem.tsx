@@ -13,7 +13,7 @@ const SidebarTopItem: FC = () => {
           className="h-full w-full object-cover" // Mengatur gambar untuk menutupi elemen
         />
       </div>
-      <p className="mt-5 text-center text-sm lg:text-lg">
+      <p className="mt-5 text-center text-sm text-white lg:text-lg">
         PT Fismed Global Indonesia
       </p>
     </div>
