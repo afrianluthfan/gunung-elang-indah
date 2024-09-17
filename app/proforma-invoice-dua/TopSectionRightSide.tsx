@@ -9,7 +9,7 @@ const TopSectionRightSide = () => {
   const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
+    const storedUsername = localStorage.getItem("statusAccount");
     if (storedUsername) {
       setUsername(storedUsername);
     }
@@ -25,7 +25,7 @@ const TopSectionRightSide = () => {
         Segarkan
       </Button>
 
-      {username === "sales" && (
+      {username === "SALES" && (
         <Button
           onClick={() => router.push("/proforma-invoice-dua/form")}
           className="bg-[#00a110] font-semibold text-white"

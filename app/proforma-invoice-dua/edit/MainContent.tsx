@@ -70,7 +70,7 @@ const ProformaInvoiceDetail = () => {
   const divisi = searchParams.get("divisi");
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
+    const storedUsername = localStorage.getItem("statusAccount");
     if (storedUsername) {
       setUsername(storedUsername);
     }
@@ -85,7 +85,7 @@ const ProformaInvoiceDetail = () => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/detailPI",
+          "http://localhost:8080/api/proforma-invoice/detailPI",
           { id: id, divisi: divisi }
         );
         setResponseData(response.data.data);
@@ -110,7 +110,7 @@ const ProformaInvoiceDetail = () => {
           }
 
           await axios.post(
-            "http://209.182.237.155:8080/api/proforma-invoice/editPI-admin",
+            "http://localhost:8080/api/proforma-invoice/editPI-admin",
             responseData
           );
           Swal.fire({

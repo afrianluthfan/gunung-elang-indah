@@ -58,7 +58,7 @@ const Form: FC = () => {
     const fetchDivisiList = async () => {
       try {
         const responseDivisi = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/divisi-list",
+          "http://localhost:8080/api/proforma-invoice/divisi-list",
           "",
         );
         setDivisiList(responseDivisi.data.data);
@@ -96,7 +96,7 @@ const Form: FC = () => {
 
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/purchase-order/inquiry",
+        "http://localhost:8080/api/purchase-order/inquiry",
         requestBody,
       );
       // if (response.status === 200) {
@@ -157,9 +157,9 @@ const Form: FC = () => {
   return (
     <section className="flex max-h-screen">
       {/* sidebar */}
-      <Sidebar />
+      {/* <Sidebar /> */}
 
-      <div className="ml-[17.3vw] flex h-fit min-h-screen w-[82.7vw] flex-col bg-[#EFEFEF] text-black">
+      <div className="ml-0 h-screen w-full bg-[#EFEFEF] text-black md:ml-[17.3vw] md:w-[82.7vw]">
         {/* top bar that says "Welcome, {user}" */}
         <WelcomingMessage />
         {/* main content */}

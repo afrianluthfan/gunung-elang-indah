@@ -69,7 +69,7 @@ const AdminMainContent = () => {
     const fetchStockData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/stock-barang/list",
+          "http://localhost:8080/api/stock-barang/list",
         );
         setStockData(res.data.data);
       } catch (error) {
@@ -80,7 +80,7 @@ const AdminMainContent = () => {
     const fetchHospitalData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
+          "http://localhost:8080/api/proforma-invoice/rs-list",
         );
         setHospitalData(res.data.data);
       } catch (error) {
@@ -106,7 +106,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/proforma-invoice/inquiry",
+            "http://localhost:8080/api/proforma-invoice/inquiry",
             responseData,
           );
 

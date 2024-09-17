@@ -22,6 +22,14 @@ const Sidebar = () => {
   // logout handler
   const handleLogOut = () => {
     dispatch(logOut());
+    // clear localstorage
+    localStorage.removeItem("statusAccount");
+    localStorage.removeItem("username");
+    localStorage.removeItem("persist:root");
+    localStorage.removeItem("token");
+
+    dispatch(logOut());
+
     router.push("/login");
   };
 
@@ -183,7 +191,7 @@ const Sidebar = () => {
   }, [activeUser]);
 
   return (
-    <div className="fixed z-50 flex h-screen w-full flex-col items-center justify-between bg-[#011869] p-1 md:w-[17.3vw] md:p-5">
+    <div className="fixed z-0 flex h-screen w-full flex-col items-center justify-between bg-[#011869] p-1 md:w-[17.3vw] md:p-5">
       <SidebarTopItem />
       <SidebarMenuItemsLayout>
         {menuItemsList.map((menuItem, index) => (
