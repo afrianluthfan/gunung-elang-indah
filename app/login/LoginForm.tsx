@@ -23,7 +23,9 @@ const LoginForm = () => {
     if (!password || !username) {
       setAlert({
         visible: true,
-        message: !username ? "Username Masih Kosong!" : "Password Masih Kosong!",
+        message: !username
+          ? "Username Masih Kosong!"
+          : "Password Masih Kosong!",
       });
       setTimeout(() => {
         setAlert({ visible: false, message: "" });
@@ -49,7 +51,9 @@ const LoginForm = () => {
         localStorage.setItem("statusAccount", data[0].role_name);
 
         // Dispatch login action
-        dispatch(logIn({ username, password, statusAccount: data[0].role_name }));
+        dispatch(
+          logIn({ username, password, statusAccount: data[0].role_name }),
+        );
 
         // Redirect based on user role
         switch (data[0].role_name.toLowerCase()) {

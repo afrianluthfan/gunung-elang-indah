@@ -7,26 +7,51 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
+interface ResponseData {
+  rumah_sakit?: string;
+  alamat?: string;
+  id_rumah_sakit?: string;
+  nama_dokter?: string;
+}
+
 const MainContent = () => {
   const { register, handleSubmit } = useForm();
   const router = useRouter();
-  const [hospitalSuggestions, setHospitalSuggestions] = useState<string[]>([]);
+  const [inputCompanyValue, setInputCompanyValue] = useState("");
+  const [hospitalSuggestions, setHospitalSuggestions] = useState<string[]>([]); // Store the filtered suggestions
   const [hospitalData, setHospitalData] = useState<any[]>([]);
+  const [doctorData, setDoctorData] = useState<any[]>([]);
+  const [doctorSuggestions, setDoctorSuggestions] = useState<string[]>([]);
+  const [responseData, setResponseData] = useState<ResponseData>({});
+  const [inputDoctorValue, setInputDoctorValue] = useState("");
 
   useEffect(() => {
-
     const fetchHospitalData = async () => {
       try {
         const res = await axios.post(
           "http://localhost:8080/api/proforma-invoice/rs-list",
         );
         setHospitalData(res.data.data);
+        console.log("Hospital data fetched", res.data.data);
       } catch (error) {
         console.error("Error fetching hospital data", error);
       }
     };
 
+    const fetchDokterData = async () => {
+      try {
+        const res = await axios.post(
+          "http://localhost:8080/api/proforma-invoice/dr-list",
+        );
+        setDoctorData(res.data.data);
+        console.log("Data dokter fetched", res.data.data);
+      } catch (error) {
+        console.error("Error fetching dokter data", error);
+      }
+    };
+
     fetchHospitalData();
+    fetchDokterData();
   }, []);
 
   // State untuk menyimpan value dropdown divisi
@@ -34,7 +59,7 @@ const MainContent = () => {
 
   // Fungsi untuk menangani submit form
   const onSubmit = async (data: Record<string, string | boolean>) => {
-    console.log("Divis : " + kategoriDivisi);
+    console.log("Divisi : " + kategoriDivisi);
     let divisi = "";
 
     if (kategoriDivisi === "supplier") {
@@ -51,7 +76,8 @@ const MainContent = () => {
       npwp_address_perusahaan: data.npwp_address_perusahaan,
       npwp_perusahaan: "data.npwp_perusahaan",
       ipak_number_perusahaan: data.ipak_number_perusahaan,
-      alamat_pengirim_facture_perusahaan: data.alamat_pengirim_facture_perusahaan,
+      alamat_pengirim_facture_perusahaan:
+        data.alamat_pengirim_facture_perusahaan,
       kota_perusahaan: data.kota_perusahaan,
       kode_pos_perusahaan: data.kode_pos_perusahaan,
       telpon_perusahaan: data.telpon_perusahaan,
@@ -85,12 +111,19 @@ const MainContent = () => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            await axios.post("http://localhost:8080/api/customer-profilling/add", requestBody);
+            await axios.post(
+              "http://localhost:8080/api/customer-profilling/add",
+              requestBody,
+            );
             router.push("/profiling");
             Swal.fire("Nice!", "Data telah di input ke system!.", "success");
           } catch (error) {
             console.error("Error submitting data", error);
-            Swal.fire("Error!", "Terjadi kesalahan saat mengirim data.", "error");
+            Swal.fire(
+              "Error!",
+              "Terjadi kesalahan saat mengirim data.",
+              "error",
+            );
           }
         }
       });
@@ -99,24 +132,46 @@ const MainContent = () => {
     }
   };
 
-
   const handleHospitalSuggestionClick = (suggestion: string) => {
     const selectedHospital = hospitalData.find(
       (hospital) => hospital.name === suggestion,
     );
+
     if (selectedHospital) {
       setResponseData((prevData) => ({
         ...prevData,
-        rumah_sakit: selectedHospital.name,
-        alamat: selectedHospital.address_company,
-        id_rumah_sakit: selectedHospital.id.toString(), // Menyetel ID Rumah Sakit secara otomatis
+        nama_perusahaan: selectedHospital.name, // Update responseData with the selected company
       }));
-      setHospitalSuggestions([]);
+      setInputCompanyValue(selectedHospital.name); // Update the input value to the selected suggestion
+      setHospitalSuggestions([]); // Clear the suggestions list
+
+      localStorage.setItem("selectedHospital", selectedHospital.name); // Optional: Store in localStorage
+    } else {
+      console.log("No hospital found for the selected suggestion");
+    }
+  };
+
+  const handleDoctorSuggestionClick = (suggestion: string) => {
+    const selectedDoctor = doctorData.find(
+      (doctor) => doctor.namaDokter === suggestion,
+    );
+
+    if (selectedDoctor) {
+      setResponseData((prevData) => ({
+        ...prevData,
+        nama_dokter: selectedDoctor.namaDokter,
+      }));
+      setInputDoctorValue(selectedDoctor.namaDokter); // Update input with selected value
+      setDoctorSuggestions([]);
+
+      localStorage.setItem("selectedDoctor", selectedDoctor.namaDokter);
+    } else {
+      console.log("No doctor found for the selected suggestion");
     }
   };
 
   return (
-    <div className="flex h-full w-full bg-white flex-col gap-6 p-8 z-50">
+    <div className="z-50 flex h-full w-full flex-col gap-6 bg-white p-8">
       <div className="flex flex-row justify-between gap-6">
         <h1 className="text-xl font-bold">Form Profiling</h1>
 
@@ -124,12 +179,14 @@ const MainContent = () => {
           <select
             value={kategoriDivisi}
             onChange={(e) => setKategoriDivisi(e.target.value)} // Simpan value ke state
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full rounded-md border border-gray-300 p-2"
           >
             <option value="">Pilih Divisi</option>
             <option value="supplier">Supplier</option>
             <option value="customer">Customer</option>
-            <option value="customer_non_rumah_sakit">Customer Non Rumah Sakit</option>
+            <option value="customer_non_rumah_sakit">
+              Customer Non Rumah Sakit
+            </option>
           </select>
         </div>
       </div>
@@ -137,32 +194,51 @@ const MainContent = () => {
       <Divider />
 
       {kategoriDivisi !== "" && (
-        <div className="bg-white rounded-3xl p-6 shadow-2xl">
-          <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
+        <div className="rounded-3xl bg-white p-6 shadow-2xl">
+          <form
+            className="flex flex-col gap-6"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <div>
-              <h3 className="font-semibold text-lg mb-4">Data Perusahaan</h3>
+              <h3 className="mb-4 text-lg font-semibold">Data Perusahaan</h3>
 
               {/* Grid untuk PC dan flex untuk mobile */}
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                <div className="relative flex w-full flex-col space-y-2 md:w-1/3">
-                  <label className="text-left">Nama Perusahaan</label>
+                <div className="relative flex w-full flex-col space-y-2">
+                  {/* <label className="text-left">Nama Perusahaan</label> */}
 
                   <Input
                     {...register("nama_perusahaan")}
-                    name="rumah_sakit"
+                    name="nama_perusahaan"
+                    value={inputCompanyValue} // Controlled by local state
                     placeholder="Nama Perusahaan"
-                    className="flex-1 border-none px-2 py-2 outline-none"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setInputCompanyValue(value); // Update the local state for input
+
+                      // Filter hospital suggestions based on the input value
+                      const filteredSuggestions = hospitalData
+                        .filter(
+                          (hospital) =>
+                            hospital.name
+                              .toLowerCase()
+                              .includes(value.toLowerCase()), // Case-insensitive matching
+                        )
+                        .map((hospital) => hospital.name);
+
+                      setHospitalSuggestions(filteredSuggestions); // Update suggestions based on the filter
+                    }}
+                    className="h-[100%] w-full flex-1 border-none outline-none"
                     endContent={
                       <button
                         className="opacity-75"
                         type="button"
                         onClick={() => {
-                          const allSuggestions = hospitalData.map(
-                            (hospital: { name: string }) => hospital.name,
-                          );
-                          setHospitalSuggestions(
-                            (prevSuggestions) =>
-                              prevSuggestions.length > 0 ? [] : allSuggestions, // Toggle suggestions
+                          const allSuggestions = hospitalData
+                            .filter((hospital) => hospital.name)
+                            .map((hospital) => hospital.name);
+                          setHospitalSuggestions((prevSuggestions) =>
+                            prevSuggestions.length > 0 ? [] : allSuggestions,
                           );
                         }}
                       >
@@ -173,11 +249,13 @@ const MainContent = () => {
 
                   {/* Dropdown Suggestions */}
                   {hospitalSuggestions.length > 0 && (
-                    <ul className="absolute top-[4.8rem] z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                    <ul className="absolute top-[2rem] z-[40] mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
                       {hospitalSuggestions.map((suggestion, idx) => (
                         <li
                           key={idx}
-                          onClick={() => handleHospitalSuggestionClick(suggestion)}
+                          onClick={() =>
+                            handleHospitalSuggestionClick(suggestion)
+                          } // Call the selection handler
                           className="cursor-pointer p-2 hover:bg-gray-200"
                         >
                           {suggestion}
@@ -186,56 +264,210 @@ const MainContent = () => {
                     </ul>
                   )}
                 </div>
-                <Input {...register("address_perusahaan")} label="Alamat Perusahaan" className="w-full-lg" />
-                <Input {...register("ipak_number_perusahaan")} label="No. IPAK" className="w-full-lg" />
+                <Input
+                  {...register("address_perusahaan")}
+                  label="Alamat Perusahaan"
+                  className="w-full-lg"
+                />
+                <Input
+                  {...register("ipak_number_perusahaan")}
+                  label="No. IPAK"
+                  className="w-full-lg"
+                />
                 {/* <Input {...register("npwp_perusahaan")} label="NPWP Perusahaan" className="w-full-lg" /> */}
-                <Input {...register("alamat_pengirim_facture_perusahaan")} label="Alamat Pengirim Faktur" className="w-full-lg" />
-                <Input {...register("npwp_address_perusahaan")} label="Alamat NPWP Perusahaan" className="w-full-lg" />
-                <Input {...register("pic_perusahaan")} label="PIC Perusahaan" className="w-full-lg" />
+                <Input
+                  {...register("alamat_pengirim_facture_perusahaan")}
+                  label="Alamat Pengirim Faktur"
+                  className="w-full-lg"
+                />
+                <Input
+                  {...register("npwp_address_perusahaan")}
+                  label="Alamat NPWP Perusahaan"
+                  className="w-full-lg"
+                />
+                <Input
+                  {...register("pic_perusahaan")}
+                  label="PIC Perusahaan"
+                  className="w-full-lg"
+                />
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <Input {...register("email_perusahaan")} label="Email Perusahaan" className="w-full-lg" />
-                  <Input {...register("telpon_perusahaan")} label="Telepon Perusahaan" className="w-full-lg" />
+                  <Input
+                    {...register("email_perusahaan")}
+                    label="Email Perusahaan"
+                    className="w-full-lg"
+                  />
+                  <Input
+                    {...register("telpon_perusahaan")}
+                    label="Telepon Perusahaan"
+                    className="w-full-lg"
+                  />
                 </div>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <Input {...register("kota_perusahaan")} label="Kota Perusahaan" className="w-full-lg" />
-                  <Input {...register("kode_pos_perusahaan")} label="Kode Pos Perusahaan" className="w-full-lg" />
+                  <Input
+                    {...register("kota_perusahaan")}
+                    label="Kota Perusahaan"
+                    className="w-full-lg"
+                  />
+                  <Input
+                    {...register("kode_pos_perusahaan")}
+                    label="Kode Pos Perusahaan"
+                    className="w-full-lg"
+                  />
                 </div>
-
               </div>
             </div>
 
             <Divider />
 
             <div>
-              <h3 className="font-semibold text-lg mb-4">Data Dokter</h3>
+              <h3 className="mb-4 text-lg font-semibold">Data Dokter</h3>
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                <Input {...register("nama_dokter")} label="Nama Dokter" className="w-full" />
-                <Input {...register("alamat_pengirim_dokter")} label="Alamat Pengirim Dokter" className="w-full" />
-                <Input {...register("npwp_dokter")} label="NPWP Dokter" className="w-full" />
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <Input {...register("telpon_dokter")} label="Telepon Dokter" className="w-full" />
-                  <Input {...register("email_dokter")} label="Email Dokter" className="w-full" />
+                <div className="relative flex w-full flex-col space-y-2">
+                  {/* <label className="text-left">Nama Perusahaan</label> */}
+
+                  <Input
+                    {...register("nama_dokter")}
+                    name="nama_dokter"
+                    value={inputDoctorValue} // Controlled by local state
+                    placeholder="Nama Dokter"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setInputDoctorValue(value); // Update the local state for input
+
+                      // Filter suggestions based on the input value
+                      const filteredSuggestions = doctorData
+                        .filter(
+                          (doctor) =>
+                            doctor.namaDokter
+                              .toLowerCase()
+                              .includes(value.toLowerCase()), // Case-insensitive matching
+                        )
+                        .map((doctor) => doctor.namaDokter);
+
+                      setDoctorSuggestions(filteredSuggestions); // Update suggestions based on the filter
+                    }}
+                    className="h-[100%] w-full flex-1 border-none outline-none"
+                    endContent={
+                      <button
+                        className="opacity-75"
+                        type="button"
+                        onClick={() => {
+                          const allSuggestions = doctorData
+                            .filter((doctor) => doctor.namaDokter)
+                            .map((doctor) => doctor.namaDokter);
+                          setDoctorSuggestions((prevSuggestions) =>
+                            prevSuggestions.length > 0 ? [] : allSuggestions,
+                          );
+                        }}
+                      >
+                        ▼
+                      </button>
+                    }
+                  />
+
+                  {/* Dropdown Suggestions */}
+                  {doctorSuggestions.length > 0 && (
+                    <ul className="absolute top-[2rem] z-[40] mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                      {doctorSuggestions.map((suggestion, idx) => (
+                        <li
+                          key={idx}
+                          onClick={() =>
+                            handleDoctorSuggestionClick(suggestion)
+                          }
+                          className="cursor-pointer p-2 hover:bg-gray-200"
+                        >
+                          {suggestion}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
-                <Input {...register("pic_dokter")} label="PIC Dokter" className="w-full" />
+                <Input
+                  {...register("alamat_pengirim_dokter")}
+                  label="Alamat Pengirim Dokter"
+                  className="w-full"
+                />
+                <Input
+                  {...register("npwp_dokter")}
+                  label="NPWP Dokter"
+                  className="w-full"
+                />
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <Input {...register("kota_dokter")} label="Kota Dokter" className="w-full" />
-                  <Input {...register("kode_pos_dokter")} label="Kode Pos Dokter" className="w-full" />
+                  <Input
+                    {...register("telpon_dokter")}
+                    label="Telepon Dokter"
+                    className="w-full"
+                  />
+                  <Input
+                    {...register("email_dokter")}
+                    label="Email Dokter"
+                    className="w-full"
+                  />
                 </div>
-                <Input {...register("handphone_dokter")} label="Handphone Dokter" className="w-full" />
-                <Input {...register("kode_pajak_dokter")} label="Kode Pajak Dokter" className="w-full" />
-                <Input {...register("cp_dokter")} label="Contact Person Dokter" className="w-full" />
-                <Input {...register("verifikasi_dokter")} label="Verifikasi" className="w-full" />
-                <Input {...register("pembuat_cp")} label="Pembuat CP" className="w-full" />
-                <Input {...register("term_of_payment")} label="Term of Payment" className="w-full" />
+                <Input
+                  {...register("pic_dokter")}
+                  label="PIC Dokter"
+                  className="w-full"
+                />
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <Input
+                    {...register("kota_dokter")}
+                    label="Kota Dokter"
+                    className="w-full"
+                  />
+                  <Input
+                    {...register("kode_pos_dokter")}
+                    label="Kode Pos Dokter"
+                    className="w-full"
+                  />
+                </div>
+                <Input
+                  {...register("handphone_dokter")}
+                  label="Handphone Dokter"
+                  className="w-full"
+                />
+                <Input
+                  {...register("kode_pajak_dokter")}
+                  label="Kode Pajak Dokter"
+                  className="w-full"
+                />
+                <Input
+                  {...register("cp_dokter")}
+                  label="Contact Person Dokter"
+                  className="w-full"
+                />
+                <Input
+                  {...register("verifikasi_dokter")}
+                  label="Verifikasi"
+                  className="w-full"
+                />
+                <Input
+                  {...register("pembuat_cp")}
+                  label="Pembuat CP"
+                  className="w-full"
+                />
+                <Input
+                  {...register("term_of_payment")}
+                  label="Term of Payment"
+                  className="w-full"
+                />
               </div>
             </div>
 
             <div className="flex flex-row justify-end gap-3">
-              <Button color="success" className=" self-center text-white font-semibold" type="submit">
+              <Button
+                color="success"
+                className="self-center font-semibold text-white"
+                type="submit"
+              >
                 SUBMIT
               </Button>
 
-              <Button color="danger" className=" self-center text-white font-semibold" type="submit">
+              <Button
+                color="danger"
+                className="self-center font-semibold text-white"
+                type="submit"
+              >
                 CANCEL
               </Button>
             </div>
@@ -243,17 +475,11 @@ const MainContent = () => {
         </div>
       )}
 
-      <div className="flex h-[4vh] items-center justify-center text-end font-semibold ">
+      <div className="flex h-[4vh] items-center justify-center text-end font-semibold">
         <h1 className="mb-4">Supported by PT Gunung Elang Indah</h1>
       </div>
     </div>
-
-
   );
 };
 
 export default MainContent;
-function setResponseData(arg0: (prevData: any) => any) {
-  throw new Error("Function not implemented.");
-}
-
