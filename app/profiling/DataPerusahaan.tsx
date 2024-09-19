@@ -38,7 +38,7 @@ const DataPerusahaan: FC<DataPerusahaanProps> = ({ data }) => {
       try {
         const response = await axios.post(
           "http://localhost:8080/api/customer-profilling/get-by-search",
-          data
+          data,
         );
         if (response.data.status) {
           const customer = response.data.customer[0];
@@ -58,7 +58,7 @@ const DataPerusahaan: FC<DataPerusahaanProps> = ({ data }) => {
               name: item.docktor_name,
               number_phone_item: item.number_phone_item,
               email_item: item.email_item,
-            }))
+            })),
           );
         } else {
           console.error("Data not found");
@@ -73,9 +73,9 @@ const DataPerusahaan: FC<DataPerusahaanProps> = ({ data }) => {
 
   return (
     <div>
-      <section className="flex">
+      <section className="flex flex-col gap-5 lg:flex-row lg:gap-0">
         <Image
-          className="aspect-[183/238] max-h-[238] max-w-[185px] rounded-md object-cover"
+          className="aspect-[183/238] max-h-[238px] rounded-md object-cover lg:max-w-[185px]"
           height={2000}
           width={2000}
           alt="placeholder-image"
@@ -115,24 +115,40 @@ const DataPerusahaan: FC<DataPerusahaanProps> = ({ data }) => {
       <br />
       <Divider />
 
-      <h1 className="font-bold text-xl mt-4">Dokter Terdaftar</h1>
+      <h1 className="mt-4 text-xl font-bold">Dokter Terdaftar</h1>
 
-      <table className="w-full text-left mt-6 border-separate border-spacing-0 rounded-lg overflow-hidden shadow-sm">
-        <thead>
+      <table className="my-6 w-full border-separate border-spacing-0 overflow-y-scroll rounded-lg text-left shadow-sm lg:overflow-hidden">
+        <thead className="rounded-xl lg:rounded-none">
           <tr className="bg-blue-900 text-white">
-            <th className="px-4 py-3 border-b border-blue-900">NO</th>
-            <th className="px-4 py-3 border-b border-blue-900">NAMA DOKTER</th>
-            <th className="px-4 py-3 border-b border-blue-900">TELEPON DOKTER</th>
-            <th className="px-4 py-3 border-b border-blue-900">EMAIL DOKTER</th>
+            <th className="border-b border-blue-900 px-4 py-3 text-sm lg:text-xl">
+              NO
+            </th>
+            <th className="border-b border-blue-900 px-4 py-3 text-sm lg:text-xl">
+              NAMA DOKTER
+            </th>
+            <th className="border-b border-blue-900 px-4 py-3 text-sm lg:text-xl">
+              TELEPON DOKTER
+            </th>
+            <th className="border-b border-blue-900 px-4 py-3 text-sm lg:text-xl">
+              EMAIL DOKTER
+            </th>
           </tr>
         </thead>
         <tbody className="bg-white">
           {dokterData.map((dokter, index) => (
             <tr key={index} className="even:bg-gray-100">
-              <td className="px-4 py-2 border-b border-gray-300">{index + 1}</td>
-              <td className="px-4 py-2 border-b border-gray-300">{dokter.name}</td>
-              <td className="px-4 py-2 border-b border-gray-300">{dokter.number_phone_item}</td>
-              <td className="px-4 py-2 border-b border-gray-300">{dokter.email_item}</td>
+              <td className="border-b border-gray-300 px-4 py-2">
+                {index + 1}
+              </td>
+              <td className="border-b border-gray-300 px-4 py-2">
+                {dokter.name}
+              </td>
+              <td className="border-b border-gray-300 px-4 py-2">
+                {dokter.number_phone_item}
+              </td>
+              <td className="border-b border-gray-300 px-4 py-2">
+                {dokter.email_item}
+              </td>
             </tr>
           ))}
         </tbody>

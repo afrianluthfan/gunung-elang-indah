@@ -11,7 +11,7 @@ interface TopSectionRightSideProps {
 const TopSectionRightSide: FC<TopSectionRightSideProps> = ({ search }) => {
   const router = useRouter();
   return (
-    <div className="flex w-[8vw] flex-col gap-1">
+    <div className="flex w-[8vw] gap-1 lg:flex-col">
       <Button
         onClick={() => router.push("/profiling/form")}
         className="bg-[#00DC16] font-bold text-white"
