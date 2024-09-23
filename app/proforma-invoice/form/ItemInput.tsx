@@ -47,7 +47,7 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
     const fetchItemData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/stock-barang/list",
+          "http://209.182.237.155:8080/api/stock-barang/list",
           "",
         );
         setItemData(response.data.data);

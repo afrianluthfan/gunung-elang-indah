@@ -120,6 +120,10 @@ const Sidebar = () => {
         pageName: "Purchase Order",
         pageRoute: "purchase-order",
       },
+      {
+        pageName: "Stok Barang",
+        pageRoute: "stok-barang",
+      },
       // {
       //   pageName: "Komisi",
       //   pageRoute: "komisi",
@@ -184,7 +188,7 @@ const Sidebar = () => {
       case "ADMIN":
         setMenuItemsList(adminMenus);
         break;
-      case "FINANCE":
+      case "KEUANGAN":
         setMenuItemsList(financeMenus);
         break;
     }

@@ -29,7 +29,7 @@ const MainContent = () => {
     const fetchHospitalData = async () => {
       try {
         const res = await axios.post(
-          "http://localhost:8080/api/proforma-invoice/rs-list",
+          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
         );
         setHospitalData(res.data.data);
         console.log("Hospital data fetched", res.data.data);
@@ -41,7 +41,7 @@ const MainContent = () => {
     const fetchDokterData = async () => {
       try {
         const res = await axios.post(
-          "http://localhost:8080/api/proforma-invoice/dr-list",
+          "http://209.182.237.155:8080/api/proforma-invoice/dr-list",
         );
         setDoctorData(res.data.data);
         console.log("Data dokter fetched", res.data.data);
@@ -112,7 +112,7 @@ const MainContent = () => {
         if (result.isConfirmed) {
           try {
             await axios.post(
-              "http://localhost:8080/api/customer-profilling/add",
+              "http://209.182.237.155:8080/api/customer-profilling/add",
               requestBody,
             );
             router.push("/profiling");

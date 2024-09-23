@@ -35,7 +35,7 @@ const LoginForm = () => {
 
     try {
       // Perform login request
-      const response = await axios.post("http://localhost:8080/api/login", {
+      const response = await axios.post("http://209.182.237.155:8080/api/login", {
         username,
         password,
       });
@@ -66,7 +66,7 @@ const LoginForm = () => {
           case "logistik":
             router.push("/stok-barang");
             break;
-          case "finance":
+          case "keuangan":
             router.push("/piutang");
             break;
           default:
@@ -108,7 +108,7 @@ const LoginForm = () => {
           case "LOGISTIK":
             router.push("/stok-barang");
             break;
-          case "FINANCE":
+          case "KEUANGAN":
             router.push("/piutang");
             break;
           default:
