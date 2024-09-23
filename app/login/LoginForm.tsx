@@ -19,6 +19,15 @@ const LoginForm = () => {
   const dispatch = useDispatch<AppDispatch>();
   const isAuth = useSelector((state: RootState) => state.auth.value.isAuth);
 
+  // Define role-based passwords
+  const roleBasedPasswords: Record<string, string> = {
+    // test push
+    sales: "@FismedSales2024",
+    admin: "@AdminFismed24",
+    finance: "@KeuanganFismed224",
+    logistik: "@BagianGudan002024",
+  };
+
   const handleLogin = async () => {
     if (!password || !username) {
       setAlert({
