@@ -74,7 +74,7 @@ const AdminMainContent = () => {
   const id = searchParams.get("id");
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
+    const storedUsername = localStorage.getItem("statusAccount");
     if (storedUsername) {
       setUsername(storedUsername);
     }

@@ -157,9 +157,9 @@ const Form: FC = () => {
   return (
     <section className="flex max-h-screen">
       {/* sidebar */}
-      <Sidebar />
+      {/* <Sidebar /> */}
 
-      <div className="ml-[17.3vw] flex h-fit min-h-screen w-[82.7vw] flex-col bg-[#EFEFEF] text-black">
+      <div className="ml-0 h-screen w-full bg-[#EFEFEF] text-black md:ml-[17.3vw] md:w-[82.7vw]">
         {/* top bar that says "Welcome, {user}" */}
         <WelcomingMessage />
         {/* main content */}
@@ -180,7 +180,9 @@ const Form: FC = () => {
             </Button>
           </div> */}
           <div className="flex h-[4vh] items-center justify-center text-end font-semibold">
-            <h1>Supported by PT Gunung Elang Indah</h1>
+            <h1 className="text-sm lg:text-lg">
+              Supported by PT Gunung Elang Indah
+            </h1>
           </div>
         </div>
       </div>

@@ -6,22 +6,18 @@ import TableComponent from "@/components/Tables/AdminTable/PITable-dua";
 
 const MainContent = () => (
   <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
-
     <ContentTopSectionLayout>
       {/* cek profile customer and searchbar */}
       <TopSectionLeftSide />
 
       {/* the two buttons on the right */}
       <TopSectionRightSide />
-
     </ContentTopSectionLayout>
 
-
-    <div className="h-full">
+    <div className="h-full overflow-x-scroll">
       <TableComponent />
     </div>
   </div>
-
 );
 
 export default MainContent;

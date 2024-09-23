@@ -116,7 +116,7 @@ const Form: FC = () => {
   return (
     <section className="flex max-h-screen">
       {/* sidebar */}
-      <Sidebar />
+      {/* <Sidebar /> */}
 
       <div className="ml-[17.3vw] flex h-fit min-h-screen w-[82.7vw] flex-col bg-[#EFEFEF] text-black">
         {/* top bar that says "Welcome, {user}" */}

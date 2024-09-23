@@ -65,7 +65,7 @@ export default function PITableComponent() {
 
   // Fetch username from localStorage
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
+    const storedUsername = localStorage.getItem("statusAccount");
     if (storedUsername) {
       setUsername(storedUsername);
     }

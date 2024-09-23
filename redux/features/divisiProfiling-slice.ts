@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type InitialState = {
+  divisi: any;
   value: DivisiProfilingState;
 };
 

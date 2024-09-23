@@ -63,7 +63,7 @@ export default function PITableComponent() {
 
   // Fetch username from localStorage
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
+    const storedUsername = localStorage.getItem("statusAccount");
     if (storedUsername) {
       setUsername(storedUsername);
     }
@@ -72,13 +72,13 @@ export default function PITableComponent() {
   // Refresh page on navigation
   useEffect(() => {
     router.refresh();
-  }, []);
+  }, [router]);
 
   // Function to fetch data from API
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/proforma-invoice/get-all-list"
+        "http://209.182.237.155:8080/api/proforma-invoice/get-all-list",
       );
       console.log("API response:", response.data); // Log the API response
       if (response.data.status) {
@@ -100,7 +100,7 @@ export default function PITableComponent() {
 
   const filteredUsers = React.useMemo(() => {
     return users.filter((user) =>
-      user.nama_company?.toLowerCase().includes(searchText.toLowerCase())
+      user.nama_company?.toLowerCase().includes(searchText.toLowerCase()),
     );
   }, [users, searchText]);
 
@@ -155,13 +155,13 @@ export default function PITableComponent() {
         case "actions":
           return (
             <div className="relative flex items-center gap-2">
-              <Tooltip content="Details" className="text-black text-center">
+              <Tooltip content="Details" className="text-center text-black">
                 <span
                   onClick={() =>
                     router.push(
                       username === "sales"
                         ? `/proforma-invoice-dua/edit?id=${user.id}&divisi=${user.divisi}`
-                        : `/proforma-invoice-dua/edit?id=${user.id}&divisi=${user.divisi}`
+                        : `/proforma-invoice-dua/edit?id=${user.id}&divisi=${user.divisi}`,
                     )
                   }
                   className="cursor-pointer text-lg text-default-400 active:opacity-50"
@@ -170,13 +170,13 @@ export default function PITableComponent() {
                 </span>
               </Tooltip>
               {user.status !== "DITERIMA" && username === "sales" && (
-                <Tooltip content="Edit" className="text-black text-center">
+                <Tooltip content="Edit" className="text-center text-black">
                   <span
                     onClick={() =>
                       router.push(
                         username === "sales"
                           ? `/proforma-invoice-dua/edit-sales?id=${user.id}&divisi=${user.divisi}`
-                          : ""
+                          : "",
                       )
                     }
                     className="cursor-pointer text-lg text-default-400 active:opacity-50"
@@ -191,7 +191,7 @@ export default function PITableComponent() {
           return cellValue;
       }
     },
-    [username, router]
+    [username, router],
   );
 
   const onRowsPerPageChange = React.useCallback(
@@ -199,7 +199,7 @@ export default function PITableComponent() {
       setRowsPerPage(Number(e.target.value));
       setPage(1);
     },
-    []
+    [],
   );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -208,14 +208,14 @@ export default function PITableComponent() {
 
   return (
     <div>
-      <div className="flex justify-between gap-4 mb-5">
+      <div className="mb-5 flex flex-col justify-between gap-4 lg:flex-row">
         <Input
           type="text"
           placeholder="Masukan Nama Perusahaan"
           value={searchText}
           onChange={handleSearchChange}
         />
-        <Button className="bg-blue-900 w-10 font-bold text-white">
+        <Button className="w-10 bg-blue-900 font-bold text-white">
           Cari/Cek
         </Button>
       </div>
@@ -234,7 +234,7 @@ export default function PITableComponent() {
           <TableHeader columns={columns}>
             {(column) => (
               <TableColumn
-                className="bg-blue-900 text-white text-center"
+                className="bg-blue-900 text-center text-white"
                 key={column.uid}
                 align="start"
               >
@@ -242,11 +242,14 @@ export default function PITableComponent() {
               </TableColumn>
             )}
           </TableHeader>
-          <TableBody emptyContent={"No Proforma Invoice found"} items={itemsWithIndex}>
+          <TableBody
+            emptyContent={"No Proforma Invoice found"}
+            items={itemsWithIndex}
+          >
             {(item) => (
               <TableRow key={item.id}>
                 {(columnKey) => (
-                  <TableCell className="text-center items-center">
+                  <TableCell className="items-center text-center">
                     {renderCell(item, columnKey)}
                   </TableCell>
                 )}
@@ -272,6 +275,3 @@ export default function PITableComponent() {
     </div>
   );
 }
-
-
-

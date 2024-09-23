@@ -7,6 +7,7 @@ type ListItemPOState = {
   discount: string;
 
   // COMENT
+  
   // price
   // quantity
   // name

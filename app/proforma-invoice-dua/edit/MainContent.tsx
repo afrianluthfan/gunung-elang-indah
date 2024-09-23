@@ -70,7 +70,7 @@ const ProformaInvoiceDetail = () => {
   const divisi = searchParams.get("divisi");
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
+    const storedUsername = localStorage.getItem("statusAccount");
     if (storedUsername) {
       setUsername(storedUsername);
     }
