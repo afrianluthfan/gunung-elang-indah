@@ -40,7 +40,7 @@ const MainContent: FC = () => {
     const fetchRsData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/proforma-invoice/rs-list",
+          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
           "",
         );
         setRsData(response.data.data);
@@ -93,7 +93,7 @@ const MainContent: FC = () => {
         <TopSectionLeftSide />
       </ContentTopSectionLayout>
       <Divider />
-      
+
       <form className="grid h-full w-full grid-cols-3 gap-3">
         {/* first column */}
         <div className="flex flex-col gap-3">

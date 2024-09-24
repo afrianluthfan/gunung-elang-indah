@@ -1,24 +1,26 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+type AuthState = {
+  isAuth: boolean;
+  username: string;
+  password: string;
+  statusAcount: string;
+  isSA: boolean;
+};
+
 type InitialState = {
   value: AuthState;
 };
 
-type AuthState = {
-  isAuth: boolean;
-  username: string;
-  uid: string;
-  isSA: boolean;
-};
-
-const initialState = {
+const initialState: InitialState = {
   value: {
     isAuth: false,
     username: "",
-    uid: "",
+    password: "",
+    statusAcount: "",
     isSA: false,
-  } as AuthState,
-} as InitialState;
+  },
+};
 
 export const auth = createSlice({
   name: "auth",
@@ -27,14 +29,16 @@ export const auth = createSlice({
     logOut: () => {
       return initialState;
     },
-    logIn: (_state, action: PayloadAction<string>) => {
-      return {
-        value: {
-          isAuth: true,
-          username: action.payload,
-          uid: "asdfghjkl",
-          isSA: false,
-        },
+    logIn: (
+      state,
+      action: PayloadAction<{ username: string; password: string; statusAccount: string }>,
+    ) => {
+      state.value = {
+        isAuth: action.payload.password === "qwerty12345", // Example check, replace with real authentication logic
+        username: action.payload.username,
+        statusAcount: action.payload.statusAccount,
+        password: action.payload.password,
+        isSA: false,
       };
     },
   },

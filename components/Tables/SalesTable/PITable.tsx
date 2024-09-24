@@ -16,17 +16,18 @@ import {
 import { EditIcon } from "./EditIcon";
 import { EyeIcon } from "../AdminTable/EyeIcon";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const columns = [
   { name: "NO.", uid: "number" },
   { name: "ID", uid: "id", sortable: true },
-  { name: "KAT.", uid: "kat" },
-  { name: "NAMA BARANG", uid: "name", sortable: true },
-  { name: "QTY", uid: "qty", sortable: true },
-  { name: "H. SATUAN", uid: "hsatuan", sortable: true },
-  { name: "DISC", uid: "disc" },
-  { name: "SUBTOTAL", uid: "subtotal", sortable: true },
-  { name: "STATUS", uid: "status", sortable: true },
+  { name: "DIVISI", uid: "divisi" },
+  { name: "NAMA BARANG", uid: "name" },
+  // { name: "QTY", uid: "qty" },
+  { name: "H. SATUAN", uid: "hsatuan" },
+  // { name: "DISC", uid: "disc" },
+  { name: "SUBTOTAL", uid: "subtotal" },
+  { name: "STATUS", uid: "status" },
   { name: "ACTIONS", uid: "actions" },
 ];
 
@@ -51,11 +52,12 @@ type ItemData = {
   disc: string;
   subtotal: string;
   status: string;
+  divisi: string;
 }[];
 
 const INITIAL_VISIBLE_COLUMNS = [
   "number",
-  "kat",
+  "divisi",
   "name",
   "qty",
   "hsatuan",
@@ -78,14 +80,15 @@ export default function PITableComponent() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: "age",
-    direction: "ascending",
+    direction: "descending",
   });
   const [page, setPage] = useState(1);
+  const router = useRouter();
 
   const fetchItemData1 = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/proforma-invoice/get-all-list",
+        "http://209.182.237.155:8080/api/proforma-invoice/get-all-list",
         "",
       );
       return response.data.data;
@@ -98,7 +101,7 @@ export default function PITableComponent() {
   const fetchItemData2 = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/stock-barang/list",
+        "http://209.182.237.155:8080/api/stock-barang/list",
         "",
       );
       return response.data.data;
@@ -129,6 +132,7 @@ export default function PITableComponent() {
           disc: "N/A", // Assuming disc is not available in the provided data
           subtotal: item1.sub_total,
           status: item1.status,
+          divisi: item1.divisi,
         };
       });
 
@@ -193,14 +197,11 @@ export default function PITableComponent() {
       if (columnKey === "number") {
         return user.index;
       }
-
       const cellValue = user[columnKey as keyof User];
       switch (columnKey) {
         case "name":
           return cellValue;
         case "status":
-          console.log("User Status:", user.status); // Log the status to check the value
-
           return (
             <Chip
               className="capitalize"
@@ -221,7 +222,14 @@ export default function PITableComponent() {
               </Tooltip>
               {user.status !== "diterima" && (
                 <Tooltip content="Edit user" className="text-black">
-                  <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
+                  <span
+                    onClick={() =>
+                      router.push(
+                        `/proforma-invoice/edit?id=${user.id}&divisi=${user.divisi}`,
+                      )
+                    }
+                    className="cursor-pointer text-lg text-default-400 active:opacity-50"
+                  >
                     <EditIcon />
                   </span>
                 </Tooltip>
@@ -232,7 +240,7 @@ export default function PITableComponent() {
           return cellValue;
       }
     },
-    [],
+    [router],
   );
 
   const onRowsPerPageChange = React.useCallback(
@@ -247,7 +255,7 @@ export default function PITableComponent() {
     <div>
       <Table
         aria-label="Example table with custom cells"
-        selectionMode="multiple"
+        
         onSelectionChange={setSelectedKeys}
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}

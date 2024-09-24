@@ -3,22 +3,27 @@ import { Select, SelectItem, Selection } from "@nextui-org/react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { setAmount } from "@/redux/features/salesPIItemNumber-slice";
-import { set } from "react-hook-form";
 
 interface DropdownProps {
   data: { value: string; label: string }[];
   label: string;
   placeholder: string;
-  statePassing?: (selectedItem: string) => void; // Update type to string
+  statePassing?: (selectedItem: string) => void;
+  selectedKeys?: Selection;
 }
+
+type Key = string | number;
 
 const Dropdown: FC<DropdownProps> = ({
   data,
   label,
   placeholder,
   statePassing,
+  selectedKeys,
 }) => {
-  const [value, setValue] = React.useState<Selection>(new Set([]));
+  const [value, setValue] = React.useState<Selection>(
+    selectedKeys || new Set([]),
+  );
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -27,12 +32,12 @@ const Dropdown: FC<DropdownProps> = ({
 
   const handleSelect = (selectedKeys: Selection) => {
     setValue(selectedKeys);
-    const selectedValue = Array.from(selectedKeys).join(", "); // Extracting value as string
+    const selectedValue = Array.from(selectedKeys).join(", ");
     if (!isNaN(Number(selectedValue))) {
-      dispatch(setAmount(Number(selectedValue))); // Dispatch the selected value as number
+      dispatch(setAmount(Number(selectedValue)));
     }
     if (statePassing) {
-      statePassing(selectedValue); // Pass the selected value as string
+      statePassing(selectedValue);
     }
   };
 
@@ -41,12 +46,12 @@ const Dropdown: FC<DropdownProps> = ({
       <Select
         label={label}
         placeholder={placeholder}
-        selectedKeys={value}
+        selectedKeys={selectedKeys || value}
         onSelectionChange={handleSelect}
       >
-        {data.map((data) => (
-          <SelectItem className="text-black" key={data.value}>
-            {data.label}
+        {data.map((item) => (
+          <SelectItem className="text-black" key={item.value}>
+            {item.label}
           </SelectItem>
         ))}
       </Select>

@@ -18,33 +18,39 @@ const Sidebar = () => {
   const [menuItemsList, setMenuItemsList] = useState([
     { pageName: "", pageRoute: "" },
   ]);
-  const activeUser = useAppSelector(
-    (state) => state.authReducer.value.username,
-  );
+  const activeUser = useAppSelector((state) => state.auth.value.statusAcount);
   // logout handler
   const handleLogOut = () => {
     dispatch(logOut());
+    // clear localstorage
+    localStorage.removeItem("statusAccount");
+    localStorage.removeItem("username");
+    localStorage.removeItem("persist:root");
+    localStorage.removeItem("token");
+
+    dispatch(logOut());
+
     router.push("/login");
   };
 
   useEffect(() => {
     const salesMenus = [
-      {
-        pageName: "Profiling",
-        pageRoute: "profiling",
-      },
+      // {
+      //   pageName: "Profiling",
+      //   pageRoute: "profiling",
+      // },
       {
         pageName: "Proforma Invoice",
-        pageRoute: "proforma-invoice",
+        pageRoute: "proforma-invoice-dua",
       },
       {
         pageName: "Stok Barang",
         pageRoute: "stok-barang",
       },
-      {
-        pageName: "Sewa Alat",
-        pageRoute: "sewa-alat",
-      },
+      // {
+      //   pageName: "Sewa Alat",
+      //   pageRoute: "sewa-alat",
+      // },
     ];
 
     const logistikMenus = [
@@ -64,8 +70,12 @@ const Sidebar = () => {
 
     const adminMenus = [
       {
+        pageName: "Profiling",
+        pageRoute: "profiling",
+      },
+      {
         pageName: "Proforma Invoice",
-        pageRoute: "proforma-invoice",
+        pageRoute: "proforma-invoice-dua",
       },
       {
         pageName: "Purchase Order",
@@ -107,29 +117,85 @@ const Sidebar = () => {
         pageRoute: "sales-order",
       },
       {
-        pageName: "Komisi",
-        pageRoute: "komisi",
+        pageName: "Purchase Order",
+        pageRoute: "purchase-order",
       },
+      {
+        pageName: "Stok Barang",
+        pageRoute: "stok-barang",
+      },
+      // {
+      //   pageName: "Komisi",
+      //   pageRoute: "komisi",
+      // },
+    ];
+
+    // buatkan untuk super admin dan munculin semua navigasi routennya
+    const superAdmin = [
+      {
+        pageName: "Profiling",
+        pageRoute: "profiling",
+      },
+      {
+        pageName: "Proforma Invoice",
+        pageRoute: "proforma-invoice-dua",
+      },
+      {
+        pageName: "Purchase Order",
+        pageRoute: "purchase-order",
+      },
+      {
+        pageName: "Stok Barang",
+        pageRoute: "stok-barang",
+      },
+      {
+        pageName: "Sewa Barang",
+        pageRoute: "sewa-barang",
+      },
+      {
+        pageName: "Sales Order",
+        pageRoute: "sales-order",
+      },
+      {
+        pageName: "Piutang",
+        pageRoute: "piutang",
+      },
+      {
+        pageName: "Hutang",
+        pageRoute: "hutang",
+      },
+      {
+        pageName: "Pemasukan",
+        pageRoute: "pemasukan",
+      },
+      {
+        pageName: "Pengeluaran",
+        pageRoute: "pengeluaran",
+      },
+      // {
+      //   pageName: "Komisi",
+      //   pageRoute: "komisi",
+      // },
     ];
 
     switch (activeUser) {
-      case "sales":
+      case "SALES":
         setMenuItemsList(salesMenus);
         break;
-      case "logistik":
+      case "LOGISTIK":
         setMenuItemsList(logistikMenus);
         break;
-      case "admin":
+      case "ADMIN":
         setMenuItemsList(adminMenus);
         break;
-      case "finance":
+      case "KEUANGAN":
         setMenuItemsList(financeMenus);
         break;
     }
   }, [activeUser]);
 
   return (
-    <div className="fixed z-50 flex h-screen w-[17.3vw] min-w-[107px] flex-col items-center justify-between bg-[#011869] p-5">
+    <div className="fixed flex h-screen w-full flex-col items-center justify-between bg-[#011869] p-1 md:w-[17.3vw] md:p-5">
       <SidebarTopItem />
       <SidebarMenuItemsLayout>
         {menuItemsList.map((menuItem, index) => (
@@ -141,7 +207,10 @@ const Sidebar = () => {
           />
         ))}
       </SidebarMenuItemsLayout>
-      <Button className="w-full font-bold" onClick={handleLogOut}>
+      <Button
+        className="w-fit min-w-16 px-0 text-xs font-bold lg:w-full lg:px-4 lg:text-sm"
+        onClick={handleLogOut}
+      >
         Log Out
       </Button>
     </div>

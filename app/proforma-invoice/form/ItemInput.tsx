@@ -1,3 +1,4 @@
+"use client";
 import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
 import { Button, Divider, Input } from "@nextui-org/react";
 import { useForm, Controller } from "react-hook-form";
@@ -16,7 +17,7 @@ interface ItemInputProps {
 }
 
 type ItemData = {
-  id: string;
+  id: number;
   name: string;
   total: string;
   price: string;
@@ -36,9 +37,8 @@ type ListItemPIState = {
 };
 
 const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
-  const { control, handleSubmit, watch } = useForm<ListItemPIState>();
+  const { control, handleSubmit, watch, setValue } = useForm<ListItemPIState>();
   const [itemData, setItemData] = useState<ItemData[]>([]);
-  const [selectedData, setselectedData] = useState<{}>("");
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const watchFields = watch();
@@ -47,7 +47,7 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
     const fetchItemData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/stock-barang/list",
+          "http://209.182.237.155:8080/api/stock-barang/list",
           "",
         );
         setItemData(response.data.data);
@@ -67,13 +67,11 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
     router.push("/proforma-invoice/form/preview");
   };
 
-  const findItemByName = (name: string): ItemData | undefined => {
-    return itemData.find((item) => item.name === name);
-  };
-
   const handleItemSelection = (data: ItemData) => {
-    setselectedData(data);
-    console.log("selectedData: ", selectedData);
+    setValue("namaBarang", data.name); // Update the form field value
+    dispatch(
+      setListItemPI({ index, item: { ...watchFields, namaBarang: data.name } }),
+    );
   };
 
   return (
@@ -103,8 +101,8 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
         {/* second column */}
         <div className="flex flex-col gap-3">
           <PiItemAutocompleteSearch
-            data={itemData}
-            label="Nama Rumah Sakit"
+            selectData={itemData}
+            label="Nama Barang"
             passingFunction={handleItemSelection}
           />
           <Controller
@@ -120,22 +118,8 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
             control={control}
             render={({ field }) => <Input {...field} label="QTY" />}
           />
-          <Controller
-            name="subTotal"
-            control={control}
-            render={({ field }) => <Input {...field} label="SUB TOTAL" />}
-          />
         </div>
       </form>
-      <div className="flex justify-end">
-        <Button
-          onClick={handleSubmit(handleSetData)}
-          color="primary"
-          className="min-w-36"
-        >
-          Next
-        </Button>
-      </div>
     </div>
   );
 };

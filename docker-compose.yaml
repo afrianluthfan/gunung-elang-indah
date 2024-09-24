@@ -1,0 +1,10 @@
+services:
+  fismed_fe:
+    image: fismed-fe:latest
+    container_name: fismed-fe-dev
+    build:
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 3000:3000
+    

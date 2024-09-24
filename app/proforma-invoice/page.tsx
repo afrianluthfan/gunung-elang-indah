@@ -8,7 +8,7 @@ import WelcomingMessage from "@/components/WelcomingMessage";
 import { useAppSelector } from "@/redux/store";
 
 const ProfilingPage = () => {
-  const user = useAppSelector((state) => state.authReducer.value.username);
+  const user = useAppSelector((state) => state.auth.value.username);
   let MainContent = <></>;
   switch (user) {
     case "sales":

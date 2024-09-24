@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
+import axios from "axios";
 import {
   Table,
   TableHeader,
@@ -8,16 +9,13 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Button,
   Chip,
-  User,
   Pagination,
   Selection,
   ChipProps,
   SortDescriptor,
   Tooltip,
 } from "@nextui-org/react";
-import { columns, users, statusOptions } from "./data";
 import { DeleteIcon } from "./DeleteIcon";
 import { EyeIcon } from "./EyeIcon";
 import { EditIcon } from "./EditIcon";
@@ -31,72 +29,92 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 const INITIAL_VISIBLE_COLUMNS = [
   "number",
   "tanggal",
-  "name",
-  "total",
-  "status",
-  "actions",
+  "nama",
+  "amount",
+  // "actions",
 ];
 
-type User = (typeof users)[0];
+type User = {
+  id: number;
+  nama: string;
+  nominal: string;
+  amount: string;
+  tanggal: string;
+};
 
 export default function TableComponent() {
-  const [filterValue, setFilterValue] = React.useState("");
-  const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
-    new Set([]),
-  );
-  const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
+  const [users, setUsers] = useState<User[]>([]);
+  const [filterValue, setFilterValue] = useState("");
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
+  const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS),
   );
-  const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
-    column: "age",
-    direction: "ascending",
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
+    column: "id",
+    direction: "descending",
   });
+  const [page, setPage] = useState(1);
+  const [error, setError] = useState<string | null>(null);
 
-  const [page, setPage] = React.useState(1);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.post(
+          "http://209.182.237.155:8080/api/piutang/list",
+          {},
+        );
+        setUsers(response.data.data);
+      } catch (error) {
+        setError("Error fetching data");
+        console.error("Error fetching data:", error);
+      }
+    };
 
-  const hasSearchFilter = Boolean(filterValue);
+    fetchData();
+  }, []);
 
-  const headerColumns = React.useMemo(() => {
+  const columns = [
+    { name: "No", uid: "number" },
+    { name: "Tanggal", uid: "tanggal" },
+    { name: "Nama", uid: "nama" },
+    { name: "Nominal", uid: "nominal" },
+    { name: "Amount", uid: "amount" },
+    // { name: "Actions", uid: "actions" }
+  ];
+
+  const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
 
     return columns.filter((column) =>
       Array.from(visibleColumns).includes(column.uid),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visibleColumns]);
 
-  const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
+  const filteredItems = useMemo(() => {
+    let filteredUsers = Array.isArray(users) ? [...users] : [];
 
-    if (hasSearchFilter) {
+    if (filterValue) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase()),
-      );
-    }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status),
+        user.nama.toLowerCase().includes(filterValue.toLowerCase()),
       );
     }
 
     return filteredUsers;
-  }, [hasSearchFilter, statusFilter, filterValue]);
+  }, [filterValue, users]);
 
-  const sortedItems = React.useMemo(() => {
+  const sortedItems = useMemo(() => {
     return [...filteredItems].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] as number;
-      const second = b[sortDescriptor.column as keyof User] as number;
+      const first = a[sortDescriptor.column as keyof User] as string | number;
+      const second = b[sortDescriptor.column as keyof User] as string | number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, filteredItems]);
 
-  const itemsWithIndex = React.useMemo(() => {
+  const itemsWithIndex = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     return sortedItems.slice(start, start + rowsPerPage).map((item, index) => ({
       ...item,
@@ -106,7 +124,7 @@ export default function TableComponent() {
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const renderCell = React.useCallback(
+  const renderCell = useCallback(
     (user: User & { index: number }, columnKey: React.Key) => {
       if (columnKey === "number") {
         return user.index;
@@ -114,32 +132,10 @@ export default function TableComponent() {
 
       const cellValue = user[columnKey as keyof User];
       switch (columnKey) {
-        case "name":
-          return cellValue;
-        case "role":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">{cellValue}</p>
-              <p className="text-bold text-tiny capitalize text-default-400">
-                {user.team}
-              </p>
-            </div>
-          );
-        case "status":
-          return (
-            <Chip
-              className="capitalize"
-              color={statusColorMap[user.status]}
-              size="sm"
-              variant="flat"
-            >
-              {cellValue}
-            </Chip>
-          );
         case "actions":
           return (
             <div className="relative flex items-center gap-2">
-              <Tooltip content="Details" className="text-black">
+              {/* <Tooltip content="Details" className="text-black">
                 <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
                   <EyeIcon />
                 </span>
@@ -153,7 +149,7 @@ export default function TableComponent() {
                 <span className="cursor-pointer text-lg text-danger active:opacity-50">
                   <DeleteIcon />
                 </span>
-              </Tooltip>
+              </Tooltip> */}
             </div>
           );
         default:
@@ -163,7 +159,7 @@ export default function TableComponent() {
     [],
   );
 
-  const onRowsPerPageChange = React.useCallback(
+  const onRowsPerPageChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       setRowsPerPage(Number(e.target.value));
       setPage(1);
@@ -171,18 +167,23 @@ export default function TableComponent() {
     [],
   );
 
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <div>
       <Table
         aria-label="Example table with custom cells"
-        selectionMode="multiple"
+        // 
         onSelectionChange={setSelectedKeys}
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
+        removeWrapper
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
-            <TableColumn key={column.uid} align="start">
+            <TableColumn className="bg-blue-900 text-white" key={column.uid} align="start">
               {column.name}
             </TableColumn>
           )}

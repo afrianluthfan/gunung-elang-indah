@@ -1,43 +1,90 @@
 "use client";
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
-import React, { FC, useState } from "react";
-
-type ItemData = {
-  id: string;
-  name: string;
-  total: string;
-  price: string;
-  created_at: string;
-  created_by: string;
-  updated_at: string;
-  updated_by: string;
-};
+import React, { FC, useEffect, useState, useCallback } from "react";
 
 interface PiItemAutocompleteSearchProps {
-  data: ItemData[];
   label: string;
-  passingFunction: (itemData: ItemData) => void;
+  assignedValue?: string;
+  selectData?: {
+    id: number;
+    name: string;
+    total: string;
+    price: string;
+    created_at: string;
+    created_by: string;
+    updated_at: string;
+    updated_by: string;
+  }[];
+  passingFunction: (itemData: {
+    id: number;
+    name: string;
+    total: string;
+    price: string;
+    created_at: string;
+    created_by: string;
+    updated_at: string;
+    updated_by: string;
+  }) => void;
 }
 
 const PiItemAutocompleteSearch: FC<PiItemAutocompleteSearchProps> = ({
-  data,
   label,
+  assignedValue,
   passingFunction,
+  selectData,
 }) => {
-  const [selectedValue, setSelectedValue] = useState<string | null>(null); // State to hold selected value
+  const [data, setData] = useState<
+    {
+      id: number;
+      name: string;
+      total: string;
+      price: string;
+      created_at: string;
+      created_by: string;
+      updated_at: string;
+      updated_by: string;
+    }[]
+  >([]);
 
-  // Handle selection change
-  const handleSelectionChange = (value: string) => {
-    setSelectedValue(value); // Update selected value
+  const [inputValue, setInputValue] = useState<string>(assignedValue || "");
+  const [selectedKey, setSelectedKey] = useState<string>(assignedValue || "");
 
-    const selectedItem = data.find((item) => item.name === value);
-    if (selectedItem) {
-      passingFunction(selectedItem); // Pass selected item to parent component
-      console.log("Selected item: ", selectedItem);
-    } else {
-      console.log("No matching item found in data.");
-      console.log("Selected name: ", value);
+  useEffect(() => {
+    if (selectData) {
+      setData(selectData);
     }
+  }, [selectData]);
+
+  useEffect(() => {
+    if (assignedValue && data.length > 0) {
+      const selectedItem = data.find((item) => item.name === assignedValue);
+      if (selectedItem) {
+        passingFunction(selectedItem);
+        setInputValue(assignedValue);
+        setSelectedKey(assignedValue);
+      }
+    }
+  }, [assignedValue, data, passingFunction]);
+
+  const handleSelectionChange = useCallback(
+    (key: React.Key | null) => {
+      if (key === null) {
+        setSelectedKey("");
+        return;
+      }
+      const selectedItem = data.find((item) => item.name === key);
+      if (selectedItem) {
+        passingFunction(selectedItem);
+        setSelectedKey(key as string);
+        setInputValue(selectedItem.name);
+      }
+    },
+    [data, passingFunction],
+  );
+
+  const handleInputChange = (value: string) => {
+    setInputValue(value);
+    setSelectedKey(""); // Clear selected key when input changes
   };
 
   return (
@@ -45,14 +92,17 @@ const PiItemAutocompleteSearch: FC<PiItemAutocompleteSearchProps> = ({
       <Autocomplete
         labelPlacement="inside"
         label={label}
-        value={selectedValue || ""} // Ensure value is a string
-        onSelectionChange={(key) => handleSelectionChange(key as string)}
+        inputValue={inputValue}
+        selectedKey={selectedKey}
+        onInputChange={handleInputChange}
+        onSelectionChange={handleSelectionChange}
+        allowsCustomValue
       >
         {data.map((item) => (
           <AutocompleteItem
             className="text-black"
-            key={item.id}
-            value={item.name} // Use item.name as the value
+            key={item.name}
+            value={item.name}
           >
             {item.name}
           </AutocompleteItem>

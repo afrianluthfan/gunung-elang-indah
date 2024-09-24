@@ -6,7 +6,7 @@ import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 
 const TopSectionRightSide = () => {
-  const user = useAppSelector((state) => state.authReducer.value.username);
+  const user = useAppSelector((state) => state.auth.value.username);
   const router = useRouter();
   let ButtonContent = <></>;
 
@@ -22,12 +22,12 @@ const TopSectionRightSide = () => {
       );
       break;
     case "admin":
-      ButtonContent = <ModalComponent ButtonText="Tambah" />;
+      ButtonContent = <></>;
       break;
   }
 
   return (
-    <div className="flex w-[8vw] flex-col gap-1">
+    <div className="flex w-[8vw] flex-col justify-end gap-1">
       {ButtonContent}
       <Button className="bg-[#00186D] font-bold text-white">Cari/Cek</Button>
     </div>

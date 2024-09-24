@@ -1,22 +1,21 @@
-import Sidebar from "@/components/Sidebar";
+"use client"; // Tambahkan ini di bagian paling atas
+
 import MainContent from "./MainContent";
 import MainContentLayout from "@/components/layouts/MainContentLayout";
 import WelcomingMessage from "@/components/WelcomingMessage";
 
-const ProfilingPage = () => (
-  <section className="flex max-h-screen">
-    {/* sidebar */}
-    <Sidebar />
-
-    <div className="ml-[17.3vw] h-screen w-[82.7vw] bg-[#EFEFEF] text-black">
-      {/* top bar that says "Welcome, {user}" */}
-      <WelcomingMessage />
-      {/* main content */}
-      <MainContentLayout>
-        <MainContent />
-      </MainContentLayout>
-    </div>
-  </section>
-);
+const ProfilingPage = () => {
+  return (
+    <section className="flex max-h-screen">
+      {/* Main Content */}
+      <div className="ml-0 h-screen w-full bg-[#EFEFEF] text-black md:ml-[17.3vw] md:w-[82.7vw]">
+        <WelcomingMessage />
+        <MainContentLayout>
+          <MainContent />
+        </MainContentLayout>
+      </div>
+    </section>
+  );
+};
 
 export default ProfilingPage;

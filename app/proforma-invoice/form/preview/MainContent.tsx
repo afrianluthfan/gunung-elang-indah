@@ -30,15 +30,13 @@ type Hospital = {
 const MainContent = () => {
   const router = useRouter();
   const [rsData, setRsData] = useState<Hospital[]>([]);
-  const responseData = useAppSelector(
-    (state) => state.salesPIInquirySliceReducer.value,
-  );
+  const responseData = useAppSelector((state) => state.salesPIInquiry.value);
 
   useEffect(() => {
     const fetchRsData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/proforma-invoice/rs-list",
+          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
           "",
         );
         setRsData(response.data.data);
@@ -49,12 +47,14 @@ const MainContent = () => {
 
     fetchRsData();
   }, []);
+
   const dispatch = useDispatch();
 
   const submitData = async () => {
     const selectedHospital = rsData.find(
       (hospital) => hospital.name === responseData.rumah_sakit,
     );
+
     const idRumahSakit = selectedHospital ? selectedHospital.id.toString() : "";
 
     const requestBody = {
@@ -85,7 +85,7 @@ const MainContent = () => {
 
     try {
       await axios.post(
-        "http://localhost:8080/api/proforma-invoice/posting",
+        "http://209.182.237.155:8080/api/proforma-invoice/posting",
         requestBody,
       );
       dispatch(resetItemPI());
@@ -111,7 +111,7 @@ const MainContent = () => {
           <h1>Nomor Surat Jalan: {responseData.nomor_surat_jalan}</h1>
           <h1>Tanggal: {responseData.tanggal}</h1>
           <h1>Jatuh Tempo: {responseData.jatuh_tempo}</h1>
-          <h1>Nomor SI: {responseData.nomor_si}</h1>
+          <h1>Nomor Surat Jalan: {responseData.nomor_si}</h1>
         </div>
         <div className="flex flex-col">
           <h1>Nama Rumah Sakit: {responseData.rumah_sakit}</h1>

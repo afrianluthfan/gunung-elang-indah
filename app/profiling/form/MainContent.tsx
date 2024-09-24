@@ -1,256 +1,482 @@
 "use client";
 
-import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
-import TopSectionLeftSide from "./TopSectionLeftSide";
+import { useEffect, useState } from "react";
 import { Button, Divider, Input } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
-import Dropdown from "@/components/Dropdown";
-import { tax_codes } from "../../../components/Tables/SalesTable/tax";
-import { useEffect, useState } from "react";
-import { AppDispatch, useAppSelector } from "@/redux/store";
-import { useDispatch } from "react-redux";
-import {
-  resetItemProfiling,
-  setItemProfiling,
-} from "@/redux/features/iitemProfiling-slice";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
-type FormFields = {
-  name: string;
-  nama_company: string;
-  address_company: string;
-  npwp_address: string;
-  npwp: string;
-  ipak_number: string;
-  facture_address: string;
-  city_facture: string;
-  zip_code_facture: string;
-  number_phone_facture: string;
-  email_facture: string;
-  fax_facture: string;
-  pic_facture: string;
-  item_address: string;
-  city_item: string;
-  zip_code_item: string;
-  number_phone_item: string;
-  email_item: string;
-  fax_item: string;
-  pic_item: string;
-  contact_person: string;
-  handphone: string;
-  tax_code_id: string;
-  top: string;
-};
+interface ResponseData {
+  rumah_sakit?: string;
+  alamat?: string;
+  id_rumah_sakit?: string;
+  nama_dokter?: string;
+}
 
 const MainContent = () => {
-  const [selectedTaxCode, setSelectedTaxCode] = useState<string>("");
-  const { register, setValue } = useForm<FormFields>();
-  const dispatch = useDispatch<AppDispatch>();
-  const profilingInput = useAppSelector(
-    (state) => state.itemProfilingReducer.value,
-  );
+  const { register, handleSubmit } = useForm();
   const router = useRouter();
+  const [inputCompanyValue, setInputCompanyValue] = useState("");
+  const [hospitalSuggestions, setHospitalSuggestions] = useState<string[]>([]); // Store the filtered suggestions
+  const [hospitalData, setHospitalData] = useState<any[]>([]);
+  const [doctorData, setDoctorData] = useState<any[]>([]);
+  const [doctorSuggestions, setDoctorSuggestions] = useState<string[]>([]);
+  const [responseData, setResponseData] = useState<ResponseData>({});
+  const [inputDoctorValue, setInputDoctorValue] = useState("");
 
-  const handleSubmit = async () => {
+  useEffect(() => {
+    const fetchHospitalData = async () => {
+      try {
+        const res = await axios.post(
+          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
+        );
+        setHospitalData(res.data.data);
+        console.log("Hospital data fetched", res.data.data);
+      } catch (error) {
+        console.error("Error fetching hospital data", error);
+      }
+    };
+
+    const fetchDokterData = async () => {
+      try {
+        const res = await axios.post(
+          "http://209.182.237.155:8080/api/proforma-invoice/dr-list",
+        );
+        setDoctorData(res.data.data);
+        console.log("Data dokter fetched", res.data.data);
+      } catch (error) {
+        console.error("Error fetching dokter data", error);
+      }
+    };
+
+    fetchHospitalData();
+    fetchDokterData();
+  }, []);
+
+  // State untuk menyimpan value dropdown divisi
+  const [kategoriDivisi, setKategoriDivisi] = useState("");
+
+  // Fungsi untuk menangani submit form
+  const onSubmit = async (data: Record<string, string | boolean>) => {
+    console.log("Divisi : " + kategoriDivisi);
+    let divisi = "";
+
+    if (kategoriDivisi === "supplier") {
+      divisi = "3";
+    } else if (kategoriDivisi === "customer") {
+      divisi = "1";
+    } else if (kategoriDivisi === "customer_non_rumah_sakit") {
+      divisi = "2";
+    }
+
     const requestBody = {
-      name: profilingInput.name,
-      nama_company: profilingInput.nama_company,
-      address_company: profilingInput.address_company,
-      npwp_address: profilingInput.npwp_address,
-      npwp: profilingInput.npwp,
-      ipak_number: profilingInput.ipak_number,
-      facture_address: profilingInput.facture_address,
-      city_facture: profilingInput.city_facture,
-      zip_code_facture: profilingInput.zip_code_facture,
-      number_phone_facture: profilingInput.number_phone_facture,
-      email_facture: profilingInput.email_facture,
-      fax_facture: profilingInput.fax_facture,
-      pic_facture: profilingInput.pic_facture,
-      item_address: profilingInput.item_address,
-      city_item: profilingInput.city_item,
-      zip_code_item: profilingInput.zip_code_item,
-      number_phone_item: profilingInput.number_phone_item,
-      email_item: profilingInput.email_item,
-      fax_item: profilingInput.fax_item,
-      pic_item: profilingInput.pic_item,
-      contact_person: profilingInput.contact_person,
-      handphone: profilingInput.handphone,
-      tax_code_id: selectedTaxCode,
-      top: profilingInput.top,
+      nama_perusahaan: data.nama_perusahaan,
+      address_perusahaan: data.address_perusahaan,
+      npwp_address_perusahaan: data.npwp_address_perusahaan,
+      npwp_perusahaan: "data.npwp_perusahaan",
+      ipak_number_perusahaan: data.ipak_number_perusahaan,
+      alamat_pengirim_facture_perusahaan:
+        data.alamat_pengirim_facture_perusahaan,
+      kota_perusahaan: data.kota_perusahaan,
+      kode_pos_perusahaan: data.kode_pos_perusahaan,
+      telpon_perusahaan: data.telpon_perusahaan,
+      email_perusahaan: data.email_perusahaan,
+      nama_dokter: data.nama_dokter,
+      alamat_pengirim_dokter: data.alamat_pengirim_dokter,
+      npwp_dokter: data.npwp_dokter,
+      telpon_dokter: data.telpon_dokter,
+      email_dokter: data.email_dokter,
+      pic_dokter: data.pic_dokter,
+      kota_dokter: data.kota_dokter,
+      kode_pos_dokter: data.kode_pos_dokter,
+      handphone_dokter: data.handphone_dokter,
+      kode_pajak_dokter: data.kode_pajak_dokter,
+      cp_dokter: data.cp_dokter,
+      verifikasi_dokter: data.verifikasi_dokter,
+      pembuat_cp_dokter: data.pembuat_cp,
+      term_of_payment: data.term_of_payment,
+      kategori_divisi: divisi,
     };
 
     try {
-      await axios.post(
-        "http://localhost:8080/api/customer-profilling/add",
-        requestBody,
-      );
-      dispatch(resetItemProfiling());
-      router.push("/profiling");
+      Swal.fire({
+        title: "Apakah Kamu Yakin?",
+        text: "Apakah kamu yakin ingin data ini di input ?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            await axios.post(
+              "http://209.182.237.155:8080/api/customer-profilling/add",
+              requestBody,
+            );
+            router.push("/profiling");
+            Swal.fire("Nice!", "Data telah di input ke system!.", "success");
+          } catch (error) {
+            console.error("Error submitting data", error);
+            Swal.fire(
+              "Error!",
+              "Terjadi kesalahan saat mengirim data.",
+              "error",
+            );
+          }
+        }
+      });
     } catch (error) {
-      console.error("Error submitting data", error);
-      throw error;
+      console.error("Error processing request", error);
     }
   };
-  const handleTaxCodeChange = (selectedItem: string) => {
-    setSelectedTaxCode(selectedItem);
-    dispatch(setItemProfiling({ tax_code_id: selectedItem }));
+
+  const handleHospitalSuggestionClick = (suggestion: string) => {
+    const selectedHospital = hospitalData.find(
+      (hospital) => hospital.name === suggestion,
+    );
+
+    if (selectedHospital) {
+      setResponseData((prevData) => ({
+        ...prevData,
+        nama_perusahaan: selectedHospital.name, // Update responseData with the selected company
+      }));
+      setInputCompanyValue(selectedHospital.name); // Update the input value to the selected suggestion
+      setHospitalSuggestions([]); // Clear the suggestions list
+
+      localStorage.setItem("selectedHospital", selectedHospital.name); // Optional: Store in localStorage
+    } else {
+      console.log("No hospital found for the selected suggestion");
+    }
   };
 
-  const divisi = useAppSelector(
-    (state) => state.divisiProfilingReducer.value.divisi,
-  );
+  const handleDoctorSuggestionClick = (suggestion: string) => {
+    const selectedDoctor = doctorData.find(
+      (doctor) => doctor.namaDokter === suggestion,
+    );
 
-  useEffect(() => {
-    setValue("tax_code_id", selectedTaxCode);
-  }, [selectedTaxCode, setValue]);
+    if (selectedDoctor) {
+      setResponseData((prevData) => ({
+        ...prevData,
+        nama_dokter: selectedDoctor.namaDokter,
+      }));
+      setInputDoctorValue(selectedDoctor.namaDokter); // Update input with selected value
+      setDoctorSuggestions([]);
 
-  const handleInputChange =
-    (field: keyof FormFields) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = e.target;
-      setValue(field, value);
-      dispatch(setItemProfiling({ [field]: value }));
-    };
+      localStorage.setItem("selectedDoctor", selectedDoctor.namaDokter);
+    } else {
+      console.log("No doctor found for the selected suggestion");
+    }
+  };
 
   return (
-    <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
-      <ContentTopSectionLayout>
-        {/* cek profile customer and searchbar */}
-        <TopSectionLeftSide />
-      </ContentTopSectionLayout>
+    <div className="z-50 flex h-full w-full flex-col gap-6 bg-white p-8">
+      <div className="flex flex-row justify-between gap-6">
+        <h1 className="text-xl font-bold">Form Profiling</h1>
+
+        <div>
+          <select
+            value={kategoriDivisi}
+            onChange={(e) => setKategoriDivisi(e.target.value)} // Simpan value ke state
+            className="w-full rounded-md border border-gray-300 p-2"
+          >
+            <option value="">Pilih Divisi</option>
+            <option value="supplier">Supplier</option>
+            <option value="customer">Customer</option>
+            <option value="customer_non_rumah_sakit">
+              Customer Non Rumah Sakit
+            </option>
+          </select>
+        </div>
+      </div>
+
       <Divider />
-      <form className="grid grid-cols-3 gap-3">
-        <div className="col-span-1 flex flex-col gap-3">
-          {divisi === "customer" ? (
-            <Input
-              {...register("name")}
-              label="NAMA DOKTER"
-              onChange={handleInputChange("name")}
-            />
-          ) : (
-            <Input className="invisible" label="invisible" />
-          )}
-          <Input
-            {...register("npwp")}
-            label="NPWP"
-            onChange={handleInputChange("npwp")}
-          />
-          <Input
-            {...register("facture_address")}
-            label="ALAMAT PENGIRIM FAKTUR"
-            onChange={handleInputChange("facture_address")}
-          />
-          <Input
-            {...register("pic_facture")}
-            label="PIC"
-            onChange={handleInputChange("pic_facture")}
-          />
-          <div className="flex gap-3">
-            <Input
-              {...register("number_phone_facture")}
-              label="TLP"
-              onChange={handleInputChange("number_phone_facture")}
-            />
-            <Input
-              {...register("fax_facture")}
-              label="FAX"
-              onChange={handleInputChange("fax_facture")}
-            />
-          </div>
-          <Input
-            {...register("handphone")}
-            label="HANDPHONE"
-            onChange={handleInputChange("handphone")}
-          />
+
+      {kategoriDivisi !== "" && (
+        <div className="rounded-3xl bg-white p-6 shadow-2xl">
+          <form
+            className="flex flex-col gap-6"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <div>
+              <h3 className="mb-4 text-lg font-semibold">Data Perusahaan</h3>
+
+              {/* Grid untuk PC dan flex untuk mobile */}
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+                <div className="relative flex w-full flex-col space-y-2">
+                  {/* <label className="text-left">Nama Perusahaan</label> */}
+
+                  <Input
+                    {...register("nama_perusahaan")}
+                    name="nama_perusahaan"
+                    value={inputCompanyValue} // Controlled by local state
+                    placeholder="Nama Perusahaan"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setInputCompanyValue(value); // Update the local state for input
+
+                      // Filter hospital suggestions based on the input value
+                      const filteredSuggestions = hospitalData
+                        .filter(
+                          (hospital) =>
+                            hospital.name
+                              .toLowerCase()
+                              .includes(value.toLowerCase()), // Case-insensitive matching
+                        )
+                        .map((hospital) => hospital.name);
+
+                      setHospitalSuggestions(filteredSuggestions); // Update suggestions based on the filter
+                    }}
+                    className="h-[100%] w-full flex-1 border-none outline-none"
+                    endContent={
+                      <button
+                        className="opacity-75"
+                        type="button"
+                        onClick={() => {
+                          const allSuggestions = hospitalData
+                            .filter((hospital) => hospital.name)
+                            .map((hospital) => hospital.name);
+                          setHospitalSuggestions((prevSuggestions) =>
+                            prevSuggestions.length > 0 ? [] : allSuggestions,
+                          );
+                        }}
+                      >
+                        ▼
+                      </button>
+                    }
+                  />
+
+                  {/* Dropdown Suggestions */}
+                  {hospitalSuggestions.length > 0 && (
+                    <ul className="absolute top-[2rem] z-[40] mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                      {hospitalSuggestions.map((suggestion, idx) => (
+                        <li
+                          key={idx}
+                          onClick={() =>
+                            handleHospitalSuggestionClick(suggestion)
+                          } // Call the selection handler
+                          className="cursor-pointer p-2 hover:bg-gray-200"
+                        >
+                          {suggestion}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+                <Input
+                  {...register("address_perusahaan")}
+                  label="Alamat Perusahaan"
+                  className="w-full-lg"
+                />
+                <Input
+                  {...register("ipak_number_perusahaan")}
+                  label="No. IPAK"
+                  className="w-full-lg"
+                />
+                {/* <Input {...register("npwp_perusahaan")} label="NPWP Perusahaan" className="w-full-lg" /> */}
+                <Input
+                  {...register("alamat_pengirim_facture_perusahaan")}
+                  label="Alamat Pengirim Faktur"
+                  className="w-full-lg"
+                />
+                <Input
+                  {...register("npwp_address_perusahaan")}
+                  label="Alamat NPWP Perusahaan"
+                  className="w-full-lg"
+                />
+                <Input
+                  {...register("pic_perusahaan")}
+                  label="PIC Perusahaan"
+                  className="w-full-lg"
+                />
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <Input
+                    {...register("email_perusahaan")}
+                    label="Email Perusahaan"
+                    className="w-full-lg"
+                  />
+                  <Input
+                    {...register("telpon_perusahaan")}
+                    label="Telepon Perusahaan"
+                    className="w-full-lg"
+                  />
+                </div>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <Input
+                    {...register("kota_perusahaan")}
+                    label="Kota Perusahaan"
+                    className="w-full-lg"
+                  />
+                  <Input
+                    {...register("kode_pos_perusahaan")}
+                    label="Kode Pos Perusahaan"
+                    className="w-full-lg"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <Divider />
+
+            <div>
+              <h3 className="mb-4 text-lg font-semibold">Data Dokter</h3>
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+                <div className="relative flex w-full flex-col space-y-2">
+                  {/* <label className="text-left">Nama Perusahaan</label> */}
+
+                  <Input
+                    {...register("nama_dokter")}
+                    name="nama_dokter"
+                    value={inputDoctorValue} // Controlled by local state
+                    placeholder="Nama Dokter"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setInputDoctorValue(value); // Update the local state for input
+
+                      // Filter suggestions based on the input value
+                      const filteredSuggestions = doctorData
+                        .filter(
+                          (doctor) =>
+                            doctor.namaDokter
+                              .toLowerCase()
+                              .includes(value.toLowerCase()), // Case-insensitive matching
+                        )
+                        .map((doctor) => doctor.namaDokter);
+
+                      setDoctorSuggestions(filteredSuggestions); // Update suggestions based on the filter
+                    }}
+                    className="h-[100%] w-full flex-1 border-none outline-none"
+                    endContent={
+                      <button
+                        className="opacity-75"
+                        type="button"
+                        onClick={() => {
+                          const allSuggestions = doctorData
+                            .filter((doctor) => doctor.namaDokter)
+                            .map((doctor) => doctor.namaDokter);
+                          setDoctorSuggestions((prevSuggestions) =>
+                            prevSuggestions.length > 0 ? [] : allSuggestions,
+                          );
+                        }}
+                      >
+                        ▼
+                      </button>
+                    }
+                  />
+
+                  {/* Dropdown Suggestions */}
+                  {doctorSuggestions.length > 0 && (
+                    <ul className="absolute top-[2rem] z-[40] mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                      {doctorSuggestions.map((suggestion, idx) => (
+                        <li
+                          key={idx}
+                          onClick={() =>
+                            handleDoctorSuggestionClick(suggestion)
+                          }
+                          className="cursor-pointer p-2 hover:bg-gray-200"
+                        >
+                          {suggestion}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+                <Input
+                  {...register("alamat_pengirim_dokter")}
+                  label="Alamat Pengirim Dokter"
+                  className="w-full"
+                />
+                <Input
+                  {...register("npwp_dokter")}
+                  label="NPWP Dokter"
+                  className="w-full"
+                />
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <Input
+                    {...register("telpon_dokter")}
+                    label="Telepon Dokter"
+                    className="w-full"
+                  />
+                  <Input
+                    {...register("email_dokter")}
+                    label="Email Dokter"
+                    className="w-full"
+                  />
+                </div>
+                <Input
+                  {...register("pic_dokter")}
+                  label="PIC Dokter"
+                  className="w-full"
+                />
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <Input
+                    {...register("kota_dokter")}
+                    label="Kota Dokter"
+                    className="w-full"
+                  />
+                  <Input
+                    {...register("kode_pos_dokter")}
+                    label="Kode Pos Dokter"
+                    className="w-full"
+                  />
+                </div>
+                <Input
+                  {...register("handphone_dokter")}
+                  label="Handphone Dokter"
+                  className="w-full"
+                />
+                <Input
+                  {...register("kode_pajak_dokter")}
+                  label="Kode Pajak Dokter"
+                  className="w-full"
+                />
+                <Input
+                  {...register("cp_dokter")}
+                  label="Contact Person Dokter"
+                  className="w-full"
+                />
+                <Input
+                  {...register("verifikasi_dokter")}
+                  label="Verifikasi"
+                  className="w-full"
+                />
+                <Input
+                  {...register("pembuat_cp")}
+                  label="Pembuat CP"
+                  className="w-full"
+                />
+                <Input
+                  {...register("term_of_payment")}
+                  label="Term of Payment"
+                  className="w-full"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-row justify-end gap-3">
+              <Button
+                color="success"
+                className="self-center font-semibold text-white"
+                type="submit"
+              >
+                SUBMIT
+              </Button>
+
+              <Button
+                color="danger"
+                className="self-center font-semibold text-white"
+                type="submit"
+              >
+                CANCEL
+              </Button>
+            </div>
+          </form>
         </div>
-        <div className="col-span-1 flex flex-col gap-3">
-          <Input
-            {...register("nama_company")}
-            label="NAMA RUMAH SAKIT"
-            onChange={handleInputChange("nama_company")}
-          />
-          <Input
-            {...register("ipak_number")}
-            label="NO. IPAK"
-            onChange={handleInputChange("ipak_number")}
-          />
-          <div className="flex gap-3">
-            <Input
-              {...register("city_facture")}
-              label="KOTA"
-              onChange={handleInputChange("city_facture")}
-            />
-            <Input
-              {...register("zip_code_facture")}
-              label="POS"
-              onChange={handleInputChange("zip_code_facture")}
-            />
-          </div>
-          <Input
-            label="ALAMAT PENGIRIM"
-            {...register("item_address")}
-            onChange={handleInputChange("item_address")}
-          />
-          <Input label="PIC" onChange={handleInputChange("pic_item")} />
-          <Dropdown
-            {...register("tax_code_id")}
-            data={tax_codes}
-            label="KODE PAJAK"
-            placeholder="Pilih Kode Pajak"
-            statePassing={handleTaxCodeChange}
-          />
-        </div>
-        <div className="col-span-1 flex flex-col gap-3">
-          <Input
-            {...register("address_company")}
-            label="ALAMAT RUMAH SAKIT"
-            onChange={handleInputChange("address_company")}
-          />
-          <Input
-            {...register("npwp_address")}
-            label="ALAMAT NPWP"
-            onChange={handleInputChange("npwp_address")}
-          />
-          <div className="flex gap-3">
-            <Input
-              {...register("number_phone_item")}
-              label="TLP"
-              onChange={handleInputChange("number_phone_item")}
-            />
-            <Input
-              {...register("fax_item")}
-              label="FAX"
-              onChange={handleInputChange("fax_item")}
-            />
-          </div>
-          <div className="flex gap-3">
-            <Input
-              {...register("city_item")}
-              label="KOTA"
-              onChange={handleInputChange("city_item")}
-            />
-            <Input
-              {...register("zip_code_item")}
-              label="POS"
-              onChange={handleInputChange("zip_code_item")}
-            />
-          </div>
-          <Input
-            {...register("contact_person")}
-            label="CONTACT PERSON"
-            onChange={handleInputChange("contact_person")}
-          />
-          <Input
-            {...register("top")}
-            label="TERM OF PAYMENT"
-            onChange={handleInputChange("top")}
-          />
-        </div>
-      </form>
-      <div className="flex justify-end">
-        <Button color="primary" className="min-w-36" onClick={handleSubmit}>
-          SUBMIT
-        </Button>
+      )}
+
+      <div className="flex h-[4vh] items-center justify-center text-end font-semibold">
+        <h1 className="mb-4">Supported by PT Gunung Elang Indah</h1>
       </div>
     </div>
   );
