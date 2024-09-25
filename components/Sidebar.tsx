@@ -45,7 +45,7 @@ const Sidebar = () => {
       },
       {
         pageName: "Stok Barang",
-        pageRoute: "stok-barang",
+        pageRoute: "stok-barang-sales",
       },
       // {
       //   pageName: "Sewa Alat",

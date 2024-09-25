@@ -69,22 +69,19 @@ export default function PITableComponent() {
     }
   }, []);
 
-  // Refresh page on navigation
   useEffect(() => {
     router.refresh();
   }, [router]);
 
-  // Function to fetch data from API
   const fetchData = async () => {
     try {
       const response = await axios.post(
         "http://209.182.237.155:8080/api/proforma-invoice/get-all-list",
       );
-      console.log("API response:", response.data); // Log the API response
+      console.log("API response:", response.data); 
       if (response.data.status) {
-        // Update state with fetched data
         setUsers(response.data.data);
-        console.log("Users set:", response.data.data); // Log the data set to users
+        console.log("Users set:", response.data.data);
       } else {
         console.error("Failed to fetch data:", response.data.message);
       }
@@ -93,7 +90,6 @@ export default function PITableComponent() {
     }
   };
 
-  // Fetch data on component mount and when navigating back
   useEffect(() => {
     fetchData();
   }, []);
