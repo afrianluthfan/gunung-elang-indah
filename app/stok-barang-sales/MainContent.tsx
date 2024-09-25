@@ -77,7 +77,6 @@ const MainContent = () => {
     { name: "Variable", uid: "variable" },
     { name: "Nama", uid: "nama" },
     { name: "Jumlah Barang", uid: "qty" },
-    { name: "Harga Satuan", uid: "harga" },
     { name: "Katalog", uid: "kode" },
     { name: "Gudang", uid: "namaGudang" },
   ];
