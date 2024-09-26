@@ -93,6 +93,10 @@ const Sidebar = () => {
         pageName: "Sales Order",
         pageRoute: "sales-order",
       },
+      {
+        pageName: "Price List",
+        pageRoute: "price-list",
+      },
     ];
 
     const financeMenus = [
