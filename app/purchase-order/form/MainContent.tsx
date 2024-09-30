@@ -19,6 +19,9 @@ import Swal from "sweetalert2";
 import { DeleteIcon } from "../../../components/Tables/AdminTable/DeleteIcon";
 
 type ItemDetail = {
+  gudang: string
+  variable: string
+  kode: string
   id: number;
   po_id: number;
   name: string;
@@ -69,20 +72,37 @@ const AdminMainContent = () => {
   });
 
   const [isRejected, setIsRejected] = useState(false);
+  const [items, setItems] = useState<any[]>([]);
+  const [GUDANG, setGudang] = useState("");
   const [shouldSubmit, setShouldSubmit] = useState(false);
   const [stockData, setStockData] = useState<any[]>([]);
   const [itemSuggestions, setItemSuggestions] = useState<{ [key: number]: string[] }>({});
 
+  const [suppliers, setSuppliers] = useState([]);
+  const [selectedSupplier, setSelectedSupplier] = useState('');
+
   useEffect(() => {
     const fetchStockData = async () => {
       try {
-        const res = await axios.post("http://209.182.237.155:8080/api/stock-barang/list");
+        const res = await axios.post("http://localhost:8080/api/stok/list-proses");
         setStockData(res.data.data);
       } catch (error) {
         console.error("Error fetching stock data", error);
       }
     };
 
+    const fetchSuppliers = async () => {
+      try {
+        const response = await axios.post('http://localhost:8080/api/proforma-invoice/supplier');
+        if (response.data && response.data.data) {
+          setSuppliers(response.data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching suppliers:', error);
+      }
+    };
+
+    fetchSuppliers();
     fetchStockData();
   }, []);
 
@@ -91,7 +111,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/purchase-order/inquiry",
+            "http://localhost:8080/api/purchase-order/inquiry",
             responseData
           );
 
@@ -133,13 +153,24 @@ const AdminMainContent = () => {
     }
   };
 
-  const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>, itemId?: number) => {
+  const handleSupplierChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newValue = e.target.value;
+    const [namaCustomer, alamat] = newValue.split('|');
+    setSelectedSupplier(newValue);
+
+    setResponseData(prevData => ({
+      ...prevData,
+      nama_suplier: namaCustomer,
+    }));
+  };
+
+  const handleFieldChange = ( e: React.ChangeEvent<HTMLInputElement>, itemId?: number) => {
     const { name, value } = e.target;
 
     if (name === "name") {
       if (value.length > 1) {
         const filteredSuggestions = stockData
-          .filter((item: { name: string }) => item.name.toLowerCase().includes(value.toLowerCase()))
+          .filter((item: { name?: string }) => item.name && item.name.toLowerCase().includes(value.toLowerCase()))
           .map((item: { name: string }) => item.name);
         setItemSuggestions((prevSuggestions) => ({
           ...prevSuggestions,
@@ -166,21 +197,30 @@ const AdminMainContent = () => {
         [name]: value,
       }));
     }
-  };
 
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === itemId ? { ...item, gudang: value } : item
+      )
+    );
+
+  };
   const handleAddItem = () => {
     setResponseData((prevData) => ({
       ...prevData,
       item: [
         ...prevData.item,
         {
-          id: Date.now(), // Generate a unique ID for new items
+          id: Date.now(),
           po_id: Date.now(),
           name: "",
           quantity: "",
           price: "",
           discount: "",
           amount: "",
+          variable: "", 
+          kode: "", 
+          gudang: "", 
         },
       ],
     }));
@@ -208,9 +248,12 @@ const AdminMainContent = () => {
             ? {
               ...item,
               name: selectedItem.name,
-              price: selectedItem.price.toString(), // Convert to string if needed
+              kode: selectedItem.kode,
+              variable: selectedItem.variable,
+              price: selectedItem.price.toString(),
             }
             : item
+
         ),
       }));
       setItemSuggestions((prevSuggestions) => ({
@@ -230,13 +273,16 @@ const AdminMainContent = () => {
       <div className="flex gap-4">
         <div className="flex flex-col space-y-2 w-full md:w-1/3">
           <label className="text-left">Supplier:</label>
-          <Input
-            value={responseData.nama_suplier}
-            name="nama_suplier"
-            onChange={(e) => handleFieldChange(e)}
-            placeholder="Nama Suplier"
-            className="p-2 border border-gray-300 rounded"
-          />
+          <select id="supplier" className="h-full border border-gray-300 rounded-md border-1" value={selectedSupplier} onChange={handleSupplierChange}>
+            <option value="">-- Pilih Supplier --</option>
+            {suppliers.map((supplier: {
+              address_company: string; id: string | number, name: string
+            }) => (
+              <option key={supplier.id} value={`${supplier.name}|${supplier.address_company}`}>
+                {supplier.name}
+              </option>
+            ))}
+          </select>
           <label className="text-left">Catatan PO:</label>
           <Input
             value={responseData.catatan_po}
@@ -285,28 +331,31 @@ const AdminMainContent = () => {
       </div>
       <hr className="border-t-2 border-gray-200" />
       <div className="flex justify-between gap-3">
-        <h1 className="text-xl text-black font-semibold mt-2">Data Barang</h1>
+        <h1 className="text-lg text-black font-semibold mt-2">Data Barang</h1>
         <Button onClick={handleAddItem} className="bg-blue-900 text-white">Tambah Barang</Button>
       </div>
       <Table removeWrapper>
         <TableHeader>
           <TableColumn className="bg-blue-900 text-white text-center">No</TableColumn>
-          <TableColumn className="bg-blue-900 text-white text-center">Nama Barang</TableColumn>
+          <TableColumn className="bg-blue-900 text-white text-center w-[300px]">Nama Barang</TableColumn>
+          <TableColumn className="bg-blue-900 text-white text-center">Variable</TableColumn>
+          <TableColumn className="bg-blue-900 text-white text-center">Kode</TableColumn>
           <TableColumn className="bg-blue-900 text-white text-center">Quantity</TableColumn>
           <TableColumn className="bg-blue-900 text-white text-center">Harga Satuan</TableColumn>
-          <TableColumn className="bg-blue-900 text-white text-center">Discount</TableColumn>
+          <TableColumn className="bg-blue-900 text-white text-center">Gudang Tujuan</TableColumn>
           <TableColumn className="bg-blue-900 text-white text-center">Aksi</TableColumn>
         </TableHeader>
         <TableBody>
           {responseData.item.map((item, index) => (
             <TableRow key={item.id}>
               <TableCell>{index + 1}</TableCell>
-              <TableCell >
+              <TableCell>
                 <div className="relative">
-                  <Input
+                  <textarea
                     value={item.name}
                     name="name"
-                    onChange={(e) => handleFieldChange(e, item.id)}
+                    className="w-full p-2 border border-black-500 rounded resize-none"
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
                     placeholder="Nama Barang"
                   />
                   {itemSuggestions[item.id]?.length > 0 && (
@@ -325,28 +374,57 @@ const AdminMainContent = () => {
                 </div>
               </TableCell>
               <TableCell>
-                <Input
+                <textarea
+                  value={item.variable}
+                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  name="variable"
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
+                  placeholder="Variable"
+                />
+              </TableCell>
+              <TableCell>
+                <textarea
+                  value={item.kode}
+                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  name="kode"
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
+                  placeholder="Kode"
+                />
+              </TableCell>
+              <TableCell>
+                <textarea
                   value={item.quantity}
                   name="quantity"
-                  onChange={(e) => handleFieldChange(e, item.id)}
+                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
                   placeholder="Quantity"
                 />
               </TableCell>
               <TableCell>
-                <Input
+                <textarea
                   value={item.price}
                   name="price"
-                  onChange={(e) => handleFieldChange(e, item.id)}
+                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
                   placeholder="Harga Satuan"
                 />
               </TableCell>
               <TableCell>
-                <Input
-                  value={item.discount.replace(/%/g, '')} // Remove '%' from display
-                  name="discount"
-                  onChange={(e) => handleFieldChange(e, item.id)}
-                  placeholder="Discount"
-                />
+                <select
+                  value={item.gudang}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                    handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id);
+                    setGudang(e.target.value);
+                  }}
+                  name="gudang"
+                  id="123"
+                  className="w-full px-5 py-4 border border-black-500 rounded resize-none"
+                >
+                  <option value="">Pilih Gudang Tujuan</option>
+                  <option value="Gudang 1">Gudang 1</option>
+                  <option value="Gudang 2">Gudang 2</option>
+                  <option value="Gudang 3">Gudang 3</option>
+                </select>
               </TableCell>
               <TableCell>
                 <Tooltip content="Delete" className="text-black">
@@ -385,3 +463,7 @@ const AdminMainContent = () => {
 };
 
 export default AdminMainContent;
+function setItems(arg0: (prevItems: any) => any) {
+  throw new Error("Function not implemented.");
+}
+

@@ -80,7 +80,7 @@ export default function PITableComponent() {
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/purchase-order/list"
+        "http://localhost:8080/api/purchase-order/list"
       );
       if (response.data.status) {
         setUsers(response.data.data);
@@ -167,12 +167,12 @@ export default function PITableComponent() {
                   <EyeIcon className="items-center" />
                 </span>
               </Tooltip>
-              {user.status !== "DITERIMA" && username === "admin" && (
+              {user.status !== "DITERIMA" && username === "ADMIN" && (
                 <Tooltip content="Edit" className="text-black text-center">
                   <span
                     onClick={() =>
                       router.push(
-                        username === "admin"
+                        username === "ADMIN"
                           ? `/purchase-order/edit-admin?id=${user.id}`
                           : ``
                       )

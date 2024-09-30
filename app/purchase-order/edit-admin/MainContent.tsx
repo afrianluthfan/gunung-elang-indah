@@ -26,6 +26,9 @@ type ItemDetail = {
   price: string;
   discount: string;
   amount: string;
+  kode: string;
+  variable: string;
+  gudang: string;
 };
 
 type PurchaseOrder = {
@@ -83,10 +86,23 @@ const AdminMainContent = () => {
   const [shouldSubmit, setShouldSubmit] = useState(false);
   const [stockItems, setStockItems] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<Record<number, string[]>>({});
-  const [prices, setPrices] = useState<Record<string, string>>({}); // To store item prices
+  const [prices, setPrices] = useState<Record<string, string>>({});
+
+  const [GUDANG, setGudang] = useState("");
+
+  const [stockData, setStockData] = useState<any[]>([]);
+
+  const [suppliers, setSuppliers] = useState([]);
+  const [selectedSupplier, setSelectedSupplier] = useState('');
+
+
+  // SUYGGESTION SEARCH
+
+  const [itemSuggestions, setItemSuggestions] = useState<{ [key: number]: string[] }>({});
 
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
+
 
   useEffect(() => {
     if (!id) {
@@ -97,27 +113,52 @@ const AdminMainContent = () => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/purchase-order/detail",
+          "http://localhost:8080/api/purchase-order/detail",
           { id: id }
         );
         setResponseData(response.data.data);
+        if (response.data.data) {
+          setSelectedSupplier(response.data.data.nama_suplier);
+        }
       } catch (error) {
         console.error("Error fetching data", error);
       }
     };
 
+    const fetchSuppliers = async () => {
+      try {
+        const response = await axios.post('http://localhost:8080/api/proforma-invoice/supplier');
+        if (response.data && response.data.data) {
+          setSuppliers(response.data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching suppliers:', error);
+      }
+    };
+
+    fetchSuppliers();
     fetchData();
   }, [id]);
+
+  const handleSupplierChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newValue = e.target.value;
+    const [namaCustomer, alamat] = newValue.split('|');
+    setSelectedSupplier(newValue);
+
+    setResponseData(prevData => ({
+      ...prevData,
+      nama_suplier: namaCustomer,
+    }));
+  };
 
   useEffect(() => {
     const fetchStockItems = async () => {
       try {
-        const response = await axios.post("http://209.182.237.155:8080/api/stock-barang/list");
+        const response = await axios.post("http://localhost:8080/api/stock-barang/list");
         const items = response.data.data;
         setStockItems(items.map((item: { name: string }) => item.name));
-        // Initialize prices map
-        const pricesMap = items.reduce((acc: Record<string, string>, item: { name: string, price: string }) => {
-          acc[item.name] = item.price;
+        const pricesMap = items.reduce((acc: Record<string, { price: string; kode: string; variable: string }>, item: { name: string, price: string, variable: string, kode: string }) => {
+          acc[item.name] = { price: item.price, kode: item.kode, variable: item.variable };
           return acc;
         }, {});
         setPrices(pricesMap);
@@ -137,7 +178,7 @@ const AdminMainContent = () => {
 
     try {
       const response = await axios.post(
-        `http://209.182.237.155:8080/api/stock-barang/list?query=${query}`
+        `http://localhost:8080/api/stock-barang/list?query=${query}`
       );
       const filteredSuggestions = response.data.data
         .filter((item: { name: string }) =>
@@ -152,11 +193,11 @@ const AdminMainContent = () => {
   };
 
   const updatePriceForItem = (itemIndex: number, itemName: string) => {
-    const price = prices[itemName] || "";
+    const priceInfo = prices[itemName] || { price: "", kode: "", variable: "" };
     setResponseData((prevData) => ({
       ...prevData,
       item: prevData.item.map((item, index) =>
-        index === itemIndex ? { ...item, price: price } : item
+        index === itemIndex ? { ...item, price: typeof priceInfo === 'object' ? priceInfo.price : '', kode: typeof priceInfo === 'object' ? priceInfo.kode : '', variable: typeof priceInfo === 'object' ? priceInfo.variable : '' } : item
       ),
     }));
   };
@@ -166,7 +207,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/purchase-order/edit/inquiry",
+            "http://localhost:8080/api/purchase-order/edit/inquiry",
             responseData
           );
 
@@ -235,8 +276,14 @@ const AdminMainContent = () => {
         [name]: value,
       }));
     }
-  };
 
+    setResponseData((prevData) => ({
+      ...prevData,
+      item: prevData.item.map((item) =>
+        item.id === itemIndex ? { ...item, gudang: value } : item
+      )
+    }));
+  };
   const handleAddItem = () => {
     setResponseData((prevData) => ({
       ...prevData,
@@ -250,6 +297,9 @@ const AdminMainContent = () => {
           price: "",
           discount: "",
           amount: "",
+          kode: "",
+          variable: "",
+          gudang: "",
         },
       ],
     }));
@@ -271,6 +321,7 @@ const AdminMainContent = () => {
     setIsRejected(false);
   };
 
+
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       {responseData.reason && (
@@ -287,13 +338,16 @@ const AdminMainContent = () => {
       <div className="flex gap-4">
         <div className="flex w-full flex-col space-y-2 md:w-1/3">
           <label className="text-left">Supplier:</label>
-          <Input
-            value={responseData.nama_suplier}
-            name="nama_suplier"
-            onChange={(e) => handleFieldChange(e)}
-            placeholder="Nama Suplier"
-            className="rounded py-2"
-          />
+          <select id="supplier" className="h-full border border-gray-300 rounded-md border-1" value={selectedSupplier} onChange={handleSupplierChange}>
+            <option value="">-- Pilih Supplier --</option>
+            {suppliers.map((supplier: {
+              address_company: string; id: string | number, name: string
+            }) => (
+              <option key={supplier.id} value={`${supplier.name}`}>
+                {supplier.name}
+              </option>
+            ))}
+          </select>
           <label className="text-left">Catatan PO:</label>
           <Input
             value={responseData.catatan_po}
@@ -356,9 +410,11 @@ const AdminMainContent = () => {
         <TableHeader>
           <TableColumn className="bg-blue-900 text-white text-center">No</TableColumn>
           <TableColumn className="bg-blue-900 text-white">Nama Barang</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">Kode</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">Variable</TableColumn>
           <TableColumn className="bg-blue-900 text-white">Quantity</TableColumn>
           <TableColumn className="bg-blue-900 text-white">Harga Satuan</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">Discount</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">Gudang Tujuan</TableColumn>
           <TableColumn className="bg-blue-900 text-white">Action</TableColumn>
         </TableHeader>
         <TableBody>
@@ -367,10 +423,11 @@ const AdminMainContent = () => {
               <TableCell className="text-center">{index + 1}</TableCell>
               <TableCell>
                 <div className="relative">
-                  <Input
+                  <textarea
                     value={item.name}
                     name="name"
-                    onChange={(e) => handleFieldChange(e, index)}
+                    className="w-full p-2 border border-black-500 rounded resize-none"
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
                     placeholder="Nama Barang"
                     autoComplete="off"
                   />
@@ -398,28 +455,57 @@ const AdminMainContent = () => {
                 </div>
               </TableCell>
               <TableCell>
-                <Input
+                <textarea
+                  value={item.kode}
+                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  name="kode"
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
+                  placeholder="Kode"
+                />
+              </TableCell>
+              <TableCell>
+                <textarea
+                  value={item.variable}
+                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  name="variable"
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
+                  placeholder="Variable"
+                />
+              </TableCell>
+              <TableCell>
+                <textarea
                   value={item.quantity}
+                  className="w-full p-2 border border-black-500 rounded resize-none"
                   name="quantity"
-                  onChange={(e) => handleFieldChange(e, index)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
                   placeholder="Quantity"
                 />
               </TableCell>
               <TableCell>
-                <Input
+                <textarea
                   value={item.price}
+                  className="w-full p-2 border border-black-500 rounded resize-none"
                   name="price"
-                  onChange={(e) => handleFieldChange(e, index)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
                   placeholder="Harga Satuan"
                 />
               </TableCell>
               <TableCell>
-                <Input
-                  value={item.discount.replace(/%/g, "")}
-                  name="discount"
-                  onChange={(e) => handleFieldChange(e, index)}
-                  placeholder="Discount"
-                />
+                <select
+                  value={item.gudang}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                    handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id);
+                    setGudang(e.target.value);
+                  }}
+                  name="gudang"
+                  id="123"
+                  className="w-full px-5 py-4 border border-black-500 rounded resize-none"
+                >
+                  <option value="">Pilih Gudang Tujuan</option>
+                  <option value="Gudang 1">Gudang 1</option>
+                  <option value="Gudang 2">Gudang 2</option>
+                  <option value="Gudang 3">Gudang 3</option>
+                </select>
               </TableCell>
               <TableCell>
                 <Tooltip content="Delete" className="text-black">

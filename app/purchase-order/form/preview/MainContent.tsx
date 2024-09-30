@@ -46,7 +46,7 @@ const MainContent = () => {
           if (data && data.data && data.data.data) {
             
             if (aksi === "update") {
-              const res = await axios.post("http://209.182.237.155:8080/api/purchase-order/edit/posting-edit-admin", data.data.data);
+              const res = await axios.post("http://localhost:8080/api/purchase-order/edit/posting-edit-admin", data.data.data);
               console.log(res);
               if (res.data.status === true) {
                 Swal.fire({
@@ -66,7 +66,7 @@ const MainContent = () => {
                 });
               }
             } else {
-              const res = await axios.post("http://209.182.237.155:8080/api/purchase-order/posting", data.data.data);
+              const res = await axios.post("http://localhost:8080/api/purchase-order/posting", data.data.data);
               if (res.data.status === true) {
                 Swal.fire({
                   title: "Success",
@@ -164,8 +164,6 @@ const MainContent = () => {
                   <h1>{catatan_po}</h1>
                 </td>
               </tr>
-            </td>
-            <td className="">
               <tr>
                 <td className=" text-left">
                   <h1 className=" font-medium">Prepared By:</h1>
@@ -220,23 +218,27 @@ const MainContent = () => {
 
         {/* Bagian Table */}
         <div className="flex justify-between items-center">
-          <Table >
+          <Table removeWrapper>
             <TableHeader>
               <TableColumn className="bg-blue-900 text-white text-center">NO</TableColumn>
+              <TableColumn className="bg-blue-900 text-white text-center">KODE</TableColumn>
               <TableColumn className="bg-blue-900 text-white text-center">NAMA BARANG</TableColumn>
+              <TableColumn className="bg-blue-900 text-white text-center">VARIABLE</TableColumn>
               <TableColumn className="bg-blue-900 text-white text-center">QUANTITY</TableColumn>
               <TableColumn className="bg-blue-900 text-white text-center">HARGA SATUAN</TableColumn>
-              <TableColumn className="bg-blue-900 text-white text-center">DISCOUNT</TableColumn>
+              <TableColumn className="bg-blue-900 text-white text-center">GUDANG</TableColumn>
               <TableColumn className="bg-blue-900 text-white text-center">AMOUNT</TableColumn>
             </TableHeader>
             <TableBody>
-              {item?.map((item: { name: string; quantity: number; price: number; discount: number; amount: number }, index: number) => (
+              {item?.map((item: { name: string; kode: string; quantity: number; price: string; gudang: string; amount: string; variable: string }, index: number) => (
                 <TableRow key={index} className="">
                   <TableCell className="text-center">{index + 1}</TableCell>
+                  <TableCell className="text-center">{item.kode}</TableCell>
                   <TableCell className="text-center">{item.name}</TableCell>
+                  <TableCell className="text-center">{item.variable}</TableCell>
                   <TableCell className="text-center">{item.quantity}</TableCell>
                   <TableCell className="text-center">{item.price}</TableCell>
-                  <TableCell className="text-center">{item.discount}</TableCell>
+                  <TableCell className="text-center">{item.gudang}</TableCell>
                   <TableCell className="text-center">{item.amount}</TableCell>
                 </TableRow>
               ))}

@@ -29,7 +29,7 @@ const MainContent = () => {
     const fetchHospitalData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
+          "http://localhost:8080/api/proforma-invoice/rs-list",
         );
         setHospitalData(res.data.data);
         console.log("Hospital data fetched", res.data.data);
@@ -41,7 +41,7 @@ const MainContent = () => {
     const fetchDokterData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/dr-list",
+          "http://localhost:8080/api/proforma-invoice/dr-list",
         );
         setDoctorData(res.data.data);
         console.log("Data dokter fetched", res.data.data);
@@ -56,6 +56,7 @@ const MainContent = () => {
 
   // State untuk menyimpan value dropdown divisi
   const [kategoriDivisi, setKategoriDivisi] = useState("");
+  
 
   // Fungsi untuk menangani submit form
   const onSubmit = async (data: Record<string, string | boolean>) => {
@@ -69,6 +70,7 @@ const MainContent = () => {
     } else if (kategoriDivisi === "customer_non_rumah_sakit") {
       divisi = "2";
     }
+
 
     const requestBody = {
       nama_perusahaan: data.nama_perusahaan,
@@ -112,7 +114,7 @@ const MainContent = () => {
         if (result.isConfirmed) {
           try {
             await axios.post(
-              "http://209.182.237.155:8080/api/customer-profilling/add",
+              "http://localhost:8080/api/customer-profilling/add",
               requestBody,
             );
             router.push("/profiling");
@@ -172,6 +174,9 @@ const MainContent = () => {
 
   return (
     <div className="z-50 flex h-full w-full flex-col gap-6 bg-white p-8">
+
+
+
       <div className="flex flex-row justify-between gap-6">
         <h1 className="text-xl font-bold">Form Profiling</h1>
 
@@ -319,140 +324,215 @@ const MainContent = () => {
 
             <Divider />
 
-            <div>
-              <h3 className="mb-4 text-lg font-semibold">Data Dokter</h3>
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                <div className="relative flex w-full flex-col space-y-2">
-                  {/* <label className="text-left">Nama Perusahaan</label> */}
+            {kategoriDivisi !== "customer" && (
+              <>
+                <div>
+                  <h3 className="mb-4 text-lg font-semibold">Data Penanggung Jawab</h3>
+                  <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+                    <Input
+                      {...register("npwp_dokter")}
+                      label="NPWP"
+                      className="w-full"
+                    />
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <Input
+                        {...register("telpon_dokter")}
+                        label="Telepon"
+                        className="w-full"
+                      />
+                      <Input
+                        {...register("email_dokter")}
+                        label="Email"
+                        className="w-full"
+                      />
+                    </div>
+                    <Input
+                      {...register("pic_dokter")}
+                      label="PIC"
+                      className="w-full"
+                    />
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <Input
+                        {...register("kota_dokter")}
+                        label="Kota"
+                        className="w-full"
+                      />
+                      <Input
+                        {...register("kode_pos_dokter")}
+                        label="Kode Pos"
+                        className="w-full"
+                      />
+                    </div>
+                    <Input
+                      {...register("handphone_dokter")}
+                      label="Handphone"
+                      className="w-full"
+                    />
+                    <Input
+                      {...register("kode_pajak_dokter")}
+                      label="Kode Pajak"
+                      className="w-full"
+                    />
+                    <Input
+                      {...register("cp_dokter")}
+                      label="Contact Person"
+                      className="w-full"
+                    />
+                    <Input
+                      {...register("verifikasi_dokter")}
+                      label="Verifikasi"
+                      className="w-full"
+                    />
+                    <Input
+                      {...register("pembuat_cp")}
+                      label="Pembuat CP"
+                      className="w-full"
+                    />
+                    <Input
+                      {...register("term_of_payment")}
+                      label="Term of Payment"
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              </>
+            )} 
 
-                  <Input
-                    {...register("nama_dokter")}
-                    name="nama_dokter"
-                    value={inputDoctorValue} // Controlled by local state
-                    placeholder="Nama Dokter"
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setInputDoctorValue(value); // Update the local state for input
+            {kategoriDivisi === "customer" && (
+              <>
+                <div>
+                  <h3 className="mb-4 text-lg font-semibold">Data Dokter</h3>
+                  <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+                    <div className="relative flex w-full flex-col space-y-2">
 
-                      // Filter suggestions based on the input value
-                      const filteredSuggestions = doctorData
-                        .filter(
-                          (doctor) =>
-                            doctor.namaDokter
-                              .toLowerCase()
-                              .includes(value.toLowerCase()), // Case-insensitive matching
-                        )
-                        .map((doctor) => doctor.namaDokter);
+                      <Input
+                        {...register("nama_dokter")}
+                        name="nama_dokter"
+                        value={inputDoctorValue}
+                        placeholder="Nama Dokter"
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setInputDoctorValue(value);
 
-                      setDoctorSuggestions(filteredSuggestions); // Update suggestions based on the filter
-                    }}
-                    className="h-[100%] w-full flex-1 border-none outline-none"
-                    endContent={
-                      <button
-                        className="opacity-75"
-                        type="button"
-                        onClick={() => {
-                          const allSuggestions = doctorData
-                            .filter((doctor) => doctor.namaDokter)
+                          const filteredSuggestions = doctorData
+                            .filter(
+                              (doctor) =>
+                                doctor.namaDokter
+                                  .toLowerCase()
+                                  .includes(value.toLowerCase()),
+                            )
                             .map((doctor) => doctor.namaDokter);
-                          setDoctorSuggestions((prevSuggestions) =>
-                            prevSuggestions.length > 0 ? [] : allSuggestions,
-                          );
-                        }}
-                      >
-                        ▼
-                      </button>
-                    }
-                  />
 
-                  {/* Dropdown Suggestions */}
-                  {doctorSuggestions.length > 0 && (
-                    <ul className="absolute top-[2rem] z-[40] mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
-                      {doctorSuggestions.map((suggestion, idx) => (
-                        <li
-                          key={idx}
-                          onClick={() =>
-                            handleDoctorSuggestionClick(suggestion)
-                          }
-                          className="cursor-pointer p-2 hover:bg-gray-200"
-                        >
-                          {suggestion}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                          setDoctorSuggestions(filteredSuggestions);
+                        }}
+                        className="h-[100%] w-full flex-1 border-none outline-none"
+                        endContent={
+                          <button
+                            className="opacity-75"
+                            type="button"
+                            onClick={() => {
+                              const allSuggestions = doctorData
+                                .filter((doctor) => doctor.namaDokter)
+                                .map((doctor) => doctor.namaDokter);
+                              setDoctorSuggestions((prevSuggestions) =>
+                                prevSuggestions.length > 0 ? [] : allSuggestions,
+                              );
+                            }}
+                          >
+                            ▼
+                          </button>
+                        }
+                      />
+
+                      {doctorSuggestions.length > 0 && (
+                        <ul className="absolute top-[2rem] z-[40] mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                          {doctorSuggestions.map((suggestion, idx) => (
+                            <li
+                              key={idx}
+                              onClick={() =>
+                                handleDoctorSuggestionClick(suggestion)
+                              }
+                              className="cursor-pointer p-2 hover:bg-gray-200"
+                            >
+                              {suggestion}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                    <Input
+                      {...register("alamat_pengirim_dokter")}
+                      label="Alamat Pengirim Dokter"
+                      className="w-full"
+                    />
+                    <Input
+                      {...register("npwp_dokter")}
+                      label="NPWP Dokter"
+                      className="w-full"
+                    />
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <Input
+                        {...register("telpon_dokter")}
+                        label="Telepon Dokter"
+                        className="w-full"
+                      />
+                      <Input
+                        {...register("email_dokter")}
+                        label="Email Dokter"
+                        className="w-full"
+                      />
+                    </div>
+                    <Input
+                      {...register("pic_dokter")}
+                      label="PIC Dokter"
+                      className="w-full"
+                    />
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <Input
+                        {...register("kota_dokter")}
+                        label="Kota Dokter"
+                        className="w-full"
+                      />
+                      <Input
+                        {...register("kode_pos_dokter")}
+                        label="Kode Pos Dokter"
+                        className="w-full"
+                      />
+                    </div>
+                    <Input
+                      {...register("handphone_dokter")}
+                      label="Handphone Dokter"
+                      className="w-full"
+                    />
+                    <Input
+                      {...register("kode_pajak_dokter")}
+                      label="Kode Pajak Dokter"
+                      className="w-full"
+                    />
+                    <Input
+                      {...register("cp_dokter")}
+                      label="Contact Person Dokter"
+                      className="w-full"
+                    />
+                    <Input
+                      {...register("verifikasi_dokter")}
+                      label="Verifikasi"
+                      className="w-full"
+                    />
+                    <Input
+                      {...register("pembuat_cp")}
+                      label="Pembuat CP"
+                      className="w-full"
+                    />
+                    <Input
+                      {...register("term_of_payment")}
+                      label="Term of Payment"
+                      className="w-full"
+                    />
+                  </div>
                 </div>
-                <Input
-                  {...register("alamat_pengirim_dokter")}
-                  label="Alamat Pengirim Dokter"
-                  className="w-full"
-                />
-                <Input
-                  {...register("npwp_dokter")}
-                  label="NPWP Dokter"
-                  className="w-full"
-                />
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <Input
-                    {...register("telpon_dokter")}
-                    label="Telepon Dokter"
-                    className="w-full"
-                  />
-                  <Input
-                    {...register("email_dokter")}
-                    label="Email Dokter"
-                    className="w-full"
-                  />
-                </div>
-                <Input
-                  {...register("pic_dokter")}
-                  label="PIC Dokter"
-                  className="w-full"
-                />
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <Input
-                    {...register("kota_dokter")}
-                    label="Kota Dokter"
-                    className="w-full"
-                  />
-                  <Input
-                    {...register("kode_pos_dokter")}
-                    label="Kode Pos Dokter"
-                    className="w-full"
-                  />
-                </div>
-                <Input
-                  {...register("handphone_dokter")}
-                  label="Handphone Dokter"
-                  className="w-full"
-                />
-                <Input
-                  {...register("kode_pajak_dokter")}
-                  label="Kode Pajak Dokter"
-                  className="w-full"
-                />
-                <Input
-                  {...register("cp_dokter")}
-                  label="Contact Person Dokter"
-                  className="w-full"
-                />
-                <Input
-                  {...register("verifikasi_dokter")}
-                  label="Verifikasi"
-                  className="w-full"
-                />
-                <Input
-                  {...register("pembuat_cp")}
-                  label="Pembuat CP"
-                  className="w-full"
-                />
-                <Input
-                  {...register("term_of_payment")}
-                  label="Term of Payment"
-                  className="w-full"
-                />
-              </div>
-            </div>
+              </>
+            )}
 
             <div className="flex flex-row justify-end gap-3">
               <Button
