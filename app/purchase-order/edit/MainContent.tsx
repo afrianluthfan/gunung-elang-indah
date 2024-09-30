@@ -15,6 +15,9 @@ import {
 } from "@nextui-org/react";
 
 type ItemDetail = {
+  gudang: string;
+  variable: string;
+  kode: string;
   id: number;
   po_id: number;
   name: string;
@@ -89,7 +92,7 @@ const AdminMainContent = () => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/purchase-order/detail",
+          "http://localhost:8080/api/purchase-order/detail",
           { id: id }
         );
         setResponseData(response.data.data);
@@ -106,7 +109,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           await axios.post(
-            "http://209.182.237.155:8080/api/purchase-order/edit/finance",
+            "http://localhost:8080/api/purchase-order/edit/finance",
             responseData
           );
           Swal.fire({
@@ -181,6 +184,18 @@ const AdminMainContent = () => {
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
+
+      {
+        responseData.reason && (
+          <div>
+            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+              <p className="font-bold">Alasan Penolakan:</p>
+              <p>{responseData.reason}</p>
+            </div>
+          </div>
+        )
+      }
+
       <h1 className="font-semibold lg:text-[1.85vh]">Detail Pembuatan Purchase Order</h1>
       <Divider />
       <div className="flex justify-between">
@@ -273,20 +288,24 @@ const AdminMainContent = () => {
         <Table removeWrapper>
           <TableHeader>
             <TableColumn className="bg-blue-900 text-white text-center">NO</TableColumn>
+            <TableColumn className="bg-blue-900 text-white text-center">KODE BARANG</TableColumn>
             <TableColumn className="bg-blue-900 text-white text-center">NAMA BARANG</TableColumn>
+            <TableColumn className="bg-blue-900 text-white text-center">VARIABLE BARANG</TableColumn>
             <TableColumn className="bg-blue-900 text-white text-center">QTY</TableColumn>
             <TableColumn className="bg-blue-900 text-white text-center">HARGA SATUAN</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">DISC</TableColumn>
+            <TableColumn className="bg-blue-900 text-white text-center">GUDANG</TableColumn>
             <TableColumn className="bg-blue-900 text-white text-center">SUB TOTAL</TableColumn>
           </TableHeader>
           <TableBody>
             {responseData.item.map((item, index) => (
               <TableRow key={item.id}>
                 <TableCell className="text-center">{index + 1}</TableCell>
+                <TableCell className="text-center">{item.kode}</TableCell>
                 <TableCell className="text-center">{item.name}</TableCell>
+                <TableCell className="text-center">{item.variable}</TableCell>
                 <TableCell className="text-center">{item.quantity}</TableCell>
                 <TableCell className="text-center">{item.price}</TableCell>
-                <TableCell className="text-center">{item.discount}</TableCell>
+                <TableCell className="text-center">{item.gudang}</TableCell>
                 <TableCell className="text-center">{item.amount}</TableCell>
               </TableRow>
             ))}
@@ -307,7 +326,7 @@ const AdminMainContent = () => {
 
 
       {
-        username !== "admin" && (
+        username !== "ADMIN" && (
 
           responseData.status !== "DITERIMA" && (
             <div className="flex justify-end gap-3">
@@ -323,6 +342,7 @@ const AdminMainContent = () => {
 
         )
       }
+
     </div>
   );
 };
