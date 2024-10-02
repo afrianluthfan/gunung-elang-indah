@@ -60,7 +60,7 @@ export default function PITableComponent() {
   const fetchItemData1 = async () => {
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/proforma-invoice/get-all-list",
+        "http://localhost:8080/api/proforma-invoice/get-all-list",
         "",
       );
       return response.data.data;
@@ -73,7 +73,7 @@ export default function PITableComponent() {
   const fetchItemData2 = async () => {
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/stock-barang/list",
+        "http://localhost:8080/api/stock-barang/list",
         "",
       );
       return response.data.data;

@@ -18,6 +18,9 @@ import Swal from "sweetalert2";
 import { DeleteIcon } from "../../../components/Tables/AdminTable/DeleteIcon";
 
 type ItemDetail = {
+  gudang: string | (readonly string[] & string) | undefined;
+  kode: string | (readonly string[] & string) | undefined;
+  variable: string | (readonly string[] & string) | undefined;
   kat: string;
   nama_barang: string;
   quantity: string;
@@ -36,7 +39,7 @@ type PurchaseOrder = {
   id_rumah_sakit: string;
   tanggal_tindakan: string;
   item: ItemDetail[];
-  item_deleted: { kat: string }[];
+  item_deleted: { kode: string }[];
 };
 
 const AdminMainContent = () => {
@@ -65,22 +68,47 @@ const AdminMainContent = () => {
   const [selectedDivisi, setSelectedDivisi] = useState<string>("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  // INI ADALAH KEPERLUAN LOGIC DOKTER 
+  const [doctorData, setDoctorData] = useState<any[]>([]);
+  const [doctorSuggestions, setDoctorSuggestions] = useState<string[]>([]);
+
+  // INI ADALAH KEPERLUAN LOGIC GUDANG
+  const [GUDANG, setGudang] = useState("");
+
   useEffect(() => {
-    const fetchStockData = async () => {
-      try {
-        const res = await axios.post(
-          "http://209.182.237.155:8080/api/stock-barang/list",
-        );
-        setStockData(res.data.data);
-      } catch (error) {
-        console.error("Error fetching stock data", error);
+    const fetchDoctorData = async () => {
+      if (responseData.rumah_sakit) {
+        try {
+          const res = await axios.post("http://localhost:8080/api/proforma-invoice/dr-list", {
+            nama: responseData.rumah_sakit,
+          });
+          setDoctorData(res.data.data);
+          setDoctorSuggestions(res.data.data.map((doctor: { namaDokter: string }) => doctor.namaDokter));
+        } catch (error) {
+          console.error("Error fetching doctor data", error);
+        }
+
+        try {
+          const res = await axios.post(
+            "http://localhost:8080/api/price/ListByCustomer", {
+            nama: responseData.rumah_sakit,
+          });
+          setStockData(res.data.data);
+        } catch (error) {
+          console.error("Error fetching stock data", error);
+        }
       }
     };
+
+    fetchDoctorData();
+  }, [responseData.rumah_sakit]);
+
+  useEffect(() => {
 
     const fetchHospitalData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
+          "http://localhost:8080/api/proforma-invoice/rs-list",
         );
         setHospitalData(res.data.data);
       } catch (error) {
@@ -88,7 +116,6 @@ const AdminMainContent = () => {
       }
     };
 
-    fetchStockData();
     fetchHospitalData();
   }, []);
 
@@ -106,7 +133,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/proforma-invoice/inquiry",
+            "http://localhost:8080/api/proforma-invoice/inquiry",
             responseData,
           );
 
@@ -140,8 +167,8 @@ const AdminMainContent = () => {
             ...prevData,
             item: prevData.item.filter((_, idx) => idx !== index),
             item_deleted: Array.isArray(prevData.item_deleted)
-              ? [...prevData.item_deleted, { kat: deletedItem.kat }]
-              : [{ kat: deletedItem.kat }],
+              ? [...prevData.item_deleted, { kode: deletedItem.kode || '' }]
+              : [{ kode: deletedItem.kode || '' }],
           }));
         }
       });
@@ -208,19 +235,22 @@ const AdminMainContent = () => {
       item: [
         ...prevData.item,
         {
+          kode: "",
           kat: "",
           nama_barang: "",
           quantity: "",
           harga_satuan: "",
           discount: "",
+          variable: "",
+          gudang: "",
         },
       ],
     }));
   };
 
-  const submitAcc = () => {
+  function submitAcc() {
     setShouldSubmit(true);
-  };
+  }
 
   const handleSuggestionClick = (suggestion: string, index: number) => {
     const selectedItem = stockData.find((item) => item.name === suggestion);
@@ -230,10 +260,13 @@ const AdminMainContent = () => {
         item: prevData.item.map((item, idx) =>
           idx === index
             ? {
-                ...item,
-                nama_barang: selectedItem.name,
-                harga_satuan: selectedItem.price.toString(), // Convert to string if needed
-              }
+              ...item,
+              nama_barang: selectedItem.name,
+              kode: selectedItem.kode,
+              variable: selectedItem.variable,
+              discount: selectedItem.diskon, // Convert to string if needed
+              harga_satuan: selectedItem.price.toString(), // Convert to string if needed
+            }
             : item,
         ),
       }));
@@ -277,6 +310,7 @@ const AdminMainContent = () => {
       item_deleted: [],
     }));
   };
+
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
@@ -326,7 +360,7 @@ const AdminMainContent = () => {
                 name="rumah_sakit"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="Nama Perusahaan"
-                className="flex-1 border-none px-2 py-2 outline-none"
+                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
                 endContent={
                   <button
                     className="opacity-75"
@@ -361,7 +395,6 @@ const AdminMainContent = () => {
                 </ul>
               )}
             </div>
-
             <div className="flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Alamat:</label>
               <Input
@@ -369,7 +402,7 @@ const AdminMainContent = () => {
                 name="alamat"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="Alamat"
-                className="py-2"
+                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
               />
             </div>
             <div className="flex w-full flex-col space-y-2 md:w-1/3">
@@ -387,20 +420,51 @@ const AdminMainContent = () => {
                 value={responseData.tanggal_tindakan}
                 name="tanggal_tindakan"
                 onChange={(e) => handleFieldChange(e, -1)}
-                className="py-2"
+                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
               />
             </div>
           </div>
           <div className="flex gap-4">
-            <div className="flex w-full flex-col space-y-2 md:w-1/3">
+            <div className="relative flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Nama Dokter:</label>
               <Input
                 value={responseData.nama_dokter}
                 name="nama_dokter"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="Nama Dokter"
-                className="py-2"
+                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
+                endContent={
+                  <button
+                    className="opacity-75"
+                    type="button"
+                    onClick={() => {
+                      setDoctorSuggestions(doctorSuggestions.length > 0 ? [] : doctorData.map((doctor) => doctor.namaDokter));
+                    }}
+                  >
+                    ▼
+                  </button>
+                }
               />
+              {doctorSuggestions.length > 0 && (
+                <ul className="absolute top-[5rem] z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                  {doctorSuggestions.map((suggestion, idx) => (
+                    <li
+                      key={idx}
+                      onClick={() => {
+                        setResponseData((prevData) => ({
+                          ...prevData,
+                          nama_dokter: suggestion,
+                        }));
+                        setDoctorSuggestions([]);
+                      }}
+                      className="cursor-pointer p-2 hover:bg-gray-200"
+                    >
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
             </div>
             <div className="flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Nama Pasien:</label>
@@ -409,7 +473,7 @@ const AdminMainContent = () => {
                 name="nama_pasien"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="Nama Pasien"
-                className="py-2"
+                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
               />
             </div>
             <div className="flex w-full flex-col space-y-2 md:w-1/3">
@@ -419,7 +483,7 @@ const AdminMainContent = () => {
                 name="rm"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="RM"
-                className="py-2"
+                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
               />
             </div>
           </div>
@@ -450,6 +514,9 @@ const AdminMainContent = () => {
                   Nama Barang
                 </TableColumn>
                 <TableColumn className="bg-blue-900 text-white">
+                  Variable
+                </TableColumn>
+                <TableColumn className="bg-blue-900 text-white">
                   Quantity
                 </TableColumn>
                 <TableColumn className="bg-blue-900 text-white">
@@ -457,6 +524,9 @@ const AdminMainContent = () => {
                 </TableColumn>
                 <TableColumn className="bg-blue-900 text-white">
                   Diskon
+                </TableColumn>
+                <TableColumn className="bg-blue-900 text-white">
+                  Gudang Asal
                 </TableColumn>
                 <TableColumn className="bg-blue-900 text-white">
                   Action
@@ -467,8 +537,8 @@ const AdminMainContent = () => {
                   <TableRow key={index}>
                     <TableCell>
                       <Input
-                        value={row.kat}
-                        name="kat"
+                        value={row.kode}
+                        name="kode"
                         onChange={(e) => handleFieldChange(e, index)}
                         placeholder="Kode Barang"
                         className="pt-2"
@@ -495,7 +565,7 @@ const AdminMainContent = () => {
                                   ...prevSuggestions,
                                   [index]:
                                     prevSuggestions[index] &&
-                                    prevSuggestions[index].length > 0
+                                      prevSuggestions[index].length > 0
                                       ? []
                                       : allSuggestions, // Toggle suggestions
                                 }));
@@ -526,6 +596,15 @@ const AdminMainContent = () => {
                     </TableCell>
                     <TableCell>
                       <Input
+                        value={row.variable}
+                        name="variable"
+                        onChange={(e) => handleFieldChange(e, index)}
+                        placeholder="Variable"
+                        className="pt-2"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
                         value={row.quantity}
                         name="quantity"
                         onChange={(e) => handleFieldChange(e, index)}
@@ -552,6 +631,23 @@ const AdminMainContent = () => {
                       />
                     </TableCell>
                     <TableCell>
+                      <select
+                        value={row.gudang}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                          handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index);
+                          setGudang(e.target.value);
+                        }}
+                        name="gudang"
+                        id="123"
+                        className="w-full px-5 py-4 border border-black-500 rounded resize-none"
+                      >
+                        <option value="">Pilih Gudang Tujuan</option>
+                        <option value="Gudang 1">Gudang 1</option>
+                        <option value="Gudang 2">Gudang 2</option>
+                        <option value="Gudang 3">Gudang 3</option>
+                      </select>
+                    </TableCell>
+                    <TableCell>
                       <Tooltip content="Delete item">
                         <span
                           className="cursor-pointer text-lg text-red-600"
@@ -573,21 +669,41 @@ const AdminMainContent = () => {
           </div>
         </>
       )}
-      {selectedDivisi === "Radiologi" && (
+
+      {selectedDivisi == "Radiologi" && (
         <>
-          {/* Konten untuk divisi Radiologi */}
           <div className="flex gap-4">
-            <div className="flex w-full flex-col space-y-2 md:w-1/3">
+            <div className="relative flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Nama Perusahaan</label>
+
               <Input
                 value={responseData.rumah_sakit}
                 name="rumah_sakit"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="Nama Perusahaan"
-                className="py-2"
+                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
+                endContent={
+                  <button
+                    className="opacity-75"
+                    type="button"
+                    onClick={() => {
+                      const allSuggestions = hospitalData.map(
+                        (hospital: { name: string }) => hospital.name,
+                      );
+                      setHospitalSuggestions(
+                        (prevSuggestions) =>
+                          prevSuggestions.length > 0 ? [] : allSuggestions, // Toggle suggestions
+                      );
+                    }}
+                  >
+                    ▼
+                  </button>
+                }
               />
+
+              {/* Dropdown Suggestions */}
               {hospitalSuggestions.length > 0 && (
-                <ul className="absolute z-10 mt-1 max-h-48 overflow-y-auto rounded border border-gray-300 bg-white">
+                <ul className="absolute top-[4.8rem] z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
                   {hospitalSuggestions.map((suggestion, idx) => (
                     <li
                       key={idx}
@@ -607,72 +723,24 @@ const AdminMainContent = () => {
                 name="alamat"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="Alamat"
-                className="py-2"
+                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
               />
             </div>
             <div className="flex w-full flex-col space-y-2 md:w-1/3">
-              {/* <label className="text-left">Tanggal Jatuh Tempo:</label> */}
-              {/* <Input
-                type="date"
-                value={responseData.jatuh_tempo}
-                name="jatuh_tempo"
-                onChange={(e) => handleFieldChange(e, -1)}
-                className="py-2"
-              /> */}
               <label className="text-left">Rekam Medis:</label>
               <Input
                 value={responseData.rm}
                 name="rm"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="RM"
-                className="py-2"
+                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
               />
             </div>
           </div>
+
           <div className="flex gap-4">
-            {/* <div className="flex flex-col space-y-2 w-full md:w-1/3">
-              <label className="text-left">Nama Dokter:</label>
-              <Input
-                value={responseData.nama_dokter}
-                name="nama_dokter"
-                onChange={(e) => handleFieldChange(e, -1)}
-                placeholder="Nama Dokter"
-                className="py-2"
-              />
-            </div>
-            <div className="flex flex-col space-y-2 w-full md:w-1/3">
-              <label className="text-left">Nama Pasien:</label>
-              <Input
-                value={responseData.nama_pasien}
-                name="nama_pasien"
-                onChange={(e) => handleFieldChange(e, -1)}
-                placeholder="Nama Pasien"
-                className="py-2"
-              />
-            </div> */}
-            <div className="flex w-full flex-col space-y-2 md:w-1/3">
-              {/* <label className="text-left">Rekam Medis:</label>
-              <Input
-                value={responseData.rm}
-                name="rm"
-                onChange={(e) => handleFieldChange(e, -1)}
-                placeholder="RM"
-                className="py-2"
-              /> */}
-            </div>
+            <div className="flex w-full flex-col space-y-2 md:w-1/3"></div>
           </div>
-          {/* <div className="flex gap-4 ">
-            <div className="flex flex-col space-y-2 w-full md:w-1/3">
-              <label className="text-left">Tanggal Tindakan:</label>
-              <Input
-                type="date"
-                value={responseData.tanggal_tindakan}
-                name="tanggal_tindakan"
-                onChange={(e) => handleFieldChange(e, -1)}
-                className="py-2"
-              />
-            </div>
-          </div> */}
 
           <Divider />
 
@@ -697,6 +765,9 @@ const AdminMainContent = () => {
                   Nama Barang
                 </TableColumn>
                 <TableColumn className="bg-blue-900 text-white">
+                  Variable
+                </TableColumn>
+                <TableColumn className="bg-blue-900 text-white">
                   Quantity
                 </TableColumn>
                 <TableColumn className="bg-blue-900 text-white">
@@ -704,6 +775,9 @@ const AdminMainContent = () => {
                 </TableColumn>
                 <TableColumn className="bg-blue-900 text-white">
                   Diskon
+                </TableColumn>
+                <TableColumn className="bg-blue-900 text-white">
+                  Gudang Asal
                 </TableColumn>
                 <TableColumn className="bg-blue-900 text-white">
                   Action
@@ -714,37 +788,71 @@ const AdminMainContent = () => {
                   <TableRow key={index}>
                     <TableCell>
                       <Input
-                        value={row.kat}
-                        name="kat"
+                        value={row.kode}
+                        name="kode"
                         onChange={(e) => handleFieldChange(e, index)}
                         placeholder="Kode Barang"
-                        className="py-2"
+                        className="pt-2"
                       />
                     </TableCell>
                     <TableCell>
+                      <div className="relative w-full">
+                        {/* Wrapper for Input and Dropdown Button */}
+                        <Input
+                          value={row.nama_barang}
+                          name="nama_barang"
+                          onChange={(e) => handleFieldChange(e, index)}
+                          placeholder="Nama Barang"
+                          className="flex-1 border-none px-2 py-2 outline-none"
+                          endContent={
+                            <button
+                              className="opacity-75"
+                              type="button"
+                              onClick={() => {
+                                const allSuggestions = stockData.map(
+                                  (item: { name: string }) => item.name,
+                                );
+                                setItemSuggestions((prevSuggestions) => ({
+                                  ...prevSuggestions,
+                                  [index]:
+                                    prevSuggestions[index] &&
+                                      prevSuggestions[index].length > 0
+                                      ? []
+                                      : allSuggestions, // Toggle suggestions
+                                }));
+                              }}
+                            >
+                              ▼
+                            </button>
+                          }
+                        />
+                        {/* Dropdown Suggestions */}
+                        {itemSuggestions[index] &&
+                          itemSuggestions[index].length > 0 && (
+                            <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                              {itemSuggestions[index].map((suggestion, idx) => (
+                                <li
+                                  key={idx}
+                                  onClick={() =>
+                                    handleSuggestionClick(suggestion, index)
+                                  }
+                                  className="cursor-pointer p-2 hover:bg-gray-200"
+                                >
+                                  {suggestion}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
                       <Input
-                        value={row.nama_barang}
-                        name="nama_barang"
+                        value={row.variable}
+                        name="variable"
                         onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Nama Barang"
-                        className="py-2"
+                        placeholder="Variable"
+                        className="pt-2"
                       />
-                      {itemSuggestions[index] &&
-                        itemSuggestions[index].length > 0 && (
-                          <ul className="absolute z-10 mt-1 max-h-48 overflow-y-auto rounded border border-gray-300 bg-white">
-                            {itemSuggestions[index].map((suggestion, idx) => (
-                              <li
-                                key={idx}
-                                onClick={() =>
-                                  handleSuggestionClick(suggestion, index)
-                                }
-                                className="cursor-pointer p-2 hover:bg-gray-200"
-                              >
-                                {suggestion}
-                              </li>
-                            ))}
-                          </ul>
-                        )}
                     </TableCell>
                     <TableCell>
                       <Input
@@ -752,7 +860,7 @@ const AdminMainContent = () => {
                         name="quantity"
                         onChange={(e) => handleFieldChange(e, index)}
                         placeholder="Quantity"
-                        className="py-2"
+                        className="pt-2"
                       />
                     </TableCell>
                     <TableCell>
@@ -761,7 +869,7 @@ const AdminMainContent = () => {
                         name="harga_satuan"
                         onChange={(e) => handleFieldChange(e, index)}
                         placeholder="Harga Satuan"
-                        className="py-2"
+                        className="pt-2"
                       />
                     </TableCell>
                     <TableCell>
@@ -770,8 +878,25 @@ const AdminMainContent = () => {
                         name="discount"
                         onChange={(e) => handleFieldChange(e, index)}
                         placeholder="Diskon"
-                        className="py-2"
+                        className="pt-2"
                       />
+                    </TableCell>
+                    <TableCell>
+                      <select
+                        value={row.gudang}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                          handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index);
+                          setGudang(e.target.value);
+                        }}
+                        name="gudang"
+                        id="123"
+                        className="w-full px-5 py-4 border border-black-500 rounded resize-none"
+                      >
+                        <option value="">Pilih Gudang Tujuan</option>
+                        <option value="Gudang 1">Gudang 1</option>
+                        <option value="Gudang 2">Gudang 2</option>
+                        <option value="Gudang 3">Gudang 3</option>
+                      </select>
                     </TableCell>
                     <TableCell>
                       <Tooltip content="Delete item">
@@ -795,6 +920,7 @@ const AdminMainContent = () => {
           </div>
         </>
       )}
+
     </div>
   );
 };
