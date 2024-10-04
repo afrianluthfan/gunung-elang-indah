@@ -64,7 +64,7 @@ const MainContent = () => {
           if (data && data.data && data.data.data) {
 
             if (aksi === "update") {
-              const res = await axios.post("http://209.182.237.155:8080/api/proforma-invoice/editPI-posting", data.data.data);
+              const res = await axios.post("http://localhost:8080/api/proforma-invoice/editPI-posting", data.data.data);
               console.log(res);
               if (res.data.status === true) {
                 Swal.fire({
@@ -86,7 +86,7 @@ const MainContent = () => {
                 });
               }
             } else {
-              const res = await axios.post("http://209.182.237.155:8080/api/proforma-invoice/posting", data.data.data);
+              const res = await axios.post("http://localhost:8080/api/proforma-invoice/posting", data.data.data);
               if (res.data.status === true) {
                 Swal.fire({
                   title: "Success",
@@ -344,7 +344,7 @@ const MainContent = () => {
             <table className="w-full">
               <tbody>
                 <td>
-                  
+
                   <tr>
                     <td className=" text-left">
                       <h1 className=" font-medium">Nama Perusahaan</h1>
@@ -577,21 +577,23 @@ const MainContent = () => {
 
 
         <p>Sub Total  : </p>
-        {RP_sub_total !== "" && (
-          <>
-            <p>{RP_sub_total}</p>
-          </>
-        )}
 
-        {RP_sub_total === "" && (
-          <>
-            <p>{subtotal}</p>
-          </>
-        )}
+        <p>{RP_sub_total}</p>
+
         <p>PPN 11%  : </p>
         <p>{pajak}</p>
         <p>Total : </p>
         <p>{total}</p>
+      </div>
+
+      
+      <div className="flex justify-end gap-4">
+        <Button onClick={cancelData}  className="min-w-36 bg-red-600 text-white">
+          Batalkan
+        </Button>
+        <Button onClick={submitData}  className="min-w-36 bg-green-500 text-white">
+          Konfirmasi
+        </Button>
       </div>
 
 
