@@ -95,7 +95,7 @@ const ProformaInvoiceDetail = () => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/detailPI",
+          "http://localhost:8080/api/proforma-invoice/detailPI",
           { id: id, divisi: divisi }
         );
         setResponseData(response.data.data);
@@ -119,17 +119,61 @@ const ProformaInvoiceDetail = () => {
             responseData.status = "Diterima";
           }
 
-          await axios.post(
-            "http://209.182.237.155:8080/api/proforma-invoice/editPI-admin",
-            responseData
-          );
-          Swal.fire({
-            title: "Success!",
-            text: "Proforma Invoice berhasil di " + responseData.status + ".",
-            icon: "success",
-            confirmButtonText: "OK"
-          });
-          router.push("/proforma-invoice-dua");
+          try {
+            const response = await axios.post(
+              "http://localhost:8080/api/proforma-invoice/editPI-admin",
+              responseData
+            );
+
+            // Jika berhasil, tampilkan pesan sukses
+            Swal.fire({
+              title: "Success!",
+              text: "Proforma Invoice berhasil di " + responseData.status + ".",
+              icon: "success",
+              confirmButtonText: "OK"
+            });
+
+            // Redirect ke halaman lain
+            router.push("/proforma-invoice-dua");
+
+          } catch (error) {
+
+            if (responseData.status === "DITOLAK") {
+              responseData.status = "Diterima";
+            }
+  
+            if (responseData.status === "DITERIMA") {
+              responseData.status = "Ditolak";
+            }
+
+            if (responseData.status === "Ditolak") {
+              responseData.status = "Diterima";
+            }
+  
+            if (responseData.status === "Diterima") {
+              responseData.status = "Ditolak";
+            }
+
+            // Tangkap error dari response dan tampilkan error message
+            if (axios.isAxiosError(error) && error.response?.data) {
+              const errorMessage = error.response.data.message || "Terjadi kesalahan.";
+
+              Swal.fire({
+                title: "Error!",
+                html: errorMessage,
+                icon: "error",
+                confirmButtonText: "OK"
+              });
+            } else {
+              // Jika tidak ada detail error dari server, tampilkan error umum
+              Swal.fire({
+                title: "Error!",
+                text: "Terjadi kesalahan saat memproses permintaan.",
+                icon: "error",
+                confirmButtonText: "OK"
+              });
+            }
+          }
         } catch (error) {
           console.error("Error submitting data", error);
         } finally {
@@ -336,7 +380,7 @@ const ProformaInvoiceDetail = () => {
                   <h1>{responseData.number_si}</h1>
                 </td>
               </tr>
-            
+
               <tr>
                 <td className=" text-left">
                   <h1 className="font-medium">Divisi</h1>
