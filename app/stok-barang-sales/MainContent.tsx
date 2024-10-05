@@ -72,6 +72,7 @@ const MainContent = () => {
     fetchData();
   }, [fetchData]); // Panggil `fetchData` ketika komponen mount atau `gudang` berubah
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const columns = [
     { name: "No", uid: "number" },
     { name: "Variable", uid: "variable" },
@@ -83,7 +84,7 @@ const MainContent = () => {
 
   const headerColumns = useMemo(() => {
     return columns.filter((column) => visibleColumns.has(column.uid));
-  }, [visibleColumns]);
+  }, [columns, visibleColumns]);
 
   const filteredItems = useMemo(() => {
     let filteredUsers = Array.isArray(users) ? [...users] : [];

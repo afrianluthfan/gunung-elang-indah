@@ -1,6 +1,5 @@
 "use client";
 
-import Sidebar from "@/components/Sidebar";
 import WelcomingMessage from "@/components/WelcomingMessage";
 import React, { FC, useEffect, useState } from "react";
 import MainContent from "./MainContent";
