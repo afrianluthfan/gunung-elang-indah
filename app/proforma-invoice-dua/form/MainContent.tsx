@@ -68,7 +68,7 @@ const AdminMainContent = () => {
   const [selectedDivisi, setSelectedDivisi] = useState<string>("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // INI ADALAH KEPERLUAN LOGIC DOKTER 
+  // INI ADALAH KEPERLUAN LOGIC DOKTER
   const [doctorData, setDoctorData] = useState<any[]>([]);
   const [doctorSuggestions, setDoctorSuggestions] = useState<string[]>([]);
 
@@ -79,20 +79,29 @@ const AdminMainContent = () => {
     const fetchDoctorData = async () => {
       if (responseData.rumah_sakit) {
         try {
-          const res = await axios.post("http://localhost:8080/api/proforma-invoice/dr-list", {
-            nama: responseData.rumah_sakit,
-          });
+          const res = await axios.post(
+            "http://localhost:8080/api/proforma-invoice/dr-list",
+            {
+              nama: responseData.rumah_sakit,
+            },
+          );
           setDoctorData(res.data.data);
-          setDoctorSuggestions(res.data.data.map((doctor: { namaDokter: string }) => doctor.namaDokter));
+          setDoctorSuggestions(
+            res.data.data.map(
+              (doctor: { namaDokter: string }) => doctor.namaDokter,
+            ),
+          );
         } catch (error) {
           console.error("Error fetching doctor data", error);
         }
 
         try {
           const res = await axios.post(
-            "http://localhost:8080/api/price/ListByCustomer", {
-            nama: responseData.rumah_sakit,
-          });
+            "http://localhost:8080/api/price/ListByCustomer",
+            {
+              nama: responseData.rumah_sakit,
+            },
+          );
           setStockData(res.data.data);
         } catch (error) {
           console.error("Error fetching stock data", error);
@@ -104,7 +113,6 @@ const AdminMainContent = () => {
   }, [responseData.rumah_sakit]);
 
   useEffect(() => {
-
     const fetchHospitalData = async () => {
       try {
         const res = await axios.post(
@@ -167,8 +175,8 @@ const AdminMainContent = () => {
             ...prevData,
             item: prevData.item.filter((_, idx) => idx !== index),
             item_deleted: Array.isArray(prevData.item_deleted)
-              ? [...prevData.item_deleted, { kode: deletedItem.kode || '' }]
-              : [{ kode: deletedItem.kode || '' }],
+              ? [...prevData.item_deleted, { kode: deletedItem.kode || "" }]
+              : [{ kode: deletedItem.kode || "" }],
           }));
         }
       });
@@ -260,13 +268,13 @@ const AdminMainContent = () => {
         item: prevData.item.map((item, idx) =>
           idx === index
             ? {
-              ...item,
-              nama_barang: selectedItem.name,
-              kode: selectedItem.kode,
-              variable: selectedItem.variable,
-              discount: selectedItem.diskon, // Convert to string if needed
-              harga_satuan: selectedItem.price.toString(), // Convert to string if needed
-            }
+                ...item,
+                nama_barang: selectedItem.name,
+                kode: selectedItem.kode,
+                variable: selectedItem.variable,
+                discount: selectedItem.diskon, // Convert to string if needed
+                harga_satuan: selectedItem.price.toString(), // Convert to string if needed
+              }
             : item,
         ),
       }));
@@ -311,12 +319,11 @@ const AdminMainContent = () => {
     }));
   };
 
-
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <ContentTopSectionLayout>
-        <div className="flex w-full justify-between">
-          <h1 className="mt-2 text-xl font-bold lg:text-[1.85vh]">
+        <div className="flex w-full items-center justify-between">
+          <h1 className="mt-2 max-w-32 font-bold lg:max-w-full lg:text-[1.85vh] lg:text-xl">
             Form Tambah Proforma Invoice
           </h1>
 
@@ -351,16 +358,18 @@ const AdminMainContent = () => {
       <Divider />
       {selectedDivisi == "Ortopedi" && (
         <>
-          <div className="flex gap-4">
+          <div className="flex flex-col gap-4 lg:flex-row">
             <div className="relative flex w-full flex-col space-y-2 md:w-1/3">
-              <label className="text-left">Nama Perusahaan</label>
+              <label className="text-left text-sm lg:text-lg">
+                Nama Perusahaan
+              </label>
 
               <Input
                 value={responseData.rumah_sakit}
                 name="rumah_sakit"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="Nama Perusahaan"
-                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
+                className="flex-1 rounded-md text-xs outline-none lg:border lg:border-gray-300 lg:px-2 lg:py-2 lg:text-lg"
                 endContent={
                   <button
                     className="opacity-75"
@@ -402,7 +411,7 @@ const AdminMainContent = () => {
                 name="alamat"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="Alamat"
-                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
+                className="flex-1 rounded-md border border-gray-300 px-2 py-2 outline-none"
               />
             </div>
             <div className="flex w-full flex-col space-y-2 md:w-1/3">
@@ -420,11 +429,11 @@ const AdminMainContent = () => {
                 value={responseData.tanggal_tindakan}
                 name="tanggal_tindakan"
                 onChange={(e) => handleFieldChange(e, -1)}
-                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
+                className="flex-1 rounded-md border border-gray-300 px-2 py-2 outline-none"
               />
             </div>
           </div>
-          <div className="flex gap-4">
+          <div className="flex flex-col gap-4 lg:flex-row">
             <div className="relative flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Nama Dokter:</label>
               <Input
@@ -432,13 +441,17 @@ const AdminMainContent = () => {
                 name="nama_dokter"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="Nama Dokter"
-                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
+                className="flex-1 rounded-md border border-gray-300 px-2 py-2 outline-none"
                 endContent={
                   <button
                     className="opacity-75"
                     type="button"
                     onClick={() => {
-                      setDoctorSuggestions(doctorSuggestions.length > 0 ? [] : doctorData.map((doctor) => doctor.namaDokter));
+                      setDoctorSuggestions(
+                        doctorSuggestions.length > 0
+                          ? []
+                          : doctorData.map((doctor) => doctor.namaDokter),
+                      );
                     }}
                   >
                     ▼
@@ -464,7 +477,6 @@ const AdminMainContent = () => {
                   ))}
                 </ul>
               )}
-
             </div>
             <div className="flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Nama Pasien:</label>
@@ -473,7 +485,7 @@ const AdminMainContent = () => {
                 name="nama_pasien"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="Nama Pasien"
-                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
+                className="flex-1 rounded-md border border-gray-300 px-2 py-2 outline-none"
               />
             </div>
             <div className="flex w-full flex-col space-y-2 md:w-1/3">
@@ -483,7 +495,7 @@ const AdminMainContent = () => {
                 name="rm"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="RM"
-                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
+                className="flex-1 rounded-md border border-gray-300 px-2 py-2 outline-none"
               />
             </div>
           </div>
@@ -499,10 +511,10 @@ const AdminMainContent = () => {
             </Button>
           </div>
 
-          <div className="">
+          <div className="overflow-scroll lg:overflow-auto">
             <Table
               aria-label="Table Barang"
-              className="min-w-full divide-y divide-gray-200"
+              className="min-w-fit divide-y divide-gray-200"
               isHeaderSticky
               removeWrapper
             >
@@ -535,7 +547,7 @@ const AdminMainContent = () => {
               <TableBody>
                 {responseData.item.map((row, index) => (
                   <TableRow key={index}>
-                    <TableCell>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
                       <Input
                         value={row.kode}
                         name="kode"
@@ -544,7 +556,7 @@ const AdminMainContent = () => {
                         className="pt-2"
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
                       <div className="relative w-full">
                         {/* Wrapper for Input and Dropdown Button */}
                         <Input
@@ -565,7 +577,7 @@ const AdminMainContent = () => {
                                   ...prevSuggestions,
                                   [index]:
                                     prevSuggestions[index] &&
-                                      prevSuggestions[index].length > 0
+                                    prevSuggestions[index].length > 0
                                       ? []
                                       : allSuggestions, // Toggle suggestions
                                 }));
@@ -594,7 +606,7 @@ const AdminMainContent = () => {
                           )}
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
                       <Input
                         value={row.variable}
                         name="variable"
@@ -603,7 +615,7 @@ const AdminMainContent = () => {
                         className="pt-2"
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
                       <Input
                         value={row.quantity}
                         name="quantity"
@@ -612,7 +624,7 @@ const AdminMainContent = () => {
                         className="pt-2"
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
                       <Input
                         value={row.harga_satuan}
                         name="harga_satuan"
@@ -621,33 +633,38 @@ const AdminMainContent = () => {
                         className="pt-2"
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
                       <Input
                         value={row.discount}
                         name="discount"
                         onChange={(e) => handleFieldChange(e, index)}
                         placeholder="Diskon"
-                        className="pt-2"
+                        className="min-w-fit pt-2"
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
                       <select
                         value={row.gudang}
                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                          handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index);
+                          handleFieldChange(
+                            e as unknown as React.ChangeEvent<HTMLInputElement>,
+                            index,
+                          );
                           setGudang(e.target.value);
                         }}
                         name="gudang"
                         id="123"
-                        className="w-full px-5 py-4 border border-black-500 rounded resize-none"
+                        className="border-black-500 w-full resize-none rounded border px-2 py-4"
                       >
-                        <option value="">Pilih Gudang Tujuan</option>
+                        <option value="" className="text-xs">
+                          Pilih Gudang Tujuan
+                        </option>
                         <option value="Gudang 1">Gudang 1</option>
                         <option value="Gudang 2">Gudang 2</option>
                         <option value="Gudang 3">Gudang 3</option>
                       </select>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
                       <Tooltip content="Delete item">
                         <span
                           className="cursor-pointer text-lg text-red-600"
@@ -672,7 +689,7 @@ const AdminMainContent = () => {
 
       {selectedDivisi == "Radiologi" && (
         <>
-          <div className="flex gap-4">
+          <div className="flex flex-col gap-4 lg:flex-row">
             <div className="relative flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Nama Perusahaan</label>
 
@@ -681,7 +698,7 @@ const AdminMainContent = () => {
                 name="rumah_sakit"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="Nama Perusahaan"
-                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
+                className="flex-1 rounded-md border border-gray-300 px-2 py-2 outline-none"
                 endContent={
                   <button
                     className="opacity-75"
@@ -723,7 +740,7 @@ const AdminMainContent = () => {
                 name="alamat"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="Alamat"
-                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
+                className="flex-1 rounded-md border border-gray-300 px-2 py-2 outline-none"
               />
             </div>
             <div className="flex w-full flex-col space-y-2 md:w-1/3">
@@ -733,7 +750,7 @@ const AdminMainContent = () => {
                 name="rm"
                 onChange={(e) => handleFieldChange(e, -1)}
                 placeholder="RM"
-                className="flex-1 border px-2 py-2 outline-none rounded-md border-gray-300"
+                className="flex-1 rounded-md border border-gray-300 px-2 py-2 outline-none"
               />
             </div>
           </div>
@@ -753,7 +770,7 @@ const AdminMainContent = () => {
           <div className="">
             <Table
               aria-label="Table Barang"
-              className="min-w-full divide-y divide-gray-200"
+              className="min-w-full divide-y divide-gray-200 overflow-scroll lg:overflow-auto"
               isHeaderSticky
               removeWrapper
             >
@@ -786,7 +803,7 @@ const AdminMainContent = () => {
               <TableBody>
                 {responseData.item.map((row, index) => (
                   <TableRow key={index}>
-                    <TableCell>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
                       <Input
                         value={row.kode}
                         name="kode"
@@ -795,7 +812,7 @@ const AdminMainContent = () => {
                         className="pt-2"
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
                       <div className="relative w-full">
                         {/* Wrapper for Input and Dropdown Button */}
                         <Input
@@ -803,7 +820,7 @@ const AdminMainContent = () => {
                           name="nama_barang"
                           onChange={(e) => handleFieldChange(e, index)}
                           placeholder="Nama Barang"
-                          className="flex-1 border-none px-2 py-2 outline-none"
+                          className="flex-1 border-none px-2 pt-2 outline-none"
                           endContent={
                             <button
                               className="opacity-75"
@@ -816,7 +833,7 @@ const AdminMainContent = () => {
                                   ...prevSuggestions,
                                   [index]:
                                     prevSuggestions[index] &&
-                                      prevSuggestions[index].length > 0
+                                    prevSuggestions[index].length > 0
                                       ? []
                                       : allSuggestions, // Toggle suggestions
                                 }));
@@ -845,7 +862,7 @@ const AdminMainContent = () => {
                           )}
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
                       <Input
                         value={row.variable}
                         name="variable"
@@ -854,7 +871,7 @@ const AdminMainContent = () => {
                         className="pt-2"
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
                       <Input
                         value={row.quantity}
                         name="quantity"
@@ -863,7 +880,7 @@ const AdminMainContent = () => {
                         className="pt-2"
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
                       <Input
                         value={row.harga_satuan}
                         name="harga_satuan"
@@ -872,7 +889,7 @@ const AdminMainContent = () => {
                         className="pt-2"
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
                       <Input
                         value={row.discount}
                         name="discount"
@@ -881,16 +898,19 @@ const AdminMainContent = () => {
                         className="pt-2"
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
                       <select
                         value={row.gudang}
                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                          handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index);
+                          handleFieldChange(
+                            e as unknown as React.ChangeEvent<HTMLInputElement>,
+                            index,
+                          );
                           setGudang(e.target.value);
                         }}
                         name="gudang"
                         id="123"
-                        className="w-full px-5 py-4 border border-black-500 rounded resize-none"
+                        className="border-black-500 w-full resize-none rounded border px-5 py-4"
                       >
                         <option value="">Pilih Gudang Tujuan</option>
                         <option value="Gudang 1">Gudang 1</option>
@@ -898,7 +918,7 @@ const AdminMainContent = () => {
                         <option value="Gudang 3">Gudang 3</option>
                       </select>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
                       <Tooltip content="Delete item">
                         <span
                           className="cursor-pointer text-lg text-red-600"
@@ -920,7 +940,6 @@ const AdminMainContent = () => {
           </div>
         </>
       )}
-
     </div>
   );
 };

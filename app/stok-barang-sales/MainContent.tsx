@@ -36,7 +36,7 @@ const MainContent = () => {
   const [filterValue, setFilterValue] = useState("");
   const [gudang, setGudang] = useState(""); // State untuk menyimpan pilihan gudang
   const [visibleColumns] = useState<Set<string>>(
-    new Set(INITIAL_VISIBLE_COLUMNS)
+    new Set(INITIAL_VISIBLE_COLUMNS),
   );
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
@@ -53,12 +53,12 @@ const MainContent = () => {
       if (gudang && gudang !== "0") {
         response = await axios.post(
           `http://localhost:8080/api/stok/listbygudang`,
-          { id: gudang }
+          { id: gudang },
         );
       } else {
         response = await axios.post(
           "http://localhost:8080/api/stok/list-customer",
-          {}
+          {},
         );
       }
       setUsers(response.data.data);
@@ -90,7 +90,7 @@ const MainContent = () => {
 
     if (filterValue) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.nama.toLowerCase().includes(filterValue.toLowerCase())
+        user.nama.toLowerCase().includes(filterValue.toLowerCase()),
       );
     }
 
@@ -124,7 +124,7 @@ const MainContent = () => {
 
       return cellValue;
     },
-    []
+    [],
   );
 
   const onRowsPerPageChange = useCallback(
@@ -132,20 +132,19 @@ const MainContent = () => {
       setRowsPerPage(Number(e.target.value));
       setPage(1);
     },
-    []
+    [],
   );
 
   if (error) {
     return (
-
-      <div className="flex h-full w-full flex-col justify-between gap-6 p-8 ">
+      <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
         <div className="flex w-full flex-col justify-between gap-4">
-          <h1 className="text-xl font-bold lg:text-[2vh] mb-4">Cari Barang</h1>
-          <div className="text-sm flex w-full justify-stretch gap-4">
+          <h1 className="mb-4 text-xl font-bold lg:text-[2vh]">Cari Barang</h1>
+          <div className="flex w-full flex-col justify-stretch gap-4 text-sm lg:flex-row">
             <select
               name="Pilih Gudang"
               id="123"
-              className="rounded-lg border text-black text-small border-blue-900 bg-white p-2 lg:z-50 z-0"
+              className="z-0 rounded-lg border border-blue-900 bg-white p-2 text-small text-black lg:z-50"
               value={gudang}
               onChange={(e) => setGudang(e.target.value)} // Set pilihan gudang
             >
@@ -155,7 +154,9 @@ const MainContent = () => {
               <option value="3">Gudang Ketiga</option>
             </select>
             <Input type="text" placeholder="Masukan ID Purchase Order" />
-            <Button className="bg-[#00186D] font-bold text-white">Cari/Cek</Button>
+            <Button className="bg-[#00186D] font-bold text-white">
+              Cari/Cek
+            </Button>
           </div>
         </div>
 
@@ -165,14 +166,14 @@ const MainContent = () => {
   }
 
   return (
-    <div className="flex h-full w-full flex-col justify-between gap-6 p-8 ">
+    <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <div className="flex w-full flex-col justify-between gap-4">
-        <h1 className="text-xl font-bold lg:text-[2vh] mb-4">Cari Barang</h1>
-        <div className="text-sm flex w-full justify-stretch gap-4">
+        <h1 className="mb-4 text-xl font-bold lg:text-[2vh]">Cari Barang</h1>
+        <div className="flex w-full justify-stretch gap-4 text-sm">
           <select
             name="Pilih Gudang"
             id="123"
-            className="rounded-lg border text-black text-small border-blue-900 bg-white p-2 lg:z-50 z-0"
+            className="z-0 rounded-lg border border-blue-900 bg-white p-2 text-small text-black lg:z-50"
             value={gudang}
             onChange={(e) => setGudang(e.target.value)} // Set pilihan gudang
           >
@@ -182,7 +183,9 @@ const MainContent = () => {
             <option value="3">Gudang Ketiga</option>
           </select>
           <Input type="text" placeholder="Masukan ID Purchase Order" />
-          <Button className="bg-[#00186D] font-bold text-white">Cari/Cek</Button>
+          <Button className="bg-[#00186D] font-bold text-white">
+            Cari/Cek
+          </Button>
         </div>
       </div>
 
@@ -208,7 +211,10 @@ const MainContent = () => {
                 </TableColumn>
               )}
             </TableHeader>
-            <TableBody emptyContent={"Barang Tidak Ada Di Gudang Ini"} items={itemsWithIndex}>
+            <TableBody
+              emptyContent={"Barang Tidak Ada Di Gudang Ini"}
+              items={itemsWithIndex}
+            >
               {(item) => (
                 <TableRow key={item.number}>
                   {(columnKey) => (
