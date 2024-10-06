@@ -227,7 +227,7 @@ const MainContent = () => {
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <div className="flex w-full flex-col justify-between gap-4">
-        <h1 className="text-xl font-bold mb-4 lg:text-[2vh]">Cari Barang</h1>
+        <h1 className="text-xl font-bold mb-4 lg:text-[2vh]">Cari Data</h1>
         <div className="text-sm flex flex-col w-full justify-stretch gap-2 lg:flex-row lg:items-center">
           <select
             name="Pilih Gudang"

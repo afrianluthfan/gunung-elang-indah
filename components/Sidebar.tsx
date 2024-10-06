@@ -58,13 +58,13 @@ const Sidebar = () => {
         pageName: "Stok Barang",
         pageRoute: "stok-barang",
       },
-      {
-        pageName: "Rental Items",
-        pageRoute: "rental-items",
-      },
+      // {
+      //   pageName: "Rental Items",
+      //   pageRoute: "rental-items",
+      // },
       {
         pageName: "Documents",
-        pageRoute: "documents",
+        pageRoute: "dokumen-logistik",
       },
     ];
 
@@ -85,10 +85,10 @@ const Sidebar = () => {
         pageName: "Stok Barang",
         pageRoute: "stok-barang",
       },
-      {
-        pageName: "Sewa Barang",
-        pageRoute: "sewa-barang",
-      },
+      // {
+      //   pageName: "Sewa Barang",
+      //   pageRoute: "sewa-barang",
+      // },
       {
         pageName: "Sales Order",
         pageRoute: "sales-order",
