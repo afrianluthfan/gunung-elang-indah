@@ -141,7 +141,7 @@ const MainContent = () => {
 
       <div className="flex h-full w-full flex-col justify-between gap-6 p-8 ">
         <div className="flex w-full flex-col justify-between gap-4">
-          <h1 className="text-xl font-bold lg:text-[2vh] mb-4">Cari Barang</h1>
+          <h1 className="text-xl font-bold lg:text-[2vh] mb-4">Cari Data</h1>
           <div className="text-sm flex w-full justify-stretch gap-4">
             <select
               name="Pilih Gudang"
@@ -168,7 +168,7 @@ const MainContent = () => {
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8 ">
       <div className="flex w-full flex-col justify-between gap-4">
-        <h1 className="text-xl font-bold lg:text-[2vh] mb-4">Cari Barang</h1>
+        <h1 className="text-xl font-bold lg:text-[2vh] mb-4">Cari Data</h1>
         <div className="text-sm flex w-full justify-stretch gap-4">
           <select
             name="Pilih Gudang"

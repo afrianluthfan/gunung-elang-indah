@@ -140,7 +140,7 @@ const MainContent = () => {
     return (
       <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
         <div className="flex w-full flex-col justify-between gap-4">
-          <h1 className="mb-4 text-xl font-bold lg:text-[2vh]">Cari Barang</h1>
+          <h1 className="mb-4 text-xl font-bold lg:text-[2vh]">Cari Data</h1>
           <div className="flex w-full flex-col justify-stretch gap-4 text-sm lg:flex-row">
             <select
               name="Pilih Gudang"
@@ -169,7 +169,7 @@ const MainContent = () => {
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <div className="flex w-full flex-col justify-between gap-4">
-        <h1 className="mb-4 text-xl font-bold lg:text-[2vh]">Cari Barang</h1>
+        <h1 className="mb-4 text-xl font-bold lg:text-[2vh]">Cari Data</h1>
         <div className="flex w-full justify-stretch gap-4 text-sm">
           <select
             name="Pilih Gudang"

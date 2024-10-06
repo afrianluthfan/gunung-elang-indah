@@ -44,13 +44,14 @@ type OrderData = {
   RP_sub_total: string;
   RP_pajak_ppn: string;
   RP_total: string;
+  rumah_sakit: string;
 };
 
-export default function SOTableComponent() {
+export default function SOTableComponent({ selectedDocument }: { selectedDocument: string }) {
   const [users, setUsers] = useState<OrderData[]>([]);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "age",
+    column: "tanggal",
     direction: "ascending",
   });
   const [page, setPage] = useState(1);
@@ -58,12 +59,9 @@ export default function SOTableComponent() {
   const dispatch = useDispatch();
 
   // Fetch data from the API
-  const fetchData = async () => {
+  const fetchData = async (endpoint: string, request: any = {}) => {
     try {
-      const response = await axios.post(
-        "http://209.182.237.155:8080/api/sales_order/list",
-        "",
-      );
+      const response = await axios.post(endpoint, request);
       setUsers(response.data.data);
     } catch (error) {
       console.error(error);
@@ -71,8 +69,17 @@ export default function SOTableComponent() {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    setUsers([]);
+
+    if (selectedDocument === "PO" || selectedDocument === "PI") {
+      console.log("Selected Document:", selectedDocument);
+      const endpoint = selectedDocument === "PO" ? "http://209.182.237.155:8080/api/sales_order/list" : "http://209.182.237.155:8080/api/sales_order/list";
+      const request = {
+        dok : selectedDocument
+      };  
+      fetchData(endpoint, request);
+    } 
+  }, [selectedDocument]);
 
   const handleEditButton = useCallback(
     (id: number) => {
@@ -87,8 +94,8 @@ export default function SOTableComponent() {
 
   const sortedItems = React.useMemo(() => {
     return [...users].sort((a: OrderData, b: OrderData) => {
-      const first = a[sortDescriptor.column as keyof OrderData] as number;
-      const second = b[sortDescriptor.column as keyof OrderData] as number;
+      const first = a[sortDescriptor.column as keyof OrderData] as string;
+      const second = b[sortDescriptor.column as keyof OrderData] as string;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
@@ -132,16 +139,16 @@ export default function SOTableComponent() {
         case "tanggal":
           return <div>{user.tanggal}</div>;
         case "nama_customer":
-          return <div>{user.nama_customer}</div>;
+          return <div>{user.rumah_sakit}</div>;
         case "total":
           return <div>{user.RP_total}</div>;
         default:
           if (Array.isArray(cellValue)) {
             return (
               <ul>
-                {cellValue.map((item) => (
+                {cellValue.map((item: any) => (
                   <li key={item.id}>
-                    {item.nama_barang} - {item.quantity} - {item.harga_satuan}
+                    {item.nama_customer} - {item.quantity} - {item.harga_satuan}
                   </li>
                 ))}
               </ul>
@@ -149,8 +156,7 @@ export default function SOTableComponent() {
           }
           return cellValue;
       }
-    },
-    [handleEditButton],
+    }, [handleEditButton],
   );
 
   const onRowsPerPageChange = React.useCallback(
@@ -176,7 +182,7 @@ export default function SOTableComponent() {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"No users found"} items={itemsWithIndex}>
+        <TableBody emptyContent={"Silahkan pilih jenis dokumen dulu !"} items={itemsWithIndex}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
