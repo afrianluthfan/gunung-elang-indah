@@ -1,4 +1,3 @@
-import Sidebar from "@/components/Sidebar";
 import WelcomingMessage from "@/components/WelcomingMessage";
 import React, { FC } from "react";
 import MainContent from "./MainContent";
@@ -8,10 +7,8 @@ interface pageProps {}
 
 const Form: FC<pageProps> = ({}) => {
   return (
-    <section className="flex max-h-screen">
-      {/* sidebar */}
-      <Sidebar />
-      <div className="ml-[17.3vw] flex max-h-screen w-[82.7vw] flex-col bg-[#EFEFEF] text-black">
+    <section>
+      <div className="ml-0 flex h-screen w-screen flex-col bg-[#EFEFEF] text-black md:ml-[17.3vw] md:w-[82.7vw]">
         <WelcomingMessage />
         <div className="flex h-[88.5vh] w-full flex-col items-center justify-between px-[1.6vw] pt-[2vh]">
           <div className="flex w-full flex-col gap-5">

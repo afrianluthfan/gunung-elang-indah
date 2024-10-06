@@ -1,6 +1,5 @@
 "use client";
 
-import Sidebar from "@/components/Sidebar";
 import WelcomingMessage from "@/components/WelcomingMessage";
 import React, { FC, useEffect, useState } from "react";
 import MainContent from "./MainContent";
@@ -58,7 +57,7 @@ const Form: FC = () => {
   //   const fetchDivisiList = async () => {
   //     try {
   //       const responseDivisi = await axios.post(
-  //         "http://localhost:8080/api/proforma-invoice/divisi-list",
+  //         "http://209.182.237.155:8080/api/proforma-invoice/divisi-list",
   //         "",
   //       );
   //       setDivisiList(responseDivisi.data.data);
@@ -96,7 +95,7 @@ const Form: FC = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/purchase-order/inquiry",
+        "http://209.182.237.155:8080/api/purchase-order/inquiry",
         requestBody,
       );
       // if (response.status === 200) {
@@ -156,9 +155,6 @@ const Form: FC = () => {
 
   return (
     <section className="flex max-h-screen">
-      {/* sidebar */}
-      {/* <Sidebar /> */}
-
       <div className="ml-0 h-screen w-full bg-[#EFEFEF] text-black md:ml-[17.3vw] md:w-[82.7vw]">
         {/* top bar that says "Welcome, {user}" */}
         <WelcomingMessage />

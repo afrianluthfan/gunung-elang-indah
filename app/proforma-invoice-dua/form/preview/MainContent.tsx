@@ -29,7 +29,6 @@ const MainContent = () => {
     }
   }, []);
 
-
   useEffect(() => {
     // Retrieve data from localStorage
     const storedData = localStorage.getItem("purchaseOrder");
@@ -37,17 +36,16 @@ const MainContent = () => {
       setData(JSON.parse(storedData));
     }
 
-
     // localStorage.removeItem("purchaseOrder");
   }, []);
 
   const submitData = async () => {
     const aksi = localStorage.getItem("aksi");
-    let pesan = ""
+    let pesan = "";
     if (aksi === "update") {
-      pesan = "Mengubah"
+      pesan = "Mengubah";
     } else {
-      pesan = "membuat"
+      pesan = "membuat";
     }
 
     Swal.fire({
@@ -62,9 +60,11 @@ const MainContent = () => {
       if (result.isConfirmed) {
         try {
           if (data && data.data && data.data.data) {
-
             if (aksi === "update") {
-              const res = await axios.post("http://localhost:8080/api/proforma-invoice/editPI-posting", data.data.data);
+              const res = await axios.post(
+                "http://209.182.237.155:8080/api/proforma-invoice/editPI-posting",
+                data.data.data,
+              );
               console.log(res);
               if (res.data.status === true) {
                 Swal.fire({
@@ -86,7 +86,10 @@ const MainContent = () => {
                 });
               }
             } else {
-              const res = await axios.post("http://localhost:8080/api/proforma-invoice/posting", data.data.data);
+              const res = await axios.post(
+                "http://209.182.237.155:8080/api/proforma-invoice/posting",
+                data.data.data,
+              );
               if (res.data.status === true) {
                 Swal.fire({
                   title: "Success",
@@ -116,14 +119,10 @@ const MainContent = () => {
           throw error;
         }
 
-
         localStorage.removeItem("purchaseOrder");
         localStorage.removeItem("aksi");
-
       }
     });
-
-
   };
 
   const cancelData = async () => {
@@ -136,8 +135,21 @@ const MainContent = () => {
 
   // Destructure the inner data object
   const {
-    nama_suplier, nomor_po, tanggal_tindakan, catatan_po, prepared_by, prepared_jabatan,
-    approved_by, approved_jabatan, sub_total, pajak, total, item, alamat, item_detail_pi, subtotal,
+    nama_suplier,
+    nomor_po,
+    tanggal_tindakan,
+    catatan_po,
+    prepared_by,
+    prepared_jabatan,
+    approved_by,
+    approved_jabatan,
+    sub_total,
+    pajak,
+    total,
+    item,
+    alamat,
+    item_detail_pi,
+    subtotal,
 
     RP_sub_total,
     RP_pajak_ppn,
@@ -145,12 +157,19 @@ const MainContent = () => {
     id_divisi,
     divisi,
 
-
     status,
 
-    jatuh_tempo, nomor_invoice, nomor_si, tanggal,
+    jatuh_tempo,
+    nomor_invoice,
+    nomor_si,
+    tanggal,
 
-    invoice_number, due_date, number_si, nama_dokter, nama_pasien, rumah_sakit,
+    invoice_number,
+    due_date,
+    number_si,
+    nama_dokter,
+    nama_pasien,
+    rumah_sakit,
   } = data.data.data || {};
 
   return (
@@ -160,19 +179,17 @@ const MainContent = () => {
       </ContentTopSectionLayout>
       <Divider />
 
-
-
       {/* KONDISI ORTOPEDI */}
       {id_divisi === "Ortopedi" && (
         <>
           {/* Konten untuk divisi Ortopedi */}
-          <div className="flex justify-between">
+          <div className="flex flex-col justify-between md:flex-row">
             <table className="w-full">
               <tbody>
                 <td>
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Nama Perusahaan</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Nama Perusahaan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -180,8 +197,8 @@ const MainContent = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Alamat Perusahaan</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Alamat Perusahaan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -189,8 +206,8 @@ const MainContent = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Tanggal PI</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Tanggal PI</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -198,8 +215,8 @@ const MainContent = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Tanggal Tindakan</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Tanggal Tindakan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -215,7 +232,6 @@ const MainContent = () => {
                       <h1>{jatuh_tempo}</h1>
                     </td>
                   </tr> */}
-
                 </td>
               </tbody>
             </table>
@@ -224,8 +240,8 @@ const MainContent = () => {
               <tbody>
                 <td>
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Nomor Invoice</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Nomor Invoice</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -233,8 +249,8 @@ const MainContent = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Nomor Surat Jalan</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Nomor Surat Jalan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -243,8 +259,8 @@ const MainContent = () => {
                   </tr>
 
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Nama Dokter</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Nama Dokter</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -253,8 +269,8 @@ const MainContent = () => {
                   </tr>
 
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Nama Pasien</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Nama Pasien</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -277,8 +293,8 @@ const MainContent = () => {
               <tbody>
                 <td>
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Nama Perusahaan</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Nama Perusahaan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -286,8 +302,8 @@ const MainContent = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Alamat Perusahaan</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Alamat Perusahaan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -295,8 +311,8 @@ const MainContent = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Tanggal PI</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Tanggal PI</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -313,8 +329,8 @@ const MainContent = () => {
                     </td>
                   </tr> */}
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Nomor Invoice</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Nomor Invoice</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -322,8 +338,8 @@ const MainContent = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Nomor Surat Jalan</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Nomor Surat Jalan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -344,10 +360,9 @@ const MainContent = () => {
             <table className="w-full">
               <tbody>
                 <td>
-
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Nama Perusahaan</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Nama Perusahaan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -356,8 +371,8 @@ const MainContent = () => {
                   </tr>
 
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Alamat Perusahaan</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Alamat Perusahaan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -366,8 +381,8 @@ const MainContent = () => {
                   </tr>
 
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Tanggal PI</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Tanggal PI</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -376,15 +391,14 @@ const MainContent = () => {
                   </tr>
 
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Tanggal Tindakan</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Tanggal Tindakan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
                       <h1>{tanggal_tindakan}</h1>
                     </td>
                   </tr>
-
                 </td>
               </tbody>
             </table>
@@ -393,8 +407,8 @@ const MainContent = () => {
               <tbody>
                 <td>
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Nomor Invoice</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Nomor Invoice</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -403,8 +417,8 @@ const MainContent = () => {
                   </tr>
 
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Nomor Surat Jalan</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Nomor Surat Jalan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -413,8 +427,8 @@ const MainContent = () => {
                   </tr>
 
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Nama Dokter</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Nama Dokter</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -423,15 +437,14 @@ const MainContent = () => {
                   </tr>
 
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Nama Pasien</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Nama Pasien</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
                       <h1>{nama_pasien}</h1>
                     </td>
                   </tr>
-
                 </td>
               </tbody>
             </table>
@@ -448,8 +461,8 @@ const MainContent = () => {
               <tbody>
                 <td>
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Nama Perusahaan</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Nama Perusahaan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -457,8 +470,8 @@ const MainContent = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Alamat Perusahaan</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Alamat Perusahaan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -466,8 +479,8 @@ const MainContent = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Tanggal PI</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Tanggal PI</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -484,8 +497,8 @@ const MainContent = () => {
                     </td>
                   </tr> */}
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Nomor Invoice</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Nomor Invoice</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -493,8 +506,8 @@ const MainContent = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td className=" text-left">
-                      <h1 className=" font-medium">Nomor Surat Jalan</h1>
+                    <td className="text-left">
+                      <h1 className="font-medium">Nomor Surat Jalan</h1>
                     </td>
                     <td className="w-10 text-center">:</td>
                     <td className="">
@@ -510,93 +523,147 @@ const MainContent = () => {
 
       <Divider />
 
-
-
-
       {/* Bagian Table  */}
 
-      <div className="flex justify-start my-1">
+      <div className="my-1 flex justify-start">
         <h1 className="font-semibold lg:text-[1.85vh]">List Harga Barang</h1>
       </div>
 
       {/* Bagian Table */}
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between overflow-scroll lg:overflow-auto">
         <Table removeWrapper>
           <TableHeader>
-            <TableColumn className="bg-blue-900 text-white text-center">NO</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">KODE BARANG</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">NAMA BARANG</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">VARIABLE</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">QUANTITY</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">HARGA SATUAN</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">DISCOUNT</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">AMOUNT</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">GUDANG ASAL</TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              NO
+            </TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              KODE BARANG
+            </TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              NAMA BARANG
+            </TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              VARIABLE
+            </TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              QUANTITY
+            </TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              HARGA SATUAN
+            </TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              DISCOUNT
+            </TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              AMOUNT
+            </TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              GUDANG ASAL
+            </TableColumn>
           </TableHeader>
           <TableBody>
-            {item?.map((item: {
-              gudang: string;
-              amount: string;
-              variable: string;
-              kode: string; nama_barang: string; quantity: string; harga_satuan: string; discount: string; RP_sub_total_item: string
-            }, index: number) => (
-              <TableRow key={index} className="">
-                <TableCell className="text-center">{index + 1}</TableCell>
-                <TableCell className="text-center">{item.kode}</TableCell>
-                <TableCell className="text-center">{item.nama_barang}</TableCell>
-                <TableCell className="text-center">{item.variable}</TableCell>
-                <TableCell className="text-center">{item.quantity}</TableCell>
-                <TableCell className="text-center">{item.harga_satuan}</TableCell>
-                <TableCell className="text-center">{item.discount}</TableCell>
-                <TableCell className="text-center">{item.amount}</TableCell>
-                <TableCell className="text-center">{item.gudang}</TableCell>
-              </TableRow>
-            ))}
-            {item_detail_pi?.map((item_detail_pi: {
-              gudang: string;
-              amount: string; variable: string;
-              kode: string; nama_barang: string; quantity: string; harga_satuan: string; discount: string; rp_sub_total_item: string
-            }, index: number) => (
-              <TableRow key={index} className="">
-                <TableCell className="text-center">{index + 1}</TableCell>
-                <TableCell className="text-center">{item_detail_pi.kode}</TableCell>
-                <TableCell className="text-center">{item_detail_pi.nama_barang}</TableCell>
-                <TableCell className="text-center">{item_detail_pi.variable}</TableCell>
-                <TableCell className="text-center">{item_detail_pi.quantity}</TableCell>
-                <TableCell className="text-center">{item_detail_pi.harga_satuan}</TableCell>
-                <TableCell className="text-center">{item_detail_pi.discount}</TableCell>
-                <TableCell className="text-center">{item_detail_pi.rp_sub_total_item}</TableCell>
-                <TableCell className="text-center">{item_detail_pi.gudang}</TableCell>
-              </TableRow>
-            ))}
+            {item?.map(
+              (
+                item: {
+                  gudang: string;
+                  amount: string;
+                  variable: string;
+                  kode: string;
+                  nama_barang: string;
+                  quantity: string;
+                  harga_satuan: string;
+                  discount: string;
+                  RP_sub_total_item: string;
+                },
+                index: number,
+              ) => (
+                <TableRow key={index} className="">
+                  <TableCell className="text-center">{index + 1}</TableCell>
+                  <TableCell className="text-center">{item.kode}</TableCell>
+                  <TableCell className="text-center">
+                    {item.nama_barang}
+                  </TableCell>
+                  <TableCell className="text-center">{item.variable}</TableCell>
+                  <TableCell className="text-center">{item.quantity}</TableCell>
+                  <TableCell className="text-center">
+                    {item.harga_satuan}
+                  </TableCell>
+                  <TableCell className="text-center">{item.discount}</TableCell>
+                  <TableCell className="text-center">{item.amount}</TableCell>
+                  <TableCell className="text-center">{item.gudang}</TableCell>
+                </TableRow>
+              ),
+            )}
+            {item_detail_pi?.map(
+              (
+                item_detail_pi: {
+                  gudang: string;
+                  amount: string;
+                  variable: string;
+                  kode: string;
+                  nama_barang: string;
+                  quantity: string;
+                  harga_satuan: string;
+                  discount: string;
+                  rp_sub_total_item: string;
+                },
+                index: number,
+              ) => (
+                <TableRow key={index} className="">
+                  <TableCell className="text-center">{index + 1}</TableCell>
+                  <TableCell className="text-center">
+                    {item_detail_pi.kode}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {item_detail_pi.nama_barang}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {item_detail_pi.variable}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {item_detail_pi.quantity}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {item_detail_pi.harga_satuan}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {item_detail_pi.discount}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {item_detail_pi.rp_sub_total_item}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {item_detail_pi.gudang}
+                  </TableCell>
+                </TableRow>
+              ),
+            )}
           </TableBody>
         </Table>
       </div>
 
-      <div className="py-4 grid w-[35%] grid-cols-2 self-end text-end text-sm font-bold">
+      <div className="grid grid-cols-2 self-end py-4 text-end text-sm font-bold lg:w-[35%]">
+        <p>Sub Total : </p>
 
+        <p className="ml-5 lg:ml-0">{RP_sub_total}</p>
 
-        <p>Sub Total  : </p>
-
-        <p>{RP_sub_total}</p>
-
-        <p>PPN 11%  : </p>
+        <p>PPN 11% : </p>
         <p>{pajak}</p>
         <p>Total : </p>
         <p>{total}</p>
       </div>
 
-      
       <div className="flex justify-end gap-4">
-        <Button onClick={cancelData}  className="min-w-36 bg-red-600 text-white">
+        <Button onClick={cancelData} className="min-w-36 bg-red-600 text-white">
           Batalkan
         </Button>
-        <Button onClick={submitData}  className="min-w-36 bg-green-500 text-white">
+        <Button
+          onClick={submitData}
+          className="min-w-36 bg-green-500 text-white"
+        >
           Konfirmasi
         </Button>
       </div>
-
-
     </div>
   );
 };
