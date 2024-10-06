@@ -37,7 +37,7 @@ const DataPerusahaan: FC<DataPerusahaanProps> = ({ data }) => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/customer-profilling/get-by-search",
+          "http://209.182.237.155:8080/api/customer-profilling/get-by-search",
           data,
         );
         if (response.data.status) {

@@ -80,7 +80,7 @@ const AdminMainContent = () => {
       if (responseData.rumah_sakit) {
         try {
           const res = await axios.post(
-            "http://localhost:8080/api/proforma-invoice/dr-list",
+            "http://209.182.237.155:8080/api/proforma-invoice/dr-list",
             {
               nama: responseData.rumah_sakit,
             },
@@ -97,7 +97,7 @@ const AdminMainContent = () => {
 
         try {
           const res = await axios.post(
-            "http://localhost:8080/api/price/ListByCustomer",
+            "http://209.182.237.155:8080/api/price/ListByCustomer",
             {
               nama: responseData.rumah_sakit,
             },
@@ -116,7 +116,7 @@ const AdminMainContent = () => {
     const fetchHospitalData = async () => {
       try {
         const res = await axios.post(
-          "http://localhost:8080/api/proforma-invoice/rs-list",
+          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
         );
         setHospitalData(res.data.data);
       } catch (error) {
@@ -141,7 +141,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://localhost:8080/api/proforma-invoice/inquiry",
+            "http://209.182.237.155:8080/api/proforma-invoice/inquiry",
             responseData,
           );
 

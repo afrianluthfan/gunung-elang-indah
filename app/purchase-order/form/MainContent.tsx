@@ -84,7 +84,7 @@ const AdminMainContent = () => {
   useEffect(() => {
     const fetchStockData = async () => {
       try {
-        const res = await axios.post("http://localhost:8080/api/stok/list-proses");
+        const res = await axios.post("http://209.182.237.155:8080/api/stok/list-proses");
         setStockData(res.data.data);
       } catch (error) {
         console.error("Error fetching stock data", error);
@@ -93,7 +93,7 @@ const AdminMainContent = () => {
 
     const fetchSuppliers = async () => {
       try {
-        const response = await axios.post('http://localhost:8080/api/proforma-invoice/supplier');
+        const response = await axios.post('http://209.182.237.155:8080/api/proforma-invoice/supplier');
         if (response.data && response.data.data) {
           setSuppliers(response.data.data);
         }
@@ -111,7 +111,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://localhost:8080/api/purchase-order/inquiry",
+            "http://209.182.237.155:8080/api/purchase-order/inquiry",
             responseData
           );
 

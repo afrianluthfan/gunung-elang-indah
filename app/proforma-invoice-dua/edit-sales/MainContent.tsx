@@ -100,7 +100,7 @@ const AdminMainContent = () => {
     const fetchDoctorData = async () => {
       if (responseData.rumah_sakit) {
         try {
-          const res = await axios.post("http://localhost:8080/api/proforma-invoice/dr-list", {
+          const res = await axios.post("http://209.182.237.155:8080/api/proforma-invoice/dr-list", {
             nama: responseData.rumah_sakit,
           });
           setDoctorData(res.data.data);
@@ -111,7 +111,7 @@ const AdminMainContent = () => {
 
         try {
           const res = await axios.post(
-            "http://localhost:8080/api/price/ListByCustomer", {
+            "http://209.182.237.155:8080/api/price/ListByCustomer", {
             nama: responseData.rumah_sakit,
           });
           setStockData(res.data.data);
@@ -127,7 +127,7 @@ const AdminMainContent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.post("http://localhost:8080/api/proforma-invoice/detailPI", {
+        const res = await axios.post("http://209.182.237.155:8080/api/proforma-invoice/detailPI", {
           id: id,
           divisi: divisi,
         });
@@ -148,7 +148,7 @@ const AdminMainContent = () => {
   useEffect(() => {
     const fetchStockData = async () => {
       try {
-        const res = await axios.post("http://localhost:8080/api/stock-barang/list");
+        const res = await axios.post("http://209.182.237.155:8080/api/stock-barang/list");
         setStockData(res.data.data);
       } catch (error) {
         console.error("Error fetching stock data", error);
@@ -157,7 +157,7 @@ const AdminMainContent = () => {
 
     const fetchHospitalData = async () => {
       try {
-        const res = await axios.post("http://localhost:8080/api/proforma-invoice/rs-list");
+        const res = await axios.post("http://209.182.237.155:8080/api/proforma-invoice/rs-list");
         setHospitalData(res.data.data);
       } catch (error) {
         console.error("Error fetching hospital data", error);
@@ -183,7 +183,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://localhost:8080/api/proforma-invoice/editPI-inquiry",
+            "http://209.182.237.155:8080/api/proforma-invoice/editPI-inquiry",
             responseData
           );
 
