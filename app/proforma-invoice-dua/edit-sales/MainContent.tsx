@@ -484,7 +484,7 @@ const AdminMainContent = () => {
                 }
               />
               {doctorSuggestions.length > 0 && (
-                <ul className="absolute top-[5rem] z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                <ul className="absolute top-[5rem] z-[100] mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
                   {doctorSuggestions.map((suggestion, idx) => (
                     <li
                       key={idx}
@@ -600,7 +600,7 @@ const AdminMainContent = () => {
                       />
                       {itemSuggestions[index] &&
                         itemSuggestions[index].length > 0 && (
-                          <ul className="absolute z-10 mt-1 max-h-48 overflow-y-auto rounded border border-gray-300 bg-white">
+                          <ul className="absolute z-[100] mt-1 max-h-48 overflow-y-auto rounded border border-gray-300 bg-white">
                             {itemSuggestions[index].map((suggestion, idx) => (
                               <li
                                 key={idx}
@@ -857,7 +857,7 @@ const AdminMainContent = () => {
                       />
                       {itemSuggestions[index] &&
                         itemSuggestions[index].length > 0 && (
-                          <ul className="absolute z-10 mt-1 max-h-48 overflow-y-auto rounded border border-gray-300 bg-white">
+                          <ul className="absolute z-[100] mt-1 max-h-48 overflow-y-auto rounded border border-gray-300 bg-white">
                             {itemSuggestions[index].map((suggestion, idx) => (
                               <li
                                 key={idx}

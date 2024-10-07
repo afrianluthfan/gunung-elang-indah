@@ -511,7 +511,7 @@ const AdminMainContent = () => {
             </Button>
           </div>
 
-          <div className="overflow-scroll lg:overflow-auto">
+          <div>
             <Table
               aria-label="Table Barang"
               className="min-w-fit divide-y divide-gray-200"
@@ -590,7 +590,7 @@ const AdminMainContent = () => {
                         {/* Dropdown Suggestions */}
                         {itemSuggestions[index] &&
                           itemSuggestions[index].length > 0 && (
-                            <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                            <ul className="absolute z-[100] mt-1 max-h-48 w-full overflow-y-scroll rounded-2xl border border-gray-300 bg-white">
                               {itemSuggestions[index].map((suggestion, idx) => (
                                 <li
                                   key={idx}
@@ -767,10 +767,10 @@ const AdminMainContent = () => {
             </Button>
           </div>
 
-          <div className="">
+          <div>
             <Table
               aria-label="Table Barang"
-              className="min-w-full divide-y divide-gray-200 overflow-scroll lg:overflow-auto"
+              className="min-w-full divide-y divide-gray-200"
               isHeaderSticky
               removeWrapper
             >
@@ -846,7 +846,7 @@ const AdminMainContent = () => {
                         {/* Dropdown Suggestions */}
                         {itemSuggestions[index] &&
                           itemSuggestions[index].length > 0 && (
-                            <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                            <ul className="absolute z-[200] mt-1 max-h-[250px] w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
                               {itemSuggestions[index].map((suggestion, idx) => (
                                 <li
                                   key={idx}
