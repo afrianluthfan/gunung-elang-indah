@@ -96,7 +96,7 @@ const ProformaInvoiceDetail = () => {
       try {
         const response = await axios.post(
           "http://209.182.237.155:8080/api/proforma-invoice/detailPI",
-          { id: id, divisi: divisi }
+          { id: id, divisi: divisi },
         );
         setResponseData(response.data.data);
       } catch (error) {
@@ -122,7 +122,7 @@ const ProformaInvoiceDetail = () => {
           try {
             const response = await axios.post(
               "http://209.182.237.155:8080/api/proforma-invoice/editPI-admin",
-              responseData
+              responseData,
             );
 
             // Jika berhasil, tampilkan pesan sukses
@@ -130,18 +130,16 @@ const ProformaInvoiceDetail = () => {
               title: "Success!",
               text: "Proforma Invoice berhasil di " + responseData.status + ".",
               icon: "success",
-              confirmButtonText: "OK"
+              confirmButtonText: "OK",
             });
 
             // Redirect ke halaman lain
             router.push("/proforma-invoice-dua");
-
           } catch (error) {
-
             if (responseData.status === "DITOLAK") {
               responseData.status = "Diterima";
             }
-  
+
             if (responseData.status === "DITERIMA") {
               responseData.status = "Ditolak";
             }
@@ -149,20 +147,21 @@ const ProformaInvoiceDetail = () => {
             if (responseData.status === "Ditolak") {
               responseData.status = "Diterima";
             }
-  
+
             if (responseData.status === "Diterima") {
               responseData.status = "Ditolak";
             }
 
             // Tangkap error dari response dan tampilkan error message
             if (axios.isAxiosError(error) && error.response?.data) {
-              const errorMessage = error.response.data.message || "Terjadi kesalahan.";
+              const errorMessage =
+                error.response.data.message || "Terjadi kesalahan.";
 
               Swal.fire({
                 title: "Error!",
                 html: errorMessage,
                 icon: "error",
-                confirmButtonText: "OK"
+                confirmButtonText: "OK",
               });
             } else {
               // Jika tidak ada detail error dari server, tampilkan error umum
@@ -170,7 +169,7 @@ const ProformaInvoiceDetail = () => {
                 title: "Error!",
                 text: "Terjadi kesalahan saat memproses permintaan.",
                 icon: "error",
-                confirmButtonText: "OK"
+                confirmButtonText: "OK",
               });
             }
           }
@@ -187,13 +186,13 @@ const ProformaInvoiceDetail = () => {
 
   const submitAcc = () => {
     Swal.fire({
-      title: 'Apakah Kamu Yakin ?',
+      title: "Apakah Kamu Yakin ?",
       text: "Apakah kamu yakin ingin menerima proforma invoice ini!",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, accept it!'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, accept it!",
     }).then((result) => {
       if (result.isConfirmed) {
         setResponseData((prevData) => ({
@@ -207,30 +206,30 @@ const ProformaInvoiceDetail = () => {
 
   const submitReject = () => {
     Swal.fire({
-      title: 'Alasan Penolakan',
-      input: 'textarea',
-      inputLabel: 'Masukkan alasan penolakan',
-      inputPlaceholder: 'Alasan penolakan...',
+      title: "Alasan Penolakan",
+      input: "textarea",
+      inputLabel: "Masukkan alasan penolakan",
+      inputPlaceholder: "Alasan penolakan...",
       inputAttributes: {
-        'aria-label': 'Masukkan alasan penolakan'
+        "aria-label": "Masukkan alasan penolakan",
       },
       showCancelButton: true,
-      confirmButtonText: 'Kirim',
-      cancelButtonText: 'Batal',
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
+      confirmButtonText: "Kirim",
+      cancelButtonText: "Batal",
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
       inputValidator: (value) => {
         if (!value) {
-          return 'Alasan penolakan tidak boleh kosong!';
+          return "Alasan penolakan tidak boleh kosong!";
         }
         return null;
-      }
+      },
     }).then((result) => {
       if (result.isConfirmed) {
         setResponseData((prevData) => ({
           ...prevData,
           status: "DITOLAK",
-          reason: result.value
+          reason: result.value,
         }));
         setShouldSubmit(true);
       }
@@ -239,7 +238,9 @@ const ProformaInvoiceDetail = () => {
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
-      <h1 className="font-semibold lg:text-[1.85vh]">Detail Proforma Invoice</h1>
+      <h1 className="font-semibold lg:text-[1.85vh]">
+        Detail Proforma Invoice
+      </h1>
       <Divider />
 
       {/* Jika divisi === Ortopedic */}
@@ -248,8 +249,8 @@ const ProformaInvoiceDetail = () => {
           <table className="">
             <tbody>
               <tr>
-                <td className=" text-left">
-                  <h1 className=" font-medium">Perusahaan</h1>
+                <td className="text-left">
+                  <h1 className="font-medium">Perusahaan</h1>
                 </td>
                 <td className="w-10 text-center">:</td>
                 <td className="">
@@ -258,8 +259,8 @@ const ProformaInvoiceDetail = () => {
               </tr>
 
               <tr>
-                <td className=" text-left">
-                  <h1 className=" font-medium">Alamat Perusahaan</h1>
+                <td className="text-left">
+                  <h1 className="font-medium">Alamat Perusahaan</h1>
                 </td>
                 <td className="w-10 text-center">:</td>
                 <td className="">
@@ -268,8 +269,8 @@ const ProformaInvoiceDetail = () => {
               </tr>
 
               <tr>
-                <td className=" text-left">
-                  <h1 className=" font-medium">Nomor Invoice</h1>
+                <td className="text-left">
+                  <h1 className="font-medium">Nomor Invoice</h1>
                 </td>
                 <td className="w-10 text-center">:</td>
                 <td className="">
@@ -278,7 +279,7 @@ const ProformaInvoiceDetail = () => {
               </tr>
 
               <tr>
-                <td className=" text-left">
+                <td className="text-left">
                   <h1 className="font-medium">Number SI</h1>
                 </td>
                 <td className="w-10 text-center">:</td>
@@ -296,7 +297,7 @@ const ProformaInvoiceDetail = () => {
                 </td>
               </tr> */}
               <tr>
-                <td className=" text-left">
+                <td className="text-left">
                   <h1 className="font-medium">Nama Dokter</h1>
                 </td>
                 <td className="w-10 text-center">:</td>
@@ -305,7 +306,7 @@ const ProformaInvoiceDetail = () => {
                 </td>
               </tr>
               <tr>
-                <td className=" text-left">
+                <td className="text-left">
                   <h1 className="font-medium">Nama Pasien</h1>
                 </td>
                 <td className="w-10 text-center">:</td>
@@ -314,7 +315,7 @@ const ProformaInvoiceDetail = () => {
                 </td>
               </tr>
               <tr>
-                <td className=" text-left">
+                <td className="text-left">
                   <h1 className="font-medium">Tanggal Tindakan</h1>
                 </td>
                 <td className="w-10 text-center">:</td>
@@ -323,7 +324,7 @@ const ProformaInvoiceDetail = () => {
                 </td>
               </tr>
               <tr>
-                <td className=" text-left">
+                <td className="text-left">
                   <h1 className="font-medium">Divisi</h1>
                 </td>
                 <td className="w-10 text-center">:</td>
@@ -342,8 +343,8 @@ const ProformaInvoiceDetail = () => {
           <table className="">
             <tbody>
               <tr>
-                <td className=" text-left">
-                  <h1 className=" font-medium">Perusahaan</h1>
+                <td className="text-left">
+                  <h1 className="font-medium">Perusahaan</h1>
                 </td>
                 <td className="w-10 text-center">:</td>
                 <td className="">
@@ -352,8 +353,8 @@ const ProformaInvoiceDetail = () => {
               </tr>
 
               <tr>
-                <td className=" text-left">
-                  <h1 className=" font-medium">Alamat Perusahaan</h1>
+                <td className="text-left">
+                  <h1 className="font-medium">Alamat Perusahaan</h1>
                 </td>
                 <td className="w-10 text-center">:</td>
                 <td className="">
@@ -362,8 +363,8 @@ const ProformaInvoiceDetail = () => {
               </tr>
 
               <tr>
-                <td className=" text-left">
-                  <h1 className=" font-medium">Nomor Invoice</h1>
+                <td className="text-left">
+                  <h1 className="font-medium">Nomor Invoice</h1>
                 </td>
                 <td className="w-10 text-center">:</td>
                 <td className="">
@@ -372,7 +373,7 @@ const ProformaInvoiceDetail = () => {
               </tr>
 
               <tr>
-                <td className=" text-left">
+                <td className="text-left">
                   <h1 className="font-medium">Number SI</h1>
                 </td>
                 <td className="w-10 text-center">:</td>
@@ -382,7 +383,7 @@ const ProformaInvoiceDetail = () => {
               </tr>
 
               <tr>
-                <td className=" text-left">
+                <td className="text-left">
                   <h1 className="font-medium">Divisi</h1>
                 </td>
                 <td className="w-10 text-center">:</td>
@@ -397,36 +398,60 @@ const ProformaInvoiceDetail = () => {
 
       <Divider />
 
-      <div className="flex justify-start my-1">
+      <div className="my-1 flex justify-start">
         <h1 className="font-semibold lg:text-[1.4vh]">List Barang</h1>
       </div>
 
       {/* Bagian Table */}
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between overflow-x-scroll">
         <Table removeWrapper>
           <TableHeader>
-            <TableColumn className="bg-blue-900 text-white text-center">NO</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">KODE BARANG</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">NAMA BARANG</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">VARIABLE</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">QTY</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">HARGA SATUAN</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">DISC</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">GUDANG ASAL</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">SUB TOTAL</TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              NO
+            </TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              KODE BARANG
+            </TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              NAMA BARANG
+            </TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              VARIABLE
+            </TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              QTY
+            </TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              HARGA SATUAN
+            </TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              DISC
+            </TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              GUDANG ASAL
+            </TableColumn>
+            <TableColumn className="bg-blue-900 text-center text-white">
+              SUB TOTAL
+            </TableColumn>
           </TableHeader>
           <TableBody>
             {responseData.item_detail_pi.map((item, index) => (
               <TableRow key={item.id}>
                 <TableCell className="text-center">{index + 1}</TableCell>
                 <TableCell className="text-center">{item.kat}</TableCell>
-                <TableCell className="text-center">{item.nama_barang}</TableCell>
+                <TableCell className="text-center">
+                  {item.nama_barang}
+                </TableCell>
                 <TableCell className="text-center">{item.variable}</TableCell>
                 <TableCell className="text-center">{item.quantity}</TableCell>
-                <TableCell className="text-center">{item.harga_satuan}</TableCell>
+                <TableCell className="text-center">
+                  {item.harga_satuan}
+                </TableCell>
                 <TableCell className="text-center">{item.discount}</TableCell>
                 <TableCell className="text-center">{item.gudang}</TableCell>
-                <TableCell className="text-center">{item.sub_total_item}</TableCell>
+                <TableCell className="text-center">
+                  {item.sub_total_item}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -435,7 +460,7 @@ const ProformaInvoiceDetail = () => {
 
       <Divider />
 
-      <div className="grid w-[25%] grid-cols-2 gap-2 self-end text-sm font-bold">
+      <div className="grid grid-cols-2 gap-2 self-end text-sm font-bold lg:w-[25%]">
         <p className="text-end">Sub Total : </p>
         <p className="text-start">{responseData.sub_total}</p>
         <p className="text-end">PPN 11% : </p>
@@ -444,20 +469,20 @@ const ProformaInvoiceDetail = () => {
         <p className="text-start">{responseData.total}</p>
       </div>
 
-      {
-        username === 'ADMIN' && (
-          responseData.status !== 'Diterima' && (
-            <div className="flex justify-end gap-3">
-              <Button onClick={submitReject} color="danger" className="min-w-36">
-                Ditolak
-              </Button>
-              <Button onClick={submitAcc} color="success" className="min-w-36 text-white">
-                Diterima
-              </Button>
-            </div>
-          )
-        )
-      }
+      {username === "ADMIN" && responseData.status !== "Diterima" && (
+        <div className="flex justify-end gap-3">
+          <Button onClick={submitReject} color="danger" className="min-w-36">
+            Ditolak
+          </Button>
+          <Button
+            onClick={submitAcc}
+            color="success"
+            className="min-w-36 text-white"
+          >
+            Diterima
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
