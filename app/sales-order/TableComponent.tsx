@@ -6,7 +6,7 @@ interface TableComponentProps {}
 const TableComponent: FC<TableComponentProps> = ({}) => {
   return (
     <div className="h-full">
-      <SOTableComponent />
+      <SOTableComponent selectedDocument={""} />
     </div>
   );
 };
