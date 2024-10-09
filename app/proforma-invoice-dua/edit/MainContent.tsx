@@ -95,7 +95,7 @@ const ProformaInvoiceDetail = () => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/proforma-invoice/detailPI",
+          "http://209.182.237.155:8080/api/proforma-invoice/detailPI",
           { id: id, divisi: divisi },
         );
         setResponseData(response.data.data);
@@ -121,7 +121,7 @@ const ProformaInvoiceDetail = () => {
 
           try {
             const response = await axios.post(
-              "http://localhost:8080/api/proforma-invoice/editPI-admin",
+              "http://209.182.237.155:8080/api/proforma-invoice/editPI-admin",
               responseData,
             );
 

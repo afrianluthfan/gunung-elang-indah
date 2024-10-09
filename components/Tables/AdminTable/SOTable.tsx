@@ -73,7 +73,7 @@ export default function SOTableComponent({ selectedDocument }: { selectedDocumen
 
     if (selectedDocument === "PO" || selectedDocument === "PI") {
       console.log("Selected Document:", selectedDocument);
-      const endpoint = selectedDocument === "PO" ? "http://localhost:8080/api/sales_order/list" : "http://localhost:8080/api/sales_order/list";
+      const endpoint = selectedDocument === "PO" ? "http://209.182.237.155:8080/api/sales_order/list" : "http://209.182.237.155:8080/api/sales_order/list";
       const request = {
         dok : selectedDocument
       };  
