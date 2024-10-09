@@ -34,6 +34,9 @@ const MainContent = () => {
     const aksi = localStorage.getItem("aksi");
 
     if (aksi === "update") {
+      // Remove item akse
+      localStorage.removeItem("aksi");
+
       Swal.fire({
         title: "Apakah Kamu Yakin ?",
         text: "Apakah kamu yakin ingin mengubah purchase order ini?",
@@ -48,7 +51,7 @@ const MainContent = () => {
             if (data && data.data && data.data.data) {
 
 
-              const res = await axios.post("http://209.182.237.155:8080/api/purchase-order/edit/posting-edit-admin", data.data.data);
+              const res = await axios.post("http://localhost:8080/api/purchase-order/edit/posting-edit-admin", data.data.data);
               console.log(res);
               if (res.data.status === true) {
                 Swal.fire({
@@ -97,7 +100,7 @@ const MainContent = () => {
             if (data && data.data && data.data.data) {
 
               
-                const res = await axios.post("http://209.182.237.155:8080/api/purchase-order/posting", data.data.data);
+                const res = await axios.post("http://localhost:8080/api/purchase-order/posting", data.data.data);
                 if (res.data.status === true) {
                   Swal.fire({
                     title: "Success",

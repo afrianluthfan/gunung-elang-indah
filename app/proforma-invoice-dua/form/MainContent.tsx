@@ -80,7 +80,7 @@ const AdminMainContent = () => {
       if (responseData.rumah_sakit) {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/proforma-invoice/dr-list",
+            "http://localhost:8080/api/proforma-invoice/dr-list",
             {
               nama: responseData.rumah_sakit,
             },
@@ -97,7 +97,7 @@ const AdminMainContent = () => {
 
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/price/ListByCustomer",
+            "http://localhost:8080/api/price/ListByCustomer",
             {
               nama: responseData.rumah_sakit,
             },
@@ -116,7 +116,7 @@ const AdminMainContent = () => {
     const fetchHospitalData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
+          "http://localhost:8080/api/proforma-invoice/rs-list",
         );
         setHospitalData(res.data.data);
       } catch (error) {
@@ -141,7 +141,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/proforma-invoice/inquiry",
+            "http://localhost:8080/api/proforma-invoice/inquiry",
             responseData,
           );
 
@@ -268,13 +268,13 @@ const AdminMainContent = () => {
         item: prevData.item.map((item, idx) =>
           idx === index
             ? {
-                ...item,
-                nama_barang: selectedItem.name,
-                kode: selectedItem.kode,
-                variable: selectedItem.variable,
-                discount: selectedItem.diskon, // Convert to string if needed
-                harga_satuan: selectedItem.price.toString(), // Convert to string if needed
-              }
+              ...item,
+              nama_barang: selectedItem.name,
+              kode: selectedItem.kode,
+              variable: selectedItem.variable,
+              discount: selectedItem.diskon, // Convert to string if needed
+              harga_satuan: selectedItem.price.toString(), // Convert to string if needed
+            }
             : item,
         ),
       }));
@@ -499,191 +499,6 @@ const AdminMainContent = () => {
               />
             </div>
           </div>
-          <div className="flex gap-4">
-            <div className="flex w-full flex-col space-y-2 md:w-1/3"></div>
-          </div>
-
-          <Divider />
-
-          <div className="flex justify-end">
-            <Button className="bg-blue-900 text-white" onClick={handleAddItem}>
-              Tambah Barang
-            </Button>
-          </div>
-
-          <div>
-            <Table
-              aria-label="Table Barang"
-              className="min-w-fit divide-y divide-gray-200"
-              isHeaderSticky
-              removeWrapper
-            >
-              <TableHeader>
-                <TableColumn className="bg-blue-900 text-white">
-                  Kode Barang
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Nama Barang
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Variable
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Quantity
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Harga Satuan
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Diskon
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Gudang Asal
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Action
-                </TableColumn>
-              </TableHeader>
-              <TableBody>
-                {responseData.item.map((row, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="min-w-[150px] lg:min-w-fit">
-                      <Input
-                        value={row.kode}
-                        name="kode"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Kode Barang"
-                        className="pt-2"
-                      />
-                    </TableCell>
-                    <TableCell className="min-w-[150px] lg:min-w-fit">
-                      <div className="relative w-full">
-                        {/* Wrapper for Input and Dropdown Button */}
-                        <Input
-                          value={row.nama_barang}
-                          name="nama_barang"
-                          onChange={(e) => handleFieldChange(e, index)}
-                          placeholder="Nama Barang"
-                          className="flex-1 border-none px-2 py-2 outline-none"
-                          endContent={
-                            <button
-                              className="opacity-75"
-                              type="button"
-                              onClick={() => {
-                                const allSuggestions = stockData.map(
-                                  (item: { name: string }) => item.name,
-                                );
-                                setItemSuggestions((prevSuggestions) => ({
-                                  ...prevSuggestions,
-                                  [index]:
-                                    prevSuggestions[index] &&
-                                    prevSuggestions[index].length > 0
-                                      ? []
-                                      : allSuggestions, // Toggle suggestions
-                                }));
-                              }}
-                            >
-                              ▼
-                            </button>
-                          }
-                        />
-                        {/* Dropdown Suggestions */}
-                        {itemSuggestions[index] &&
-                          itemSuggestions[index].length > 0 && (
-                            <ul className="absolute z-[100] mt-1 max-h-48 w-full overflow-y-scroll rounded-2xl border border-gray-300 bg-white">
-                              {itemSuggestions[index].map((suggestion, idx) => (
-                                <li
-                                  key={idx}
-                                  onClick={() =>
-                                    handleSuggestionClick(suggestion, index)
-                                  }
-                                  className="cursor-pointer p-2 hover:bg-gray-200"
-                                >
-                                  {suggestion}
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="min-w-[150px] lg:min-w-fit">
-                      <Input
-                        value={row.variable}
-                        name="variable"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Variable"
-                        className="pt-2"
-                      />
-                    </TableCell>
-                    <TableCell className="min-w-[150px] lg:min-w-fit">
-                      <Input
-                        value={row.quantity}
-                        name="quantity"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Quantity"
-                        className="pt-2"
-                      />
-                    </TableCell>
-                    <TableCell className="min-w-[150px] lg:min-w-fit">
-                      <Input
-                        value={row.harga_satuan}
-                        name="harga_satuan"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Harga Satuan"
-                        className="pt-2"
-                      />
-                    </TableCell>
-                    <TableCell className="min-w-[150px] lg:min-w-fit">
-                      <Input
-                        value={row.discount}
-                        name="discount"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Diskon"
-                        className="min-w-fit pt-2"
-                      />
-                    </TableCell>
-                    <TableCell className="min-w-[150px] lg:min-w-fit">
-                      <select
-                        value={row.gudang}
-                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                          handleFieldChange(
-                            e as unknown as React.ChangeEvent<HTMLInputElement>,
-                            index,
-                          );
-                          setGudang(e.target.value);
-                        }}
-                        name="gudang"
-                        id="123"
-                        className="border-black-500 w-full resize-none rounded border px-2 py-4"
-                      >
-                        <option value="" className="text-xs">
-                          Pilih Gudang Tujuan
-                        </option>
-                        <option value="Gudang 1">Gudang 1</option>
-                        <option value="Gudang 2">Gudang 2</option>
-                        <option value="Gudang 3">Gudang 3</option>
-                      </select>
-                    </TableCell>
-                    <TableCell className="min-w-[150px] lg:min-w-fit">
-                      <Tooltip content="Delete item">
-                        <span
-                          className="cursor-pointer text-lg text-red-600"
-                          onClick={() => handleDelete(index)}
-                        >
-                          <DeleteIcon />
-                        </span>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-          <div className="mt-4 flex justify-end">
-            <Button color="primary" onClick={submitAcc}>
-              Simpan
-            </Button>
-          </div>
         </>
       )}
 
@@ -755,191 +570,150 @@ const AdminMainContent = () => {
             </div>
           </div>
 
-          <div className="flex gap-4">
-            <div className="flex w-full flex-col space-y-2 md:w-1/3"></div>
-          </div>
-
-          <Divider />
-
-          <div className="flex justify-end">
-            <Button className="bg-blue-900 text-white" onClick={handleAddItem}>
-              Tambah Barang
-            </Button>
-          </div>
-
-          <div>
-            <Table
-              aria-label="Table Barang"
-              className="min-w-full divide-y divide-gray-200"
-              isHeaderSticky
-              removeWrapper
-            >
-              <TableHeader>
-                <TableColumn className="bg-blue-900 text-white">
-                  Kode Barang
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Nama Barang
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Variable
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Quantity
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Harga Satuan
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Diskon
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Gudang Asal
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Action
-                </TableColumn>
-              </TableHeader>
-              <TableBody>
-                {responseData.item.map((row, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="min-w-[150px] lg:min-w-fit">
-                      <Input
-                        value={row.kode}
-                        name="kode"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Kode Barang"
-                        className="pt-2"
-                      />
-                    </TableCell>
-                    <TableCell className="min-w-[150px] lg:min-w-fit">
-                      <div className="relative w-full">
-                        {/* Wrapper for Input and Dropdown Button */}
-                        <Input
-                          value={row.nama_barang}
-                          name="nama_barang"
-                          onChange={(e) => handleFieldChange(e, index)}
-                          placeholder="Nama Barang"
-                          className="flex-1 border-none px-2 pt-2 outline-none"
-                          endContent={
-                            <button
-                              className="opacity-75"
-                              type="button"
-                              onClick={() => {
-                                const allSuggestions = stockData.map(
-                                  (item: { name: string }) => item.name,
-                                );
-                                setItemSuggestions((prevSuggestions) => ({
-                                  ...prevSuggestions,
-                                  [index]:
-                                    prevSuggestions[index] &&
-                                    prevSuggestions[index].length > 0
-                                      ? []
-                                      : allSuggestions, // Toggle suggestions
-                                }));
-                              }}
-                            >
-                              ▼
-                            </button>
-                          }
-                        />
-                        {/* Dropdown Suggestions */}
-                        {itemSuggestions[index] &&
-                          itemSuggestions[index].length > 0 && (
-                            <ul className="absolute z-[200] mt-1 max-h-[250px] w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
-                              {itemSuggestions[index].map((suggestion, idx) => (
-                                <li
-                                  key={idx}
-                                  onClick={() =>
-                                    handleSuggestionClick(suggestion, index)
-                                  }
-                                  className="cursor-pointer p-2 hover:bg-gray-200"
-                                >
-                                  {suggestion}
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="min-w-[150px] lg:min-w-fit">
-                      <Input
-                        value={row.variable}
-                        name="variable"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Variable"
-                        className="pt-2"
-                      />
-                    </TableCell>
-                    <TableCell className="min-w-[150px] lg:min-w-fit">
-                      <Input
-                        value={row.quantity}
-                        name="quantity"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Quantity"
-                        className="pt-2"
-                      />
-                    </TableCell>
-                    <TableCell className="min-w-[150px] lg:min-w-fit">
-                      <Input
-                        value={row.harga_satuan}
-                        name="harga_satuan"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Harga Satuan"
-                        className="pt-2"
-                      />
-                    </TableCell>
-                    <TableCell className="min-w-[150px] lg:min-w-fit">
-                      <Input
-                        value={row.discount}
-                        name="discount"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Diskon"
-                        className="pt-2"
-                      />
-                    </TableCell>
-                    <TableCell className="min-w-[150px] lg:min-w-fit">
-                      <select
-                        value={row.gudang}
-                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                          handleFieldChange(
-                            e as unknown as React.ChangeEvent<HTMLInputElement>,
-                            index,
-                          );
-                          setGudang(e.target.value);
-                        }}
-                        name="gudang"
-                        id="123"
-                        className="border-black-500 w-full resize-none rounded border px-5 py-4"
-                      >
-                        <option value="">Pilih Gudang Tujuan</option>
-                        <option value="Gudang 1">Gudang 1</option>
-                        <option value="Gudang 2">Gudang 2</option>
-                        <option value="Gudang 3">Gudang 3</option>
-                      </select>
-                    </TableCell>
-                    <TableCell className="min-w-[150px] lg:min-w-fit">
-                      <Tooltip content="Delete item">
-                        <span
-                          className="cursor-pointer text-lg text-red-600"
-                          onClick={() => handleDelete(index)}
-                        >
-                          <DeleteIcon />
-                        </span>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-          <div className="mt-4 flex justify-end">
-            <Button color="primary" onClick={submitAcc}>
-              Simpan
-            </Button>
-          </div>
         </>
       )}
+
+      <Divider />
+
+      <div className="flex justify-end">
+        <Button className="bg-blue-900 text-white" onClick={handleAddItem}>
+          Tambah Barang
+        </Button>
+      </div>
+
+      <div>
+        <Table
+          aria-label="Table Barang"
+          className="min-w-full divide-y divide-gray-200"
+          isHeaderSticky
+          removeWrapper
+        >
+          <TableHeader>
+            <TableColumn className="bg-blue-900 text-white">
+              Gudang Asal
+            </TableColumn>
+            <TableColumn className="bg-blue-900 text-white">
+              Nama Barang
+            </TableColumn>
+
+            <TableColumn className="bg-blue-900 text-white">
+              Quantity
+            </TableColumn>
+
+
+            <TableColumn className="bg-blue-900 text-white">
+              Action
+            </TableColumn>
+          </TableHeader>
+          <TableBody>
+            {responseData.item.map((row, index) => (
+              <TableRow key={index}>
+                <TableCell className="min-w-[150px] lg:min-w-fit">
+                  <select
+                    value={row.gudang}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                      handleFieldChange(
+                        e as unknown as React.ChangeEvent<HTMLInputElement>,
+                        index,
+                      );
+                      setGudang(e.target.value);
+                    }}
+                    name="gudang"
+                    id="123"
+                    className="border-black-500 w-full resize-none rounded border px-2 py-4"
+                  >
+                    <option value="" className="text-xs">
+                      Pilih Gudang Tujuan
+                    </option>
+                    <option value="Gudang 1">Gudang 1</option>
+                    <option value="Gudang 2">Gudang 2</option>
+                    <option value="Gudang 3">Gudang 3</option>
+                  </select>
+                </TableCell>
+
+                <TableCell className="min-w-[150px] lg:min-w-fit">
+                  <div className="relative w-full">
+                    {/* Wrapper for Input and Dropdown Button */}
+                    <Input
+                      value={row.nama_barang}
+                      name="nama_barang"
+                      onChange={(e) => handleFieldChange(e, index)}
+                      placeholder="Nama Barang"
+                      className="flex-1 border-none px-2 pt-2 outline-none"
+                      endContent={
+                        <button
+                          className="opacity-75"
+                          type="button"
+                          onClick={() => {
+                            const allSuggestions = stockData.map(
+                              (item: { name: string }) => item.name,
+                            );
+                            setItemSuggestions((prevSuggestions) => ({
+                              ...prevSuggestions,
+                              [index]:
+                                prevSuggestions[index] &&
+                                  prevSuggestions[index].length > 0
+                                  ? []
+                                  : allSuggestions, // Toggle suggestions
+                            }));
+                          }}
+                        >
+                          ▼
+                        </button>
+                      }
+                    />
+                    {/* Dropdown Suggestions */}
+                    {itemSuggestions[index] &&
+                      itemSuggestions[index].length > 0 && (
+                        <ul className="absolute z-[200] mt-1 max-h-[250px] w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                          {itemSuggestions[index].map((suggestion, idx) => (
+                            <li
+                              key={idx}
+                              onClick={() =>
+                                handleSuggestionClick(suggestion, index)
+                              }
+                              className="cursor-pointer p-2 hover:bg-gray-200"
+                            >
+                              {suggestion}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                  </div>
+                </TableCell>
+
+                <TableCell className="min-w-[150px] lg:min-w-fit">
+                  <Input
+                    value={row.quantity}
+                    name="quantity"
+                    onChange={(e) => handleFieldChange(e, index)}
+                    placeholder="Quantity"
+                    className="pt-2"
+                  />
+                </TableCell>
+
+
+                <TableCell className="min-w-[150px] lg:min-w-fit">
+                  <Tooltip content="Delete item">
+                    <span
+                      className="cursor-pointer text-lg text-red-600"
+                      onClick={() => handleDelete(index)}
+                    >
+                      <DeleteIcon />
+                    </span>
+                  </Tooltip>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
+        <div className="mt-4 flex justify-end">
+          <Button color="primary" onClick={submitAcc}>
+            Simpan
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };

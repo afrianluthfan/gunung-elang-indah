@@ -59,7 +59,7 @@ const MainContent = () => {
   const fetchGudangList = useCallback(async () => {
     try {
       const response = await axios.post(
-        `http://209.182.237.155:8080/api/proforma-invoice/rs-list`
+        `http://localhost:8080/api/proforma-invoice/rs-list`
       );
       setGudangList(response.data.data);
     } catch (error) {
@@ -73,7 +73,7 @@ const MainContent = () => {
       let response;
       if (gudang && gudang !== "0") {
         response = await axios.post(
-          `http://209.182.237.155:8080/api/price/ListByCustomer`,
+          `http://localhost:8080/api/price/ListByCustomer`,
           { nama: gudang }
         );
         setUsers([]); // Bersihkan data sebelum set data baru
@@ -188,7 +188,7 @@ const MainContent = () => {
       }));
 
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/price/SetPrice",
+        "http://localhost:8080/api/price/SetPrice",
         { input }
       );
 
@@ -264,10 +264,11 @@ const MainContent = () => {
       <Divider />
 
       <div className="h-full">
-        <div className="h-[100vh] lg:h-[40vh] w-full overflow-x-auto">
+        <div className="h-[100vh] lg:h-[40vh] w-full overflow-auto">
           <Table
             aria-label="Example table with dynamic content"
             className="w-full h-full"
+            removeWrapper
             isHeaderSticky
             isStriped
             sortDescriptor={sortDescriptor}

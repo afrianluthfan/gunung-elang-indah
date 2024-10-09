@@ -92,7 +92,7 @@ const AdminMainContent = () => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/purchase-order/detail",
+          "http://localhost:8080/api/purchase-order/detail",
           { id: id }
         );
         setResponseData(response.data.data);
@@ -109,7 +109,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           await axios.post(
-            "http://209.182.237.155:8080/api/purchase-order/edit/finance",
+            "http://localhost:8080/api/purchase-order/edit/finance",
             responseData
           );
           Swal.fire({

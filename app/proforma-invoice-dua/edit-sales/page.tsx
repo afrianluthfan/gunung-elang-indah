@@ -34,7 +34,7 @@ const Form: FC = () => {
     const fetchItemListData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/stock-barang/list",
+          "http://localhost:8080/api/stock-barang/list",
           "",
         );
         setItemListData(response.data.data);
@@ -58,8 +58,7 @@ const Form: FC = () => {
 
   return (
     <section className="flex max-h-screen">
-      <Sidebar />
-      <div className="ml-[17.3vw] flex max-h-screen w-[82.7vw] flex-col bg-[#EFEFEF] text-black">
+      <div className="ml-0 h-screen w-full bg-[#EFEFEF] text-black md:ml-[17.3vw] md:w-[82.7vw]">
         <WelcomingMessage />
         <div className="flex h-[88.5vh] w-full flex-col items-center justify-between px-[1.6vw] pt-[2vh]">
           <div className="flex w-full flex-col gap-5">

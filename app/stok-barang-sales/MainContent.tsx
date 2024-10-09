@@ -52,12 +52,12 @@ const MainContent = () => {
       let response;
       if (gudang && gudang !== "0") {
         response = await axios.post(
-          `http://209.182.237.155:8080/api/stok/listbygudang`,
+          `http://localhost:8080/api/stok/listbygudang`,
           { id: gudang },
         );
       } else {
         response = await axios.post(
-          "http://209.182.237.155:8080/api/stok/list-customer",
+          "http://localhost:8080/api/stok/list-customer",
           {},
         );
       }
@@ -192,10 +192,11 @@ const MainContent = () => {
 
       <Divider />
 
-      <div className="h-full overflow-x-scroll">
+      <div className="h-full ">
         <div className="text-sm">
           <Table
             aria-label="Example table with custom cells"
+            className="overflow-x-scroll"
             sortDescriptor={sortDescriptor}
             onSortChange={setSortDescriptor}
             removeWrapper

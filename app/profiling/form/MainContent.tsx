@@ -29,7 +29,7 @@ const MainContent = () => {
     const fetchHospitalData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
+          "http://localhost:8080/api/proforma-invoice/rs-list",
         );
         setHospitalData(res.data.data);
         console.log("Hospital data fetched", res.data.data);
@@ -41,7 +41,7 @@ const MainContent = () => {
     const fetchDokterData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/dr-list",
+          "http://localhost:8080/api/proforma-invoice/dr-list",
         );
         setDoctorData(res.data.data);
         console.log("Data dokter fetched", res.data.data);
@@ -54,9 +54,14 @@ const MainContent = () => {
     fetchDokterData();
   }, []);
 
+
+  const backButton = () => {
+    router.push("/profiling");
+  };
+
   // State untuk menyimpan value dropdown divisi
   const [kategoriDivisi, setKategoriDivisi] = useState("");
-  
+
 
   // Fungsi untuk menangani submit form
   const onSubmit = async (data: Record<string, string | boolean>) => {
@@ -114,7 +119,7 @@ const MainContent = () => {
         if (result.isConfirmed) {
           try {
             await axios.post(
-              "http://209.182.237.155:8080/api/customer-profilling/add",
+              "http://localhost:8080/api/customer-profilling/add",
               requestBody,
             );
             router.push("/profiling");
@@ -396,7 +401,7 @@ const MainContent = () => {
                   </div>
                 </div>
               </>
-            )} 
+            )}
 
             {kategoriDivisi === "customer" && (
               <>
@@ -536,6 +541,14 @@ const MainContent = () => {
 
             <div className="flex flex-row justify-end gap-3">
               <Button
+                color="danger"
+                className="self-center font-semibold text-white"
+                onClick={backButton}
+              >
+                CANCEL
+              </Button>
+
+              <Button
                 color="success"
                 className="self-center font-semibold text-white"
                 type="submit"
@@ -543,13 +556,7 @@ const MainContent = () => {
                 SUBMIT
               </Button>
 
-              <Button
-                color="danger"
-                className="self-center font-semibold text-white"
-                type="submit"
-              >
-                CANCEL
-              </Button>
+
             </div>
           </form>
         </div>

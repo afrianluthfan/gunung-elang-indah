@@ -14,7 +14,7 @@ const MainContent = () => (
       <TopSectionRightSide />
     </ContentTopSectionLayout>
 
-    <div className="h-full overflow-x-scroll">
+    <div className="h-full ">
       <TableComponent />
     </div>
   </div>

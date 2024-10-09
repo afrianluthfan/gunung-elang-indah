@@ -52,12 +52,12 @@ const MainContent = () => {
       let response;
       if (gudang && gudang !== "0") {
         response = await axios.post(
-          `http://209.182.237.155:8080/api/stok/listbygudang`,
+          `http://localhost:8080/api/stok/listbygudang`,
           { id: gudang }
         );
       } else {
         response = await axios.post(
-          "http://209.182.237.155:8080/api/stok/list-customer",
+          "http://localhost:8080/api/stok/list-customer",
           {}
         );
       }

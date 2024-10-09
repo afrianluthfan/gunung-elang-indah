@@ -44,7 +44,7 @@ const LoginForm = () => {
 
     try {
       // Perform login request
-      const response = await axios.post("http://209.182.237.155:8080/api/login", {
+      const response = await axios.post("http://localhost:8080/api/login", {
         username,
         password,
       });

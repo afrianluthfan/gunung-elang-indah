@@ -103,7 +103,7 @@ const AdminMainContent = () => {
       if (responseData.rumah_sakit) {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/proforma-invoice/dr-list",
+            "http://localhost:8080/api/proforma-invoice/dr-list",
             {
               nama: responseData.rumah_sakit,
             },
@@ -120,7 +120,7 @@ const AdminMainContent = () => {
 
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/price/ListByCustomer",
+            "http://localhost:8080/api/price/ListByCustomer",
             {
               nama: responseData.rumah_sakit,
             },
@@ -139,7 +139,7 @@ const AdminMainContent = () => {
     const fetchData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/detailPI",
+          "http://localhost:8080/api/proforma-invoice/detailPI",
           {
             id: id,
             divisi: divisi,
@@ -162,7 +162,7 @@ const AdminMainContent = () => {
     const fetchStockData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/stock-barang/list",
+          "http://localhost:8080/api/stock-barang/list",
         );
         setStockData(res.data.data);
       } catch (error) {
@@ -173,7 +173,7 @@ const AdminMainContent = () => {
     const fetchHospitalData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
+          "http://localhost:8080/api/proforma-invoice/rs-list",
         );
         setHospitalData(res.data.data);
       } catch (error) {
@@ -199,7 +199,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/proforma-invoice/editPI-inquiry",
+            "http://localhost:8080/api/proforma-invoice/editPI-inquiry",
             responseData,
           );
 
@@ -336,10 +336,10 @@ const AdminMainContent = () => {
         item_detail_pi: prevData.item_detail_pi.map((item_detail_pi, idx) =>
           idx === index
             ? {
-                ...item_detail_pi,
-                nama_barang: selectedItem.name,
-                harga_satuan: selectedItem.price.toString(), // Convert to string if needed
-              }
+              ...item_detail_pi,
+              nama_barang: selectedItem.name,
+              harga_satuan: selectedItem.price.toString(), // Convert to string if needed
+            }
             : item_detail_pi,
         ),
       }));
@@ -379,11 +379,17 @@ const AdminMainContent = () => {
         </div>
       )}
 
-      <h1 className="text-xl font-semibold">Edit Purchase Order</h1>
+      <div className="flex justify-between text-">
+        <h1 className="text-xl font-semibold mt-2">Edit Purchase Order</h1>
+        <Button color="primary" onClick={submitAcc}>
+          Simpan
+        </Button>
+      </div>
       <Divider />
+      
       {divisi == "Ortopedi" && (
         <>
-          <div className="flex gap-4">
+          <div className="flex flex-col gap-4 lg:flex-row">
             <div className="relative flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Nama Perusahaan</label>
 
@@ -447,18 +453,8 @@ const AdminMainContent = () => {
                 className="flex-1 rounded-md border border-gray-300 px-2 py-2 outline-none"
               />
             </div>
-            {/* <div className="flex flex-col space-y-2 w-full md:w-1/3">
-              <label className="text-left">Tanggal Jatuh Tempo:</label>
-              <Input
-                type="date"
-                value={responseData.due_date}
-                name="due_date"
-                onChange={(e) => handleFieldChange(e, -1)}
-                className="py-2"
-              />
-            </div> */}
           </div>
-          <div className="flex gap-4">
+          <div className="flex flex-col gap-4 lg:flex-row">
             <div className="relative flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Nama Dokter:</label>
               <Input
@@ -524,18 +520,6 @@ const AdminMainContent = () => {
               />
             </div>
           </div>
-          <div className="flex gap-4">
-            {/* <div className="flex flex-col space-y-2 w-full md:w-1/3">
-              <label className="text-left">Tanggal Tindakan:</label>
-              <Input
-                type="date"
-                value={responseData.tanggal_tindakan}
-                name="tanggal_tindakan"
-                onChange={(e) => handleFieldChange(e, -1)}
-                className="py-2"
-              />
-            </div> */}
-          </div>
 
           <Divider />
 
@@ -545,7 +529,7 @@ const AdminMainContent = () => {
             </Button>
           </div>
 
-          <div className="">
+          <div className="flex items-center justify-between overflow-x-scroll pb-[200px]">
             <Table
               aria-label="Table Barang"
               className="min-w-full divide-y divide-gray-200"
@@ -591,29 +575,54 @@ const AdminMainContent = () => {
                       />
                     </TableCell>
                     <TableCell>
-                      <Input
-                        value={row.nama_barang}
-                        name="nama_barang"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Nama Barang"
-                        className="py-2"
-                      />
-                      {itemSuggestions[index] &&
-                        itemSuggestions[index].length > 0 && (
-                          <ul className="absolute z-[100] mt-1 max-h-48 overflow-y-auto rounded border border-gray-300 bg-white">
-                            {itemSuggestions[index].map((suggestion, idx) => (
-                              <li
-                                key={idx}
-                                onClick={() =>
-                                  handleSuggestionClick(suggestion, index)
-                                }
-                                className="cursor-pointer p-2 hover:bg-gray-200"
-                              >
-                                {suggestion}
-                              </li>
-                            ))}
-                          </ul>
-                        )}
+                      <div className="relative w-full">
+
+                        <Input
+                          value={row.nama_barang}
+                          name="nama_barang"
+                          onChange={(e) => handleFieldChange(e, index)}
+                          placeholder="Nama Barang"
+                          className="flex-1 border-none px-2 py-2 outline-none"
+                          endContent={
+                            <button
+                              className="opacity-75"
+                              type="button"
+                              onClick={() => {
+                                const allSuggestions = stockData.map(
+                                  (item: { name: string }) => item.name,
+                                );
+                                setItemSuggestions((prevSuggestions) => ({
+                                  ...prevSuggestions,
+                                  [index]:
+                                    prevSuggestions[index] &&
+                                      prevSuggestions[index].length > 0
+                                      ? []
+                                      : allSuggestions,
+                                }));
+                              }}
+                            >
+                              ▼
+                            </button>
+                          }
+                        />
+                        {/* Dropdown Suggestions */}
+                        {itemSuggestions[index] &&
+                          itemSuggestions[index].length > 0 && (
+                            <ul className="absolute z-[100] mt-1 max-h-48 w-full overflow-y-scroll rounded-2xl border border-gray-300 bg-white">
+                              {itemSuggestions[index].map((suggestion, idx) => (
+                                <li
+                                  key={idx}
+                                  onClick={() =>
+                                    handleSuggestionClick(suggestion, index)
+                                  }
+                                  className="cursor-pointer p-2 hover:bg-gray-200"
+                                >
+                                  {suggestion}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <Input
@@ -686,17 +695,13 @@ const AdminMainContent = () => {
               </TableBody>
             </Table>
           </div>
-          <div className="mt-4 flex justify-end">
-            <Button color="primary" onClick={submitAcc}>
-              Simpan
-            </Button>
-          </div>
+
         </>
       )}
       {divisi === "Radiologi" && (
         <>
           {/* Konten untuk divisi Radiologi */}
-          <div className="flex gap-4">
+          <div className="flex flex-col gap-4 lg:flex-row">
             <div className="flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Nama Perusahaan</label>
               <Input
@@ -740,39 +745,8 @@ const AdminMainContent = () => {
                 className="py-2"
               />
             </div>
-
-            {/* <div className="flex flex-col space-y-2 w-full md:w-1/3">
-              <label className="text-left">Tanggal Jatuh Tempo:</label>
-              <Input
-                type="date"
-                value={responseData.due_date}
-                name="due_date"
-                onChange={(e) => handleFieldChange(e, -1)}
-                className="py-2"
-              />
-            </div> */}
           </div>
-          <div className="flex gap-4">
-            {/* <div className="flex flex-col space-y-2 w-full md:w-1/3">
-              <label className="text-left">Nama Dokter:</label>
-              <Input
-                value={responseData.nama_dokter}
-                name="nama_dokter"
-                onChange={(e) => handleFieldChange(e, -1)}
-                placeholder="Nama Dokter"
-                className="py-2"
-              />
-            </div>
-            <div className="flex flex-col space-y-2 w-full md:w-1/3">
-              <label className="text-left">Nama Pasien:</label>
-              <Input
-                value={responseData.nama_pasien}
-                name="nama_pasien"
-                onChange={(e) => handleFieldChange(e, -1)}
-                placeholder="Nama Pasien"
-                className="py-2"
-              />
-            </div> */}
+          <div className="flex flex-col gap-4 lg:flex-row">
             <div className="flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">RM:</label>
               <Input
@@ -784,18 +758,6 @@ const AdminMainContent = () => {
               />
             </div>
           </div>
-          {/* <div className="flex gap-4 ">
-            <div className="flex flex-col space-y-2 w-full md:w-1/3">
-              <label className="text-left">Tanggal Tindakan:</label>
-              <Input
-                type="date"
-                value={responseData.tanggal_tindakan}
-                name="tanggal_tindakan"
-                onChange={(e) => handleFieldChange(e, -1)}
-                className="py-2"
-              />
-            </div>
-          </div> */}
 
           <Divider />
 
@@ -805,7 +767,7 @@ const AdminMainContent = () => {
             </Button>
           </div>
 
-          <div className="">
+          <div className="flex items-center justify-between overflow-x-scroll mb-10">
             <Table
               aria-label="Table Barang"
               className="min-w-full divide-y divide-gray-200"
@@ -820,7 +782,7 @@ const AdminMainContent = () => {
                   Nama Barang
                 </TableColumn>
                 <TableColumn className="bg-blue-900 text-white">
-                  Variable
+                  Variable Barang
                 </TableColumn>
                 <TableColumn className="bg-blue-900 text-white">
                   Quantity
@@ -830,6 +792,9 @@ const AdminMainContent = () => {
                 </TableColumn>
                 <TableColumn className="bg-blue-900 text-white">
                   Diskon
+                </TableColumn>
+                <TableColumn className="bg-blue-900 text-white">
+                  Gudang Asal
                 </TableColumn>
                 <TableColumn className="bg-blue-900 text-white">
                   Action
@@ -848,36 +813,61 @@ const AdminMainContent = () => {
                       />
                     </TableCell>
                     <TableCell>
-                      <Input
-                        value={row.nama_barang}
-                        name="nama_barang"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Nama Barang"
-                        className="py-2"
-                      />
-                      {itemSuggestions[index] &&
-                        itemSuggestions[index].length > 0 && (
-                          <ul className="absolute z-[100] mt-1 max-h-48 overflow-y-auto rounded border border-gray-300 bg-white">
-                            {itemSuggestions[index].map((suggestion, idx) => (
-                              <li
-                                key={idx}
-                                onClick={() =>
-                                  handleSuggestionClick(suggestion, index)
-                                }
-                                className="cursor-pointer p-2 hover:bg-gray-200"
-                              >
-                                {suggestion}
-                              </li>
-                            ))}
-                          </ul>
-                        )}
+                      <div className="relative w-full">
+
+                        <Input
+                          value={row.nama_barang}
+                          name="nama_barang"
+                          onChange={(e) => handleFieldChange(e, index)}
+                          placeholder="Nama Barang"
+                          className="flex-1 border-none px-2 py-2 outline-none"
+                          endContent={
+                            <button
+                              className="opacity-75"
+                              type="button"
+                              onClick={() => {
+                                const allSuggestions = stockData.map(
+                                  (item: { name: string }) => item.name,
+                                );
+                                setItemSuggestions((prevSuggestions) => ({
+                                  ...prevSuggestions,
+                                  [index]:
+                                    prevSuggestions[index] &&
+                                      prevSuggestions[index].length > 0
+                                      ? []
+                                      : allSuggestions,
+                                }));
+                              }}
+                            >
+                              ▼
+                            </button>
+                          }
+                        />
+                        {/* Dropdown Suggestions */}
+                        {itemSuggestions[index] &&
+                          itemSuggestions[index].length > 0 && (
+                            <ul className="absolute z-[100] mt-1 max-h-48 w-full overflow-y-scroll rounded-2xl border border-gray-300 bg-white">
+                              {itemSuggestions[index].map((suggestion, idx) => (
+                                <li
+                                  key={idx}
+                                  onClick={() =>
+                                    handleSuggestionClick(suggestion, index)
+                                  }
+                                  className="cursor-pointer p-2 hover:bg-gray-200"
+                                >
+                                  {suggestion}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <Input
                         value={row.variable}
                         name="variable"
                         onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Variable Barang"
+                        placeholder="variable Barang"
                         className="py-2"
                       />
                     </TableCell>
@@ -909,6 +899,26 @@ const AdminMainContent = () => {
                       />
                     </TableCell>
                     <TableCell>
+                      <select
+                        value={row.gudang}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                          handleFieldChange(
+                            e as unknown as React.ChangeEvent<HTMLInputElement>,
+                            index,
+                          );
+                          setGudang(e.target.value);
+                        }}
+                        name="gudang"
+                        id="123"
+                        className="border-black-500 w-full resize-none rounded border px-5 py-4"
+                      >
+                        <option value="">Pilih Gudang Tujuan</option>
+                        <option value="Gudang 1">Gudang 1</option>
+                        <option value="Gudang 2">Gudang 2</option>
+                        <option value="Gudang 3">Gudang 3</option>
+                      </select>
+                    </TableCell>
+                    <TableCell>
                       <Tooltip content="Delete item">
                         <span
                           className="cursor-pointer text-lg text-red-600"
@@ -922,11 +932,6 @@ const AdminMainContent = () => {
                 ))}
               </TableBody>
             </Table>
-          </div>
-          <div className="mt-4 flex justify-end">
-            <Button color="primary" onClick={submitAcc}>
-              Simpan
-            </Button>
           </div>
         </>
       )}
