@@ -70,7 +70,17 @@ export default function SOTableComponent({ selectedDocument }: { selectedDocumen
 
   useEffect(() => {
     setUsers([]);
+    
+    // get localstorage 
 
+    const role = localStorage.getItem("statusAccount");
+
+    if (role === "ADMIN") {
+      selectedDocument = "PI"
+    } else if (role === "FINANCE") {
+      selectedDocument = "PO"
+    }
+    
     if (selectedDocument === "PO" || selectedDocument === "PI") {
       console.log("Selected Document:", selectedDocument);
       const endpoint = selectedDocument === "PO" ? "http://209.182.237.155:8080/api/sales_order/list" : "http://209.182.237.155:8080/api/sales_order/list";

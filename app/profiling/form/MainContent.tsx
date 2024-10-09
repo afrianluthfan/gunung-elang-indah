@@ -81,7 +81,7 @@ const MainContent = () => {
       nama_perusahaan: data.nama_perusahaan,
       address_perusahaan: data.address_perusahaan,
       npwp_address_perusahaan: data.npwp_address_perusahaan,
-      npwp_perusahaan: "data.npwp_perusahaan",
+      npwp_perusahaan: data.npwp_perusahaan,
       ipak_number_perusahaan: data.ipak_number_perusahaan,
       alamat_pengirim_facture_perusahaan:
         data.alamat_pengirim_facture_perusahaan,
@@ -284,7 +284,7 @@ const MainContent = () => {
                   label="No. IPAK"
                   className="w-full-lg"
                 />
-                {/* <Input {...register("npwp_perusahaan")} label="NPWP Perusahaan" className="w-full-lg" /> */}
+                <Input {...register("npwp_perusahaan")} label="NPWP Perusahaan" className="w-full-lg" />
                 <Input
                   {...register("alamat_pengirim_facture_perusahaan")}
                   label="Alamat Pengirim Faktur"
