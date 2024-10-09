@@ -14,6 +14,7 @@ interface DataPerusahaanProps {
 
 const DataPerusahaan: FC<DataPerusahaanProps> = ({ data }) => {
   const [rsData, setRsData] = useState<{
+    kategori_divisi: string;
     name: string;
     address_company: string;
     npwp: string;
@@ -27,6 +28,7 @@ const DataPerusahaan: FC<DataPerusahaanProps> = ({ data }) => {
     noIpak: "",
     alamatNpwp: "",
     jumlahProformaInvoice: 0,
+    kategori_divisi: "",
   });
 
   const [dokterData, setDokterData] = useState<
@@ -50,6 +52,7 @@ const DataPerusahaan: FC<DataPerusahaanProps> = ({ data }) => {
             noIpak: customer.ipak_number,
             alamatNpwp: customer.npwp_address,
             jumlahProformaInvoice: responseData.jumlah_pi,
+            kategori_divisi: customer.kategori_divisi,
           });
 
           // Set dokter data dari customer response
@@ -115,44 +118,59 @@ const DataPerusahaan: FC<DataPerusahaanProps> = ({ data }) => {
       <br />
       <Divider />
 
-      <h1 className="mt-4 text-xl font-bold">Dokter Terdaftar</h1>
 
-      <table className="my-6 w-full border-separate border-spacing-0 overflow-y-scroll rounded-lg text-left shadow-sm lg:overflow-hidden">
-        <thead className="rounded-xl lg:rounded-none">
-          <tr className="bg-blue-900 text-white">
-            <th className="border-b border-blue-900 px-4 py-3 text-sm lg:text-xl">
-              NO
-            </th>
-            <th className="border-b border-blue-900 px-4 py-3 text-sm lg:text-xl">
-              NAMA DOKTER
-            </th>
-            <th className="border-b border-blue-900 px-4 py-3 text-sm lg:text-xl">
-              TELEPON DOKTER
-            </th>
-            <th className="border-b border-blue-900 px-4 py-3 text-sm lg:text-xl">
-              EMAIL DOKTER
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white">
-          {dokterData.map((dokter, index) => (
-            <tr key={index} className="even:bg-gray-100">
-              <td className="border-b border-gray-300 px-4 py-2">
-                {index + 1}
-              </td>
-              <td className="border-b border-gray-300 px-4 py-2">
-                {dokter.name}
-              </td>
-              <td className="border-b border-gray-300 px-4 py-2">
-                {dokter.number_phone_item}
-              </td>
-              <td className="border-b border-gray-300 px-4 py-2">
-                {dokter.email_item}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {rsData.kategori_divisi == "1" && (
+        <>
+          <h1 className="mt-4 text-xl font-bold">Dokter Terdaftar</h1>
+
+          <table className="my-6 w-full border-separate border-spacing-0 overflow-y-scroll rounded-lg text-left shadow-sm lg:overflow-hidden">
+            <thead className="rounded-xl lg:rounded-none">
+              <tr className="bg-blue-900 text-white">
+                <th className="border-b border-blue-900 px-4 py-3 text-sm lg:text-xl">
+                  NO
+                </th>
+                <th className="border-b border-blue-900 px-4 py-3 text-sm lg:text-xl">
+                  NAMA DOKTER
+                </th>
+                <th className="border-b border-blue-900 px-4 py-3 text-sm lg:text-xl">
+                  TELEPON DOKTER
+                </th>
+                <th className="border-b border-blue-900 px-4 py-3 text-sm lg:text-xl">
+                  EMAIL DOKTER
+                </th>
+              </tr>
+            </thead>
+
+            {/* Tambahkan Kondisi jika rsData.kategori_divisi === 1 maka jangan tampilkan table */}
+            {/* Tambahkan Kondisi jika rsData.kategori_divisi === 1 maka jangan tampilkan table */}
+            {/* Tambahkan Kondisi jika rsData.kategori_divisi === 1 maka jangan tampilkan table */}
+
+
+
+
+            <tbody className="bg-white">
+              {dokterData.map((dokter, index) => (
+                <tr key={index} className="even:bg-gray-100">
+                  <td className="border-b border-gray-300 px-4 py-2">
+                    {index + 1}
+                  </td>
+                  <td className="border-b border-gray-300 px-4 py-2">
+                    {dokter.name}
+                  </td>
+                  <td className="border-b border-gray-300 px-4 py-2">
+                    {dokter.number_phone_item}
+                  </td>
+                  <td className="border-b border-gray-300 px-4 py-2">
+                    {dokter.email_item}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
+
+
     </div>
   );
 };
