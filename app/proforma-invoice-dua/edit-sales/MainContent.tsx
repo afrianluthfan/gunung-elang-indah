@@ -173,7 +173,7 @@ const AdminMainContent = () => {
     const fetchHospitalData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
+          "http://209.182.237.155:8080/api/proforma-invoice/rs-listc",
         );
         setHospitalData(res.data.data);
       } catch (error) {
