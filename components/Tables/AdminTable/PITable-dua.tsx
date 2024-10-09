@@ -224,6 +224,7 @@ export default function PITableComponent() {
         <Table
           removeWrapper
           aria-label="Purchase Order Table"
+          className="overflow-x-scroll"
           sortDescriptor={sortDescriptor}
           onSortChange={setSortDescriptor}
         >

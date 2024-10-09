@@ -34,6 +34,9 @@ const MainContent = () => {
     const aksi = localStorage.getItem("aksi");
 
     if (aksi === "update") {
+      // Remove item akse
+      localStorage.removeItem("aksi");
+
       Swal.fire({
         title: "Apakah Kamu Yakin ?",
         text: "Apakah kamu yakin ingin mengubah purchase order ini?",

@@ -192,10 +192,11 @@ const MainContent = () => {
 
       <Divider />
 
-      <div className="h-full overflow-x-scroll">
+      <div className="h-full ">
         <div className="text-sm">
           <Table
             aria-label="Example table with custom cells"
+            className="overflow-x-scroll"
             sortDescriptor={sortDescriptor}
             onSortChange={setSortDescriptor}
             removeWrapper

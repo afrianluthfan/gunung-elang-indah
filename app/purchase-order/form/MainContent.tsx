@@ -107,6 +107,8 @@ const AdminMainContent = () => {
   }, []);
 
   useEffect(() => {
+    // setlocalstorage param aksi = "add"
+
     if (shouldSubmit) {
       const submitData = async () => {
         try {

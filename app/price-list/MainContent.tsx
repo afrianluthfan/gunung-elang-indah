@@ -264,10 +264,11 @@ const MainContent = () => {
       <Divider />
 
       <div className="h-full">
-        <div className="h-[100vh] lg:h-[40vh] w-full overflow-x-auto">
+        <div className="h-[100vh] lg:h-[40vh] w-full overflow-auto">
           <Table
             aria-label="Example table with dynamic content"
             className="w-full h-full"
+            removeWrapper
             isHeaderSticky
             isStriped
             sortDescriptor={sortDescriptor}
