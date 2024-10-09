@@ -93,7 +93,7 @@ const AdminMainContent = () => {
 
     const fetchSuppliers = async () => {
       try {
-        const response = await axios.post('http://209.182.237.155:8080/api/proforma-invoice/supplier');
+        const response = await axios.post('http://209.182.237.155:8080/api/proforma-invoice/rs-lists');
         if (response.data && response.data.data) {
           setSuppliers(response.data.data);
         }
