@@ -14,6 +14,7 @@ import {
 import Swal from "sweetalert2";
 
 type User = {
+  id: number;
   kode: string;
   namaGudang: string;
   nama: string;
@@ -30,7 +31,7 @@ type RumahSakit = {
 };
 
 const INITIAL_VISIBLE_COLUMNS = [
-  "number",
+  "id",
   "variable",
   "nama",
   "diskon",
@@ -59,8 +60,8 @@ const MainContent = () => {
   const fetchGudangList = useCallback(async () => {
     try {
       const response = await axios.post(
-        `http://209.182.237.155:8080/api/proforma-invoice/rs-list`
-      );
+        `http://209.182.237.155:8080/api/proforma-invoice/rs-listc`
+      );    
       setGudangList(response.data.data);
     } catch (error) {
       setError("Error fetching Gudang list");
@@ -98,7 +99,7 @@ const MainContent = () => {
   }, [gudang, fetchData]);
 
   const columns = [
-    { name: "No", uid: "number" },
+    { name: "No", uid: "id" },
     { name: "Variable", uid: "variable" },
     { name: "Nama", uid: "nama" },
     { name: "Katalog", uid: "kode" },
@@ -142,7 +143,11 @@ const MainContent = () => {
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const handleInputChange = (index: number, key: keyof User, value: string) => {
+  const handleInputChange2 = (index: number, key: keyof User, value: string) => {
+    console.log("Input value:", value);
+    console.log("Index:", index); 
+    console.log("Key:", key);
+
     const updatedUsers = [...users];
     updatedUsers[index] = { ...updatedUsers[index], [key]: value };
     setUsers(updatedUsers);
@@ -155,13 +160,13 @@ const MainContent = () => {
           <Input
             value={user[columnKey as keyof User]?.toString()}
             onChange={(e) =>
-              handleInputChange(index, columnKey as keyof User, e.target.value)
+              handleInputChange2(index, columnKey as keyof User, e.target.value)
             }
           />
         );
       }
-      return columnKey === "number"
-        ? user.number
+      return columnKey === "id"
+        ? user.id
         : user[columnKey as keyof User];
     },
     [users]
@@ -286,7 +291,7 @@ const MainContent = () => {
               emptyContent={<div>Data Tidak Ditemukan / Anda Blm Melimih Customer</div>}
             >
               {(item) => (
-                <TableRow key={item.kode}>
+                <TableRow key={item.id}>
                   {(columnKey) => (
                     <TableCell className="bg-white">
                       {renderCell(item, columnKey, itemsWithIndex.indexOf(item))}
