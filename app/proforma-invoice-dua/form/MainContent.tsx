@@ -623,7 +623,7 @@ const AdminMainContent = () => {
                     className="border-black-500 w-full resize-none rounded border px-2 py-4"
                   >
                     <option value="" className="text-xs">
-                      Pilih Gudang Tujuan
+                      Pilih Gudang Asal
                     </option>
                     <option value="Gudang 1">Gudang 1</option>
                     <option value="Gudang 2">Gudang 2</option>

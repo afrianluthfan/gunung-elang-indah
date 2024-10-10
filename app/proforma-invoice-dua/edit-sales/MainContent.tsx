@@ -386,7 +386,7 @@ const AdminMainContent = () => {
         </Button>
       </div>
       <Divider />
-      
+
       {divisi == "Ortopedi" && (
         <>
           <div className="flex flex-col gap-4 lg:flex-row">
@@ -538,26 +538,17 @@ const AdminMainContent = () => {
             >
               <TableHeader>
                 <TableColumn className="bg-blue-900 text-white">
-                  Kode Barang
+                  Gudang Asal
                 </TableColumn>
+
                 <TableColumn className="bg-blue-900 text-white">
                   Nama Barang
                 </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Variable Barang
-                </TableColumn>
+
                 <TableColumn className="bg-blue-900 text-white">
                   Quantity
                 </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Harga Satuan
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Diskon
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Gudang Asal
-                </TableColumn>
+
                 <TableColumn className="bg-blue-900 text-white">
                   Action
                 </TableColumn>
@@ -566,14 +557,26 @@ const AdminMainContent = () => {
                 {responseData.item_detail_pi.map((row, index) => (
                   <TableRow key={index}>
                     <TableCell>
-                      <Input
-                        value={row.kode}
-                        name="kode"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Kode Barang"
-                        className="py-2"
-                      />
+                      <select
+                        value={row.gudang}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                          handleFieldChange(
+                            e as unknown as React.ChangeEvent<HTMLInputElement>,
+                            index,
+                          );
+                          setGudang(e.target.value);
+                        }}
+                        name="gudang"
+                        id="123"
+                        className="border-black-500 w-full resize-none rounded border px-5 py-4"
+                      >
+                        <option value="">Pilih Gudang Tujuan</option>
+                        <option value="Gudang 1">Gudang 1</option>
+                        <option value="Gudang 2">Gudang 2</option>
+                        <option value="Gudang 3">Gudang 3</option>
+                      </select>
                     </TableCell>
+
                     <TableCell>
                       <div className="relative w-full">
 
@@ -624,15 +627,7 @@ const AdminMainContent = () => {
                           )}
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <Input
-                        value={row.variable}
-                        name="variable"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="variable Barang"
-                        className="py-2"
-                      />
-                    </TableCell>
+
                     <TableCell>
                       <Input
                         value={row.quantity}
@@ -642,44 +637,8 @@ const AdminMainContent = () => {
                         className="py-2"
                       />
                     </TableCell>
-                    <TableCell>
-                      <Input
-                        value={row.harga_satuan}
-                        name="harga_satuan"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Harga Satuan"
-                        className="py-2"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Input
-                        value={row.discount}
-                        name="discount"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Diskon"
-                        className="py-2"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <select
-                        value={row.gudang}
-                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                          handleFieldChange(
-                            e as unknown as React.ChangeEvent<HTMLInputElement>,
-                            index,
-                          );
-                          setGudang(e.target.value);
-                        }}
-                        name="gudang"
-                        id="123"
-                        className="border-black-500 w-full resize-none rounded border px-5 py-4"
-                      >
-                        <option value="">Pilih Gudang Tujuan</option>
-                        <option value="Gudang 1">Gudang 1</option>
-                        <option value="Gudang 2">Gudang 2</option>
-                        <option value="Gudang 3">Gudang 3</option>
-                      </select>
-                    </TableCell>
+
+
                     <TableCell>
                       <Tooltip content="Delete item">
                         <span
@@ -776,26 +735,17 @@ const AdminMainContent = () => {
             >
               <TableHeader>
                 <TableColumn className="bg-blue-900 text-white">
-                  Kode Barang
+                  Gudang Asal
                 </TableColumn>
                 <TableColumn className="bg-blue-900 text-white">
                   Nama Barang
                 </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Variable Barang
-                </TableColumn>
+
                 <TableColumn className="bg-blue-900 text-white">
                   Quantity
                 </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Harga Satuan
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Diskon
-                </TableColumn>
-                <TableColumn className="bg-blue-900 text-white">
-                  Gudang Asal
-                </TableColumn>
+
+
                 <TableColumn className="bg-blue-900 text-white">
                   Action
                 </TableColumn>
@@ -804,13 +754,24 @@ const AdminMainContent = () => {
                 {responseData.item_detail_pi.map((row, index) => (
                   <TableRow key={index}>
                     <TableCell>
-                      <Input
-                        value={row.kode}
-                        name="kode"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Kode Barang"
-                        className="py-2"
-                      />
+                      <select
+                        value={row.gudang}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                          handleFieldChange(
+                            e as unknown as React.ChangeEvent<HTMLInputElement>,
+                            index,
+                          );
+                          setGudang(e.target.value);
+                        }}
+                        name="gudang"
+                        id="123"
+                        className="border-black-500 w-full resize-none rounded border px-5 py-4"
+                      >
+                        <option value="">Pilih Gudang Tujuan</option>
+                        <option value="Gudang 1">Gudang 1</option>
+                        <option value="Gudang 2">Gudang 2</option>
+                        <option value="Gudang 3">Gudang 3</option>
+                      </select>
                     </TableCell>
                     <TableCell>
                       <div className="relative w-full">
@@ -862,15 +823,7 @@ const AdminMainContent = () => {
                           )}
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <Input
-                        value={row.variable}
-                        name="variable"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="variable Barang"
-                        className="py-2"
-                      />
-                    </TableCell>
+
                     <TableCell>
                       <Input
                         value={row.quantity}
@@ -880,44 +833,8 @@ const AdminMainContent = () => {
                         className="py-2"
                       />
                     </TableCell>
-                    <TableCell>
-                      <Input
-                        value={row.harga_satuan}
-                        name="harga_satuan"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Harga Satuan"
-                        className="py-2"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Input
-                        value={row.discount}
-                        name="discount"
-                        onChange={(e) => handleFieldChange(e, index)}
-                        placeholder="Diskon"
-                        className="py-2"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <select
-                        value={row.gudang}
-                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                          handleFieldChange(
-                            e as unknown as React.ChangeEvent<HTMLInputElement>,
-                            index,
-                          );
-                          setGudang(e.target.value);
-                        }}
-                        name="gudang"
-                        id="123"
-                        className="border-black-500 w-full resize-none rounded border px-5 py-4"
-                      >
-                        <option value="">Pilih Gudang Tujuan</option>
-                        <option value="Gudang 1">Gudang 1</option>
-                        <option value="Gudang 2">Gudang 2</option>
-                        <option value="Gudang 3">Gudang 3</option>
-                      </select>
-                    </TableCell>
+
+
                     <TableCell>
                       <Tooltip content="Delete item">
                         <span

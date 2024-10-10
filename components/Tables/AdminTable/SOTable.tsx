@@ -77,7 +77,7 @@ export default function SOTableComponent({ selectedDocument }: { selectedDocumen
 
     if (role === "ADMIN") {
       selectedDocument = "PI"
-    } else if (role === "FINANCE") {
+    } else if (role === "KEUANGAN") {
       selectedDocument = "PO"
     }
     
