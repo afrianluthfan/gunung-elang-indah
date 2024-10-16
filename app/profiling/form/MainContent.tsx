@@ -41,7 +41,7 @@ const MainContent = () => {
     const fetchDokterData = async () => {
       try {
         const res = await axios.post(
-          "http://localhost:8080/api/proforma-invoice/dr-list",
+          "http://209.182.237.155:8080/api/proforma-invoice/dr-listn",
         );
         setDoctorData(res.data.data);
         console.log("Data dokter fetched", res.data.data);
