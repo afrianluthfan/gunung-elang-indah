@@ -41,7 +41,7 @@ const MainContent = () => {
     const fetchDokterData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/dr-list",
+          "http://localhost:8080/api/proforma-invoice/dr-list",
         );
         setDoctorData(res.data.data);
         console.log("Data dokter fetched", res.data.data);
@@ -76,6 +76,17 @@ const MainContent = () => {
       divisi = "2";
     }
 
+    if (data.nama_perusahaan === "") {
+      let rumah_sakit = localStorage.getItem('selectedHospital')
+      console.log("Nama Rumah Sakit atau Customer : "+ rumah_sakit)
+      data.nama_perusahaan = rumah_sakit ?? ''
+    }
+
+    if (data.nama_dokter === "") {
+      let doctor = localStorage.getItem('selectedDoctor')
+      console.log("Nama Rumah Sakit atau Customer : "+ doctor)
+      data.nama_dokter = doctor ?? ''
+    }
 
     const requestBody = {
       nama_perusahaan: data.nama_perusahaan,
@@ -122,6 +133,10 @@ const MainContent = () => {
               "http://209.182.237.155:8080/api/customer-profilling/add",
               requestBody,
             );
+
+            localStorage.removeItem("selectedHospital");
+            localStorage.removeItem("selectedDoctor");
+
             router.push("/profiling");
             Swal.fire("Nice!", "Data telah di input ke system!.", "success");
           } catch (error) {
@@ -144,10 +159,12 @@ const MainContent = () => {
       (hospital) => hospital.name === suggestion,
     );
 
+
+
     if (selectedHospital) {
       setResponseData((prevData) => ({
         ...prevData,
-        nama_perusahaan: selectedHospital.name, // Update responseData with the selected company
+        rumah_sakit: selectedHospital.name, // Update responseData with the selected company
       }));
       setInputCompanyValue(selectedHospital.name); // Update the input value to the selected suggestion
       setHospitalSuggestions([]); // Clear the suggestions list

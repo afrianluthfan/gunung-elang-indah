@@ -30,6 +30,12 @@ interface ItemDetailPI {
   sub_total_item: string;
 }
 
+type Gudang = {
+  id: number;
+  nama_gudang: string;
+  alamat_gudang: string;
+};
+
 type PurchaseOrder = {
   id: number;
   customer_id: number;
@@ -365,6 +371,26 @@ const AdminMainContent = () => {
     }
   };
 
+
+  const [gudangList, setGudangList] = useState<Gudang[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchGudangList = async () => {
+      try {
+        const response = await axios.post(
+          `http://209.182.237.155:8080/api/gudang/list`
+        );
+        setGudangList(response.data.data);
+      } catch (error) {
+        setError("Error fetching Gudang list");
+        console.error("Error fetching Gudang list:", error);
+      }
+    }
+
+    fetchGudangList();
+  }, []);
+
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       {responseData.reason && (
@@ -557,23 +583,24 @@ const AdminMainContent = () => {
                 {responseData.item_detail_pi.map((row, index) => (
                   <TableRow key={index}>
                     <TableCell>
-                      <select
+                    <select
                         value={row.gudang}
                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                          handleFieldChange(
-                            e as unknown as React.ChangeEvent<HTMLInputElement>,
-                            index,
-                          );
+                          handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index);
                           setGudang(e.target.value);
                         }}
                         name="gudang"
                         id="123"
-                        className="border-black-500 w-full resize-none rounded border px-5 py-4"
+                        className="w-full px-5 py-4 border border-black-500 rounded resize-none"
                       >
                         <option value="">Pilih Gudang Tujuan</option>
-                        <option value="Gudang 1">Gudang 1</option>
-                        <option value="Gudang 2">Gudang 2</option>
-                        <option value="Gudang 3">Gudang 3</option>
+                        {
+                          gudangList.map((gudang) => (
+                            <option key={gudang.id} value={gudang.nama_gudang}>
+                              {gudang.nama_gudang}
+                            </option>
+                          ))
+                        }
                       </select>
                     </TableCell>
 
@@ -694,7 +721,7 @@ const AdminMainContent = () => {
                 className="py-2"
               />
             </div>
-            <div className="flex w-full flex-col space-y-2 md:w-1/3">
+            {/* <div className="flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Tanggal Tindakan:</label>
               <Input
                 type="date"
@@ -703,10 +730,8 @@ const AdminMainContent = () => {
                 onChange={(e) => handleFieldChange(e, -1)}
                 className="py-2"
               />
-            </div>
-          </div>
-          <div className="flex flex-col gap-4 lg:flex-row">
-            <div className="flex w-full flex-col space-y-2 md:w-1/3">
+            </div> */}
+             <div className="flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">RM:</label>
               <Input
                 value={responseData.rm}
@@ -716,6 +741,9 @@ const AdminMainContent = () => {
                 className="py-2"
               />
             </div>
+          </div>
+          <div className="flex flex-col gap-4 lg:flex-row">
+           
           </div>
 
           <Divider />
@@ -757,20 +785,21 @@ const AdminMainContent = () => {
                       <select
                         value={row.gudang}
                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                          handleFieldChange(
-                            e as unknown as React.ChangeEvent<HTMLInputElement>,
-                            index,
-                          );
+                          handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index);
                           setGudang(e.target.value);
                         }}
                         name="gudang"
                         id="123"
-                        className="border-black-500 w-full resize-none rounded border px-5 py-4"
+                        className="w-full px-5 py-4 border border-black-500 rounded resize-none"
                       >
                         <option value="">Pilih Gudang Tujuan</option>
-                        <option value="Gudang 1">Gudang 1</option>
-                        <option value="Gudang 2">Gudang 2</option>
-                        <option value="Gudang 3">Gudang 3</option>
+                        {
+                          gudangList.map((gudang) => (
+                            <option key={gudang.id} value={gudang.nama_gudang}>
+                              {gudang.nama_gudang}
+                            </option>
+                          ))
+                        }
                       </select>
                     </TableCell>
                     <TableCell>

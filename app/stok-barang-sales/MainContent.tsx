@@ -31,6 +31,13 @@ const INITIAL_VISIBLE_COLUMNS = [
   "namaGudang",
 ];
 
+type Gudang = {
+  id: number;
+  nama_gudang: string;
+  alamat_gudang: string;
+};
+
+
 const MainContent = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [filterValue, setFilterValue] = useState("");
@@ -45,6 +52,24 @@ const MainContent = () => {
   });
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
+
+  const [gudangList, setGudangList] = useState<Gudang[]>([]);
+
+  useEffect(() => {
+    const fetchGudangList = async () => {
+      try {
+        const response = await axios.post(
+          `http://209.182.237.155:8080/api/gudang/list`
+        );
+        setGudangList(response.data.data);
+      } catch (error) {
+        setError("Error fetching Gudang list");
+        console.error("Error fetching Gudang list:", error);
+      }
+    }
+
+    fetchGudangList();
+  }, []);
 
   // Fungsi untuk fetch data berdasarkan pilihan gudang
   const fetchData = useCallback(async () => {
@@ -142,18 +167,22 @@ const MainContent = () => {
         <div className="flex w-full flex-col justify-between gap-4">
           <h1 className="mb-4 text-xl font-bold lg:text-[2vh]">Cari Data</h1>
           <div className="flex w-full flex-col justify-stretch gap-4 text-sm lg:flex-row">
-            <select
-              name="Pilih Gudang"
-              id="123"
-              className="z-0 rounded-lg border border-blue-900 bg-white p-2 text-small text-black lg:z-50"
-              value={gudang}
-              onChange={(e) => setGudang(e.target.value)} // Set pilihan gudang
-            >
-              <option value="0">Pilih Gudang</option>
-              <option value="1">Gudang Utama</option>
-              <option value="2">Gudang Kedua</option>
-              <option value="3">Gudang Ketiga</option>
-            </select>
+          <select
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+              setGudang(e.target.value);
+            }}            name="gudang"
+            id="123"
+            className="w-full px-5 py-4 border border-black-500 rounded resize-none"
+          >
+            <option value="">Pilih Gudang Tujuan</option>
+            {
+              gudangList.map((gudang) => (
+                <option key={gudang.id} value={gudang.id}>
+                  {gudang.nama_gudang}
+                </option>
+              ))
+            }
+          </select>
             <Input type="text" placeholder="Masukan ID Purchase Order" />
             <Button className="bg-[#00186D] font-bold text-white">
               Cari/Cek
@@ -172,16 +201,20 @@ const MainContent = () => {
         <h1 className="mb-4 text-xl font-bold lg:text-[2vh]">Cari Data</h1>
         <div className="flex w-full justify-stretch gap-4 text-sm">
           <select
-            name="Pilih Gudang"
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+              setGudang(e.target.value);
+            }}            name="gudang"
             id="123"
-            className="z-0 rounded-lg border border-blue-900 bg-white p-2 text-small text-black lg:z-50"
-            value={gudang}
-            onChange={(e) => setGudang(e.target.value)} // Set pilihan gudang
+            className="w-full px-5 py-4 border border-black-500 rounded resize-none"
           >
-            <option value="0">Semua Gudang</option>
-            <option value="1">Gudang Utama</option>
-            <option value="2">Gudang Kedua</option>
-            <option value="3">Gudang Ketiga</option>
+            <option value="">Pilih Gudang Tujuan</option>
+            {
+              gudangList.map((gudang) => (
+                <option key={gudang.id} value={gudang.id}>
+                  {gudang.nama_gudang}
+                </option>
+              ))
+            }
           </select>
           <Input type="text" placeholder="Masukan ID Purchase Order" />
           <Button className="bg-[#00186D] font-bold text-white">

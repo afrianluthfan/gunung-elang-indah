@@ -45,6 +45,7 @@ type ProformaInvoice = {
   tanggal_tindakan: string;
   nama_customer: string;
   alamat_customer: string;
+  rm: string;
   item_detail_pi: ItemDetailPI[];
 };
 
@@ -70,6 +71,7 @@ const ProformaInvoiceDetail = () => {
     alamat_customer: "",
     rumah_sakit: "",
     alamat: "",
+    rm: "",
     item_detail_pi: [],
   });
 
@@ -332,6 +334,16 @@ const ProformaInvoiceDetail = () => {
                   <h1>{responseData.divisi}</h1>
                 </td>
               </tr>
+
+              <tr>
+                <td className="text-left">
+                  <h1 className="font-medium">Rekam Medis</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{responseData.rm}</h1>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -389,6 +401,16 @@ const ProformaInvoiceDetail = () => {
                 <td className="w-10 text-center">:</td>
                 <td className="">
                   <h1>{responseData.divisi}</h1>
+                </td>
+              </tr>
+
+              <tr>
+                <td className="text-left">
+                  <h1 className="font-medium">Rekam Medis</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{responseData.rm}</h1>
                 </td>
               </tr>
             </tbody>
