@@ -97,6 +97,10 @@ const Sidebar = () => {
         pageName: "Price List",
         pageRoute: "price-list",
       },
+      {
+        pageName: "Data Gudang",
+        pageRoute: "gudang",
+      },
     ];
 
     const financeMenus = [

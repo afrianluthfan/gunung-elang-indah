@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
@@ -48,6 +48,12 @@ type PurchaseOrder = {
   reason?: string;
   item: ItemDetail[];
   item_deleted: { id: number }[];
+};
+
+type Gudang = {
+  id: number;
+  nama_gudang: string;
+  alamat_gudang: string;
 };
 
 const AdminMainContent = () => {
@@ -166,7 +172,7 @@ const AdminMainContent = () => {
     }));
   };
 
-  const handleFieldChange = ( e: React.ChangeEvent<HTMLInputElement>, itemId?: number) => {
+  const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>, itemId?: number) => {
     const { name, value } = e.target;
 
     if (name === "name") {
@@ -220,9 +226,9 @@ const AdminMainContent = () => {
           price: "",
           discount: "",
           amount: "",
-          variable: "", 
-          kode: "", 
-          gudang: "", 
+          variable: "",
+          kode: "",
+          gudang: "",
         },
       ],
     }));
@@ -264,6 +270,27 @@ const AdminMainContent = () => {
       }));
     }
   };
+
+  const [gudangList, setGudangList] = useState<Gudang[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchGudangList = async () => {
+      try {
+        const response = await axios.post(
+          `http://localhost:8080/api/gudang/list`
+        );
+        setGudangList(response.data.data);
+      } catch (error) {
+        setError("Error fetching Gudang list");
+        console.error("Error fetching Gudang list:", error);
+      }
+    }
+
+    fetchGudangList();
+  }, []);
+
+
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
@@ -361,7 +388,7 @@ const AdminMainContent = () => {
                     placeholder="Nama Barang"
                   />
                   {itemSuggestions[item.id]?.length > 0 && (
-                    <div className="absolute bg-white border mt-2 w-full shadow-lg z-10">
+                    <div className="absolute bg-white border mt-2 w-full shadow-lg z-10 !h-[300px] overflow-y-auto">
                       {itemSuggestions[item.id].map((suggestion, idx) => (
                         <div
                           key={idx}
@@ -423,9 +450,9 @@ const AdminMainContent = () => {
                   className="w-full px-5 py-4 border border-black-500 rounded resize-none"
                 >
                   <option value="">Pilih Gudang Tujuan</option>
-                  <option value="Gudang 1">Gudang 1</option>
-                  <option value="Gudang 2">Gudang 2</option>
-                  <option value="Gudang 3">Gudang 3</option>
+                  {
+                    gudangList.map((gudang) => <option value={gudang.nama_gudang}>{gudang.nama_gudang}</option>)
+                  }
                 </select>
               </TableCell>
               <TableCell>
