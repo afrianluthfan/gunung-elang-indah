@@ -78,7 +78,7 @@ const MainContent = () => {
 
   const headerColumns = useMemo(() => {
     return columns.filter((column) => visibleColumns.has(column.uid));
-  }, [visibleColumns]);
+  }, [columns, visibleColumns]);
 
   const filteredItems = useMemo(() => {
     let filteredUsers = Array.isArray(gudangList) ? [...gudangList] : [];
@@ -157,12 +157,12 @@ const MainContent = () => {
           </Button>
         );
       }
-
+  
       return columnKey === "id"
         ? index + 1
         : gudang[columnKey as keyof Gudang];
     },
-    [gudangList]
+    [gudangList, handleDelete] // Tambahkan handleDelete sebagai dependensi
   );
 
   if (error) {

@@ -14,7 +14,7 @@ const TopSectionRightSide = ({ onDocumentSelect }: { onDocumentSelect: (value: s
   useEffect(() => {
     setSelectedValue("none");
     onDocumentSelect("none"); // Send "none" to the parent
-  }, []);
+  }, [onDocumentSelect]); // Tambahkan onDocumentSelect ke dalam array dependensi
 
   return (
     <div className="flex w-[12vw] flex-col gap-1">
