@@ -529,7 +529,11 @@ const AdminMainContent = () => {
                 >
                   <option value="">Pilih Gudang Tujuan</option>
                   {
-                    gudangList.map((gudang) => <option value={gudang.nama_gudang}>{gudang.nama_gudang}</option>)
+                    gudangList.map((gudang) => (
+                      <option key={gudang.id} value={gudang.nama_gudang}>
+                        {gudang.nama_gudang}
+                      </option>
+                    ))
                   }
                 </select>
               </TableCell>
