@@ -141,13 +141,6 @@ const DataPerusahaan: FC<DataPerusahaanProps> = ({ data }) => {
               </tr>
             </thead>
 
-            {/* Tambahkan Kondisi jika rsData.kategori_divisi === 1 maka jangan tampilkan table */}
-            {/* Tambahkan Kondisi jika rsData.kategori_divisi === 1 maka jangan tampilkan table */}
-            {/* Tambahkan Kondisi jika rsData.kategori_divisi === 1 maka jangan tampilkan table */}
-
-
-
-
             <tbody className="bg-white">
               {dokterData.map((dokter, index) => (
                 <tr key={index} className="even:bg-gray-100">

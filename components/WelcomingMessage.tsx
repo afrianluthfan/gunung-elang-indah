@@ -40,12 +40,12 @@ const WelcomingMessage: FC = () => {
   }, [activeUser]);
 
   return (
-    <div className="relative flex h-[11.5vh] w-full items-center justify-between bg-white px-2 py-5 text-black">
+    <div className="relative flex h-[11.5vh]  w-full items-center justify-between bg-white px-2 py-5 text-black">
       {/* Sidebar */}
       <div
         className={`fixed left-0 top-0 z-[40] h-full w-full transition-transform duration-300 ease-in-out lg:z-0 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } w-[60vw] md:w-[35.3vw] md:translate-x-0`}
+        } w-[60vw] md:w-[15vw] md:translate-x-0`}
       >
         <Sidebar />
       </div>

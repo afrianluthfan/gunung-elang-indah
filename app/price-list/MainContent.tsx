@@ -43,6 +43,9 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 const MainContent = () => {
   const [users, setUsers] = useState<User[]>([]);
+
+  const [search, setSerch] = useState<string>("");
+
   const [filterValue, setFilterValue] = useState("");
   const [gudang, setGudang] = useState("");
   const [gudangList, setGudangList] = useState<RumahSakit[]>([]);
@@ -61,7 +64,7 @@ const MainContent = () => {
     try {
       const response = await axios.post(
         `http://209.182.237.155:8080/api/proforma-invoice/rs-listc`
-      );    
+      );
       setGudangList(response.data.data);
     } catch (error) {
       setError("Error fetching Gudang list");
@@ -91,7 +94,6 @@ const MainContent = () => {
   }, [fetchGudangList]);
 
   useEffect(() => {
-    // Bersihkan data saat gudang berubah
     setUsers([]);
     if (gudang && gudang !== "0") {
       fetchData();
@@ -139,17 +141,17 @@ const MainContent = () => {
       ...item,
       number: start + index + 1,
     }));
+
+    
   }, [page, sortedItems, rowsPerPage]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const handleInputChange2 = (index: number, key: keyof User, value: string) => {
-    console.log("Input value:", value);
-    console.log("Index:", index); 
-    console.log("Key:", key);
+  const handleInputChange2 = (index: number, key: keyof User, value: string, id: number) => {
+    const findUser = users.findIndex((user) => user.id === id);
 
     const updatedUsers = [...users];
-    updatedUsers[index] = { ...updatedUsers[index], [key]: value };
+    updatedUsers[findUser] = { ...updatedUsers[findUser], [key]: value };
     setUsers(updatedUsers);
   };
 
@@ -160,24 +162,17 @@ const MainContent = () => {
           <Input
             value={user[columnKey as keyof User]?.toString()}
             onChange={(e) =>
-              handleInputChange2(index, columnKey as keyof User, e.target.value)
+              handleInputChange2(index, columnKey as keyof User, e.target.value, user.id)
             }
           />
         );
       }
+
       return columnKey === "id"
-        ? user.id
+        ? index + 1
         : user[columnKey as keyof User];
     },
     [users]
-  );
-
-  const onRowsPerPageChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setRowsPerPage(Number(e.target.value));
-      setPage(1);
-    },
-    []
   );
 
   const handleSetHarga = async () => {
@@ -229,6 +224,8 @@ const MainContent = () => {
     return <div>{error}</div>;
   }
 
+
+
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <div className="flex w-full flex-col justify-between gap-4">
@@ -250,8 +247,10 @@ const MainContent = () => {
           </select>
           <Input
             type="text"
-            placeholder="Masukan ID Purchase Order"
-            className="w-full "
+            placeholder="Cari Nama Barang !"
+            className="w-full"
+            onChange={(e) => setFilterValue(e.target.value)}
+            value={filterValue}
           />
           <Button className="bg-[#00186D] font-bold text-white rounded-md w-full lg:w-auto">
             Cari/Cek
@@ -301,7 +300,6 @@ const MainContent = () => {
               )}
             </TableBody>
           </Table>
-          
         </div>
 
         <div className="flex justify-end p-4">

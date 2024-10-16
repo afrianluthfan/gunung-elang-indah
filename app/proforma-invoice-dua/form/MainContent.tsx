@@ -175,8 +175,8 @@ const AdminMainContent = () => {
             ...prevData,
             item: prevData.item.filter((_, idx) => idx !== index),
             item_deleted: Array.isArray(prevData.item_deleted)
-              ? [...prevData.item_deleted, { kode: deletedItem.kode || "" }]
-              : [{ kode: deletedItem.kode || "" }],
+              ? [...prevData.item_deleted, { kode: deletedItem.nama_barang || "" }]
+              : [{ kode: deletedItem.nama_barang || "" }],
           }));
         }
       });
