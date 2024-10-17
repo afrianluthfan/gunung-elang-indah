@@ -29,7 +29,7 @@ const MainContent = () => {
   const submitData = async () => {
     try {
       await axios.post(
-        "http://209.182.237.155:8080/api/purchase-order/posting",
+        "http://localhost:8080/api/purchase-order/posting",
         responseData,
       );
       dispatch(resetItemPO());

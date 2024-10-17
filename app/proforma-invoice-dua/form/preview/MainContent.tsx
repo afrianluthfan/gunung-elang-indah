@@ -62,7 +62,7 @@ const MainContent = () => {
           if (data && data.data && data.data.data) {
             if (aksi === "update") {
               const res = await axios.post(
-                "http://209.182.237.155:8080/api/proforma-invoice/editPI-posting",
+                "http://localhost:8080/api/proforma-invoice/editPI-posting",
                 data.data.data,
               );
               console.log(res);
@@ -87,7 +87,7 @@ const MainContent = () => {
               }
             } else {
               const res = await axios.post(
-                "http://209.182.237.155:8080/api/proforma-invoice/posting",
+                "http://localhost:8080/api/proforma-invoice/posting",
                 data.data.data,
               );
               if (res.data.status === true) {

@@ -31,6 +31,7 @@ type PurchaseOrder = {
   id: number;
   nama_suplier: string;
   nomor_po: string;
+  nomor_si: string;
   tanggal: string;
   catatan_po: string;
   prepared_by: string;
@@ -54,6 +55,7 @@ const AdminMainContent = () => {
     id: 0,
     nama_suplier: "",
     nomor_po: "",
+    nomor_si: "",
     tanggal: "",
     catatan_po: "",
     prepared_by: "",
@@ -92,7 +94,7 @@ const AdminMainContent = () => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/purchase-order/detail",
+          "http://localhost:8080/api/purchase-order/detail",
           { id: id }
         );
         setResponseData(response.data.data);
@@ -109,7 +111,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           await axios.post(
-            "http://209.182.237.155:8080/api/purchase-order/edit/finance",
+            "http://localhost:8080/api/purchase-order/edit/finance",
             responseData
           );
           Swal.fire({
@@ -217,6 +219,15 @@ const AdminMainContent = () => {
               <td className="w-10 text-center">:</td>
               <td className="">
                 <h1>{responseData.nomor_po}</h1>
+              </td>
+            </tr>
+            <tr>
+              <td className=" text-left">
+                <h1 className=" font-medium">Nomor Surat Jalan</h1>
+              </td>
+              <td className="w-10 text-center">:</td>
+              <td className="">
+                <h1>{responseData.nomor_si}</h1>
               </td>
             </tr>
             <tr>
