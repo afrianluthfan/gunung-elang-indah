@@ -109,7 +109,7 @@ const AdminMainContent = () => {
       if (responseData.rumah_sakit) {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/proforma-invoice/dr-list",
+            "http://localhost:8080/api/proforma-invoice/dr-list",
             {
               nama: responseData.rumah_sakit,
             },
@@ -126,7 +126,7 @@ const AdminMainContent = () => {
 
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/price/ListByCustomer",
+            "http://localhost:8080/api/price/ListByCustomer",
             {
               nama: responseData.rumah_sakit,
             },
@@ -145,7 +145,7 @@ const AdminMainContent = () => {
     const fetchData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/detailPI",
+          "http://localhost:8080/api/proforma-invoice/detailPI",
           {
             id: id,
             divisi: divisi,
@@ -168,7 +168,7 @@ const AdminMainContent = () => {
     const fetchStockData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/stock-barang/list",
+          "http://localhost:8080/api/stock-barang/list",
         );
         setStockData(res.data.data);
       } catch (error) {
@@ -179,7 +179,7 @@ const AdminMainContent = () => {
     const fetchHospitalData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/rs-listc",
+          "http://localhost:8080/api/proforma-invoice/rs-listc",
         );
         setHospitalData(res.data.data);
       } catch (error) {
@@ -205,7 +205,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/proforma-invoice/editPI-inquiry",
+            "http://localhost:8080/api/proforma-invoice/editPI-inquiry",
             responseData,
           );
 
@@ -379,7 +379,7 @@ const AdminMainContent = () => {
     const fetchGudangList = async () => {
       try {
         const response = await axios.post(
-          `http://209.182.237.155:8080/api/gudang/list`
+          `http://localhost:8080/api/gudang/list`
         );
         setGudangList(response.data.data);
       } catch (error) {

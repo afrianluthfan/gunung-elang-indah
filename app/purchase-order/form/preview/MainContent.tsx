@@ -51,7 +51,7 @@ const MainContent = () => {
             if (data && data.data && data.data.data) {
 
 
-              const res = await axios.post("http://209.182.237.155:8080/api/purchase-order/edit/posting-edit-admin", data.data.data);
+              const res = await axios.post("http://localhost:8080/api/purchase-order/edit/posting-edit-admin", data.data.data);
               console.log(res);
               if (res.data.status === true) {
                 Swal.fire({
@@ -100,7 +100,7 @@ const MainContent = () => {
             if (data && data.data && data.data.data) {
 
               
-                const res = await axios.post("http://209.182.237.155:8080/api/purchase-order/posting", data.data.data);
+                const res = await axios.post("http://localhost:8080/api/purchase-order/posting", data.data.data);
                 if (res.data.status === true) {
                   Swal.fire({
                     title: "Success",
@@ -151,7 +151,7 @@ const MainContent = () => {
   // Destructure the inner data object
   const {
     nama_suplier, nomor_po, tanggal, catatan_po, prepared_by, prepared_jabatan,
-    approved_by, approved_jabatan, sub_total, pajak, total, item
+    approved_by, approved_jabatan, sub_total, pajak, total, item, nomor_si
   } = data.data.data || {};
 
   return (
@@ -180,6 +180,15 @@ const MainContent = () => {
                 <td className="w-10 text-center">:</td>
                 <td className="">
                   <h1>{nomor_po}</h1>
+                </td>
+              </tr>
+              <tr>
+                <td className=" text-left">
+                  <h1 className=" font-medium">Nomor Surat Jalan:</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{nomor_si}</h1>
                 </td>
               </tr>
               <tr>
