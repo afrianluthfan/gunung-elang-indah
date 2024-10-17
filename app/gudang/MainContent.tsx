@@ -56,7 +56,7 @@ const MainContent = () => {
   const fetchGudangList = useCallback(async () => {
     try {
       const response = await axios.post(
-        `http://localhost:8080/api/gudang/list`
+        `http://209.182.237.155:8080/api/gudang/list`
       );
       setGudangList(response.data.data);
     } catch (error) {
@@ -126,7 +126,7 @@ const MainContent = () => {
         if (result.isConfirmed) {
           try {
             await axios.post(
-              "http://localhost:8080/api/gudang/delete",
+              "http://209.182.237.155:8080/api/gudang/delete",
               {
                 id,
               }
