@@ -24,9 +24,10 @@ import { useRouter } from "next/navigation";
 
 const columns = [
   { name: "NO.", uid: "number" },
-  { name: "TANGGAL", uid: "created_at", sortable: true },
-  { name: "NAMA PERUSAHAAN", uid: "nama_company", sortable: true },
-  { name: "NOMOR PI", uid: "invoice_number", sortable: true },
+  { name: "TANGGAL.", uid: "tanggal" },
+  { name: "NAMA SUPLIER", uid: "nama_suplier", sortable: true },
+  { name: "NOMOR PO", uid: "nomor_po", sortable: true },
+  { name: "SUB TOTAL", uid: "sub_total", sortable: true },
   { name: "TOTAL", uid: "total", sortable: true },
   { name: "STATUS", uid: "status", sortable: true },
   { name: "ACTIONS", uid: "actions" },
@@ -38,22 +39,23 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   DIPROSES: "primary",
 };
 
-type User = {
+type ItemData = {
   id: number;
-  created_at: string;
-  divisi: string;
-  invoice_number: string;
+  tanggal: string;
+  nama_suplier: string;
+  nomor_po: string;
   sub_total: string;
   total: string;
   status: string;
-  nama_company: string;
-};
+}[];
+
+type User = ItemData[0];
 
 export default function PITableComponent() {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<ItemData>([]);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "created_at",
+    column: "tanggal",
     direction: "ascending",
   });
   const [page, setPage] = useState(1);
@@ -69,19 +71,19 @@ export default function PITableComponent() {
     }
   }, []);
 
+  // Refresh page on navigation
   useEffect(() => {
     router.refresh();
-  }, [router]);
+  }, []);
 
+  // Function to fetch data from API
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/proforma-invoice/get-all-list",
+        "http://209.182.237.155:8080/api/purchase-order/list-so"
       );
-      console.log("API response:", response.data);
       if (response.data.status) {
         setUsers(response.data.data);
-        console.log("Users set:", response.data.data);
       } else {
         console.error("Failed to fetch data:", response.data.message);
       }
@@ -90,13 +92,14 @@ export default function PITableComponent() {
     }
   };
 
+  // Fetch data on component mount and when navigating back
   useEffect(() => {
     fetchData();
   }, []);
 
   const filteredUsers = React.useMemo(() => {
     return users.filter((user) =>
-      user.nama_company?.toLowerCase().includes(searchText.toLowerCase()),
+      user.nama_suplier.toLowerCase().includes(searchText.toLowerCase())
     );
   }, [users, searchText]);
 
@@ -137,11 +140,10 @@ export default function PITableComponent() {
       const cellValue = user[columnKey as keyof User];
       switch (columnKey) {
         case "status":
-          const status = user.status ? user.status.toUpperCase() : "UNKNOWN";
           return (
             <Chip
               className="capitalize"
-              color={statusColorMap[status] || "default"}
+              color={statusColorMap[user.status]}
               size="sm"
               variant="flat"
             >
@@ -151,28 +153,28 @@ export default function PITableComponent() {
         case "actions":
           return (
             <div className="relative flex items-center gap-2">
-              <Tooltip content="Details" className="text-center text-black">
+
+              <Tooltip content="Details" className="text-black text-center">
                 <span
                   onClick={() =>
                     router.push(
-                      username === "SALES"
-                        ? `/proforma-invoice-dua/edit?id=${user.id}&divisi=${user.divisi}`
-                        : `/proforma-invoice-dua/edit?id=${user.id}&divisi=${user.divisi}`,
+                      username === "admin"
+                        ? `/sales-order-finance/edit?id=${user.id}`
+                        : `/sales-order-finance/edit?id=${user.id}`
                     )
                   }
-                  className="cursor-pointer text-lg text-default-400 active:opacity-50"
-                >
+                  className="cursor-pointer text-lg text-default-400 active:opacity-50">
                   <EyeIcon className="items-center" />
                 </span>
               </Tooltip>
-              {user.status !== "DITERIMA" && username === "SALES" && (
-                <Tooltip content="Edit" className="text-center text-black">
+              {user.status !== "DITERIMA" && username === "ADMIN" && (
+                <Tooltip content="Edit" className="text-black text-center">
                   <span
                     onClick={() =>
                       router.push(
-                        username === "SALES"
-                          ? `/proforma-invoice-dua/edit-sales?id=${user.id}&divisi=${user.divisi}`
-                          : "",
+                        username === "ADMIN"
+                          ? `/purchase-order/edit-admin?id=${user.id}`
+                          : ``
                       )
                     }
                     className="cursor-pointer text-lg text-default-400 active:opacity-50"
@@ -187,7 +189,7 @@ export default function PITableComponent() {
           return cellValue;
       }
     },
-    [username, router],
+    [username, router]
   );
 
   const onRowsPerPageChange = React.useCallback(
@@ -195,7 +197,7 @@ export default function PITableComponent() {
       setRowsPerPage(Number(e.target.value));
       setPage(1);
     },
-    [],
+    []
   );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -204,16 +206,14 @@ export default function PITableComponent() {
 
   return (
     <div>
-      <div className="mb-5 flex flex-col justify-between gap-4 lg:flex-row">
+      <div className="flex justify-between gap-4 mb-5">
         <Input
           type="text"
-          placeholder="Masukan Nama Perusahaan"
+          placeholder="Masukan Nama Supplier"
           value={searchText}
           onChange={handleSearchChange}
         />
-        <Button className="w-10 bg-blue-900 font-bold text-white">
-          Cari/Cek
-        </Button>
+        <Button className="bg-blue-900 w-10 font-bold text-white">Cari/Cek</Button>
       </div>
 
       <div className="mb-5">
@@ -224,33 +224,24 @@ export default function PITableComponent() {
         <Table
           removeWrapper
           aria-label="Purchase Order Table"
-          className="overflow-x-scroll"
-          isHeaderSticky
-          isStriped
           sortDescriptor={sortDescriptor}
           onSortChange={setSortDescriptor}
         >
           <TableHeader columns={columns}>
             {(column) => (
-              <TableColumn
-                className="bg-blue-900 text-center text-white"
-                key={column.uid}
-                align="start"
-              >
+              <TableColumn className="bg-blue-900 text-white text-center" key={column.uid} align="start">
                 {column.name}
               </TableColumn>
             )}
           </TableHeader>
           <TableBody
-            emptyContent={"No Proforma Invoice found"}
+            emptyContent={"No purchase orders found"}
             items={itemsWithIndex}
           >
             {(item) => (
               <TableRow key={item.id}>
                 {(columnKey) => (
-                  <TableCell className="items-center text-center">
-                    {renderCell(item, columnKey)}
-                  </TableCell>
+                  <TableCell className="text-center items-center">{renderCell(item, columnKey)}</TableCell>
                 )}
               </TableRow>
             )}
@@ -274,3 +265,5 @@ export default function PITableComponent() {
     </div>
   );
 }
+
+// comment

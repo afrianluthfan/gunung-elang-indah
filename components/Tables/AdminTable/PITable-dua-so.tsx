@@ -76,7 +76,7 @@ export default function PITableComponent() {
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/proforma-invoice/get-all-list",
+        "http://209.182.237.155:8080/api/proforma-invoice/get-all-list-so",
       );
       console.log("API response:", response.data);
       if (response.data.status) {
@@ -156,8 +156,8 @@ export default function PITableComponent() {
                   onClick={() =>
                     router.push(
                       username === "SALES"
-                        ? `/proforma-invoice-dua/edit?id=${user.id}&divisi=${user.divisi}`
-                        : `/proforma-invoice-dua/edit?id=${user.id}&divisi=${user.divisi}`,
+                        ? `/sales-order-sales/edit?id=${user.id}&divisi=${user.divisi}`
+                        : `/sales-order-sales/edit?id=${user.id}&divisi=${user.divisi}`,
                     )
                   }
                   className="cursor-pointer text-lg text-default-400 active:opacity-50"
