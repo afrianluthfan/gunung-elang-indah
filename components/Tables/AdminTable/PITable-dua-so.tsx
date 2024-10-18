@@ -76,7 +76,7 @@ export default function PITableComponent() {
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/proforma-invoice/get-all-list-so",
+        "http://209.182.237.155:8080/api/proforma-invoice/get-all-list-so",
       );
       console.log("API response:", response.data);
       if (response.data.status) {

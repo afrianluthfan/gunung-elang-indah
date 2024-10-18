@@ -23,7 +23,7 @@ export default function ModalTambah() {
         }).then(async (result) => {
           if (result.isConfirmed) {
             try {
-              await axios.post("http://localhost:8080/api/gudang/tambah", {
+              await axios.post("http://209.182.237.155:8080/api/gudang/tambah", {
                 nama_gudang,
                 alamat_gudang,
               })
