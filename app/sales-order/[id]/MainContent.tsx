@@ -24,27 +24,105 @@ const MainContent = () => {
       </ContentTopSectionLayout>
       <Divider />
       <div className="flex justify-between">
-        <div className="flex flex-col">
-          <h1>Nomor Invoice: {data.invoice_number}</h1>
-          <h1>Nomor Surat Jalan: {data.nomor_surat_jalan}</h1>
-          <h1>Tanggal: {data.tanggal}</h1>
-          <h1>Jatuh Tempo: {data.due_date}</h1>
-          <h1>Nomor Surat Jalan: {data.number_si}</h1>
+
+
+        <div className="flex justify-between">
+          <table className="">
+            <tbody>
+              <tr>
+                <td className=" text-left">
+                  <h1 className=" font-medium">Nama Supplier</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{data.nama_customer}</h1>
+                </td>
+              </tr>
+              <tr>
+                <td className=" text-left">
+                  <h1 className=" font-medium">Nomor Purchase Order</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{data.invoice_number}</h1>
+                </td>
+              </tr>
+              <tr>
+                <td className=" text-left">
+                  <h1 className=" font-medium">Nomor Surat Jalan</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{data.nomor_surat_jalan}</h1>
+                </td>
+              </tr>
+              <tr>
+                <td className=" text-left">
+                  <h1 className=" font-medium">Tanggal</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{data.tanggal}</h1>
+                </td>
+              </tr>
+              <tr>
+                <td className=" text-left">
+                  <h1 className=" font-medium">Prepared By</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{data.preperad_by}</h1>
+                </td>
+              </tr>
+              <tr>
+                <td className=" text-left">
+                  <h1 className=" font-medium">Prepared Jabatan</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{data.preperad_jabatan}</h1>
+                </td>
+              </tr>
+              <tr>
+                <td className=" text-left">
+                  <h1 className=" font-medium">Approved By</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{data.approved_by}</h1>
+                </td>
+              </tr>
+              <tr>
+                <td className=" text-left">
+                  <h1 className=" font-medium">Approved Jabatan</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <h1>{data.approve_jabatan}</h1>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <div className="flex flex-col">
-          <h1>Nama Rumah Sakit: {data.nama_customer}</h1>
-          <h1>Divis: {data.divisi}</h1>
         </div>
       </div>
-      <Table removeWrapper aria-label="Example static collection table">
-        <TableHeader>
-          <TableColumn>NO</TableColumn>
-          <TableColumn>KAT.</TableColumn>
-          <TableColumn>NAMA BARANG</TableColumn>
-          <TableColumn>QTY</TableColumn>
-          <TableColumn>H. SATUAN</TableColumn>
-          <TableColumn>DISC</TableColumn>
-          <TableColumn>SUB TOTAL</TableColumn>
+
+      <Divider />
+
+      <div className="flex flex-row justify-between">
+        <h1 className="text-xl font-semibold lg:text-[1.85vh]">Detail Barang</h1>
+        <button className="bg-green-600 text-white p-2 rounded-md">Simpan Data</button>
+      </div>
+
+      <Table removeWrapper aria-label="Example static collection table ">
+        <TableHeader >
+          <TableColumn className="bg-blue-900 text-white">NO</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">KAT.</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">NAMA BARANG</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">QTY</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">H. SATUAN</TableColumn>
+          <TableColumn className="bg-blue-900 text-white">SUB TOTAL</TableColumn>
         </TableHeader>
         <TableBody>
           {/* Map over dataItem to render each row */}
@@ -55,7 +133,6 @@ const MainContent = () => {
               <TableCell>{item_detail_pi.nama_barang}</TableCell>
               <TableCell>{item_detail_pi.quantity}</TableCell>
               <TableCell>{item_detail_pi.harga_satuan}</TableCell>
-              <TableCell>{item_detail_pi.discount}</TableCell>
               <TableCell>{item_detail_pi.sub_total_item}</TableCell>
             </TableRow>
           ))}
@@ -69,6 +146,12 @@ const MainContent = () => {
         <p>{data.RP_pajak_ppn}</p>
         <p>Total: </p>
         <p>{data.RP_total}</p>
+      </div>
+
+      <Divider />
+
+      <div>
+        <button className="bg-green-600 text-white p-2 rounded-md w-full">Download Invoice</button>
       </div>
     </div>
   );

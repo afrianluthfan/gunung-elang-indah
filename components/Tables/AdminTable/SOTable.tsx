@@ -58,7 +58,6 @@ export default function SOTableComponent({ selectedDocument }: { selectedDocumen
   const router = useRouter();
   const dispatch = useDispatch();
 
-  // Fetch data from the API
   const fetchData = async (endpoint: string, request: any = {}) => {
     try {
       const response = await axios.post(endpoint, request);
@@ -70,8 +69,6 @@ export default function SOTableComponent({ selectedDocument }: { selectedDocumen
 
   useEffect(() => {
     setUsers([]);
-    
-    // get localstorage 
 
     const role = localStorage.getItem("statusAccount");
 
@@ -83,7 +80,7 @@ export default function SOTableComponent({ selectedDocument }: { selectedDocumen
     
     if (selectedDocument === "PO" || selectedDocument === "PI") {
       console.log("Selected Document:", selectedDocument);
-      const endpoint = selectedDocument === "PO" ? "http://209.182.237.155:8080/api/sales_order/list" : "http://209.182.237.155:8080/api/sales_order/list";
+      const endpoint = selectedDocument === "PO" ? "http://localhost:8080/api/sales_order/list/finance" : "http://localhost:8080/api/sales_order/list/admin";
       const request = {
         dok : selectedDocument
       };  
@@ -97,7 +94,21 @@ export default function SOTableComponent({ selectedDocument }: { selectedDocumen
       if (selectedOrder) {
         dispatch(setdetailSO(selectedOrder));
       }
-      router.push(`/sales-order/${id}`);
+
+      const role = localStorage.getItem("statusAccount");
+
+      if (role === "ADMIN") {
+        router.push(`/sales-order-sales/${id}`);
+      } else if (role === "KEUANGAN") {
+        router.push(`/sales-order-finance/${id}`);
+      } else if (role === "LOGISTIK") {
+        if (selectedDocument = "PI") {
+          router.push(`/sales-order-sales/${id}`);
+        } else if (selectedDocument = "PO") {
+          router.push(`/sales-order-finance/${id}`);
+        }
+      }
+      
     },
     [router, users, dispatch],
   );

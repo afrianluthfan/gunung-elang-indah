@@ -76,9 +76,9 @@ export default function PITableComponent() {
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/proforma-invoice/get-all-list",
+        "http://localhost:8080/api/proforma-invoice/get-all-list",
       );
-      console.log("API response:", response.data); 
+      console.log("API response:", response.data);
       if (response.data.status) {
         setUsers(response.data.data);
         console.log("Users set:", response.data.data);
@@ -225,6 +225,8 @@ export default function PITableComponent() {
           removeWrapper
           aria-label="Purchase Order Table"
           className="overflow-x-scroll"
+          isHeaderSticky
+          isStriped
           sortDescriptor={sortDescriptor}
           onSortChange={setSortDescriptor}
         >

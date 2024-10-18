@@ -1,6 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type DetailSOState = {
+  preperad_by: string;
+  preperad_jabatan: string;
+  approved_by: string;
+  approve_jabatan: string;
   id: number;
   customer_id: number;
   nama_customer?: string;
@@ -57,6 +61,10 @@ const initialState: InitialState = {
     RP_pajak_ppn: "",
     RP_total: "",
     item_detail_pi: [],
+    preperad_by: "",
+    preperad_jabatan: "",
+    approved_by: "",
+    approve_jabatan: ""
   },
 };
 

@@ -91,7 +91,7 @@ const Sidebar = () => {
       // },
       {
         pageName: "Sales Order",
-        pageRoute: "sales-order",
+        pageRoute: "sales-order-sales",
       },
       {
         pageName: "Price List",
@@ -122,7 +122,7 @@ const Sidebar = () => {
       },
       {
         pageName: "Sales Order",
-        pageRoute: "sales-order",
+        pageRoute: "sales-order-finance",
       },
       {
         pageName: "Purchase Order",
