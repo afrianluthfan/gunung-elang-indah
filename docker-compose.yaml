@@ -2,9 +2,14 @@ services:
   fismed_fe:
     image: fismed-fe:latest
     container_name: fismed-fe-dev
-    build:
-      dockerfile: Dockerfile
     restart: always
+    deploy:
+      # mode: replicated
+      # replicas: 2
+      # endpoint_mode: vip
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1.5G
     ports:
       - 3000:3000
-    
