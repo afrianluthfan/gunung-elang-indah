@@ -259,7 +259,7 @@ const MainContent = () => {
               onChange={(newPage) => setPage(newPage)}
             />
             <select value={rowsPerPage} onChange={onRowsPerPageChange}>
-              {[5, 10].map((pageSize) => (
+              {[5, 10, 25, 50].map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize} per page
                 </option>

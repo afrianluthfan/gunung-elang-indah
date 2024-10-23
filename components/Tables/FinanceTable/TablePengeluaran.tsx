@@ -30,6 +30,8 @@ const INITIAL_VISIBLE_COLUMNS = [
   "number",
   "tanggal",
   "nama",
+  "nominal",
+  "pajak",
   "amount",
   // "actions",
 ];
@@ -79,6 +81,7 @@ export default function TableComponent() {
     { name: "Tanggal", uid: "tanggal" },
     { name: "Nama", uid: "nama" },
     { name: "Nominal", uid: "nominal" },
+    { name: "Pajak", uid: "pajak" },
     { name: "Amount", uid: "amount" },
     // { name: "Actions", uid: "actions" }
   ];
