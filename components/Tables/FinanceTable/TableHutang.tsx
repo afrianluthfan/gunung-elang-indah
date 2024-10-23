@@ -15,10 +15,12 @@ import {
   ChipProps,
   SortDescriptor,
   Tooltip,
+  Divider,
 } from "@nextui-org/react";
 import { DeleteIcon } from "./DeleteIcon";
 import { EyeIcon } from "./EyeIcon";
 import { EditIcon } from "./EditIcon";
+import Swal from "sweetalert2";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   paid: "success",
@@ -30,8 +32,10 @@ const INITIAL_VISIBLE_COLUMNS = [
   "number",
   "tanggal",
   "nama",
+  "nominal",
+  "pajak",
   "amount",
-  // "actions",
+  "actions",
 ];
 
 type User = {
@@ -57,6 +61,8 @@ export default function TableComponent() {
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
 
+  let Total = ""
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -64,6 +70,7 @@ export default function TableComponent() {
           "http://209.182.237.155:8080/api/hutang/list",
           {},
         );
+        Total = response.data.total
         setUsers(response.data.data);
       } catch (error) {
         setError("Error fetching data");
@@ -74,13 +81,63 @@ export default function TableComponent() {
     fetchData();
   }, []);
 
+  const handleMarkAsPaid = async (id: number) => {
+    // Konfirmasi menggunakan SweetAlert2
+    const result = await Swal.fire({
+      title: "Apakah kamu yakin?",
+      text: `Kamu akan melunasi user dengan ID ${id}`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, lunasi!",
+      cancelButtonText: "Batal",
+    });
+  
+    // Jika user mengkonfirmasi, lanjutkan ke API request
+    if (result.isConfirmed) {
+      try {
+        const response = await axios.post("http://209.182.237.155:8080/api/hutang/lunas", {
+          id: id,
+        });
+  
+        Swal.fire(
+          "Berhasil!",
+          `User dengan ID ${id} berhasil dilunasi.`,
+          "success"
+        );
+
+        try {
+          const response = await axios.post(
+            "http://209.182.237.155:8080/api/hutang/list",
+            {},
+          );
+          Total = response.data.total
+          setUsers(response.data.data);
+        } catch (error) {
+          setError("Error fetching data");
+          console.error("Error fetching data:", error);
+        }
+
+      } catch (error) {
+        console.error("Error marking user as paid:", error);
+  
+        Swal.fire(
+          "Gagal!",
+          `Gagal melunasi user dengan ID ${id}.`,
+          "error"
+        );
+      }
+    }
+  }
   const columns = [
     { name: "No", uid: "number" },
     { name: "Tanggal", uid: "tanggal" },
     { name: "Nama", uid: "nama" },
     { name: "Nominal", uid: "nominal" },
+    { name: "Pajak", uid: "pajak" },
     { name: "Amount", uid: "amount" },
-    // { name: "Actions", uid: "actions" }
+    { name: "Actions", uid: "actions" }
   ];
 
   const headerColumns = useMemo(() => {
@@ -135,28 +192,21 @@ export default function TableComponent() {
         case "actions":
           return (
             <div className="relative flex items-center gap-2">
-              {/* <Tooltip content="Details" className="text-black">
-                <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                  <EyeIcon />
+              <Tooltip color="success" content="Mark as Paid">
+                <span
+                  className="cursor-pointer text-lg text-success active:opacity-50"
+                  onClick={() => handleMarkAsPaid(user.id)}
+                >
+                  {/* Replace CheckIcon with an appropriate icon or import it */}
+                  ✓
                 </span>
               </Tooltip>
-              <Tooltip content="Edit user" className="text-black">
-                <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                  <EditIcon />
-                </span>
-              </Tooltip>
-              <Tooltip color="danger" content="Delete user">
-                <span className="cursor-pointer text-lg text-danger active:opacity-50">
-                  <DeleteIcon />
-                </span>
-              </Tooltip> */}
             </div>
           );
         default:
           return cellValue;
       }
-    },
-    [],
+    },    [],
   );
 
   const onRowsPerPageChange = useCallback(
@@ -173,6 +223,7 @@ export default function TableComponent() {
 
   return (
     <div>
+
       <Table
         aria-label="Example table with custom cells"
         

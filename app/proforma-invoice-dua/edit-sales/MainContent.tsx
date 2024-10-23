@@ -168,7 +168,10 @@ const AdminMainContent = () => {
     const fetchStockData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/stock-barang/list",
+          "http://209.182.237.155:8080/api/price/ListByCustomer",
+          {
+            nama: responseData.rumah_sakit
+          }
         );
         setStockData(res.data.data);
       } catch (error) {
@@ -344,7 +347,10 @@ const AdminMainContent = () => {
             ? {
               ...item_detail_pi,
               nama_barang: selectedItem.name,
-              harga_satuan: selectedItem.price.toString(), // Convert to string if needed
+              harga_satuan: selectedItem.price.toString(),
+              kode: selectedItem.kode, 
+              discount: selectedItem.diskon.toString(),
+              variable: selectedItem.variable,
             }
             : item_detail_pi,
         ),
