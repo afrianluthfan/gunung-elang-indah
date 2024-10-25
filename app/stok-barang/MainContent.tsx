@@ -11,6 +11,7 @@ import {
   Pagination,
   SortDescriptor,
 } from "@nextui-org/react";
+import { sortItemsAdmin } from "../utils/stokBarangUtils";
 
 type User = {
   kode: string;
@@ -42,7 +43,7 @@ const MainContent = () => {
   const [filterValue, setFilterValue] = useState("");
   const [gudang, setGudang] = useState(""); // State untuk menyimpan pilihan gudang
   const [visibleColumns] = useState<Set<string>>(
-    new Set(INITIAL_VISIBLE_COLUMNS)
+    new Set(INITIAL_VISIBLE_COLUMNS),
   );
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
@@ -52,21 +53,20 @@ const MainContent = () => {
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
 
-
   const [gudangList, setGudangList] = useState<Gudang[]>([]);
 
   useEffect(() => {
     const fetchGudangList = async () => {
       try {
         const response = await axios.post(
-          `http://209.182.237.155:8080/api/gudang/list`
+          `http://209.182.237.155:8080/api/gudang/list`,
         );
         setGudangList(response.data.data);
       } catch (error) {
         setError("Error fetching Gudang list");
         console.error("Error fetching Gudang list:", error);
       }
-    }
+    };
 
     fetchGudangList();
   }, []);
@@ -78,12 +78,12 @@ const MainContent = () => {
       if (gudang && gudang !== "0") {
         response = await axios.post(
           `http://209.182.237.155:8080/api/stok/listbygudang`,
-          { id: gudang }
+          { id: gudang },
         );
       } else {
         response = await axios.post(
           "http://209.182.237.155:8080/api/stok/list-customer",
-          {}
+          {},
         );
       }
       setUsers(response.data.data);
@@ -97,26 +97,29 @@ const MainContent = () => {
     fetchData();
   }, [fetchData]); // Panggil `fetchData` ketika komponen mount atau `gudang` berubah
 
-  const columns = [
-    { name: "No", uid: "number" },
-    { name: "Variable", uid: "variable" },
-    { name: "Nama", uid: "nama" },
-    { name: "Jumlah Barang", uid: "qty" },
-    { name: "Harga Satuan", uid: "harga" },
-    { name: "Katalog", uid: "kode" },
-    { name: "Gudang", uid: "namaGudang" },
-  ];
+  const columns = useMemo(
+    () => [
+      { name: "NO.", uid: "number" },
+      { name: "VARIABLE", uid: "variable" },
+      { name: "NAMA", uid: "nama" },
+      { name: "JUMLAH BARANG", uid: "qty" },
+      { name: "HARGA SATUAN", uid: "harga" },
+      { name: "KATALOG", uid: "kode" },
+      { name: "GUDANG", uid: "namaGudang" },
+    ],
+    [],
+  );
 
   const headerColumns = useMemo(() => {
     return columns.filter((column) => visibleColumns.has(column.uid));
-  }, [visibleColumns]);
+  }, [columns, visibleColumns]);
 
   const filteredItems = useMemo(() => {
     let filteredUsers = Array.isArray(users) ? [...users] : [];
 
     if (filterValue) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.nama.toLowerCase().includes(filterValue.toLowerCase())
+        user.nama.toLowerCase().includes(filterValue.toLowerCase()),
       );
     }
 
@@ -124,13 +127,7 @@ const MainContent = () => {
   }, [filterValue, users]);
 
   const sortedItems = useMemo(() => {
-    return [...filteredItems].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] as string | number;
-      const second = b[sortDescriptor.column as keyof User] as string | number;
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
+    return sortItemsAdmin(filteredItems, sortDescriptor);
   }, [sortDescriptor, filteredItems]);
 
   const itemsWithIndex = useMemo(() => {
@@ -150,7 +147,7 @@ const MainContent = () => {
 
       return cellValue;
     },
-    []
+    [],
   );
 
   const onRowsPerPageChange = useCallback(
@@ -158,34 +155,34 @@ const MainContent = () => {
       setRowsPerPage(Number(e.target.value));
       setPage(1);
     },
-    []
+    [],
   );
 
   if (error) {
     return (
-
-      <div className="flex h-full w-full flex-col justify-between gap-6 p-8 ">
+      <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
         <div className="flex w-full flex-col justify-between gap-4">
-          <h1 className="text-xl font-bold lg:text-[2vh] mb-4">Cari Data</h1>
-          <div className="text-sm flex w-full justify-stretch gap-4">
-          <select
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-              setGudang(e.target.value);
-            }}            name="gudang"
-            id="123"
-            className="w-full px-5 py-4 border border-black-500 rounded resize-none"
-          >
-            <option value="">Pilih Gudang Tujuan</option>
-            {
-              gudangList.map((gudang) => (
+          <h1 className="mb-4 text-xl font-bold lg:text-[2vh]">Cari Data</h1>
+          <div className="flex w-full justify-stretch gap-4 text-sm">
+            <select
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                setGudang(e.target.value);
+              }}
+              name="gudang"
+              id="123"
+              className="border-black-500 w-full resize-none rounded border px-5 py-4"
+            >
+              <option value="">Pilih Gudang Tujuan</option>
+              {gudangList.map((gudang) => (
                 <option key={gudang.id} value={gudang.id}>
                   {gudang.nama_gudang}
                 </option>
-              ))
-            }
-          </select>
+              ))}
+            </select>
             <Input type="text" placeholder="Masukan ID Purchase Order" />
-            <Button className="bg-[#00186D] font-bold text-white">Cari/Cek</Button>
+            <Button className="bg-[#00186D] font-bold text-white">
+              Cari/Cek
+            </Button>
           </div>
         </div>
 
@@ -195,28 +192,29 @@ const MainContent = () => {
   }
 
   return (
-    <div className="flex h-full w-full flex-col justify-between gap-6 p-8 ">
+    <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <div className="flex w-full flex-col justify-between gap-4">
-        <h1 className="text-xl font-bold lg:text-[2vh] mb-4">Cari Data</h1>
-        <div className="text-sm flex w-full justify-stretch gap-4">
-        <select
+        <h1 className="mb-4 text-xl font-bold lg:text-[2vh]">Cari Data</h1>
+        <div className="flex w-full justify-stretch gap-4 text-sm">
+          <select
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
               setGudang(e.target.value);
-            }}            name="gudang"
+            }}
+            name="gudang"
             id="123"
-            className="w-full px-5 py-4 border border-black-500 rounded resize-none"
+            className="border-black-500 w-full resize-none rounded border px-5 py-4"
           >
             <option value="">Pilih Gudang Tujuan</option>
-            {
-              gudangList.map((gudang) => (
-                <option key={gudang.id} value={gudang.id}>
-                  {gudang.nama_gudang}
-                </option>
-              ))
-            }
+            {gudangList.map((gudang) => (
+              <option key={gudang.id} value={gudang.id}>
+                {gudang.nama_gudang}
+              </option>
+            ))}
           </select>
           <Input type="text" placeholder="Masukan ID Purchase Order" />
-          <Button className="bg-[#00186D] font-bold text-white">Cari/Cek</Button>
+          <Button className="bg-[#00186D] font-bold text-white">
+            Cari/Cek
+          </Button>
         </div>
       </div>
 
@@ -235,18 +233,23 @@ const MainContent = () => {
                 <TableColumn
                   key={column.uid}
                   align="start"
-                  allowsSorting
-                  className="bg-blue-900 text-white"
+                  allowsSorting={column.uid !== "number"}
+                  className={`bg-blue-900 text-center text-white ${column.uid === "number" ? "w-1" : "w-32"}`}
                 >
                   {column.name}
                 </TableColumn>
               )}
             </TableHeader>
-            <TableBody emptyContent={"Barang Tidak Ada Di Gudang Ini"} items={itemsWithIndex}>
+            <TableBody
+              emptyContent={"Barang Tidak Ada Di Gudang Ini"}
+              items={itemsWithIndex}
+            >
               {(item) => (
                 <TableRow key={item.number}>
                   {(columnKey) => (
-                    <TableCell>{renderCell(item, columnKey)}</TableCell>
+                    <TableCell className="items-center text-center">
+                      {renderCell(item, columnKey)}
+                    </TableCell>
                   )}
                 </TableRow>
               )}

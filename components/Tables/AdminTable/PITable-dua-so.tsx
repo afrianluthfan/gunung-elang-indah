@@ -21,6 +21,7 @@ import { EditIcon } from "./EditIcon";
 import { EyeIcon } from "./EyeIcon";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { calculateTotalPages } from "@/app/utils/tableUtils";
 
 const columns = [
   { name: "NO.", uid: "number" },
@@ -126,7 +127,7 @@ export default function PITableComponent() {
     }));
   }, [page, sortedItems, rowsPerPage]);
 
-  const pages = Math.ceil(filteredUsers.length / rowsPerPage);
+  const pages = calculateTotalPages(filteredUsers.length, rowsPerPage);
 
   const renderCell = React.useCallback(
     (user: User & { index: number }, columnKey: React.Key) => {
@@ -150,9 +151,12 @@ export default function PITableComponent() {
           );
         case "actions":
           return (
-            <div className="relative flex items-center gap-2">
-              <Tooltip content="Details" className="text-center text-black">
-                <span
+            <div className="relative flex items-center justify-center gap-2">
+              <Tooltip
+                content="Details"
+                className="flex items-center justify-center text-center text-black"
+              >
+                <div
                   onClick={() =>
                     router.push(
                       username === "SALES"
@@ -163,7 +167,7 @@ export default function PITableComponent() {
                   className="cursor-pointer text-lg text-default-400 active:opacity-50"
                 >
                   <EyeIcon className="items-center" />
-                </span>
+                </div>
               </Tooltip>
               {user.status !== "DITERIMA" && username === "SALES" && (
                 <Tooltip content="Edit" className="text-center text-black">

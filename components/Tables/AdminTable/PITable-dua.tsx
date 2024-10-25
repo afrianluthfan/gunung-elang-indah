@@ -1,6 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { EditIcon } from "./EditIcon";
+import { EyeIcon } from "./EyeIcon";
+import { useRouter } from "next/navigation";
+import { User, fetchDataPI, sortItems } from "@/app/utils/piUtils";
+import {
+  calculateTotalPages,
+  filterUsersByText,
+  handleSearchChange,
+  onRowsPerPageChange,
+} from "@/app/utils/tableUtils";
 import {
   Table,
   TableHeader,
@@ -17,10 +27,6 @@ import {
   Button,
   Divider,
 } from "@nextui-org/react";
-import { EditIcon } from "./EditIcon";
-import { EyeIcon } from "./EyeIcon";
-import axios from "axios";
-import { useRouter } from "next/navigation";
 
 const columns = [
   { name: "NO.", uid: "number" },
@@ -38,22 +44,11 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   DIPROSES: "primary",
 };
 
-type User = {
-  id: number;
-  created_at: string;
-  divisi: string;
-  invoice_number: string;
-  sub_total: string;
-  total: string;
-  status: string;
-  nama_company: string;
-};
-
 export default function PITableComponent() {
   const [users, setUsers] = useState<User[]>([]);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "created_at",
+    column: "nama_company",
     direction: "ascending",
   });
   const [page, setPage] = useState(1);
@@ -73,60 +68,28 @@ export default function PITableComponent() {
     router.refresh();
   }, [router]);
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.post(
-        "http://209.182.237.155:8080/api/proforma-invoice/get-all-list",
-      );
-      console.log("API response:", response.data);
-      if (response.data.status) {
-        setUsers(response.data.data);
-        console.log("Users set:", response.data.data);
-      } else {
-        console.error("Failed to fetch data:", response.data.message);
-      }
-    } catch (error) {
-      console.error("Error fetching data from API:", error);
-    }
-  };
-
   useEffect(() => {
-    fetchData();
+    fetchDataPI(setUsers);
   }, []);
 
   const filteredUsers = React.useMemo(() => {
-    return users.filter((user) =>
-      user.nama_company?.toLowerCase().includes(searchText.toLowerCase()),
-    );
+    return filterUsersByText(users, searchText, "nama_company");
   }, [users, searchText]);
 
+  const pages = calculateTotalPages(filteredUsers.length, rowsPerPage);
   const sortedItems = React.useMemo(() => {
-    return [...filteredUsers].sort((a: User, b: User) => {
-      const first =
-        a[sortDescriptor.column as keyof User] !== undefined
-          ? String(a[sortDescriptor.column as keyof User])
-          : "";
-      const second =
-        b[sortDescriptor.column as keyof User] !== undefined
-          ? String(b[sortDescriptor.column as keyof User])
-          : "";
-
-      // Ensure both values are strings before comparing
-      const cmp = first.localeCompare(second);
-
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
+    return sortItems(filteredUsers, sortDescriptor);
   }, [sortDescriptor, filteredUsers]);
 
   const itemsWithIndex = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
-    return sortedItems.slice(start, start + rowsPerPage).map((item, index) => ({
-      ...item,
-      index: start + index + 1,
-    }));
-  }, [page, sortedItems, rowsPerPage]);
-
-  const pages = Math.ceil(filteredUsers.length / rowsPerPage);
+    return sortedItems // Changed from users to filteredUsers
+      .slice(start, start + rowsPerPage)
+      .map((item: any, index: number) => ({
+        ...item,
+        index: start + index + 1,
+      }));
+  }, [page, rowsPerPage, sortedItems]); // Changed dependency from users to filteredUsers
 
   const renderCell = React.useCallback(
     (user: User & { index: number }, columnKey: React.Key) => {
@@ -150,7 +113,7 @@ export default function PITableComponent() {
           );
         case "actions":
           return (
-            <div className="relative flex items-center gap-2">
+            <div className="relative flex items-center justify-center gap-2">
               <Tooltip content="Details" className="text-center text-black">
                 <span
                   onClick={() =>
@@ -190,16 +153,20 @@ export default function PITableComponent() {
     [username, router],
   );
 
-  const onRowsPerPageChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setRowsPerPage(Number(e.target.value));
-      setPage(1);
-    },
-    [],
-  );
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
+  const handleSortChange = (columnId: string) => {
+    if (sortDescriptor.column === columnId) {
+      const newDirection =
+        sortDescriptor.direction === "ascending" ? "descending" : "ascending";
+      setSortDescriptor({
+        column: columnId,
+        direction: newDirection,
+      });
+    } else {
+      setSortDescriptor({
+        column: columnId,
+        direction: "ascending",
+      });
+    }
   };
 
   return (
@@ -207,13 +174,12 @@ export default function PITableComponent() {
       <div className="mb-5 flex flex-col justify-between gap-4 lg:flex-row">
         <Input
           type="text"
-          placeholder="Masukan Nama Perusahaan"
+          placeholder="Masukkan Nama Perusahaan"
           value={searchText}
-          onChange={handleSearchChange}
+          onChange={(e) => {
+            handleSearchChange(e, setSearchText);
+          }}
         />
-        <Button className="w-10 bg-blue-900 font-bold text-white">
-          Cari/Cek
-        </Button>
       </div>
 
       <div className="mb-5">
@@ -224,7 +190,7 @@ export default function PITableComponent() {
         <Table
           removeWrapper
           aria-label="Purchase Order Table"
-          className="overflow-x-scroll"
+          className="grid-cols-[repeat(auto-fit,_minmax(150px,_1fr))] overflow-x-scroll" // Add grid classes
           isHeaderSticky
           isStriped
           sortDescriptor={sortDescriptor}
@@ -233,14 +199,22 @@ export default function PITableComponent() {
           <TableHeader columns={columns}>
             {(column) => (
               <TableColumn
-                className="bg-blue-900 text-center text-white"
                 key={column.uid}
                 align="start"
+                allowsSorting={column.sortable}
+                tabIndex={0} // Makes the column header focusable
+                onKeyDown={(e: React.KeyboardEvent) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleSortChange(column.uid);
+                  }
+                }}
+                className={`bg-blue-900 text-center text-white ${column.sortable ? "cursor-pointer" : ""} ${column.uid === "number" ? "w-1" : "w-32"}`}
               >
                 {column.name}
               </TableColumn>
             )}
           </TableHeader>
+
           <TableBody
             emptyContent={"No Proforma Invoice found"}
             items={itemsWithIndex}
@@ -248,7 +222,7 @@ export default function PITableComponent() {
             {(item) => (
               <TableRow key={item.id}>
                 {(columnKey) => (
-                  <TableCell className="items-center text-center">
+                  <TableCell className="max-w-32 items-center text-center">
                     {renderCell(item, columnKey)}
                   </TableCell>
                 )}
@@ -263,7 +237,10 @@ export default function PITableComponent() {
           page={page}
           onChange={(newPage) => setPage(newPage)}
         />
-        <select value={rowsPerPage} onChange={onRowsPerPageChange}>
+        <select
+          value={rowsPerPage}
+          onChange={(e) => onRowsPerPageChange(e, setRowsPerPage, setPage)}
+        >
           {[5, 10, 25, 50].map((pageSize) => (
             <option key={pageSize} value={pageSize}>
               {pageSize} per page

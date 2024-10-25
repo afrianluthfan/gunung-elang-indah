@@ -19,19 +19,20 @@ import {
 } from "@nextui-org/react";
 import { EditIcon } from "./EditIcon";
 import { EyeIcon } from "./EyeIcon";
-import axios from "axios";
 import { useRouter } from "next/navigation";
-
-const columns = [
-  { name: "NO.", uid: "number" },
-  { name: "TANGGAL.", uid: "tanggal" },
-  { name: "NAMA SUPLIER", uid: "nama_suplier", sortable: true },
-  { name: "NOMOR PO", uid: "nomor_po", sortable: true },
-  { name: "SUB TOTAL", uid: "sub_total", sortable: true },
-  { name: "TOTAL", uid: "total", sortable: true },
-  { name: "STATUS", uid: "status", sortable: true },
-  { name: "ACTIONS", uid: "actions" },
-];
+import {
+  calculateTotalPages,
+  filterUsersByText,
+  handleSearchChange,
+  onRowsPerPageChange,
+} from "@/app/utils/tableUtils";
+import {
+  columns,
+  fetchPOData,
+  ItemData,
+  sortItems,
+  User,
+} from "@/app/utils/poUtils";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   DITERIMA: "success",
@@ -39,19 +40,7 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   DIPROSES: "primary",
 };
 
-type ItemData = {
-  id: number;
-  tanggal: string;
-  nama_suplier: string;
-  nomor_po: string;
-  sub_total: string;
-  total: string;
-  status: string;
-}[];
-
-type User = ItemData[0];
-
-export default function PITableComponent() {
+export default function TableComponent() {
   const [users, setUsers] = useState<ItemData>([]);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
@@ -59,11 +48,10 @@ export default function PITableComponent() {
     direction: "ascending",
   });
   const [page, setPage] = useState(1);
-  const [searchText, setSearchText] = useState<string>(""); // State for search text
+  const [searchText, setSearchText] = useState<string>("");
   const [username, setUsername] = useState<string | null>(null);
   const router = useRouter();
 
-  // Fetch username from localStorage
   useEffect(() => {
     const storedUsername = localStorage.getItem("statusAccount");
     if (storedUsername) {
@@ -71,54 +59,21 @@ export default function PITableComponent() {
     }
   }, []);
 
-  // Refresh page on navigation
   useEffect(() => {
     router.refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Function to fetch data from API
-  const fetchData = async () => {
-    try {
-      const response = await axios.post(
-        "http://209.182.237.155:8080/api/purchase-order/list"
-      );
-      if (response.data.status) {
-        setUsers(response.data.data);
-      } else {
-        console.error("Failed to fetch data:", response.data.message);
-      }
-    } catch (error) {
-      console.error("Error fetching data from API:", error);
-    }
-  };
-
-  // Fetch data on component mount and when navigating back
   useEffect(() => {
-    fetchData();
+    fetchPOData(setUsers);
   }, []);
 
   const filteredUsers = React.useMemo(() => {
-    return users.filter((user) =>
-      user.nama_suplier.toLowerCase().includes(searchText.toLowerCase())
-    );
+    return filterUsersByText(users, searchText, "nama_suplier");
   }, [users, searchText]);
 
   const sortedItems = React.useMemo(() => {
-    return [...filteredUsers].sort((a: User, b: User) => {
-      const first =
-        a[sortDescriptor.column as keyof User] !== undefined
-          ? String(a[sortDescriptor.column as keyof User])
-          : "";
-      const second =
-        b[sortDescriptor.column as keyof User] !== undefined
-          ? String(b[sortDescriptor.column as keyof User])
-          : "";
-
-      // Ensure both values are strings before comparing
-      const cmp = first.localeCompare(second);
-
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
+    return sortItems(filteredUsers, sortDescriptor);
   }, [sortDescriptor, filteredUsers]);
 
   const itemsWithIndex = React.useMemo(() => {
@@ -129,7 +84,7 @@ export default function PITableComponent() {
     }));
   }, [page, sortedItems, rowsPerPage]);
 
-  const pages = Math.ceil(filteredUsers.length / rowsPerPage);
+  const pages = calculateTotalPages(filteredUsers.length, rowsPerPage);
 
   const renderCell = React.useCallback(
     (user: User & { index: number }, columnKey: React.Key) => {
@@ -152,29 +107,29 @@ export default function PITableComponent() {
           );
         case "actions":
           return (
-            <div className="relative flex items-center gap-2">
-
-              <Tooltip content="Details" className="text-black text-center">
+            <div className="relative flex items-center justify-center gap-2">
+              <Tooltip content="Details" className="text-center text-black">
                 <span
                   onClick={() =>
                     router.push(
                       username === "admin"
                         ? `/purchase-order/edit?id=${user.id}`
-                        : `/purchase-order/edit?id=${user.id}`
+                        : `/purchase-order/edit?id=${user.id}`,
                     )
                   }
-                  className="cursor-pointer text-lg text-default-400 active:opacity-50">
+                  className="cursor-pointer text-lg text-default-400 active:opacity-50"
+                >
                   <EyeIcon className="items-center" />
                 </span>
               </Tooltip>
               {user.status !== "DITERIMA" && username === "ADMIN" && (
-                <Tooltip content="Edit" className="text-black text-center">
+                <Tooltip content="Edit" className="text-center text-black">
                   <span
                     onClick={() =>
                       router.push(
                         username === "ADMIN"
                           ? `/purchase-order/edit-admin?id=${user.id}`
-                          : ``
+                          : ``,
                       )
                     }
                     className="cursor-pointer text-lg text-default-400 active:opacity-50"
@@ -189,31 +144,21 @@ export default function PITableComponent() {
           return cellValue;
       }
     },
-    [username, router]
+    [username, router],
   );
-
-  const onRowsPerPageChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setRowsPerPage(Number(e.target.value));
-      setPage(1);
-    },
-    []
-  );
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
-  };
 
   return (
     <div>
-      <div className="flex justify-between gap-4 mb-5">
+      <div className="mb-5 flex justify-between gap-4">
         <Input
           type="text"
           placeholder="Masukan Nama Supplier"
           value={searchText}
-          onChange={handleSearchChange}
+          onChange={(e) => handleSearchChange(e, setSearchText)}
         />
-        <Button className="bg-blue-900 w-10 font-bold text-white">Cari/Cek</Button>
+        <Button className="w-10 bg-blue-900 font-bold text-white">
+          Cari/Cek
+        </Button>
       </div>
 
       <div className="mb-5">
@@ -229,7 +174,12 @@ export default function PITableComponent() {
         >
           <TableHeader columns={columns}>
             {(column) => (
-              <TableColumn className="bg-blue-900 text-white text-center" key={column.uid} align="start">
+              <TableColumn
+                className={`bg-blue-900 text-center text-white ${column.sortable ? "cursor-pointer" : ""} ${column.uid === "number" ? "w-1" : "w-32"}`}
+                key={column.uid}
+                align="start"
+                allowsSorting={column.sortable}
+              >
                 {column.name}
               </TableColumn>
             )}
@@ -241,7 +191,9 @@ export default function PITableComponent() {
             {(item) => (
               <TableRow key={item.id}>
                 {(columnKey) => (
-                  <TableCell className="text-center items-center">{renderCell(item, columnKey)}</TableCell>
+                  <TableCell className="items-center text-center">
+                    {renderCell(item, columnKey)}
+                  </TableCell>
                 )}
               </TableRow>
             )}
@@ -254,7 +206,10 @@ export default function PITableComponent() {
           page={page}
           onChange={(newPage) => setPage(newPage)}
         />
-        <select value={rowsPerPage} onChange={onRowsPerPageChange}>
+        <select
+          value={rowsPerPage}
+          onChange={(e) => onRowsPerPageChange(e, setRowsPerPage, setPage)}
+        >
           {[5, 10, 25, 50].map((pageSize) => (
             <option key={pageSize} value={pageSize}>
               {pageSize} per page
@@ -265,5 +220,3 @@ export default function PITableComponent() {
     </div>
   );
 }
-
-// comment

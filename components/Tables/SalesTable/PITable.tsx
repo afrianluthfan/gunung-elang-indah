@@ -214,11 +214,14 @@ export default function PITableComponent() {
           );
         case "actions":
           return (
-            <div className="relative flex items-center gap-2">
-              <Tooltip content="Details" className="text-black">
-                <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
+            <div className="relative flex items-center justify-center gap-2">
+              <Tooltip
+                content="Details"
+                className="flex justify-center text-black"
+              >
+                <div className="cursor-pointer text-lg text-default-400 active:opacity-50">
                   <EyeIcon />
-                </span>
+                </div>
               </Tooltip>
               {user.status !== "diterima" && (
                 <Tooltip content="Edit user" className="text-black">
@@ -255,7 +258,6 @@ export default function PITableComponent() {
     <div>
       <Table
         aria-label="Example table with custom cells"
-        
         onSelectionChange={setSelectedKeys}
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}

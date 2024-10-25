@@ -137,7 +137,7 @@ export default function TableComponent() {
           );
         case "actions":
           return (
-            <div className="relative flex items-center gap-2">
+            <div className="relative flex items-center justify-center gap-2">
               <Tooltip content="Details" className="text-black">
                 <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
                   <EyeIcon />
@@ -174,7 +174,6 @@ export default function TableComponent() {
     <div>
       <Table
         aria-label="Example table with custom cells"
-        
         onSelectionChange={setSelectedKeys}
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}

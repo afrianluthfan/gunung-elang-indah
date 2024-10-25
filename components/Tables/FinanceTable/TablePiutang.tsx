@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import axios from "axios";
 import {
   Table,
@@ -61,7 +67,7 @@ export default function TableComponent() {
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
 
-  let Total = ""
+  const totalRef = useRef<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,7 +76,7 @@ export default function TableComponent() {
           "http://209.182.237.155:8080/api/piutang/list",
           {},
         );
-        Total = response.data.total
+        totalRef.current = response.data.total;
         setUsers(response.data.data);
       } catch (error) {
         setError("Error fetching data");
@@ -93,18 +99,21 @@ export default function TableComponent() {
       confirmButtonText: "Ya, lunasi!",
       cancelButtonText: "Batal",
     });
-  
+
     // Jika user mengkonfirmasi, lanjutkan ke API request
     if (result.isConfirmed) {
       try {
-        const response = await axios.post("http://209.182.237.155:8080/api/piutang/lunas", {
-          id: id,
-        });
-  
+        const response = await axios.post(
+          "http://209.182.237.155:8080/api/piutang/lunas",
+          {
+            id: id,
+          },
+        );
+
         Swal.fire(
           "Berhasil!",
           `User dengan ID ${id} berhasil dilunasi.`,
-          "success"
+          "success",
         );
 
         try {
@@ -112,24 +121,19 @@ export default function TableComponent() {
             "http://209.182.237.155:8080/api/hutang/list",
             {},
           );
-          Total = response.data.total
+          totalRef.current = response.data.total;
           setUsers(response.data.data);
         } catch (error) {
           setError("Error fetching data");
           console.error("Error fetching data:", error);
         }
-
       } catch (error) {
         console.error("Error marking user as paid:", error);
-  
-        Swal.fire(
-          "Gagal!",
-          `Gagal melunasi user dengan ID ${id}.`,
-          "error"
-        );
+
+        Swal.fire("Gagal!", `Gagal melunasi user dengan ID ${id}.`, "error");
       }
     }
-  }
+  };
   const columns = [
     { name: "No", uid: "number" },
     { name: "Tanggal", uid: "tanggal" },
@@ -137,7 +141,7 @@ export default function TableComponent() {
     { name: "Nominal", uid: "nominal" },
     { name: "Pajak", uid: "pajak" },
     { name: "Amount", uid: "amount" },
-    { name: "Actions", uid: "actions" }
+    { name: "Actions", uid: "actions" },
   ];
 
   const headerColumns = useMemo(() => {
@@ -191,7 +195,7 @@ export default function TableComponent() {
       switch (columnKey) {
         case "actions":
           return (
-            <div className="relative flex items-center gap-2">
+            <div className="relative flex items-center justify-center gap-2">
               <Tooltip color="success" content="Mark as Paid">
                 <span
                   className="cursor-pointer text-lg text-success active:opacity-50"
@@ -206,7 +210,8 @@ export default function TableComponent() {
         default:
           return cellValue;
       }
-    },    [],
+    },
+    [],
   );
 
   const onRowsPerPageChange = useCallback(
@@ -223,10 +228,8 @@ export default function TableComponent() {
 
   return (
     <div>
-
       <Table
         aria-label="Example table with custom cells"
-        
         onSelectionChange={setSelectedKeys}
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
@@ -234,7 +237,11 @@ export default function TableComponent() {
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
-            <TableColumn className="bg-blue-900 text-white" key={column.uid} align="start">
+            <TableColumn
+              className="bg-blue-900 text-white"
+              key={column.uid}
+              align="start"
+            >
               {column.name}
             </TableColumn>
           )}

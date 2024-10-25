@@ -21,6 +21,7 @@ import { EditIcon } from "./EditIcon";
 import { EyeIcon } from "./EyeIcon";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { calculateTotalPages, filterUsersByText } from "@/app/utils/tableUtils";
 
 const columns = [
   { name: "NO.", uid: "number" },
@@ -94,9 +95,7 @@ export default function PITableComponent() {
   }, []);
 
   const filteredUsers = React.useMemo(() => {
-    return users.filter((user) =>
-      user.nama_company?.toLowerCase().includes(searchText.toLowerCase()),
-    );
+    return filterUsersByText(users, searchText, "nama_company");
   }, [users, searchText]);
 
   const sortedItems = React.useMemo(() => {
@@ -125,7 +124,7 @@ export default function PITableComponent() {
     }));
   }, [page, sortedItems, rowsPerPage]);
 
-  const pages = Math.ceil(filteredUsers.length / rowsPerPage);
+  const pages = calculateTotalPages(filteredUsers.length, rowsPerPage);
 
   const renderCell = React.useCallback(
     (user: User & { index: number }, columnKey: React.Key) => {
@@ -149,7 +148,7 @@ export default function PITableComponent() {
           );
         case "actions":
           return (
-            <div className="relative flex items-center gap-2">
+            <div className="relative flex items-center justify-center gap-2">
               <Tooltip content="Details" className="text-center text-black">
                 <span
                   onClick={() =>

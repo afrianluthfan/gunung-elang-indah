@@ -92,7 +92,7 @@ export default function TableComponent() {
     return columns.filter((column) =>
       Array.from(visibleColumns).includes(column.uid),
     );
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
@@ -137,7 +137,7 @@ export default function TableComponent() {
       switch (columnKey) {
         case "actions":
           return (
-            <div className="relative flex items-center gap-2">
+            <div className="relative flex items-center justify-center gap-2">
               {/* <Tooltip content="Details" className="text-black">
                 <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
                   <EyeIcon />
@@ -178,7 +178,6 @@ export default function TableComponent() {
     <div>
       <Table
         aria-label="Example table with custom cells"
-        
         onSelectionChange={setSelectedKeys}
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
@@ -186,7 +185,11 @@ export default function TableComponent() {
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
-            <TableColumn className="bg-blue-900 text-white" key={column.uid} align="start">
+            <TableColumn
+              className="bg-blue-900 text-white"
+              key={column.uid}
+              align="start"
+            >
               {column.name}
             </TableColumn>
           )}

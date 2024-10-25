@@ -50,7 +50,7 @@ const MainContent = () => {
   const [gudang, setGudang] = useState("");
   const [gudangList, setGudangList] = useState<RumahSakit[]>([]);
   const [visibleColumns] = useState<Set<string>>(
-    new Set(INITIAL_VISIBLE_COLUMNS)
+    new Set(INITIAL_VISIBLE_COLUMNS),
   );
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
@@ -63,7 +63,7 @@ const MainContent = () => {
   const fetchGudangList = useCallback(async () => {
     try {
       const response = await axios.post(
-        `http://209.182.237.155:8080/api/proforma-invoice/rs-listc`
+        `http://209.182.237.155:8080/api/proforma-invoice/rs-listc`,
       );
       setGudangList(response.data.data);
     } catch (error) {
@@ -78,7 +78,7 @@ const MainContent = () => {
       if (gudang && gudang !== "0") {
         response = await axios.post(
           `http://209.182.237.155:8080/api/price/ListByCustomer`,
-          { nama: gudang }
+          { nama: gudang },
         );
         setUsers([]); // Bersihkan data sebelum set data baru
         setUsers(response.data.data);
@@ -100,25 +100,28 @@ const MainContent = () => {
     }
   }, [gudang, fetchData]);
 
-  const columns = [
-    { name: "No", uid: "id" },
-    { name: "Variable", uid: "variable" },
-    { name: "Nama", uid: "nama" },
-    { name: "Katalog", uid: "kode" },
-    { name: "Diskon", uid: "diskon" },
-    { name: "Harga Satuan", uid: "price" },
-  ];
+  const columns = useMemo(
+    () => [
+      { name: "No", uid: "id" },
+      { name: "Variable", uid: "variable" },
+      { name: "Nama", uid: "nama" },
+      { name: "Katalog", uid: "kode" },
+      { name: "Diskon", uid: "diskon" },
+      { name: "Harga Satuan", uid: "price" },
+    ],
+    [],
+  );
 
   const headerColumns = useMemo(() => {
     return columns.filter((column) => visibleColumns.has(column.uid));
-  }, [visibleColumns]);
+  }, [columns, visibleColumns]);
 
   const filteredItems = useMemo(() => {
     let filteredUsers = Array.isArray(users) ? [...users] : [];
 
     if (filterValue) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.nama.toLowerCase().includes(filterValue.toLowerCase())
+        user.nama.toLowerCase().includes(filterValue.toLowerCase()),
       );
     }
 
@@ -141,19 +144,20 @@ const MainContent = () => {
       ...item,
       number: start + index + 1,
     }));
-
-    
   }, [page, sortedItems, rowsPerPage]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const handleInputChange2 = (index: number, key: keyof User, value: string, id: number) => {
-    const findUser = users.findIndex((user) => user.id === id);
+  const handleInputChange2 = useCallback(
+    (index: number, key: keyof User, value: string, id: number) => {
+      const findUser = users.findIndex((user) => user.id === id);
 
-    const updatedUsers = [...users];
-    updatedUsers[findUser] = { ...updatedUsers[findUser], [key]: value };
-    setUsers(updatedUsers);
-  };
+      const updatedUsers = [...users];
+      updatedUsers[findUser] = { ...updatedUsers[findUser], [key]: value };
+      setUsers(updatedUsers);
+    },
+    [users],
+  );
 
   const renderCell = useCallback(
     (user: User & { number: number }, columnKey: React.Key, index: number) => {
@@ -162,17 +166,20 @@ const MainContent = () => {
           <Input
             value={user[columnKey as keyof User]?.toString()}
             onChange={(e) =>
-              handleInputChange2(index, columnKey as keyof User, e.target.value, user.id)
+              handleInputChange2(
+                index,
+                columnKey as keyof User,
+                e.target.value,
+                user.id,
+              )
             }
           />
         );
       }
 
-      return columnKey === "id"
-        ? index + 1
-        : user[columnKey as keyof User];
+      return columnKey === "id" ? index + 1 : user[columnKey as keyof User];
     },
-    [users]
+    [handleInputChange2],
   );
 
   const handleSetHarga = async () => {
@@ -189,7 +196,7 @@ const MainContent = () => {
 
       const response = await axios.post(
         "http://209.182.237.155:8080/api/price/SetPrice",
-        { input }
+        { input },
       );
 
       if (response.status === 200) {
@@ -224,17 +231,15 @@ const MainContent = () => {
     return <div>{error}</div>;
   }
 
-
-
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <div className="flex w-full flex-col justify-between gap-4">
-        <h1 className="text-xl font-bold mb-4 lg:text-[2vh]">Cari Data</h1>
-        <div className="text-sm flex flex-col w-full justify-stretch gap-2 lg:flex-row lg:items-center">
+        <h1 className="mb-4 text-xl font-bold lg:text-[2vh]">Cari Data</h1>
+        <div className="flex w-full flex-col justify-stretch gap-2 text-sm lg:flex-row lg:items-center">
           <select
             name="Pilih Gudang"
             id="123"
-            className="rounded-lg border text-black text-small border-blue-900 bg-white p-2 w-full lg:w-auto"
+            className="w-full rounded-lg border border-blue-900 bg-white p-2 text-small text-black lg:w-auto"
             value={gudang}
             onChange={(e) => setGudang(e.target.value)}
           >
@@ -252,11 +257,11 @@ const MainContent = () => {
             onChange={(e) => setFilterValue(e.target.value)}
             value={filterValue}
           />
-          <Button className="bg-[#00186D] font-bold text-white rounded-md w-full lg:w-auto">
+          <Button className="w-full rounded-md bg-[#00186D] font-bold text-white lg:w-auto">
             Cari/Cek
           </Button>
           <Button
-            className="bg-green-700 font-bold text-white rounded-md w-full lg:w-auto"
+            className="w-full rounded-md bg-green-700 font-bold text-white lg:w-auto"
             onClick={handleSetHarga}
           >
             Set Harga
@@ -264,14 +269,13 @@ const MainContent = () => {
         </div>
       </div>
 
-
       <Divider />
 
       <div className="h-full">
-        <div className="h-[100vh] lg:h-[40vh] w-full overflow-auto">
+        <div className="h-[100vh] w-full overflow-auto lg:h-[40vh]">
           <Table
             aria-label="Example table with dynamic content"
-            className="w-full h-full"
+            className="h-full w-full"
             removeWrapper
             isHeaderSticky
             isStriped
@@ -280,20 +284,30 @@ const MainContent = () => {
           >
             <TableHeader columns={headerColumns}>
               {(column) => (
-                <TableColumn key={column.uid} allowsSorting className="bg-blue-900 text-white">
+                <TableColumn
+                  key={column.uid}
+                  allowsSorting
+                  className="bg-blue-900 text-white"
+                >
                   {column.name}
                 </TableColumn>
               )}
             </TableHeader>
             <TableBody
               items={itemsWithIndex}
-              emptyContent={<div>Data Tidak Ditemukan / Anda Blm Melimih Customer</div>}
+              emptyContent={
+                <div>Data Tidak Ditemukan / Anda Blm Melimih Customer</div>
+              }
             >
               {(item) => (
                 <TableRow key={item.id}>
                   {(columnKey) => (
                     <TableCell className="bg-white">
-                      {renderCell(item, columnKey, itemsWithIndex.indexOf(item))}
+                      {renderCell(
+                        item,
+                        columnKey,
+                        itemsWithIndex.indexOf(item),
+                      )}
                     </TableCell>
                   )}
                 </TableRow>

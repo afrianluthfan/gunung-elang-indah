@@ -21,6 +21,7 @@ import { EditIcon } from "./EditIcon";
 import { EyeIcon } from "./EyeIcon";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { calculateTotalPages, filterUsersByText } from "@/app/utils/tableUtils";
 
 const columns = [
   { name: "NO.", uid: "number" },
@@ -73,13 +74,14 @@ export default function PITableComponent() {
   // Refresh page on navigation
   useEffect(() => {
     router.refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Function to fetch data from API
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/purchase-order/list-so"
+        "http://209.182.237.155:8080/api/purchase-order/list-so",
       );
       if (response.data.status) {
         setUsers(response.data.data);
@@ -97,9 +99,7 @@ export default function PITableComponent() {
   }, []);
 
   const filteredUsers = React.useMemo(() => {
-    return users.filter((user) =>
-      user.nama_suplier.toLowerCase().includes(searchText.toLowerCase())
-    );
+    return filterUsersByText(users, searchText, "nama_suplier");
   }, [users, searchText]);
 
   const sortedItems = React.useMemo(() => {
@@ -128,7 +128,7 @@ export default function PITableComponent() {
     }));
   }, [page, sortedItems, rowsPerPage]);
 
-  const pages = Math.ceil(filteredUsers.length / rowsPerPage);
+  const pages = calculateTotalPages(filteredUsers.length, rowsPerPage);
 
   const renderCell = React.useCallback(
     (user: User & { index: number }, columnKey: React.Key) => {
@@ -151,29 +151,29 @@ export default function PITableComponent() {
           );
         case "actions":
           return (
-            <div className="relative flex items-center gap-2">
-
-              <Tooltip content="Details" className="text-black text-center">
+            <div className="relative flex items-center justify-center gap-2">
+              <Tooltip content="Details" className="text-center text-black">
                 <span
                   onClick={() =>
                     router.push(
                       username === "admin"
                         ? `/dokumen-logistik/detail-so-po?id=${user.id}`
-                        : `/dokumen-logistik/detail-so-po?id=${user.id}`
+                        : `/dokumen-logistik/detail-so-po?id=${user.id}`,
                     )
                   }
-                  className="cursor-pointer text-lg text-default-400 active:opacity-50">
+                  className="cursor-pointer text-lg text-default-400 active:opacity-50"
+                >
                   <EyeIcon className="items-center" />
                 </span>
               </Tooltip>
               {user.status !== "DITERIMA" && username === "ADMIN" && (
-                <Tooltip content="Edit" className="text-black text-center">
+                <Tooltip content="Edit" className="text-center text-black">
                   <span
                     onClick={() =>
                       router.push(
                         username === "ADMIN"
                           ? `/purchase-order/edit-admin?id=${user.id}`
-                          : ``
+                          : ``,
                       )
                     }
                     className="cursor-pointer text-lg text-default-400 active:opacity-50"
@@ -188,7 +188,7 @@ export default function PITableComponent() {
           return cellValue;
       }
     },
-    [username, router]
+    [username, router],
   );
 
   const onRowsPerPageChange = React.useCallback(
@@ -196,7 +196,7 @@ export default function PITableComponent() {
       setRowsPerPage(Number(e.target.value));
       setPage(1);
     },
-    []
+    [],
   );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -205,14 +205,16 @@ export default function PITableComponent() {
 
   return (
     <div>
-      <div className="flex justify-between gap-4 mb-5">
+      <div className="mb-5 flex justify-between gap-4">
         <Input
           type="text"
           placeholder="Masukan Nama Supplier"
           value={searchText}
           onChange={handleSearchChange}
         />
-        <Button className="bg-blue-900 w-10 font-bold text-white">Cari/Cek</Button>
+        <Button className="w-10 bg-blue-900 font-bold text-white">
+          Cari/Cek
+        </Button>
       </div>
 
       <div className="mb-5">
@@ -228,7 +230,11 @@ export default function PITableComponent() {
         >
           <TableHeader columns={columns}>
             {(column) => (
-              <TableColumn className="bg-blue-900 text-white text-center" key={column.uid} align="start">
+              <TableColumn
+                className="bg-blue-900 text-center text-white"
+                key={column.uid}
+                align="start"
+              >
                 {column.name}
               </TableColumn>
             )}
@@ -240,7 +246,9 @@ export default function PITableComponent() {
             {(item) => (
               <TableRow key={item.id}>
                 {(columnKey) => (
-                  <TableCell className="text-center items-center">{renderCell(item, columnKey)}</TableCell>
+                  <TableCell className="items-center text-center">
+                    {renderCell(item, columnKey)}
+                  </TableCell>
                 )}
               </TableRow>
             )}
