@@ -117,12 +117,12 @@ const MainContent = () => {
 
       <Table removeWrapper aria-label="Example static collection table ">
         <TableHeader >
-          <TableColumn className="bg-blue-900 text-white">NO</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">KAT.</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">NAMA BARANG</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">QTY</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">H. SATUAN</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">SUB TOTAL</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">NO</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">KAT.</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">NAMA BARANG</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">QTY</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">H. SATUAN</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">SUB TOTAL</TableColumn>
         </TableHeader>
         <TableBody>
           {/* Map over dataItem to render each row */}

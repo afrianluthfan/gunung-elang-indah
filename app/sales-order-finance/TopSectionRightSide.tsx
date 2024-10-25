@@ -20,7 +20,7 @@ const TopSectionRightSide = () => {
 
       <Button
         onClick={() => window.location.reload()}
-        className="bg-blue-900 font-semibold text-white"
+        className="bg-[#0C295F] font-semibold text-white"
       >
         Segarkan
       </Button>

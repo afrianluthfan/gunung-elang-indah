@@ -312,16 +312,16 @@ const MainContent: FC<MainContentProps> = ({ divisi }) => {
       </div>
       <Table removeWrapper aria-label="Purchase Order Details">
         <TableHeader>
-          <TableColumn className="bg-blue-900 text-white">NO</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">
+          <TableColumn className="bg-[#0C295F] text-white">NO</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">
             NAMA BARANG
           </TableColumn>
-          <TableColumn className="bg-blue-900 text-white">QUANTITY</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">
+          <TableColumn className="bg-[#0C295F] text-white">QUANTITY</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">
             HARGA SATUAN
           </TableColumn>
-          <TableColumn className="bg-blue-900 text-white">DISCOUNT</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">AKSI</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">DISCOUNT</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">AKSI</TableColumn>
         </TableHeader>
         <TableBody>
           {responseData.item_detail_pi.map((item, index) => (

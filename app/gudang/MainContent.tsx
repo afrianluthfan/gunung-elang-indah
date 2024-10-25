@@ -179,7 +179,7 @@ const MainContent = () => {
             placeholder="Masukan ID Purchase Order"
             className="w-full "
           />
-          <Button className="bg-[#00186D] font-bold text-white rounded-md w-full lg:w-auto">
+          <Button className="bg-[#0C295F] font-bold text-white rounded-md w-full lg:w-auto">
             Cari/Cek
           </Button>
           <Button
@@ -206,7 +206,7 @@ const MainContent = () => {
           >
             <TableHeader columns={headerColumns}>
               {(column) => (
-                <TableColumn key={column.uid} allowsSorting className="bg-blue-900 text-white">
+                <TableColumn key={column.uid} allowsSorting className="bg-[#0C295F] text-white">
                   {column.name}
                 </TableColumn>
               )}

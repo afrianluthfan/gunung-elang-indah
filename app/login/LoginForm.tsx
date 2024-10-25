@@ -147,7 +147,7 @@ const LoginForm = () => {
           onKeyDown={handleKeyDown}
         />
         <Button
-          className="bg-[#00186D] font-bold text-white"
+          className="bg-[#0C295F] font-bold text-white"
           onClick={handleLogin}
         >
           Login

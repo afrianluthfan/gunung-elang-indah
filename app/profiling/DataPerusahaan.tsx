@@ -125,7 +125,7 @@ const DataPerusahaan: FC<DataPerusahaanProps> = ({ data }) => {
 
           <table className="my-6 w-full border-separate border-spacing-0 overflow-y-scroll rounded-lg text-left shadow-sm lg:overflow-hidden">
             <thead className="rounded-xl lg:rounded-none">
-              <tr className="bg-blue-900 text-white">
+              <tr className="bg-[#0C295F] text-white">
                 <th className="border-b border-blue-900 px-4 py-3 text-sm lg:text-xl">
                   NO
                 </th>

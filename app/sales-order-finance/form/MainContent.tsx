@@ -361,18 +361,18 @@ const AdminMainContent = () => {
       <hr className="border-t-2 border-gray-200" />
       <div className="flex justify-between gap-3">
         <h1 className="text-lg text-black font-semibold mt-2">Data Barang</h1>
-        <Button onClick={handleAddItem} className="bg-blue-900 text-white">Tambah Barang</Button>
+        <Button onClick={handleAddItem} className="bg-[#0C295F] text-white">Tambah Barang</Button>
       </div>
       <Table removeWrapper>
         <TableHeader>
-          <TableColumn className="bg-blue-900 text-white text-center">No</TableColumn>
-          <TableColumn className="bg-blue-900 text-white text-center w-[300px]">Nama Barang</TableColumn>
-          <TableColumn className="bg-blue-900 text-white text-center">Variable</TableColumn>
-          <TableColumn className="bg-blue-900 text-white text-center">Kode</TableColumn>
-          <TableColumn className="bg-blue-900 text-white text-center">Quantity</TableColumn>
-          <TableColumn className="bg-blue-900 text-white text-center">Harga Satuan</TableColumn>
-          <TableColumn className="bg-blue-900 text-white text-center">Gudang Tujuan</TableColumn>
-          <TableColumn className="bg-blue-900 text-white text-center">Aksi</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white text-center">No</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white text-center w-[300px]">Nama Barang</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white text-center">Variable</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white text-center">Kode</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white text-center">Quantity</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white text-center">Harga Satuan</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white text-center">Gudang Tujuan</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white text-center">Aksi</TableColumn>
         </TableHeader>
         <TableBody>
           {responseData.item.map((item, index) => (

@@ -428,31 +428,31 @@ const ProformaInvoiceDetail = () => {
       <div className="flex items-center justify-between overflow-x-scroll">
         <Table removeWrapper>
           <TableHeader>
-            <TableColumn className="bg-blue-900 text-center text-white">
+            <TableColumn className="bg-[#0C295F] text-center text-white">
               NO
             </TableColumn>
-            <TableColumn className="bg-blue-900 text-center text-white">
+            <TableColumn className="bg-[#0C295F] text-center text-white">
               KODE BARANG
             </TableColumn>
-            <TableColumn className="bg-blue-900 text-center text-white">
+            <TableColumn className="bg-[#0C295F] text-center text-white">
               NAMA BARANG
             </TableColumn>
-            <TableColumn className="bg-blue-900 text-center text-white">
+            <TableColumn className="bg-[#0C295F] text-center text-white">
               VARIABLE
             </TableColumn>
-            <TableColumn className="bg-blue-900 text-center text-white">
+            <TableColumn className="bg-[#0C295F] text-center text-white">
               QTY
             </TableColumn>
-            <TableColumn className="bg-blue-900 text-center text-white">
+            <TableColumn className="bg-[#0C295F] text-center text-white">
               HARGA SATUAN
             </TableColumn>
-            <TableColumn className="bg-blue-900 text-center text-white">
+            <TableColumn className="bg-[#0C295F] text-center text-white">
               DISC
             </TableColumn>
-            <TableColumn className="bg-blue-900 text-center text-white">
+            <TableColumn className="bg-[#0C295F] text-center text-white">
               GUDANG ASAL
             </TableColumn>
-            <TableColumn className="bg-blue-900 text-center text-white">
+            <TableColumn className="bg-[#0C295F] text-center text-white">
               SUB TOTAL
             </TableColumn>
           </TableHeader>

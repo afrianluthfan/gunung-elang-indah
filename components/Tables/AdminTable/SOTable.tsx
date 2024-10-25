@@ -198,7 +198,7 @@ export default function SOTableComponent({ selectedDocument }: { selectedDocumen
       >
         <TableHeader columns={columns}>
           {(column) => (
-            <TableColumn className="bg-blue-900 text-white" key={column.uid} align="start">
+            <TableColumn className="bg-[#0C295F] text-white" key={column.uid} align="start">
               {column.name}
             </TableColumn>
           )}

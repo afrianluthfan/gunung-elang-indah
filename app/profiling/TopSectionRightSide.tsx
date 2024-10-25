@@ -18,7 +18,7 @@ const TopSectionRightSide: FC<TopSectionRightSideProps> = ({ search }) => {
       >
         Tambah
       </Button>
-      <Button className="bg-[#00186D] font-bold text-white" onClick={search}>
+      <Button className="bg-[#0C295F] font-bold text-white" onClick={search}>
         Cari/Cek
       </Button>
     </div>
