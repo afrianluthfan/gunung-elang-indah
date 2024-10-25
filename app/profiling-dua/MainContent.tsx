@@ -11,17 +11,14 @@ import {
   Pagination,
   SortDescriptor,
 } from "@nextui-org/react";
-import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
 type User = {
   id: number;
-  kode: string;
-  namaGudang: string;
-  nama: string;
-  price: string;
-  variable: string;
-  diskon: number;
-  added: string;
+  nama_perusahaan: string;
+  notelp_perusahaan: string;
+  nama_dokter: string;
+  notelp_dokter: string;
 };
 
 type RumahSakit = {
@@ -32,20 +29,17 @@ type RumahSakit = {
 
 const INITIAL_VISIBLE_COLUMNS = [
   "id",
-  "variable",
-  "nama",
-  "diskon",
-  "price",
-  "kode",
-  "namaGudang",
-  "added",
+  "nama_perusahaan",
+  "notelp_perusahaan",
+  "nama_dokter",
+  "notelp_dokter",
+  "action",
 ];
 
 const MainContent = () => {
   const [users, setUsers] = useState<User[]>([]);
 
   const [search, setSerch] = useState<string>("");
-
   const [filterValue, setFilterValue] = useState("");
   const [gudang, setGudang] = useState("");
   const [gudangList, setGudangList] = useState<RumahSakit[]>([]);
@@ -63,7 +57,7 @@ const MainContent = () => {
   const fetchGudangList = useCallback(async () => {
     try {
       const response = await axios.post(
-        `http://209.182.237.155:8080/api/proforma-invoice/rs-listc`
+        `http://209.182.237.155:8080/api/proforma-invoice/rs-list`
       );
       setGudangList(response.data.data);
     } catch (error) {
@@ -77,7 +71,7 @@ const MainContent = () => {
       let response;
       if (gudang && gudang !== "0") {
         response = await axios.post(
-          `http://209.182.237.155:8080/api/price/ListByCustomer`,
+          `http://209.182.237.155:8080/api/profile/ListByCustomer`,
           { nama: gudang }
         );
         setUsers([]); // Bersihkan data sebelum set data baru
@@ -102,11 +96,11 @@ const MainContent = () => {
 
   const columns = [
     { name: "No", uid: "id" },
-    { name: "Variable", uid: "variable" },
-    { name: "Nama", uid: "nama" },
-    { name: "Katalog", uid: "kode" },
-    { name: "Diskon", uid: "diskon" },
-    { name: "Harga Satuan", uid: "price" },
+    { name: "Nama Perusahaan", uid: "nama_perusahaan" },
+    { name: "Nomor Telpon Perusahaan", uid: "notelp_perusahaan" },
+    { name: "Nama ", uid: "nama_dokter" },
+    { name: "Nomor ", uid: "notelp_dokter" },
+    { name: "Aksi", uid: "action" },
   ];
 
   const headerColumns = useMemo(() => {
@@ -118,7 +112,7 @@ const MainContent = () => {
 
     if (filterValue) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.nama.toLowerCase().includes(filterValue.toLowerCase())
+        user.nama_perusahaan.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
 
@@ -141,8 +135,6 @@ const MainContent = () => {
       ...item,
       number: start + index + 1,
     }));
-
-    
   }, [page, sortedItems, rowsPerPage]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
@@ -154,6 +146,8 @@ const MainContent = () => {
     updatedUsers[findUser] = { ...updatedUsers[findUser], [key]: value };
     setUsers(updatedUsers);
   };
+
+  const router = useRouter();
 
   const renderCell = useCallback(
     (user: User & { number: number }, columnKey: React.Key, index: number) => {
@@ -168,63 +162,28 @@ const MainContent = () => {
         );
       }
 
-      return columnKey === "id"
-        ? index + 1
-        : user[columnKey as keyof User];
-    },
-    [users]
-  );
-
-  const handleSetHarga = async () => {
-    try {
-      const input = users.map((user) => ({
-        nama_Rumah_Sakit: gudang,
-        kode: user.kode,
-        variable: user.variable,
-        nama: user.nama,
-        diskon: Number(user.diskon),
-        price: user.price,
-        added: user.added,
-      }));
-
-      const response = await axios.post(
-        "http://209.182.237.155:8080/api/price/SetPrice",
-        { input }
-      );
-
-      if (response.status === 200) {
-        Swal.fire({
-          title: "Sukses!",
-          text: "Data berhasil dikirim!",
-          icon: "success",
-          confirmButtonText: "OK",
-        });
-
-        fetchData();
-      } else {
-        Swal.fire({
-          title: "Gagal!",
-          text: "Gagal mengirim data.",
-          icon: "error",
-          confirmButtonText: "Coba Lagi",
-        });
+      if (columnKey === "action") {
+        return (
+          <div className="flex gap-2">
+            <Button
+              className="bg-blue-600 text-white"
+              size="sm"
+              onClick={() => router.push(`/profiling-dua/form-edit?id=${user.id}`)}
+            >
+              Edit
+            </Button>
+          </div>
+        );
       }
-    } catch (error) {
-      console.error("Error sending data:", error);
-      Swal.fire({
-        title: "Error!",
-        text: "Terjadi kesalahan saat mengirim data.",
-        icon: "error",
-        confirmButtonText: "OK",
-      });
-    }
-  };
+
+      return columnKey === "id" ? index + 1 : user[columnKey as keyof User];
+    },
+    [users, router] // tambahkan router di dalam dependency array
+  );
 
   if (error) {
     return <div>{error}</div>;
   }
-
-
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
@@ -247,7 +206,7 @@ const MainContent = () => {
           </select>
           <Input
             type="text"
-            placeholder="Cari Nama Barang !"
+            placeholder="Cari Nama Dokter !"
             className="w-full"
             onChange={(e) => setFilterValue(e.target.value)}
             value={filterValue}
@@ -257,13 +216,12 @@ const MainContent = () => {
           </Button>
           <Button
             className="bg-green-700 font-bold text-white rounded-md w-full lg:w-auto"
-            onClick={handleSetHarga}
+            onClick={() => router.push("/profiling-dua/form")}
           >
-            Set Harga
+            Tambah
           </Button>
         </div>
       </div>
-
 
       <Divider />
 
@@ -301,13 +259,12 @@ const MainContent = () => {
             </TableBody>
           </Table>
         </div>
-
-        <div className="flex justify-end p-4">
+        <div className="w-full mt-5 lg:w-auto">
           <Pagination
-            showControls
+            color="primary"
             page={page}
             total={pages}
-            onChange={(page) => setPage(page)}
+            onChange={(newPage) => setPage(newPage)}
           />
         </div>
       </div>

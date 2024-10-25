@@ -210,7 +210,7 @@ export default function PITableComponent() {
           value={searchText}
           onChange={handleSearchChange}
         />
-        <Button className="w-10 bg-blue-900 font-bold text-white">
+        <Button className="w-10 bg-[#0C295F] font-bold text-white">
           Cari/Cek
         </Button>
       </div>
@@ -232,7 +232,7 @@ export default function PITableComponent() {
           <TableHeader columns={columns}>
             {(column) => (
               <TableColumn
-                className="bg-blue-900 text-center text-white"
+                className="bg-[#0C295F] text-center text-white"
                 key={column.uid}
                 align="start"
               >

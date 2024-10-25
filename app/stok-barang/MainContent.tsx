@@ -185,7 +185,7 @@ const MainContent = () => {
             }
           </select>
             <Input type="text" placeholder="Masukan ID Purchase Order" />
-            <Button className="bg-[#00186D] font-bold text-white">Cari/Cek</Button>
+            <Button className="bg-[#0C295F] font-bold text-white">Cari/Cek</Button>
           </div>
         </div>
 
@@ -216,7 +216,7 @@ const MainContent = () => {
             }
           </select>
           <Input type="text" placeholder="Masukan ID Purchase Order" />
-          <Button className="bg-[#00186D] font-bold text-white">Cari/Cek</Button>
+          <Button className="bg-[#0C295F] font-bold text-white">Cari/Cek</Button>
         </div>
       </div>
 
@@ -236,7 +236,7 @@ const MainContent = () => {
                   key={column.uid}
                   align="start"
                   allowsSorting
-                  className="bg-blue-900 text-white"
+                  className="bg-[#0C295F] text-white"
                 >
                   {column.name}
                 </TableColumn>

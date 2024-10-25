@@ -426,7 +426,7 @@ const AdminMainContent = () => {
       <div className="flex justify-between items-center">
         <h3 className="mb-2 text-left text-lg font-semibold">Barang:</h3>
         <div className="mb-2 flex justify-center">
-          <Button className="bg-blue-900 text-white" onClick={handleAddItem}>
+          <Button className="bg-[#0C295F] text-white" onClick={handleAddItem}>
             Tambah Barang
           </Button>
         </div>
@@ -434,14 +434,14 @@ const AdminMainContent = () => {
 
       <Table removeWrapper className="mb-4">
         <TableHeader>
-          <TableColumn className="bg-blue-900 text-white text-center">No</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">Nama Barang</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">Kode</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">Variable</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">Quantity</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">Harga Satuan</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">Gudang Tujuan</TableColumn>
-          <TableColumn className="bg-blue-900 text-white">Action</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white text-center">No</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">Nama Barang</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">Kode</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">Variable</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">Quantity</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">Harga Satuan</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">Gudang Tujuan</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">Action</TableColumn>
         </TableHeader>
         <TableBody>
           {responseData.item.map((item, index) => (

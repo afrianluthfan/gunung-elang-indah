@@ -74,6 +74,10 @@ const Sidebar = () => {
         pageRoute: "profiling",
       },
       {
+        pageName: "Profiling Dua",
+        pageRoute: "profiling-dua",
+      },
+      {
         pageName: "Proforma Invoice",
         pageRoute: "proforma-invoice-dua",
       },
@@ -203,7 +207,7 @@ const Sidebar = () => {
   }, [activeUser]);
 
   return (
-    <div className="fixed flex h-screen w-full flex-col items-center justify-between bg-[#011869] p-1 md:w-[17.3vw] md:p-5">
+    <div className="fixed flex h-screen w-full flex-col items-center justify-between bg-[#0C295F] p-1 md:w-[17.3vw] md:p-5">
       <SidebarTopItem />
       <SidebarMenuItemsLayout>
         {menuItemsList.map((menuItem, index) => (

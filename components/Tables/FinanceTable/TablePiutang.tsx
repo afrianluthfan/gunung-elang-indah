@@ -234,7 +234,7 @@ export default function TableComponent() {
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
-            <TableColumn className="bg-blue-900 text-white" key={column.uid} align="start">
+            <TableColumn className="bg-[#0C295F] text-white" key={column.uid} align="start">
               {column.name}
             </TableColumn>
           )}

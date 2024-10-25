@@ -356,7 +356,7 @@ const AdminMainContent = () => {
             <div className="relative">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="rounded-lg border border-blue-900 bg-blue-900 p-2 text-white"
+                className="rounded-lg border border-blue-900 bg-[#0C295F] p-2 text-white"
               >
                 {selectedDivisi ? selectedDivisi : "Pilih Divisi"}
               </button>
@@ -601,7 +601,7 @@ const AdminMainContent = () => {
       <Divider />
 
       <div className="flex justify-end">
-        <Button className="bg-blue-900 text-white" onClick={handleAddItem}>
+        <Button className="bg-[#0C295F] text-white" onClick={handleAddItem}>
           Tambah Barang
         </Button>
       </div>
@@ -614,19 +614,19 @@ const AdminMainContent = () => {
           removeWrapper
         >
           <TableHeader>
-            <TableColumn className="bg-blue-900 text-white">
+            <TableColumn className="bg-[#0C295F] text-white">
               Gudang Asal
             </TableColumn>
-            <TableColumn className="bg-blue-900 text-white">
+            <TableColumn className="bg-[#0C295F] text-white">
               Nama Barang
             </TableColumn>
 
-            <TableColumn className="bg-blue-900 text-white">
+            <TableColumn className="bg-[#0C295F] text-white">
               Quantity
             </TableColumn>
 
 
-            <TableColumn className="bg-blue-900 text-white">
+            <TableColumn className="bg-[#0C295F] text-white">
               Action
             </TableColumn>
           </TableHeader>

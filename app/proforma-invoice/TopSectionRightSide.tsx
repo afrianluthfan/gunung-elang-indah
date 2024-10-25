@@ -29,7 +29,7 @@ const TopSectionRightSide = () => {
   return (
     <div className="flex w-[8vw] flex-col justify-end gap-1">
       {ButtonContent}
-      <Button className="bg-[#00186D] font-bold text-white">Cari/Cek</Button>
+      <Button className="bg-[#0C295F] font-bold text-white">Cari/Cek</Button>
     </div>
   );
 };

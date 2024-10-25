@@ -265,14 +265,14 @@ const MainContent = () => {
       <div className="flex justify-between items-center">
         <Table removeWrapper>
           <TableHeader>
-            <TableColumn className="bg-blue-900 text-white text-center">NO</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">KODE</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">NAMA BARANG</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">VARIABLE</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">QUANTITY</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">HARGA SATUAN</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">GUDANG</TableColumn>
-            <TableColumn className="bg-blue-900 text-white text-center">AMOUNT</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">NO</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">KODE</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">NAMA BARANG</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">VARIABLE</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">QUANTITY</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">HARGA SATUAN</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">GUDANG</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">AMOUNT</TableColumn>
           </TableHeader>
           <TableBody>
             {item?.map((item: { name: string; kode: string; quantity: number; price: string; gudang: string; amount: string; variable: string }, index: number) => (
