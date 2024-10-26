@@ -14,6 +14,8 @@ interface FormData {
   price: string;
 }
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 const MainContent: FC = () => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>();
   const router = useRouter();
@@ -25,7 +27,7 @@ const MainContent: FC = () => {
     }
 
     try {
-      const response = await axios.post(`${apiUrl}/stock-barang/add", data);
+      const response = await axios.post(`${apiUrl}/stock-barang/add`, data);
       console.log("Barang berhasil ditambahkan:", response.data);
       alert("Barang berhasil ditambahkan!");
       router.push("/stok-barang");

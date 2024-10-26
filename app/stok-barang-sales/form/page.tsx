@@ -15,12 +15,17 @@ import axios from "axios";
 import { setSalesPOInquiry } from "@/redux/features/salesPOInquiry-slice";
 import { setSalesPIInquiry } from "@/redux/features/salesPIInquiry-slice";
 
+
+
 const Form: FC = () => {
   const data = useAppSelector((state) => state.itemPO.value);
   const dataItem = useAppSelector((state) => state.listItemPO.value);
   const amount: number = useAppSelector(
     (state) => state.salesPIItemNumber.value.amount,
+    
   );
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const [content, setContent] = useState<JSX.Element[]>([]);
   const [divisiList, setDivisiList] = useState<{ id: number; name: string }[]>(
@@ -58,7 +63,7 @@ const Form: FC = () => {
     const fetchDivisiList = async () => {
       try {
         const responseDivisi = await axios.post(
-          `${apiUrl}/proforma-invoice/divisi-list",
+          `${apiUrl}/proforma-invoice/divisi-list`,
           "",
         );
         setDivisiList(responseDivisi.data.data);
@@ -96,7 +101,7 @@ const Form: FC = () => {
 
     try {
       const response = await axios.post(
-        `${apiUrl}/purchase-order/inquiry",
+        `${apiUrl}/purchase-order/inquiry`,
         requestBody,
       );
       // if (response.status === 200) {

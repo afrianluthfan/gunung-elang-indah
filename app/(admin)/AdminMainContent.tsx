@@ -1,6 +1,6 @@
 import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
-import TopSectionLeftSide from "../proforma-invoice/TopSectionLeftSide";
-import TopSectionRightSide from "../proforma-invoice/TopSectionRightSide";
+import TopSectionLeftSide from "../proforma-invoice-dua/TopSectionLeftSide";
+import TopSectionRightSide from "../proforma-invoice-dua/TopSectionRightSide";
 import { Divider } from "@nextui-org/react";
 import TableComponent from "@/components/Tables/AdminTable/Table";
 
