@@ -63,7 +63,7 @@ const MainContent = () => {
   const fetchGudangList = useCallback(async () => {
     try {
       const response = await axios.post(
-        `http://209.182.237.155:8080/api/proforma-invoice/rs-listc`
+        `${apiUrl}/proforma-invoice/rs-listc`
       );
       setGudangList(response.data.data);
     } catch (error) {
@@ -77,7 +77,7 @@ const MainContent = () => {
       let response;
       if (gudang && gudang !== "0") {
         response = await axios.post(
-          `http://209.182.237.155:8080/api/price/ListByCustomer`,
+          `${apiUrl}/price/ListByCustomer`,
           { nama: gudang }
         );
         setUsers([]); // Bersihkan data sebelum set data baru
@@ -154,6 +154,7 @@ const MainContent = () => {
     updatedUsers[findUser] = { ...updatedUsers[findUser], [key]: value };
     setUsers(updatedUsers);
   };
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const renderCell = useCallback(
     (user: User & { number: number }, columnKey: React.Key, index: number) => {
@@ -188,7 +189,7 @@ const MainContent = () => {
       }));
 
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/price/SetPrice",
+        `${apiUrl}/price/SetPrice`,
         { input }
       );
 

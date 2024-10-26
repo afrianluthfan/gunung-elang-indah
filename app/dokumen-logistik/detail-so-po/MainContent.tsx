@@ -77,6 +77,7 @@ const AdminMainContent = () => {
   const [username, setUsername] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("statusAccount");
@@ -94,7 +95,7 @@ const AdminMainContent = () => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/purchase-order/detail-so",
+          `${apiUrl}/purchase-order/detail-so`,
           { id: id }
         );
         setResponseData(response.data.data);
@@ -111,7 +112,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           await axios.post(
-            "http://209.182.237.155:8080/api/purchase-order/edit/finance",
+            `${apiUrl}/purchase-order/edit/finance`,
             responseData
           );
           Swal.fire({

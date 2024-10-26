@@ -28,11 +28,13 @@ const MainContent = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
   useEffect(() => {
     const fetchData = async () => {
       if (id) {
         try {
-          const response = await axios.post(`http://209.182.237.155:8080/api/profile/DetailProfile`, {
+          const response = await axios.post(`${apiUrl}/profile/DetailProfile`, {
             id: id
           });
 
@@ -111,7 +113,7 @@ const MainContent = () => {
     const fetchHospitalData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
+          `${apiUrl}/proforma-invoice/rs-list`,
         );
         setHospitalData(res.data.data);
 
@@ -124,7 +126,7 @@ const MainContent = () => {
     const fetchDokterData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/dr-listn",
+          `${apiUrl}/proforma-invoice/dr-listn`,
         );
         setDoctorData(res.data.data);
         console.log("Data dokter fetched", res.data.data);
@@ -139,7 +141,7 @@ const MainContent = () => {
 
 
   const backButton = () => {
-    router.push("/profiling");
+    router.push("/profiling-dua");
   };
 
   // State untuk menyimpan value dropdown divisi
@@ -158,30 +160,38 @@ const MainContent = () => {
     } else if (kategoriDivisi === "customer_non_rumah_sakit") {
       divisi = "2";
     }
+
     let rumah_sakit = localStorage.getItem('selectedHospital')
     let doctor = localStorage.getItem('selectedDoctor')
 
-    if (doctor !== "") {
-      console.log("selectedDoctor ada di localStorage")
-      data.nama_dokter = doctor ?? ''    
+    if (localStorage.getItem('selectedHospital') !== null) {
+      console.log("Item 'selectedHospital' ada di localStorage.");
+      data.nama_perusahaan = rumah_sakit ?? ''
+      setValue("nama_perusahaan", data.nama_perusahaan);
     } else {
-      console.log("selectedDoctor tidak ada di localStorage")
+      console.log("Item 'selectedHospital' tidak ada di localStorage.");
     }
 
-    if (rumah_sakit !== "") {
-      console.log("selectedHospital ada di localStorage")
-      data.nama_perusahaan = rumah_sakit ?? ''
+
+    if (localStorage.getItem('selectedDoctor') !== null) {
+      console.log("Item 'selectedDoctor' ada di localStorage.");
+      data.nama_dokter = doctor ?? ''
+      setValue("nama_dokter", data.nama_dokter);
     } else {
-      console.log("selectedHospital tidak ada di localStorage")
+      console.log("Item 'selectedDoctor' tidak ada di localStorage.");
     }
+
 
     console.log("Rumah Sakit : " + data.nama_perusahaan);
     console.log("Dokter : " + data.nama_dokter);
-    
+
+    localStorage.removeItem('selectedHospital')
+    localStorage.removeItem('selectedDoctor')
+
 
 
     const requestBody = {
-      id: parseInt(id ?? '0'),          
+      id: parseInt(id ?? '0'),
       nama_perusahaan: data.nama_perusahaan,
       address_perusahaan: data.address_perusahaan,
       npwp_address_perusahaan: data.npwp_address_perusahaan,
@@ -223,14 +233,14 @@ const MainContent = () => {
         if (result.isConfirmed) {
           try {
             await axios.post(
-              "http://209.182.237.155:8080/api/profile/EditDetailProfile",
+              `${apiUrl}/profile/EditDetailProfile`,
               requestBody,
             );
 
             localStorage.removeItem("selectedHospital");
             localStorage.removeItem("selectedDoctor");
 
-            router.push("/profiling");
+            router.push("/profiling-dua");
             Swal.fire("Nice!", "Data telah di input ke system!.", "success");
           } catch (error) {
             console.error("Error submitting data", error);
@@ -251,8 +261,6 @@ const MainContent = () => {
     const selectedHospital = hospitalData.find(
       (hospital) => hospital.name === suggestion,
     );
-
-
 
     if (selectedHospital) {
       setResponseData((prevData) => ({
@@ -340,9 +348,7 @@ const MainContent = () => {
                       const filteredSuggestions = hospitalData
                         .filter(
                           (hospital) =>
-                            hospital.name
-                              .toLowerCase()
-                              .includes(value.toLowerCase()), // Case-insensitive matching
+                            hospital?.name?.toLowerCase()?.includes(value?.toLowerCase() || ''), // Add null checks
                         )
                         .map((hospital) => hospital.name);
 
@@ -405,7 +411,7 @@ const MainContent = () => {
                   label="Alamat NPWP Perusahaan"
                   className="w-full-lg"
                 />
-               
+
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <Input
                     {...register("email_perusahaan")}

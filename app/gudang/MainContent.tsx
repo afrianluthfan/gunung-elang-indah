@@ -44,6 +44,7 @@ const MainContent = () => {
   });
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
 
@@ -56,7 +57,7 @@ const MainContent = () => {
   const fetchGudangList = useCallback(async () => {
     try {
       const response = await axios.post(
-        `http://209.182.237.155:8080/api/gudang/list`
+        `${apiUrl}/gudang/list`
       );
       setGudangList(response.data.data);
     } catch (error) {
@@ -126,7 +127,7 @@ const MainContent = () => {
         if (result.isConfirmed) {
           try {
             await axios.post(
-              "http://209.182.237.155:8080/api/gudang/delete",
+              `${apiUrl}/gudang/delete`,
               {
                 id,
               }

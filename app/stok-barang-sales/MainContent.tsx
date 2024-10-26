@@ -59,7 +59,7 @@ const MainContent = () => {
     const fetchGudangList = async () => {
       try {
         const response = await axios.post(
-          `http://209.182.237.155:8080/api/gudang/list`
+          `${apiUrl}/gudang/list`
         );
         setGudangList(response.data.data);
       } catch (error) {
@@ -77,12 +77,12 @@ const MainContent = () => {
       let response;
       if (gudang && gudang !== "0") {
         response = await axios.post(
-          `http://209.182.237.155:8080/api/stok/listbygudang`,
+          `${apiUrl}/stok/listbygudang`,
           { id: gudang },
         );
       } else {
         response = await axios.post(
-          "http://209.182.237.155:8080/api/stok/list-customer",
+          `${apiUrl}/stok/list-customer",
           {},
         );
       }

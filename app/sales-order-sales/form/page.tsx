@@ -33,6 +33,8 @@ const Form: FC = () => {
     return selectedDivisi ? selectedDivisi.id : null;
   };
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
   useEffect(() => {
     const initialItems = Array.from({ length: amount }, () => ({
       kat: "",
@@ -53,20 +55,6 @@ const Form: FC = () => {
     setContent(newContent);
   }, [amount, data, dispatch]);
 
-  // useEffect(() => {
-  //   const fetchDivisiList = async () => {
-  //     try {
-  //       const responseDivisi = await axios.post(
-  //         "http://209.182.237.155:8080/api/proforma-invoice/divisi-list",
-  //         "",
-  //       );
-  //       setDivisiList(responseDivisi.data.data);
-  //     } catch (error) {
-  //       console.error("Gagal fetching list divisi!");
-  //     }
-  //   };
-  //   fetchDivisiList();
-  // }, []);
 
   const inquireData = async () => {
     const requestBody = {
@@ -95,7 +83,7 @@ const Form: FC = () => {
 
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/purchase-order/inquiry",
+        `${apiUrl}/purchase-order/inquiry`,
         requestBody,
       );
       // if (response.status === 200) {

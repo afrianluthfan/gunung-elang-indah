@@ -23,13 +23,14 @@ import { useRouter } from "next/navigation";
 const MainContent = () => {
   const router = useRouter();
   const responseData = useAppSelector((state) => state.salesPOInquiry.value);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const dispatch = useDispatch();
 
   const submitData = async () => {
     try {
       await axios.post(
-        "http://209.182.237.155:8080/api/purchase-order/posting",
+        `${apiUrl}/purchase-order/posting`,
         responseData,
       );
       dispatch(resetItemPO());

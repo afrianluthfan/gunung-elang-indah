@@ -94,7 +94,7 @@ const AdminMainContent = () => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/purchase-order/detail",
+          `${apiUrl}/purchase-order/detail`,
           { id: id }
         );
         setResponseData(response.data.data);
@@ -106,12 +106,14 @@ const AdminMainContent = () => {
     fetchData();
   }, [id]);
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
   useEffect(() => {
     if (shouldSubmit) {
       const submitData = async () => {
         try {
           await axios.post(
-            "http://209.182.237.155:8080/api/purchase-order/edit/finance",
+            `${apiUrl}/purchase-order/edit/finance`,
             responseData
           );
           Swal.fire({

@@ -15,7 +15,7 @@ interface ResponseData {
 }
 
 const MainContent = () => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
   const router = useRouter();
   const [inputCompanyValue, setInputCompanyValue] = useState("");
   const [hospitalSuggestions, setHospitalSuggestions] = useState<string[]>([]); // Store the filtered suggestions
@@ -25,11 +25,13 @@ const MainContent = () => {
   const [responseData, setResponseData] = useState<ResponseData>({});
   const [inputDoctorValue, setInputDoctorValue] = useState("");
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
   useEffect(() => {
     const fetchHospitalData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/rs-list",
+          `${apiUrl}/proforma-invoice/rs-list`,
         );
         setHospitalData(res.data.data);
         console.log("Hospital data fetched", res.data.data);
@@ -41,7 +43,7 @@ const MainContent = () => {
     const fetchDokterData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/dr-listn",
+          `${apiUrl}/proforma-invoice/dr-listn`,
         );
         setDoctorData(res.data.data);
         console.log("Data dokter fetched", res.data.data);
@@ -56,7 +58,7 @@ const MainContent = () => {
 
 
   const backButton = () => {
-    router.push("/profiling");
+    router.push("/profiling-dua");
   };
 
   // State untuk menyimpan value dropdown divisi
@@ -76,17 +78,32 @@ const MainContent = () => {
       divisi = "2";
     }
 
-    if (data.nama_perusahaan === "") {
-      let rumah_sakit = localStorage.getItem('selectedHospital')
-      console.log("Nama Rumah Sakit atau Customer : "+ rumah_sakit)
+    let rumah_sakit = localStorage.getItem('selectedHospital')
+    let doctor = localStorage.getItem('selectedDoctor')
+
+    if (localStorage.getItem('selectedHospital') !== null) {
+      console.log("Item 'selectedHospital' ada di localStorage.");
       data.nama_perusahaan = rumah_sakit ?? ''
+      setValue("nama_perusahaan", data.nama_perusahaan);
+    } else {
+      console.log("Item 'selectedHospital' tidak ada di localStorage.");
     }
 
-    if (data.nama_dokter === "") {
-      let doctor = localStorage.getItem('selectedDoctor')
-      console.log("Nama Rumah Sakit atau Customer : "+ doctor)
+
+    if (localStorage.getItem('selectedDoctor') !== null) {
+      console.log("Item 'selectedDoctor' ada di localStorage.");
       data.nama_dokter = doctor ?? ''
+      setValue("nama_dokter", data.nama_dokter);
+
+    } else {
+      console.log("Item 'selectedDoctor' tidak ada di localStorage.");
     }
+
+    console.log("Rumah Sakit : " + data.nama_perusahaan);
+    console.log("Dokter : " + data.nama_dokter);
+
+    localStorage.removeItem('selectedHospital')
+    localStorage.removeItem('selectedDoctor')
 
     const requestBody = {
       nama_perusahaan: data.nama_perusahaan,
@@ -130,14 +147,14 @@ const MainContent = () => {
         if (result.isConfirmed) {
           try {
             await axios.post(
-              "http://209.182.237.155:8080/api/customer-profilling/add",
+              `${apiUrl}/customer-profilling/add`,
               requestBody,
             );
 
             localStorage.removeItem("selectedHospital");
             localStorage.removeItem("selectedDoctor");
 
-            router.push("/profiling");
+            router.push("/profiling-dua");
             Swal.fire("Nice!", "Data telah di input ke system!.", "success");
           } catch (error) {
             console.error("Error submitting data", error);
@@ -245,13 +262,11 @@ const MainContent = () => {
 
                       // Filter hospital suggestions based on the input value
                       const filteredSuggestions = hospitalData
-                        .filter(
-                          (hospital) =>
-                            hospital.name
-                              .toLowerCase()
-                              .includes(value.toLowerCase()), // Case-insensitive matching
-                        )
-                        .map((hospital) => hospital.name);
+                      .filter(
+                        (hospital) =>
+                          hospital?.name?.toLowerCase()?.includes(value?.toLowerCase() || ''), // Add null checks
+                      )
+                      .map((hospital) => hospital.name);
 
                       setHospitalSuggestions(filteredSuggestions); // Update suggestions based on the filter
                     }}

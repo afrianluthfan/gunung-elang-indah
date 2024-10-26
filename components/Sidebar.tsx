@@ -19,26 +19,21 @@ const Sidebar = () => {
     { pageName: "", pageRoute: "" },
   ]);
   const activeUser = useAppSelector((state) => state.auth.value.statusAcount);
+
   // logout handler
   const handleLogOut = () => {
+    // Dispatch action untuk logout
     dispatch(logOut());
-    // clear localstorage
-    localStorage.removeItem("statusAccount");
-    localStorage.removeItem("username");
-    localStorage.removeItem("persist:root");
-    localStorage.removeItem("token");
+    
+    // Clear localStorage
+    localStorage.clear(); // Menghapus semua data dari LocalStorage
 
-    dispatch(logOut());
-
+    // Redirect ke halaman login
     router.push("/login");
   };
 
   useEffect(() => {
     const salesMenus = [
-      // {
-      //   pageName: "Profiling",
-      //   pageRoute: "profiling",
-      // },
       {
         pageName: "Proforma Invoice",
         pageRoute: "proforma-invoice-dua",
@@ -47,10 +42,6 @@ const Sidebar = () => {
         pageName: "Stok Barang",
         pageRoute: "stok-barang-sales",
       },
-      // {
-      //   pageName: "Sewa Alat",
-      //   pageRoute: "sewa-alat",
-      // },
     ];
 
     const logistikMenus = [
@@ -58,10 +49,6 @@ const Sidebar = () => {
         pageName: "Stok Barang",
         pageRoute: "stok-barang",
       },
-      // {
-      //   pageName: "Rental Items",
-      //   pageRoute: "rental-items",
-      // },
       {
         pageName: "Documents",
         pageRoute: "dokumen-logistik",
@@ -71,10 +58,6 @@ const Sidebar = () => {
     const adminMenus = [
       {
         pageName: "Profiling",
-        pageRoute: "profiling",
-      },
-      {
-        pageName: "Profiling Dua",
         pageRoute: "profiling-dua",
       },
       {
@@ -89,10 +72,6 @@ const Sidebar = () => {
         pageName: "Stok Barang",
         pageRoute: "stok-barang",
       },
-      // {
-      //   pageName: "Sewa Barang",
-      //   pageRoute: "sewa-barang",
-      // },
       {
         pageName: "Sales Order",
         pageRoute: "sales-order-sales",
@@ -136,13 +115,8 @@ const Sidebar = () => {
         pageName: "Stok Barang",
         pageRoute: "stok-barang",
       },
-      // {
-      //   pageName: "Komisi",
-      //   pageRoute: "komisi",
-      // },
     ];
 
-    // buatkan untuk super admin dan munculin semua navigasi routennya
     const superAdmin = [
       {
         pageName: "Profiling",
@@ -184,10 +158,6 @@ const Sidebar = () => {
         pageName: "Pengeluaran",
         pageRoute: "pengeluaran",
       },
-      // {
-      //   pageName: "Komisi",
-      //   pageRoute: "komisi",
-      // },
     ];
 
     switch (activeUser) {
@@ -203,6 +173,11 @@ const Sidebar = () => {
       case "KEUANGAN":
         setMenuItemsList(financeMenus);
         break;
+      case "SUPER_ADMIN": // Pastikan untuk menambahkan case untuk super admin
+        setMenuItemsList(superAdmin);
+        break;
+      default:
+        setMenuItemsList([]); // Mengatur default jika tidak ada user yang cocok
     }
   }, [activeUser]);
 

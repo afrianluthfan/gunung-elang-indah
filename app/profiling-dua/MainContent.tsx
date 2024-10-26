@@ -22,6 +22,7 @@ type User = {
 };
 
 type RumahSakit = {
+  kategori_divisi: string;
   id: number;
   name: string;
   address_company: string;
@@ -53,11 +54,12 @@ const MainContent = () => {
   });
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const fetchGudangList = useCallback(async () => {
     try {
       const response = await axios.post(
-        `http://209.182.237.155:8080/api/proforma-invoice/rs-list`
+        `${apiUrl}/proforma-invoice/rs-list`
       );
       setGudangList(response.data.data);
     } catch (error) {
@@ -71,7 +73,7 @@ const MainContent = () => {
       let response;
       if (gudang && gudang !== "0") {
         response = await axios.post(
-          `http://209.182.237.155:8080/api/profile/ListByCustomer`,
+          `${apiUrl}/profile/ListByCustomer`,
           { nama: gudang }
         );
         setUsers([]); // Bersihkan data sebelum set data baru
@@ -200,7 +202,7 @@ const MainContent = () => {
             <option value="0">Pilih Rumah Sakit</option>
             {gudangList.map((gudang) => (
               <option key={gudang.name} value={gudang.name}>
-                {gudang.name} - {gudang.address_company}
+                {gudang.name} - {gudang.kategori_divisi}
               </option>
             ))}
           </select>

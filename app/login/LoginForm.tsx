@@ -18,6 +18,7 @@ const LoginForm = () => {
   });
   const dispatch = useDispatch<AppDispatch>();
   const isAuth = useSelector((state: RootState) => state.auth.value.isAuth);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   // Define role-based passwords
   const roleBasedPasswords: Record<string, string> = {
@@ -44,7 +45,7 @@ const LoginForm = () => {
 
     try {
       // Perform login request
-      const response = await axios.post("http://209.182.237.155:8080/api/login", {
+      const response = await axios.post(`${apiUrl}/login`, {
         username,
         password,
       });
@@ -70,7 +71,7 @@ const LoginForm = () => {
             router.push("/proforma-invoice-dua");
             break;
           case "admin":
-            router.push("/profiling");
+            router.push("/profiling-dua");
             break;
           case "logistik":
             router.push("/stok-barang");

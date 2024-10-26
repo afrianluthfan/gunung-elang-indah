@@ -18,6 +18,8 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 const MainContent = () => {
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
   const [data, setData] = useState<any>(null);
   const [username, setUsername] = useState<string | null>(null);
@@ -62,7 +64,7 @@ const MainContent = () => {
           if (data && data.data && data.data.data) {
             if (aksi === "update") {
               const res = await axios.post(
-                "http://209.182.237.155:8080/api/proforma-invoice/editPI-posting",
+                `${apiUrl}/proforma-invoice/editPI-posting`,
                 data.data.data,
               );
               console.log(res);
@@ -87,7 +89,7 @@ const MainContent = () => {
               }
             } else {
               const res = await axios.post(
-                "http://209.182.237.155:8080/api/proforma-invoice/posting",
+                `${apiUrl}/proforma-invoice/posting`,
                 data.data.data,
               );
               if (res.data.status === true) {

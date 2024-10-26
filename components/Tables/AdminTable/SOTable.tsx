@@ -25,6 +25,7 @@ const columns = [
   { name: "TOTAL", uid: "total", sortable: true },
   { name: "ACTIONS", uid: "actions" },
 ];
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 type OrderData = {
   id: number;
@@ -80,7 +81,7 @@ export default function SOTableComponent({ selectedDocument }: { selectedDocumen
     
     if (selectedDocument === "PO" || selectedDocument === "PI") {
       console.log("Selected Document:", selectedDocument);
-      const endpoint = selectedDocument === "PO" ? "http://209.182.237.155:8080/api/sales_order/list/finance" : "http://209.182.237.155:8080/api/sales_order/list/admin";
+      const endpoint = selectedDocument === "PO" ? `${apiUrl}/sales_order/list/finance` : `${apiUrl}/sales_order/list/admin`;
       const request = {
         dok : selectedDocument
       };  
