@@ -80,6 +80,7 @@ const ProformaInvoiceDetail = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const divisi = searchParams.get("divisi");
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("statusAccount");
@@ -97,7 +98,7 @@ const ProformaInvoiceDetail = () => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/detailPI-so",
+          `${apiUrl}/proforma-invoice/detailPI-so`,
           { id: id, divisi: divisi },
         );
         setResponseData(response.data.data);
@@ -123,7 +124,7 @@ const ProformaInvoiceDetail = () => {
 
           try {
             const response = await axios.post(
-              "http://209.182.237.155:8080/api/proforma-invoice/editPI-admin",
+              `${apiUrl}/proforma-invoice/editPI-admin`,
               responseData,
             );
 
@@ -236,6 +237,41 @@ const ProformaInvoiceDetail = () => {
         setShouldSubmit(true);
       }
     });
+  };
+
+  const handleSetNamaBarang = async () => {
+    try {
+      const response = await axios.post(
+        `${apiUrl}/sales_order/list/admin/edit/nama-barang-pi-so`,
+        responseData
+      );
+
+      Swal.fire({
+        title: "Success!",
+        text: "Nama Barang berhasil diperbarui.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+
+      try {
+        const response = await axios.post(
+          `${apiUrl}/proforma-invoice/detailPI-so`,
+          { id: id, divisi: divisi },
+        );
+        setResponseData(response.data.data);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    } catch (error) {
+      console.error("Error updating Nama Barang", error);
+
+      Swal.fire({
+        title: "Error!",
+        text: "Gagal memperbarui Nama Barang. Silakan coba lagi.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
   };
 
   return (
@@ -420,8 +456,12 @@ const ProformaInvoiceDetail = () => {
 
       <Divider />
 
-      <div className="my-1 flex justify-start">
-        <h1 className="font-semibold lg:text-[1.4vh]">List Barang</h1>
+      <div className="my-1 flex justify-between">
+        <h1 className="font-semibold lg:text-[1.4vh] pt-2">List Barang</h1>
+        <Button className="bg-[#0C295F] text-white p-2 rounded-xl hover:bg-[#1c4083]"
+          onClick={handleSetNamaBarang}>
+          Set Nama Barang
+        </Button>
       </div>
 
       {/* Bagian Table */}
@@ -462,14 +502,75 @@ const ProformaInvoiceDetail = () => {
                 <TableCell className="text-center">{index + 1}</TableCell>
                 <TableCell className="text-center">{item.kat}</TableCell>
                 <TableCell className="text-center">
-                  {item.nama_barang}
+                  <textarea
+                    className="w-full border-2 rounded px-2 py-1 text-sm"
+                    value={item.nama_barang}
+                    onChange={(e) => {
+                      const updatedItems = [...responseData.item_detail_pi]
+                      updatedItems[index] = {
+                        ...item,
+                        nama_barang: e.target.value
+                      }
+                      setResponseData({
+                        ...responseData,
+                        item_detail_pi: updatedItems
+                      })
+                    }}
+                  />
                 </TableCell>
                 <TableCell className="text-center">{item.variable}</TableCell>
-                <TableCell className="text-center">{item.quantity}</TableCell>
                 <TableCell className="text-center">
-                  {item.harga_satuan}
+                  <textarea
+                    className="w-full border-2 rounded px-2 py-1 text-sm"
+                    value={item.quantity}
+                    onChange={(e) => {
+                      const updatedItems = [...responseData.item_detail_pi]
+                      updatedItems[index] = {
+                        ...item,
+                        quantity: e.target.value
+                      }
+                      setResponseData({
+                        ...responseData,
+                        item_detail_pi: updatedItems
+                      })
+                    }}
+                  />
                 </TableCell>
-                <TableCell className="text-center">{item.discount}</TableCell>
+                <TableCell className="text-center">
+                  <textarea
+                    className="w-full border-2 rounded px-2 py-1 text-sm"
+                    value={item.harga_satuan}
+                    onChange={(e) => {
+                      const updatedItems = [...responseData.item_detail_pi]
+                      updatedItems[index] = {
+                        ...item,
+                        harga_satuan: e.target.value
+                      }
+                      setResponseData({
+                        ...responseData,
+                        item_detail_pi: updatedItems
+                      })
+                    }}
+                  />
+
+                </TableCell>
+                <TableCell className="text-center">
+                  <textarea
+                    className="w-full border-2 rounded px-2 py-1 text-sm"
+                    value={item.discount}
+                    onChange={(e) => {
+                      const updatedItems = [...responseData.item_detail_pi]
+                      updatedItems[index] = {
+                        ...item,
+                        discount: e.target.value
+                      }
+                      setResponseData({
+                        ...responseData,
+                        item_detail_pi: updatedItems
+                      })
+                    }}
+                  />
+                </TableCell>
                 <TableCell className="text-center">{item.gudang}</TableCell>
                 <TableCell className="text-center">
                   {item.sub_total_item}

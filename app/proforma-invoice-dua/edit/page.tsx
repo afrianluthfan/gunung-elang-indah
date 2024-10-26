@@ -26,6 +26,7 @@ const Form: FC = () => {
   const [itemListData, setItemListData] = useState<ItemDataType[]>([]);
   const [content, setContent] = useState<JSX.Element[]>([]);
   let mainContent = <></>;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   mainContent = <MainContent />;
 
@@ -33,7 +34,7 @@ const Form: FC = () => {
     const fetchItemListData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/stock-barang/list",
+          `${apiUrl}/stock-barang/list`,
           "",
         );
         setItemListData(response.data.data);

@@ -68,14 +68,12 @@ export default function TableComponent() {
   const [error, setError] = useState<string | null>(null);
 
   const totalRef = useRef<string>("");
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post(
-          "http://209.182.237.155:8080/api/piutang/list",
-          {},
-        );
+        const response = await axios.post(`${apiUrl}/piutang/list`, {});
         totalRef.current = response.data.total;
         setUsers(response.data.data);
       } catch (error) {
@@ -85,7 +83,7 @@ export default function TableComponent() {
     };
 
     fetchData();
-  }, []);
+  }, [apiUrl]);
 
   const handleMarkAsPaid = async (id: number) => {
     // Konfirmasi menggunakan SweetAlert2
@@ -117,10 +115,7 @@ export default function TableComponent() {
         );
 
         try {
-          const response = await axios.post(
-            "http://209.182.237.155:8080/api/hutang/list",
-            {},
-          );
+          const response = await axios.post(`${apiUrl}/hutang/list`, {});
           totalRef.current = response.data.total;
           setUsers(response.data.data);
         } catch (error) {
@@ -211,7 +206,7 @@ export default function TableComponent() {
           return cellValue;
       }
     },
-    [],
+    [handleMarkAsPaid],
   );
 
   const onRowsPerPageChange = useCallback(

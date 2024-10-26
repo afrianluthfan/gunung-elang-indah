@@ -109,7 +109,7 @@ const AdminMainContent = () => {
       if (responseData.rumah_sakit) {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/proforma-invoice/dr-list",
+            `${apiUrl}/proforma-invoice/dr-list`,
             {
               nama: responseData.rumah_sakit,
             },
@@ -126,7 +126,7 @@ const AdminMainContent = () => {
 
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/price/ListByCustomer",
+            `${apiUrl}/price/ListByCustomer`,
             {
               nama: responseData.rumah_sakit,
             },
@@ -145,7 +145,7 @@ const AdminMainContent = () => {
     const fetchData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/detailPI",
+          `${apiUrl}/proforma-invoice/detailPI`,
           {
             id: id,
             divisi: divisi,
@@ -168,7 +168,7 @@ const AdminMainContent = () => {
     const fetchStockData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/price/ListByCustomer",
+          `${apiUrl}/price/ListByCustomer`,
           {
             nama: responseData.rumah_sakit
           }
@@ -182,7 +182,7 @@ const AdminMainContent = () => {
     const fetchHospitalData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/rs-listc",
+          `${apiUrl}/proforma-invoice/rs-listc`,
         );
         setHospitalData(res.data.data);
       } catch (error) {
@@ -193,6 +193,8 @@ const AdminMainContent = () => {
     fetchStockData();
     fetchHospitalData();
   }, []);
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     if (shouldSubmit) {
@@ -208,7 +210,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/proforma-invoice/editPI-inquiry",
+            `${apiUrl}/proforma-invoice/editPI-inquiry`,
             responseData,
           );
 
@@ -385,7 +387,7 @@ const AdminMainContent = () => {
     const fetchGudangList = async () => {
       try {
         const response = await axios.post(
-          `http://209.182.237.155:8080/api/gudang/list`
+          `${apiUrl}/gudang/list`
         );
         setGudangList(response.data.data);
       } catch (error) {

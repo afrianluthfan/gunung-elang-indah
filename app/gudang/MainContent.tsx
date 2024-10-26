@@ -49,6 +49,7 @@ const MainContent = () => {
   });
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     if (!isOpen) {

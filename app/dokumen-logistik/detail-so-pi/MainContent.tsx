@@ -50,6 +50,7 @@ type ProformaInvoice = {
 };
 
 const ProformaInvoiceDetail = () => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
   const [responseData, setResponseData] = useState<ProformaInvoice>({
     id: 0,
@@ -97,7 +98,7 @@ const ProformaInvoiceDetail = () => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/detailPI-so",
+          `${apiUrl}/proforma-invoice/detailPI-so`,
           { id: id, divisi: divisi },
         );
         setResponseData(response.data.data);
@@ -123,7 +124,7 @@ const ProformaInvoiceDetail = () => {
 
           try {
             const response = await axios.post(
-              "http://209.182.237.155:8080/api/proforma-invoice/editPI-admin",
+              `${apiUrl}/proforma-invoice/editPI-admin`,
               responseData,
             );
 

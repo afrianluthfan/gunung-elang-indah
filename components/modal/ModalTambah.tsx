@@ -8,6 +8,7 @@ export default function ModalTambah() {
 
   const [nama_gudang, setNamaGudang] = useState<string>("")
   const [alamat_gudang, setAlamatGudang] = useState<string>("")
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const HandleTambahData = async(onClose: () => void) => {
 
@@ -23,7 +24,7 @@ export default function ModalTambah() {
         }).then(async (result) => {
           if (result.isConfirmed) {
             try {
-              await axios.post("http://209.182.237.155:8080/api/gudang/tambah", {
+              await axios.post(`${apiUrl}/gudang/tambah`, {
                 nama_gudang,
                 alamat_gudang,
               })

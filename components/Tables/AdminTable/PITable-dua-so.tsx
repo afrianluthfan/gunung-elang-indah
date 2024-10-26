@@ -13,7 +13,6 @@ import {
   SortDescriptor,
   Tooltip,
   Input,
-  Button,
   Divider,
 } from "@nextui-org/react";
 import { EditIcon } from "./EditIcon";

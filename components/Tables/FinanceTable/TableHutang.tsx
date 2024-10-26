@@ -15,24 +15,14 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Chip,
   Pagination,
   Selection,
   ChipProps,
   SortDescriptor,
   Tooltip,
-  Divider,
 } from "@nextui-org/react";
-import { DeleteIcon } from "./DeleteIcon";
-import { EyeIcon } from "./EyeIcon";
-import { EditIcon } from "./EditIcon";
-import Swal from "sweetalert2";
 
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  paid: "success",
-  unpaid: "danger",
-  vacation: "warning",
-};
+import Swal from "sweetalert2";
 
 const INITIAL_VISIBLE_COLUMNS = [
   "number",

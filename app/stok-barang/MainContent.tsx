@@ -37,6 +37,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "kode",
   "namaGudang",
 ];
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const MainContent = () => {
   const [users, setUsers] = useState<User[]>([]);

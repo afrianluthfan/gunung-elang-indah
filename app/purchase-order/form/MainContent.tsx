@@ -87,10 +87,12 @@ const AdminMainContent = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [selectedSupplier, setSelectedSupplier] = useState('');
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
   useEffect(() => {
     const fetchStockData = async () => {
       try {
-        const res = await axios.post("http://209.182.237.155:8080/api/stok/list-proses");
+        const res = await axios.post(`${apiUrl}/stok/list-proses`);
         setStockData(res.data.data);
       } catch (error) {
         console.error("Error fetching stock data", error);
@@ -99,7 +101,7 @@ const AdminMainContent = () => {
 
     const fetchSuppliers = async () => {
       try {
-        const response = await axios.post('http://209.182.237.155:8080/api/proforma-invoice/rs-lists');
+        const response = await axios.post(`${apiUrl}/proforma-invoice/rs-lists`);
         if (response.data && response.data.data) {
           setSuppliers(response.data.data);
         }
@@ -119,7 +121,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/purchase-order/inquiry",
+            `${apiUrl}/purchase-order/inquiry`,
             responseData
           );
 
@@ -278,7 +280,7 @@ const AdminMainContent = () => {
     const fetchGudangList = async () => {
       try {
         const response = await axios.post(
-          `http://209.182.237.155:8080/api/gudang/list`
+          `${apiUrl}/gudang/list`
         );
         setGudangList(response.data.data);
       } catch (error) {

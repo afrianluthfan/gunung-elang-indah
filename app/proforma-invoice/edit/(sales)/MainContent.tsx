@@ -16,11 +16,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState, useAppSelector } from "@/redux/store";
 import { FC, useEffect, useState } from "react";
-import Dropdown from "@/components/Dropdown";
 import axios from "axios";
-import RsAutocompleteSearch from "@/components/RsAutocompleteSearch";
-import TopSectionLeftSide from "../../TopSectionLeftSide";
-import { itemNumber } from "../../form/itemNumber";
+import TopSectionLeftSide from "@/app/proforma-invoice-dua/TopSectionLeftSide";
 import { setEditPIData, setEditPIField } from "@/redux/features/editPI-slice";
 import { useSearchParams } from "next/navigation";
 import { setEditPIItems } from "@/redux/features/editPIItems-slice";

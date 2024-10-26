@@ -54,21 +54,6 @@ const Form: FC = () => {
     setContent(newContent);
   }, [amount, data, dispatch]);
 
-  // useEffect(() => {
-  //   const fetchDivisiList = async () => {
-  //     try {
-  //       const responseDivisi = await axios.post(
-  //         "http://209.182.237.155:8080/api/proforma-invoice/divisi-list",
-  //         "",
-  //       );
-  //       setDivisiList(responseDivisi.data.data);
-  //     } catch (error) {
-  //       console.error("Gagal fetching list divisi!");
-  //     }
-  //   };
-  //   fetchDivisiList();
-  // }, []);
-
   const inquireData = async () => {
     const requestBody = {
       // id_divisi: findIdByDivisi(data.divisi.toUpperCase())?.toString(), // Set id_divisi based on divisi value
@@ -94,9 +79,11 @@ const Form: FC = () => {
       })),
     };
 
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/purchase-order/inquiry",
+        `${apiUrl}/purchase-order/inquiry`,
         requestBody,
       );
       // if (response.status === 200) {

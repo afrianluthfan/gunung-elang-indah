@@ -10,6 +10,8 @@ import ItemInput from "../form/ItemInput";
 import axios from "axios";
 // import MainContent from "../MainContent";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 const Form: FC = () => {
   type ItemDataType = {
     id: number;
@@ -34,7 +36,7 @@ const Form: FC = () => {
     const fetchItemListData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/stock-barang/list",
+          `${apiUrl}/stock-barang/list`,
           "",
         );
         setItemListData(response.data.data);

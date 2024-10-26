@@ -74,6 +74,8 @@ const AdminMainContent = () => {
   const [selectedDivisi, setSelectedDivisi] = useState<string>("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
   // INI ADALAH KEPERLUAN LOGIC DOKTER
   const [doctorData, setDoctorData] = useState<any[]>([]);
   const [doctorSuggestions, setDoctorSuggestions] = useState<string[]>([]);
@@ -86,7 +88,7 @@ const AdminMainContent = () => {
       if (responseData.rumah_sakit) {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/proforma-invoice/dr-list",
+            `${apiUrl}/proforma-invoice/dr-list`,
             {
               nama: responseData.rumah_sakit,
             },
@@ -103,7 +105,7 @@ const AdminMainContent = () => {
 
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/price/ListByCustomer",
+            `${apiUrl}/price/ListByCustomer`,
             {
               nama: responseData.rumah_sakit,
             },
@@ -122,7 +124,7 @@ const AdminMainContent = () => {
     const fetchHospitalData = async () => {
       try {
         const res = await axios.post(
-          "http://209.182.237.155:8080/api/proforma-invoice/rs-listc",
+          `${apiUrl}/proforma-invoice/rs-listc`,
         );
         setHospitalData(res.data.data);
       } catch (error) {
@@ -147,7 +149,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/proforma-invoice/inquiry",
+            `${apiUrl}/proforma-invoice/inquiry`,
             responseData,
           );
 
@@ -332,7 +334,7 @@ const AdminMainContent = () => {
     const fetchGudangList = async () => {
       try {
         const response = await axios.post(
-          `http://209.182.237.155:8080/api/gudang/list`
+          `${apiUrl}/gudang/list`
         );
         setGudangList(response.data.data);
       } catch (error) {
