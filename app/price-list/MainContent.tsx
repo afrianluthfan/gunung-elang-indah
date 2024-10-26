@@ -252,7 +252,7 @@ const MainContent = () => {
           </select>
           <Input
             type="text"
-            placeholder="Cari Nama Barang !"
+            placeholder="Cari nama barang"
             className="w-full"
             onChange={(e) => setFilterValue(e.target.value)}
             value={filterValue}
@@ -283,8 +283,8 @@ const MainContent = () => {
               {(column) => (
                 <TableColumn
                   key={column.uid}
-                  allowsSorting
-                  className="bg-blue-900 text-white"
+                  allowsSorting={column.uid !== "id"}
+                  className={`bg-blue-900 text-center text-white ${column.sortable ? "cursor-pointer" : ""} ${column.uid === "id" ? "w-1" : "w-32"}`}
                 >
                   {column.name}
                 </TableColumn>
@@ -299,7 +299,7 @@ const MainContent = () => {
               {(item) => (
                 <TableRow key={item.id}>
                   {(columnKey) => (
-                    <TableCell className="bg-white">
+                    <TableCell className="items-center text-center">
                       {renderCell(
                         item,
                         columnKey,
