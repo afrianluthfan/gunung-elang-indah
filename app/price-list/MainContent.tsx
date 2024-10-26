@@ -284,7 +284,7 @@ const MainContent = () => {
                 <TableColumn
                   key={column.uid}
                   allowsSorting={column.uid !== "id"}
-                  className={`bg-blue-900 text-center text-white ${column.sortable ? "cursor-pointer" : ""} ${column.uid === "id" ? "w-1" : "w-32"}`}
+                  className={`bg-blue-900 text-center text-white ${column.uid === "id" ? "w-1" : "w-32"}`}
                 >
                   {column.name}
                 </TableColumn>

@@ -4,7 +4,6 @@ import {
   Divider,
   Input,
   Modal,
-  Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
@@ -21,7 +20,6 @@ import {
 } from "@nextui-org/react";
 import Swal from "sweetalert2";
 import { DeleteIcon } from "@/components/Tables/FinanceTable/DeleteIcon";
-import router from "next/router";
 import ModalTambah from "@/components/modal/ModalTambah";
 
 type Gudang = {
@@ -40,7 +38,6 @@ const INITIAL_VISIBLE_COLUMNS = [
 const MainContent = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [filterValue, setFilterValue] = useState("");
-  const [gudang, setGudang] = useState("");
   const [gudangList, setGudangList] = useState<Gudang[]>([]);
   const [visibleColumns] = useState<Set<string>>(
     new Set(INITIAL_VISIBLE_COLUMNS),
@@ -120,38 +117,44 @@ const MainContent = () => {
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const handleDelete = useCallback((id: number) => {
-    try {
-      Swal.fire({
-        title: "Apakah Kamu Yakin?",
-        text: "Apakah kamu yakin ingin data ini di input ?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            await axios.post("http://209.182.237.155:8080/api/gudang/delete", {
-              id,
-            });
-            fetchGudangList();
-            Swal.fire("Nice!", "Data Berhasil Di Hapus!.", "success");
-          } catch (error) {
-            console.error("Error submitting data", error);
-            Swal.fire(
-              "Error!",
-              "Terjadi kesalahan saat mengirim data.",
-              "error",
-            );
+  const handleDelete = useCallback(
+    (id: number) => {
+      try {
+        Swal.fire({
+          title: "Apakah Kamu Yakin?",
+          text: "Apakah kamu yakin ingin data ini di input ?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              await axios.post(
+                "http://209.182.237.155:8080/api/gudang/delete",
+                {
+                  id,
+                },
+              );
+              fetchGudangList();
+              Swal.fire("Nice!", "Data Berhasil Di Hapus!.", "success");
+            } catch (error) {
+              console.error("Error submitting data", error);
+              Swal.fire(
+                "Error!",
+                "Terjadi kesalahan saat mengirim data.",
+                "error",
+              );
+            }
           }
-        }
-      });
-    } catch (error) {
-      console.error("Error processing request", error);
-    }
-  }, [fetchGudangList]);
+        });
+      } catch (error) {
+        console.error("Error processing request", error);
+      }
+    },
+    [fetchGudangList],
+  );
 
   const renderCell = useCallback(
     (
@@ -218,7 +221,7 @@ const MainContent = () => {
               {(column) => (
                 <TableColumn
                   key={column.uid}
-                  allowsSorting
+                  allowsSorting={column.uid !== "id" && column.uid !== "action"}
                   className="bg-blue-900 text-white"
                 >
                   {column.name}
