@@ -37,6 +37,8 @@ type Gudang = {
   alamat_gudang: string;
 };
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 
 const MainContent = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -82,7 +84,7 @@ const MainContent = () => {
         );
       } else {
         response = await axios.post(
-          `${apiUrl}/stok/list-customer",
+          `${apiUrl}/stok/list-customer`,
           {},
         );
       }
