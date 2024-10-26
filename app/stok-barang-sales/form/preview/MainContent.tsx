@@ -26,10 +26,12 @@ const MainContent = () => {
 
   const dispatch = useDispatch();
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
   const submitData = async () => {
     try {
       await axios.post(
-        `${apiUrl}/purchase-order/posting",
+        `${apiUrl}/purchase-order/posting`,
         responseData,
       );
       dispatch(resetItemPO());
