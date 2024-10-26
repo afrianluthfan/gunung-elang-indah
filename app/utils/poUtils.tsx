@@ -1,4 +1,4 @@
-import { SortDescriptor } from "@nextui-org/react";
+import { ChipProps, SortDescriptor } from "@nextui-org/react";
 import axios from "axios";
 
 export const columns = [
@@ -24,6 +24,12 @@ export type ItemData = {
 
 export type User = ItemData[0];
 
+export const statusColorMap: Record<string, ChipProps["color"]> = {
+  DITERIMA: "success",
+  DITOLAK: "danger",
+  DIPROSES: "primary",
+};
+
 export const fetchPOData = async (
   setUsers: React.Dispatch<React.SetStateAction<ItemData>>,
 ) => {
@@ -40,10 +46,6 @@ export const fetchPOData = async (
     console.error("Error fetching data from API:", error);
   }
 };
-
-// In poUtils.tsx
-
-// In poUtils.tsx
 
 export const sortItems = (items: User[], sortDescriptor: SortDescriptor) => {
   return [...items].sort((a: User, b: User) => {

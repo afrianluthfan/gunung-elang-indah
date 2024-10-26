@@ -257,9 +257,6 @@ const MainContent = () => {
             onChange={(e) => setFilterValue(e.target.value)}
             value={filterValue}
           />
-          <Button className="w-full rounded-md bg-[#00186D] font-bold text-white lg:w-auto">
-            Cari/Cek
-          </Button>
           <Button
             className="w-full rounded-md bg-green-700 font-bold text-white lg:w-auto"
             onClick={handleSetHarga}

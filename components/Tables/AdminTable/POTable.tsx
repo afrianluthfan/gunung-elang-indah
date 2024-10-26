@@ -31,14 +31,9 @@ import {
   fetchPOData,
   ItemData,
   sortItems,
+  statusColorMap,
   User,
 } from "@/app/utils/poUtils";
-
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  DITERIMA: "success",
-  DITOLAK: "danger",
-  DIPROSES: "primary",
-};
 
 export default function TableComponent() {
   const [users, setUsers] = useState<ItemData>([]);
@@ -93,16 +88,20 @@ export default function TableComponent() {
       }
 
       const cellValue = user[columnKey as keyof User];
+      const titleCased = cellValue?.toString().replace(/_/g, " ").toUpperCase();
+
       switch (columnKey) {
         case "status":
+          const status = user.status ? user.status.toUpperCase() : "UNKNOWN";
+
           return (
             <Chip
               className="capitalize"
-              color={statusColorMap[user.status]}
+              color={statusColorMap[status]}
               size="sm"
               variant="flat"
             >
-              {cellValue}
+              {titleCased}
             </Chip>
           );
         case "actions":
@@ -156,9 +155,6 @@ export default function TableComponent() {
           value={searchText}
           onChange={(e) => handleSearchChange(e, setSearchText)}
         />
-        <Button className="w-10 bg-blue-900 font-bold text-white">
-          Cari/Cek
-        </Button>
       </div>
 
       <div className="mb-5">
@@ -201,11 +197,15 @@ export default function TableComponent() {
         </Table>
       </div>
       <div className="mt-5 flex justify-between">
-        <Pagination
-          total={pages}
-          page={page}
-          onChange={(newPage) => setPage(newPage)}
-        />
+        <div>
+          {sortedItems.length > rowsPerPage && (
+            <Pagination
+              total={pages}
+              page={page}
+              onChange={(newPage) => setPage(newPage)}
+            />
+          )}
+        </div>
         <select
           value={rowsPerPage}
           onChange={(e) => onRowsPerPageChange(e, setRowsPerPage, setPage)}

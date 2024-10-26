@@ -1,7 +1,6 @@
 import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
 import TopSectionLeftSide from "./TopSectionLeftSide";
 import TopSectionRightSide from "./TopSectionRightSide";
-import { Button, Divider, Input } from "@nextui-org/react";
 import TableComponent from "@/components/Tables/AdminTable/PITable-dua-so";
 
 const MainContent = () => (

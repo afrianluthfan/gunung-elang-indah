@@ -98,6 +98,8 @@ export default function PITableComponent() {
       }
 
       const cellValue = user[columnKey as keyof User];
+      const titleCased = cellValue?.toString().replace(/_/g, " ").toUpperCase();
+
       switch (columnKey) {
         case "status":
           const status = user.status ? user.status.toUpperCase() : "UNKNOWN";
@@ -108,7 +110,7 @@ export default function PITableComponent() {
               size="sm"
               variant="flat"
             >
-              {cellValue}
+              {titleCased}
             </Chip>
           );
         case "actions":
@@ -232,11 +234,15 @@ export default function PITableComponent() {
         </Table>
       </div>
       <div className="mt-5 flex justify-between">
-        <Pagination
-          total={pages}
-          page={page}
-          onChange={(newPage) => setPage(newPage)}
-        />
+        <div>
+          {sortedItems.length > rowsPerPage && (
+            <Pagination
+              total={pages}
+              page={page}
+              onChange={(newPage) => setPage(newPage)}
+            />
+          )}
+        </div>
         <select
           value={rowsPerPage}
           onChange={(e) => onRowsPerPageChange(e, setRowsPerPage, setPage)}
