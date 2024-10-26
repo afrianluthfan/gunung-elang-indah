@@ -28,12 +28,13 @@ const Form: FC = () => {
   let mainContent = <></>;
 
   mainContent = <MainContent />;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     const fetchItemListData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/stock-barang/list",
+          `${apiUrl}/stock-barang/list`,
           "",
         );
         setItemListData(response.data.data);

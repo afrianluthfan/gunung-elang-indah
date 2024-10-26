@@ -14,6 +14,8 @@ const columns = [
   { name: "ACTIONS", uid: "actions" },
 ];
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 const statusOptions = [
   { name: "Diterima", uid: "diterima" },
   { name: "Ditolak", uid: "ditolak" },
@@ -36,7 +38,7 @@ let users: ItemData = [];
 const fetchItemData1 = async () => {
   try {
     const response = await axios.post(
-      "http://209.182.237.155:8080/api/proforma-invoice/get-all-list",
+      `${apiUrl}/proforma-invoice/get-all-list`,
       "",
     );
     users = response.data.map((item: any) => {
@@ -55,7 +57,7 @@ const fetchItemData1 = async () => {
 const fetchItemData2 = async () => {
   try {
     const response = await axios.post(
-      "http://209.182.237.155:8080/api/stock-barang/list",
+      `${apiUrl}/stock-barang/list`,
       "",
     );
     users = response.data.map((item: any) => {

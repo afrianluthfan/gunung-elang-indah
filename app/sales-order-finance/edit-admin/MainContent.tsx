@@ -119,7 +119,7 @@ const AdminMainContent = () => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/purchase-order/detail",
+          `${apiUrl}/purchase-order/detail`,
           { id: id }
         );
         setResponseData(response.data.data);
@@ -133,7 +133,7 @@ const AdminMainContent = () => {
 
     const fetchSuppliers = async () => {
       try {
-        const response = await axios.post('http://209.182.237.155:8080/api/proforma-invoice/rs-lists');
+        const response = await axios.post(`${apiUrl}/proforma-invoice/rs-lists`);
         if (response.data && response.data.data) {
           setSuppliers(response.data.data);
         }
@@ -160,7 +160,7 @@ const AdminMainContent = () => {
   useEffect(() => {
     const fetchStockItems = async () => {
       try {
-        const response = await axios.post("http://209.182.237.155:8080/api/stock-barang/list");
+        const response = await axios.post(`${apiUrl}/stock-barang/list`);
         const items = response.data.data;
         setStockItems(items.map((item: { name: string }) => item.name));
         const pricesMap = items.reduce((acc: Record<string, { price: string; kode: string; variable: string }>, item: { name: string, price: string, variable: string, kode: string }) => {
@@ -184,7 +184,7 @@ const AdminMainContent = () => {
 
     try {
       const response = await axios.post(
-        `http://209.182.237.155:8080/api/stock-barang/list?query=${query}`
+        `${apiUrl}/stock-barang/list?query=${query}`
       );
       const filteredSuggestions = response.data.data
         .filter((item: { name: string }) =>
@@ -208,12 +208,14 @@ const AdminMainContent = () => {
     }));
   };
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
   useEffect(() => {
     if (shouldSubmit) {
       const submitData = async () => {
         try {
           const res = await axios.post(
-            "http://209.182.237.155:8080/api/purchase-order/edit/inquiry",
+            `${apiUrl}/purchase-order/edit/inquiry`,
             responseData
           );
 
@@ -335,7 +337,7 @@ const AdminMainContent = () => {
     const fetchGudangList = async () => {
       try {
         const response = await axios.post(
-          `http://209.182.237.155:8080/api/gudang/list`
+          `${apiUrl}/gudang/list`
         );
         setGudangList(response.data.data);
       } catch (error) {

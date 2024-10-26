@@ -18,6 +18,8 @@ const MainContent: FC = () => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>();
   const router = useRouter();
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
   const onSubmit = async (data: FormData) => {
     if (!data.name || !data.total || !data.price) {
       alert("Semua field wajib diisi!");
@@ -25,7 +27,7 @@ const MainContent: FC = () => {
     }
 
     try {
-      const response = await axios.post("http://209.182.237.155:8080/api/stock-barang/add", data);
+      const response = await axios.post(`${apiUrl}/stock-barang/add`, data);
       console.log("Barang berhasil ditambahkan:", response.data);
       alert("Barang berhasil ditambahkan!");
       router.push("/stok-barang");

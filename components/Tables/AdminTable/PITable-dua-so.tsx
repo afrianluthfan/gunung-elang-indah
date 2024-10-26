@@ -60,6 +60,7 @@ export default function PITableComponent() {
   const [searchText, setSearchText] = useState<string>(""); // State for search text
   const [username, setUsername] = useState<string | null>(null);
   const router = useRouter();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   // Fetch username from localStorage
   useEffect(() => {
@@ -76,7 +77,7 @@ export default function PITableComponent() {
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/proforma-invoice/get-all-list-so",
+        `${apiUrl}/proforma-invoice/get-all-list-so`,
       );
       console.log("API response:", response.data);
       if (response.data.status) {

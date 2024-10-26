@@ -31,7 +31,12 @@ const columns = [
   { name: "TOTAL", uid: "total", sortable: true },
   { name: "STATUS", uid: "status", sortable: true },
   { name: "ACTIONS", uid: "actions" },
+
+  
+
 ];
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   DITERIMA: "success",
@@ -80,7 +85,7 @@ export default function PITableComponent() {
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/purchase-order/list"
+        `${apiUrl}/purchase-order/list`
       );
       if (response.data.status) {
         setUsers(response.data.data);

@@ -59,11 +59,13 @@ export default function TableComponent() {
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/pemasukan/list",
+          `${apiUrl}/pemasukan/list`,
           {},
         );
         setUsers(response.data.data);

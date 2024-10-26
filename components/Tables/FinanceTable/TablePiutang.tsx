@@ -63,11 +63,13 @@ export default function TableComponent() {
 
   let Total = ""
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/piutang/list",
+          `${apiUrl}/piutang/list`,
           {},
         );
         Total = response.data.total
@@ -97,7 +99,7 @@ export default function TableComponent() {
     // Jika user mengkonfirmasi, lanjutkan ke API request
     if (result.isConfirmed) {
       try {
-        const response = await axios.post("http://209.182.237.155:8080/api/piutang/lunas", {
+        const response = await axios.post(`${apiUrl}/piutang/lunas`, {
           id: id,
         });
   
@@ -109,7 +111,7 @@ export default function TableComponent() {
 
         try {
           const response = await axios.post(
-            "http://209.182.237.155:8080/api/hutang/list",
+            `${apiUrl}/hutang/list`,
             {},
           );
           Total = response.data.total

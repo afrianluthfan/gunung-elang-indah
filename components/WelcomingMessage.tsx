@@ -6,11 +6,16 @@ import Image from "next/image";
 import Sidebar from "@/components/Sidebar";
 
 import { Button } from "@nextui-org/react";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { logOut } from "@/redux/features/auth-slice";
 
 const WelcomingMessage: FC = () => {
-  const activeUser = useAppSelector((state) => state.auth.value.username);
+  const activeUser = useAppSelector((state) => state.auth.value.statusAcount);
   const [user, setUser] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const dispatch = useDispatch();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -18,19 +23,19 @@ const WelcomingMessage: FC = () => {
 
   useEffect(() => {
     switch (activeUser) {
-      case "admin":
+      case "ADMIN":
         setUser("Staff Admin");
         break;
-      case "sales":
+      case "SALES":
         setUser("Staff Sales");
         break;
-      case "logistik":
+      case "LOGISTIK":
         setUser("Staff Logistik");
         break;
-      case "finance":
+      case "KEUANGAN":
         setUser("Staff Finance");
         break;
-      case "sa":
+      case "SUPER ADMIN":
         setUser("Super Admin");
         break;
       default:
@@ -39,18 +44,46 @@ const WelcomingMessage: FC = () => {
     }
   }, [activeUser]);
 
+  const validateToken = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(`${apiUrl}/token-validate`, {
+        token
+      },
+      );
+
+      if (response.data.status) {
+      } else {
+        handleLogout(); 
+        localStorage.clear();
+      } 
+    } catch (error) {
+      console.error("Error validating token:", error);
+      handleLogout();
+      localStorage.clear();
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); 
+    dispatch(logOut());    
+    setUser("");
+    setIsSidebarOpen(false);
+  };
+
+  useEffect(() => {
+    validateToken();
+  }, []);
+
   return (
     <div className="relative flex h-[11.5vh]  w-full items-center justify-between bg-white px-2 py-5 text-black">
-      {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 z-[40] h-full w-full transition-transform duration-300 ease-in-out lg:z-0 ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } w-[60vw] md:w-[15vw] md:translate-x-0`}
+        className={`fixed left-0 top-0 z-[40] h-full w-full transition-transform duration-300 ease-in-out lg:z-0 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } w-[60vw] md:w-[15vw] md:translate-x-0`}
       >
         <Sidebar />
       </div>
 
-      {/* Button to toggle Sidebar */}
       <Button
         className={`z-[100] mr-2 h-[40px] w-[40px] min-w-0 rounded-xl px-0 transition-all ease-in-out md:hidden ${isSidebarOpen ? "bg-white" : "bg-[#1e3a8a]"}`}
         onClick={toggleSidebar}

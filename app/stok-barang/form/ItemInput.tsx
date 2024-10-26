@@ -41,11 +41,13 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
   const router = useRouter();
   const watchFields = watch();
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
   useEffect(() => {
     const fetchItemData = async () => {
       try {
         const response = await axios.post(
-          "http://209.182.237.155:8080/api/stock-barang/list",
+          `${apiUrl}/stock-barang/list`,
           "",
         );
         setItemData(response.data.data);

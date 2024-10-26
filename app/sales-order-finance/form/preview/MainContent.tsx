@@ -17,6 +17,8 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import Swal from "sweetalert2";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 const MainContent = () => {
   const router = useRouter();
   const [data, setData] = useState<any>(null);
@@ -51,7 +53,7 @@ const MainContent = () => {
             if (data && data.data && data.data.data) {
 
 
-              const res = await axios.post("http://209.182.237.155:8080/api/purchase-order/edit/posting-edit-admin", data.data.data);
+              const res = await axios.post(`${apiUrl}/purchase-order/edit/posting-edit-admin`, data.data.data);
               console.log(res);
               if (res.data.status === true) {
                 Swal.fire({
@@ -100,7 +102,7 @@ const MainContent = () => {
             if (data && data.data && data.data.data) {
 
               
-                const res = await axios.post("http://209.182.237.155:8080/api/purchase-order/posting", data.data.data);
+                const res = await axios.post(`${apiUrl}/purchase-order/posting`, data.data.data);
                 if (res.data.status === true) {
                   Swal.fire({
                     title: "Success",

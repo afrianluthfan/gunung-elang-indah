@@ -30,6 +30,8 @@ const MainContent = () => {
     // localStorage.removeItem("purchaseOrder");
   }, []);
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
   const submitData = async () => {
     const aksi = localStorage.getItem("aksi");
 
@@ -51,7 +53,7 @@ const MainContent = () => {
             if (data && data.data && data.data.data) {
 
 
-              const res = await axios.post("http://209.182.237.155:8080/api/purchase-order/edit/posting-edit-admin", data.data.data);
+              const res = await axios.post(`${apiUrl}/purchase-order/edit/posting-edit-admin`, data.data.data);
               console.log(res);
               if (res.data.status === true) {
                 Swal.fire({
@@ -100,7 +102,7 @@ const MainContent = () => {
             if (data && data.data && data.data.data) {
 
               
-                const res = await axios.post("http://209.182.237.155:8080/api/purchase-order/posting", data.data.data);
+                const res = await axios.post(`${apiUrl}/purchase-order/posting`, data.data.data);
                 if (res.data.status === true) {
                   Swal.fire({
                     title: "Success",

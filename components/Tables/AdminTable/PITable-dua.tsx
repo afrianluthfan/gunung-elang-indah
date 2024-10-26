@@ -72,11 +72,12 @@ export default function PITableComponent() {
   useEffect(() => {
     router.refresh();
   }, [router]);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        "http://209.182.237.155:8080/api/proforma-invoice/get-all-list",
+        `${apiUrl}/proforma-invoice/get-all-list`,
       );
       console.log("API response:", response.data);
       if (response.data.status) {
