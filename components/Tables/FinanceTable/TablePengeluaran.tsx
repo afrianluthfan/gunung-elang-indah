@@ -9,22 +9,10 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Chip,
   Pagination,
   Selection,
-  ChipProps,
   SortDescriptor,
-  Tooltip,
 } from "@nextui-org/react";
-import { DeleteIcon } from "./DeleteIcon";
-import { EyeIcon } from "./EyeIcon";
-import { EditIcon } from "./EditIcon";
-
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  paid: "success",
-  unpaid: "danger",
-  vacation: "warning",
-};
 
 const INITIAL_VISIBLE_COLUMNS = [
   "number",
@@ -133,31 +121,7 @@ export default function TableComponent() {
         return user.index;
       }
 
-      const cellValue = user[columnKey as keyof User];
-      switch (columnKey) {
-        case "actions":
-          return (
-            <div className="relative flex items-center justify-center gap-2">
-              {/* <Tooltip content="Details" className="text-black">
-                <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                  <EyeIcon />
-                </span>
-              </Tooltip>
-              <Tooltip content="Edit user" className="text-black">
-                <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                  <EditIcon />
-                </span>
-              </Tooltip>
-              <Tooltip color="danger" content="Delete user">
-                <span className="cursor-pointer text-lg text-danger active:opacity-50">
-                  <DeleteIcon />
-                </span>
-              </Tooltip> */}
-            </div>
-          );
-        default:
-          return cellValue;
-      }
+      return user[columnKey as keyof User];
     },
     [],
   );
@@ -186,9 +150,10 @@ export default function TableComponent() {
         <TableHeader columns={headerColumns}>
           {(column) => (
             <TableColumn
-              className="bg-blue-900 text-white"
+              className={`bg-blue-900 text-center text-white ${column.uid === "number" ? "w-1" : "w-32"}`}
               key={column.uid}
               align="start"
+              allowsSorting={column.uid !== "number"}
             >
               {column.name}
             </TableColumn>
@@ -198,18 +163,24 @@ export default function TableComponent() {
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
+                <TableCell className="items-center text-center">
+                  {renderCell(item, columnKey)}
+                </TableCell>
               )}
             </TableRow>
           )}
         </TableBody>
       </Table>
       <div className="mt-5 flex justify-between">
-        <Pagination
-          total={pages}
-          page={page}
-          onChange={(newPage) => setPage(newPage)}
-        />
+        <div>
+          {sortedItems.length > rowsPerPage && (
+            <Pagination
+              total={pages}
+              page={page}
+              onChange={(newPage) => setPage(newPage)}
+            />
+          )}
+        </div>
         <select value={rowsPerPage} onChange={onRowsPerPageChange}>
           {[5, 10].map((pageSize) => (
             <option key={pageSize} value={pageSize}>

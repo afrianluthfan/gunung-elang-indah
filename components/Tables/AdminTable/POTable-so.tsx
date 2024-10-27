@@ -214,10 +214,7 @@ export default function PITableComponent() {
           placeholder="Masukan Nama Supplier"
           value={searchText}
           onChange={handleSearchChange}
-        />
-        <Button className="w-10 bg-blue-900 font-bold text-white">
-          Cari/Cek
-        </Button>
+      />
       </div>
 
       <div className="mb-5">

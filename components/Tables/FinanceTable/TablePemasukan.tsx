@@ -16,15 +16,6 @@ import {
   SortDescriptor,
   Tooltip,
 } from "@nextui-org/react";
-import { DeleteIcon } from "./DeleteIcon";
-import { EyeIcon } from "./EyeIcon";
-import { EditIcon } from "./EditIcon";
-
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  paid: "success",
-  unpaid: "danger",
-  vacation: "warning",
-};
 
 const INITIAL_VISIBLE_COLUMNS = [
   "number",
@@ -189,6 +180,7 @@ export default function TableComponent() {
               className="bg-blue-900 text-white"
               key={column.uid}
               align="start"
+              allowsSorting={column.uid !== "number"}
             >
               {column.name}
             </TableColumn>
@@ -205,11 +197,15 @@ export default function TableComponent() {
         </TableBody>
       </Table>
       <div className="mt-5 flex justify-between">
-        <Pagination
-          total={pages}
-          page={page}
-          onChange={(newPage) => setPage(newPage)}
-        />
+        <div>
+          {sortedItems.length > rowsPerPage && (
+            <Pagination
+              total={pages}
+              page={page}
+              onChange={(newPage) => setPage(newPage)}
+            />
+          )}
+        </div>
         <select value={rowsPerPage} onChange={onRowsPerPageChange}>
           {[5, 10].map((pageSize) => (
             <option key={pageSize} value={pageSize}>

@@ -184,7 +184,7 @@ const ProformaInvoiceDetail = () => {
 
       submitData();
     }
-  }, [shouldSubmit, responseData]);
+  }, [shouldSubmit, responseData, router]);
 
   const submitAcc = () => {
     Swal.fire({
