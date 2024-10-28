@@ -1,6 +1,6 @@
 services:
   fismed_fe:
-    image: fismedfe:latest
+    image: fismed-fe:latest
     container_name: fismed-fe-dev
     restart: always
     deploy:
