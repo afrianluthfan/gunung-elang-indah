@@ -225,20 +225,19 @@ export default function TableComponent() {
     return <div>{error}</div>;
   }
 
-  const onSearchChange = useCallback((value?: string) => {
-    if (value) {
-      setFilterValue(value);
-      setPage(1);
-    } else {
+  const onSearchChange = (value?: string) => {
+    if (!value) {
       setFilterValue("");
+    } else {
+      setFilterValue(value);
     }
-  }, []);
+    setPage(1);
+  };
 
-  const onClear = useCallback(() => {
-    setFilterValue("")
-    setPage(1)
-  }, [])
-
+  const onClear = () => {
+    setFilterValue("");
+    setPage(1);
+  };
 
   return (
     <div>
