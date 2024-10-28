@@ -115,7 +115,7 @@ export default function TableComponent() {
 
         try {
           const response = await axios.post(
-            `${apiUrl}/hutang/list`,
+            `${apiUrl}/pengeluaran/list`,
             {},
           );
           setTotalHutang(response.data.total);

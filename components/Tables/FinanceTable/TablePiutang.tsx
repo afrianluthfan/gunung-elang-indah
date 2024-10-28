@@ -113,7 +113,7 @@ export default function TableComponent() {
 
         try {
           const response = await axios.post(
-            `${apiUrl}/hutang/list`,
+            `${apiUrl}/piutang/list`,
             {},
           );
           Total = response.data.total

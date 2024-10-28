@@ -71,7 +71,7 @@ export default function TableComponent() {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          `${apiUrl}/piutang/list`,
+          `${apiUrl}/pemasukan/list`,
           {},
         );
         setTotalHutang(response.data.total);
