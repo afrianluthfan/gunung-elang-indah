@@ -375,7 +375,7 @@ const MainContent = () => {
 
                   {/* Dropdown Suggestions */}
                   {hospitalSuggestions.length > 0 && (
-                    <ul className="absolute top-[2rem] z-[40] mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                    <ul className="absolute top-[2rem] z-[40] mt-1 max-h-48 w-full overflow-y-auto rounded-xl border border-gray-300 bg-white">
                       {hospitalSuggestions.map((suggestion, idx) => (
                         <li
                           key={idx}
@@ -562,7 +562,7 @@ const MainContent = () => {
                       />
 
                       {doctorSuggestions.length > 0 && (
-                        <ul className="absolute top-[2rem] z-[40] mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                        <ul className="absolute top-[2rem] z-[40] mt-1 max-h-48 w-full overflow-y-auto rounded-xl border border-gray-300 bg-white">
                           {doctorSuggestions.map((suggestion, idx) => (
                             <li
                               key={idx}

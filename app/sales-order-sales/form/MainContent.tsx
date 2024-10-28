@@ -418,7 +418,7 @@ const AdminMainContent = () => {
 
               {/* Dropdown Suggestions */}
               {hospitalSuggestions.length > 0 && (
-                <ul className="absolute top-[4.8rem] z-[100] mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                <ul className="absolute top-[4.8rem] z-[100] mt-1 max-h-48 w-full overflow-y-auto rounded-xl border border-gray-300 bg-white">
                   {hospitalSuggestions.map((suggestion, idx) => (
                     <li
                       key={idx}
@@ -486,7 +486,7 @@ const AdminMainContent = () => {
                 }
               />
               {doctorSuggestions.length > 0 && (
-                <ul className="absolute top-[5rem] z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                <ul className="absolute top-[5rem] z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-xl border border-gray-300 bg-white">
                   {doctorSuggestions.map((suggestion, idx) => (
                     <li
                       key={idx}
@@ -562,7 +562,7 @@ const AdminMainContent = () => {
 
               {/* Dropdown Suggestions */}
               {hospitalSuggestions.length > 0 && (
-                <ul className="absolute top-[4.8rem] z-[100] mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                <ul className="absolute top-[4.8rem] z-[100] mt-1 max-h-48 w-full overflow-y-auto rounded-xl border border-gray-300 bg-white">
                   {hospitalSuggestions.map((suggestion, idx) => (
                     <li
                       key={idx}
@@ -691,7 +691,7 @@ const AdminMainContent = () => {
                     {/* Dropdown Suggestions */}
                     {itemSuggestions[index] &&
                       itemSuggestions[index].length > 0 && (
-                        <ul className="absolute z-[200] mt-1 max-h-[250px] w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                        <ul className="absolute z-[200] mt-1 max-h-[250px] w-full overflow-y-auto rounded-xl border border-gray-300 bg-white">
                           {itemSuggestions[index].map((suggestion, idx) => (
                             <li
                               key={idx}

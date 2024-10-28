@@ -249,7 +249,7 @@ const MainContent = () => {
           <Input
             type="text"
             placeholder="Cari Nama Barang !"
-            className="w-full"
+            className="w-full border-1 border-blue-800 rounded-xl "
             onChange={(e) => setFilterValue(e.target.value)}
             value={filterValue}
           />

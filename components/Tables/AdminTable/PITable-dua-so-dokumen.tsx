@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -51,6 +51,7 @@ type User = {
 export default function PITableComponent() {
   const [users, setUsers] = useState<User[]>([]);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [filterValue, setFilterValue] = useState("");
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: "created_at",
     direction: "ascending",
@@ -201,19 +202,32 @@ export default function PITableComponent() {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
   };
+  const onClear = useCallback(() => {
+    setFilterValue("")
+    setPage(1)
+  }, [])
+
+  const onSearchChange = useCallback((value?: string) => {
+    if (value) {
+      setFilterValue(value);
+      setPage(1);
+    } else {
+      setFilterValue("");
+    }
+  }, []);
+
 
   return (
     <div>
-      <div className="mb-5 flex flex-col justify-between gap-4 lg:flex-row">
+      <div className="flex justify-between gap-4 mb-5">
         <Input
-          type="text"
-          placeholder="Masukan Nama Perusahaan"
-          value={searchText}
-          onChange={handleSearchChange}
+          isClearable
+          className="w-full border-1 rounded-lg border-blue-900"
+          placeholder="Cari Nama Suplier ..."
+          value={filterValue}
+          onClear={() => onClear()}
+          onValueChange={onSearchChange}
         />
-        <Button className="w-10 bg-[#0C295F] font-bold text-white">
-          Cari/Cek
-        </Button>
       </div>
 
       <div className="mb-5">
@@ -233,8 +247,9 @@ export default function PITableComponent() {
           <TableHeader columns={columns}>
             {(column) => (
               <TableColumn
-                className="bg-[#0C295F] text-center text-white"
                 key={column.uid}
+                allowsSorting
+                className="bg-[#0C295F] text-white text-center"
                 align="start"
               >
                 {column.name}

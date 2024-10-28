@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -61,6 +61,7 @@ export default function PITableComponent() {
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState<string>(""); // State for search text
   const [username, setUsername] = useState<string | null>(null);
+  const [filterValue, setFilterValue] = useState("");
   const router = useRouter();
 
   // Fetch username from localStorage
@@ -204,16 +205,32 @@ export default function PITableComponent() {
     setSearchText(e.target.value);
   };
 
+  const onClear = useCallback(() => {
+    setFilterValue("")
+    setPage(1)
+  }, [])
+
+  const onSearchChange = useCallback((value?: string) => {
+    if (value) {
+      setFilterValue(value);
+      setPage(1);
+    } else {
+      setFilterValue("");
+    }
+  }, []);
+
+
   return (
     <div>
       <div className="flex justify-between gap-4 mb-5">
         <Input
-          type="text"
-          placeholder="Masukan Nama Supplier"
-          value={searchText}
-          onChange={handleSearchChange}
+          isClearable
+          className="w-full border-1 rounded-lg border-blue-900"
+          placeholder="Cari Nama Suplier ..."
+          value={filterValue}
+          onClear={() => onClear()}
+          onValueChange={onSearchChange}
         />
-        <Button className="bg-[#0C295F] w-10 font-bold text-white">Cari/Cek</Button>
       </div>
 
       <div className="mb-5">
@@ -229,7 +246,12 @@ export default function PITableComponent() {
         >
           <TableHeader columns={columns}>
             {(column) => (
-              <TableColumn className="bg-[#0C295F] text-white text-center" key={column.uid} align="start">
+              <TableColumn
+                key={column.uid}
+                allowsSorting
+                className="bg-[#0C295F] text-white text-center"
+                align="start"
+              >
                 {column.name}
               </TableColumn>
             )}

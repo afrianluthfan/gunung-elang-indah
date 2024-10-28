@@ -39,14 +39,11 @@ type Gudang = {
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-
 const MainContent = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [filterValue, setFilterValue] = useState("");
-  const [gudang, setGudang] = useState(""); // State untuk menyimpan pilihan gudang
-  const [visibleColumns] = useState<Set<string>>(
-    new Set(INITIAL_VISIBLE_COLUMNS),
-  );
+  const [gudang, setGudang] = useState("");
+  const [visibleColumns] = useState<Set<string>>(new Set(INITIAL_VISIBLE_COLUMNS));
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: "nama",
@@ -54,52 +51,41 @@ const MainContent = () => {
   });
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
-
   const [gudangList, setGudangList] = useState<Gudang[]>([]);
 
   useEffect(() => {
     const fetchGudangList = async () => {
       try {
-        const response = await axios.post(
-          `${apiUrl}/gudang/list`
-        );
+        const response = await axios.post(`${apiUrl}/gudang/list`);
         setGudangList(response.data.data);
       } catch (error) {
         setError("Error fetching Gudang list");
         console.error("Error fetching Gudang list:", error);
       }
-    }
+    };
 
     fetchGudangList();
   }, []);
 
-  // Fungsi untuk fetch data berdasarkan pilihan gudang
   const fetchData = useCallback(async () => {
     try {
       let response;
       if (gudang && gudang !== "0") {
-        response = await axios.post(
-          `${apiUrl}/stok/listbygudang`,
-          { id: gudang },
-        );
+        response = await axios.post(`${apiUrl}/stok/listbygudang`, { id: gudang });
       } else {
-        response = await axios.post(
-          `${apiUrl}/stok/list-customer`,
-          {},
-        );
+        response = await axios.post(`${apiUrl}/stok/list-customer`, {});
       }
       setUsers(response.data.data);
     } catch (error) {
       setError("Error fetching data");
       console.error("Error fetching data:", error);
     }
-  }, [gudang]); // Tambahkan `gudang` sebagai dependensi agar refetch ketika gudang berubah
+  }, [gudang]);
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]); // Panggil `fetchData` ketika komponen mount atau `gudang` berubah
+  }, [fetchData]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const columns = [
     { name: "No", uid: "number" },
     { name: "Variable", uid: "variable" },
@@ -164,37 +150,7 @@ const MainContent = () => {
   );
 
   if (error) {
-    return (
-      <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
-        <div className="flex w-full flex-col justify-between gap-4">
-          <h1 className="mb-4 text-xl font-bold lg:text-[2vh]">Cari Data</h1>
-          <div className="flex w-full flex-col justify-stretch gap-4 text-sm lg:flex-row">
-          <select
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-              setGudang(e.target.value);
-            }}            name="gudang"
-            id="123"
-            className="w-full px-5 py-4 border border-black-500 rounded resize-none"
-          >
-            <option value="">Pilih Gudang Tujuan</option>
-            {
-              gudangList.map((gudang) => (
-                <option key={gudang.id} value={gudang.id}>
-                  {gudang.nama_gudang}
-                </option>
-              ))
-            }
-          </select>
-            <Input type="text" placeholder="Masukan ID Purchase Order" />
-            <Button className="bg-[#0C295F] font-bold text-white">
-              Cari/Cek
-            </Button>
-          </div>
-        </div>
-
-        <div>Stok Barang Blm Ada</div>
-      </div>
-    );
+    return <div>Error: {error}</div>;
   }
 
   return (
@@ -205,20 +161,24 @@ const MainContent = () => {
           <select
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
               setGudang(e.target.value);
-            }}            name="gudang"
-            id="123"
+            }}
+            name="gudang"
             className="w-full px-5 py-4 border border-black-500 rounded resize-none"
           >
             <option value="">Pilih Gudang Tujuan</option>
-            {
-              gudangList.map((gudang) => (
-                <option key={gudang.id} value={gudang.id}>
-                  {gudang.nama_gudang}
-                </option>
-              ))
-            }
+            {gudangList.map((gudang) => (
+              <option key={gudang.id} value={gudang.id}>
+                {gudang.nama_gudang}
+              </option>
+            ))}
           </select>
-          <Input type="text" placeholder="Masukan ID Purchase Order" />
+          <Input
+            type="text"
+            className="border-blue-900 rounded-xl"
+            placeholder="Masukan Nama Barang"
+            value={filterValue}
+            onChange={(e) => setFilterValue(e.target.value)} // Update filterValue setiap kali ada perubahan di input
+          />
           <Button className="bg-[#0C295F] font-bold text-white">
             Cari/Cek
           </Button>
@@ -263,9 +223,12 @@ const MainContent = () => {
           </Table>
           <div className="mt-5 flex justify-between">
             <Pagination
-              total={pages}
+              showControls
+              showShadow
+              color="primary"
               page={page}
-              onChange={(newPage) => setPage(newPage)}
+              onChange={setPage}
+              total={pages}
             />
             <select value={rowsPerPage} onChange={onRowsPerPageChange}>
               {[5, 10].map((pageSize) => (

@@ -114,7 +114,7 @@ const MainContent = () => {
 
     if (filterValue) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.nama_perusahaan.toLowerCase().includes(filterValue.toLowerCase())
+        user.nama_dokter.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
 
@@ -209,7 +209,7 @@ const MainContent = () => {
           <Input
             type="text"
             placeholder="Cari Nama Dokter !"
-            className="w-full"
+            className=" w-full border-1 border-blue-900 rounded-xl"
             onChange={(e) => setFilterValue(e.target.value)}
             value={filterValue}
           />
@@ -263,10 +263,12 @@ const MainContent = () => {
         </div>
         <div className="w-full mt-5 lg:w-auto">
           <Pagination
+            showControls
+            showShadow
             color="primary"
             page={page}
+            onChange={setPage}
             total={pages}
-            onChange={(newPage) => setPage(newPage)}
           />
         </div>
       </div>

@@ -418,7 +418,7 @@ const AdminMainContent = () => {
 
               {/* Dropdown Suggestions */}
               {hospitalSuggestions.length > 0 && (
-                <ul className="absolute top-[4.8rem] z-[100] mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                <ul className="absolute top-[4.8rem] z-[100] mt-1 max-h-48 w-full overflow-y-auto rounded-xl border border-gray-300 bg-white">
                   {hospitalSuggestions.map((suggestion, idx) => (
                     <li
                       key={idx}
@@ -486,7 +486,7 @@ const AdminMainContent = () => {
                 }
               />
               {doctorSuggestions.length > 0 && (
-                <ul className="absolute top-[5rem] z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                <ul className="absolute top-[5rem] z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-xl border border-gray-300 bg-white">
                   {doctorSuggestions.map((suggestion, idx) => (
                     <li
                       key={idx}
@@ -562,7 +562,7 @@ const AdminMainContent = () => {
 
               {/* Dropdown Suggestions */}
               {hospitalSuggestions.length > 0 && (
-                <ul className="absolute top-[4.8rem] z-[100] mt-1 max-h-48 w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
+                <ul className="absolute top-[4.8rem] z-[100] mt-1 max-h-48 w-full overflow-y-auto rounded-xl border border-gray-300 bg-white">
                   {hospitalSuggestions.map((suggestion, idx) => (
                     <li
                       key={idx}
@@ -600,146 +600,151 @@ const AdminMainContent = () => {
         </>
       )}
 
-      <Divider />
+      {selectedDivisi !== "" && (
+        <>
+          <Divider />
 
-      <div className="flex justify-end">
-        <Button className="bg-[#0C295F] text-white" onClick={handleAddItem}>
-          Tambah Barang
-        </Button>
-      </div>
+          <div className="flex justify-end">
+            <Button className="bg-[#0C295F] text-white" onClick={handleAddItem}>
+              Tambah Barang
+            </Button>
+          </div>
 
-      <div>
-        <Table
-          aria-label="Table Barang"
-          className="min-w-full divide-y divide-gray-200"
-          isHeaderSticky
-          removeWrapper
-        >
-          <TableHeader>
-            <TableColumn className="bg-[#0C295F] text-white">
-              Gudang Asal
-            </TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white">
-              Nama Barang
-            </TableColumn>
+          <div>
+            <Table
+              aria-label="Table Barang"
+              className="min-w-full divide-y divide-gray-200"
+              isHeaderSticky
+              removeWrapper
+            >
+              <TableHeader>
+                <TableColumn className="bg-[#0C295F] text-white">
+                  Gudang Asal
+                </TableColumn>
+                <TableColumn className="bg-[#0C295F] text-white">
+                  Nama Barang
+                </TableColumn>
 
-            <TableColumn className="bg-[#0C295F] text-white">
-              Quantity
-            </TableColumn>
+                <TableColumn className="bg-[#0C295F] text-white">
+                  Quantity
+                </TableColumn>
 
 
-            <TableColumn className="bg-[#0C295F] text-white">
-              Action
-            </TableColumn>
-          </TableHeader>
-          <TableBody>
-            {responseData.item.map((row, index) => (
-              <TableRow key={index}>
-                <TableCell className="min-w-[150px] lg:min-w-fit">
-                <select
-                  value={row.gudang}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                    handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index);
-                    setGudang(e.target.value);
-                  }}
-                  name="gudang"
-                  id="123"
-                  className="w-full px-5 py-4 border border-black-500 rounded resize-none"
-                >
-                  <option value="">Pilih Gudang Tujuan</option>
-                  {
-                    gudangList.map((gudang) => (
-                      <option key={gudang.id} value={gudang.nama_gudang}>
-                        {gudang.nama_gudang}
-                      </option>
-                    ))
-                  }
-                </select>
-                </TableCell>
+                <TableColumn className="bg-[#0C295F] text-white">
+                  Action
+                </TableColumn>
+              </TableHeader>
+              <TableBody>
+                {responseData.item.map((row, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
+                      <select
+                        value={row.gudang}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                          handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index);
+                          setGudang(e.target.value);
+                        }}
+                        name="gudang"
+                        id="123"
+                        className="w-full px-5 py-4 border border-black-500 rounded resize-none"
+                      >
+                        <option value="">Pilih Gudang Tujuan</option>
+                        {
+                          gudangList.map((gudang) => (
+                            <option key={gudang.id} value={gudang.nama_gudang}>
+                              {gudang.nama_gudang}
+                            </option>
+                          ))
+                        }
+                      </select>
+                    </TableCell>
 
-                <TableCell className="min-w-[150px] lg:min-w-fit">
-                  <div className="relative w-full">
-                    {/* Wrapper for Input and Dropdown Button */}
-                    <Input
-                      value={row.nama_barang}
-                      name="nama_barang"
-                      onChange={(e) => handleFieldChange(e, index)}
-                      placeholder="Nama Barang"
-                      className="flex-1 border-none px-2 pt-2 outline-none"
-                      endContent={
-                        <button
-                          className="opacity-75"
-                          type="button"
-                          onClick={() => {
-                            const allSuggestions = stockData.map(
-                              (item: { name: string }) => item.name,
-                            );
-                            setItemSuggestions((prevSuggestions) => ({
-                              ...prevSuggestions,
-                              [index]:
-                                prevSuggestions[index] &&
-                                  prevSuggestions[index].length > 0
-                                  ? []
-                                  : allSuggestions, // Toggle suggestions
-                            }));
-                          }}
-                        >
-                          ▼
-                        </button>
-                      }
-                    />
-                    {/* Dropdown Suggestions */}
-                    {itemSuggestions[index] &&
-                      itemSuggestions[index].length > 0 && (
-                        <ul className="absolute z-[200] mt-1 max-h-[250px] w-full overflow-y-auto rounded-2xl border border-gray-300 bg-white">
-                          {itemSuggestions[index].map((suggestion, idx) => (
-                            <li
-                              key={idx}
-                              onClick={() =>
-                                handleSuggestionClick(suggestion, index)
-                              }
-                              className="cursor-pointer p-2 hover:bg-gray-200"
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
+                      <div className="relative w-full">
+                        {/* Wrapper for Input and Dropdown Button */}
+                        <Input
+                          value={row.nama_barang}
+                          name="nama_barang"
+                          onChange={(e) => handleFieldChange(e, index)}
+                          placeholder="Nama Barang"
+                          className="flex-1 border-none px-2 pt-2 outline-none"
+                          endContent={
+                            <button
+                              className="opacity-75"
+                              type="button"
+                              onClick={() => {
+                                const allSuggestions = stockData.map(
+                                  (item: { name: string }) => item.name,
+                                );
+                                setItemSuggestions((prevSuggestions) => ({
+                                  ...prevSuggestions,
+                                  [index]:
+                                    prevSuggestions[index] &&
+                                      prevSuggestions[index].length > 0
+                                      ? []
+                                      : allSuggestions, // Toggle suggestions
+                                }));
+                              }}
                             >
-                              {suggestion}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                  </div>
-                </TableCell>
+                              ▼
+                            </button>
+                          }
+                        />
+                        {/* Dropdown Suggestions */}
+                        {itemSuggestions[index] &&
+                          itemSuggestions[index].length > 0 && (
+                            <ul className="absolute z-[200] mt-1 max-h-[250px] w-full overflow-y-auto rounded-xl border border-gray-300 bg-white">
+                              {itemSuggestions[index].map((suggestion, idx) => (
+                                <li
+                                  key={idx}
+                                  onClick={() =>
+                                    handleSuggestionClick(suggestion, index)
+                                  }
+                                  className="cursor-pointer p-2 hover:bg-gray-200"
+                                >
+                                  {suggestion}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                      </div>
+                    </TableCell>
 
-                <TableCell className="min-w-[150px] lg:min-w-fit">
-                  <Input
-                    value={row.quantity}
-                    name="quantity"
-                    onChange={(e) => handleFieldChange(e, index)}
-                    placeholder="Quantity"
-                    className="pt-2"
-                  />
-                </TableCell>
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
+                      <Input
+                        value={row.quantity}
+                        name="quantity"
+                        onChange={(e) => handleFieldChange(e, index)}
+                        placeholder="Quantity"
+                        className="pt-2"
+                      />
+                    </TableCell>
+
+                    <TableCell className="min-w-[150px] lg:min-w-fit">
+                      <Tooltip content="Delete item">
+                        <span
+                          className="cursor-pointer text-lg text-red-600"
+                          onClick={() => handleDelete(index)}
+                        >
+                          <DeleteIcon />
+                        </span>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            <div className="mt-4 flex justify-end">
+              <Button color="primary" onClick={submitAcc}>
+                Simpan
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
 
 
-                <TableCell className="min-w-[150px] lg:min-w-fit">
-                  <Tooltip content="Delete item">
-                    <span
-                      className="cursor-pointer text-lg text-red-600"
-                      onClick={() => handleDelete(index)}
-                    >
-                      <DeleteIcon />
-                    </span>
-                  </Tooltip>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-
-        <div className="mt-4 flex justify-end">
-          <Button color="primary" onClick={submitAcc}>
-            Simpan
-          </Button>
-        </div>
-      </div>
     </div>
   );
 };

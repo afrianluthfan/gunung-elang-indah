@@ -30,16 +30,15 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 const MainContent = () => {
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [filterValue, setFilterValue] = useState("");
-  const [gudang, setGudang] = useState("");
   const [gudangList, setGudangList] = useState<Gudang[]>([]);
   const [visibleColumns] = useState<Set<string>>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "nama",
+    column: "nama_gudang",
     direction: "ascending",
   });
   const [page, setPage] = useState(1);
@@ -47,18 +46,14 @@ const MainContent = () => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
-
     if (!isOpen) {
       fetchGudangList();
     }
-    
   }, [isOpen]);
 
   const fetchGudangList = useCallback(async () => {
     try {
-      const response = await axios.post(
-        `${apiUrl}/gudang/list`
-      );
+      const response = await axios.post(`${apiUrl}/gudang/list`);
       setGudangList(response.data.data);
     } catch (error) {
       setError("Error fetching Gudang list");
@@ -82,23 +77,16 @@ const MainContent = () => {
   }, [columns, visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    let filteredUsers = Array.isArray(gudangList) ? [...gudangList] : [];
-
-    if (filterValue) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.nama_gudang.toLowerCase().includes(filterValue.toLowerCase())
-      );
-    }
-
-    return filteredUsers;
+    return gudangList.filter((gudang) =>
+      gudang.nama_gudang.toLowerCase().includes(filterValue.toLowerCase())
+    );
   }, [filterValue, gudangList]);
 
   const sortedItems = useMemo(() => {
-    return [...filteredItems].sort((a: Gudang, b: Gudang) => {
+    return [...filteredItems].sort((a, b) => {
       const first = a[sortDescriptor.column as keyof Gudang] as string | number;
       const second = b[sortDescriptor.column as keyof Gudang] as string | number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
-
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, filteredItems]);
@@ -113,41 +101,28 @@ const MainContent = () => {
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const handleDelete = (id : number) => {
-    try {
-      Swal.fire({
-        title: "Apakah Kamu Yakin?",
-        text: "Apakah kamu yakin ingin data ini di input ?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            await axios.post(
-              `${apiUrl}/gudang/delete`,
-              {
-                id,
-              }
-            );
-            fetchGudangList();
-            Swal.fire("Nice!", "Data Berhasil Di Hapus!.", "success");
-          } catch (error) {
-            console.error("Error submitting data", error);
-            Swal.fire(
-              "Error!",
-              "Terjadi kesalahan saat mengirim data.",
-              "error",
-            );
-          }
+  const handleDelete = (id: number) => {
+    Swal.fire({
+      title: "Apakah Kamu Yakin?",
+      text: "Apakah kamu yakin ingin data ini dihapus?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.post(`${apiUrl}/gudang/delete`, { id });
+          fetchGudangList();
+          Swal.fire("Nice!", "Data Berhasil Dihapus!.", "success");
+        } catch (error) {
+          console.error("Error deleting data", error);
+          Swal.fire("Error!", "Terjadi kesalahan saat menghapus data.", "error");
         }
-      });
-    } catch (error) {
-      console.error("Error processing request", error);
-    }
-  }
+      }
+    });
+  };
 
   const renderCell = useCallback(
     (gudang: Gudang & { number: number }, columnKey: React.Key, index: number) => {
@@ -158,12 +133,9 @@ const MainContent = () => {
           </Button>
         );
       }
-  
-      return columnKey === "id"
-        ? index + 1
-        : gudang[columnKey as keyof Gudang];
+      return columnKey === "id" ? index + 1 : gudang[columnKey as keyof Gudang];
     },
-    [gudangList, handleDelete] // Tambahkan handleDelete sebagai dependensi
+    [handleDelete]
   );
 
   if (error) {
@@ -173,21 +145,20 @@ const MainContent = () => {
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <div className="flex w-full flex-col justify-between gap-4">
-        <h1 className="text-xl font-bold mb-4 lg:text-[2vh]">Cari Data</h1>
+        <h1 className="text-xl font-bold mb-4 lg:text-[2vh]">Cari Gudang</h1>
         <div className="text-sm flex flex-col w-full justify-stretch gap-2 lg:flex-row lg:items-center">
           <Input
             type="text"
-            placeholder="Masukan ID Purchase Order"
-            className="w-full "
+            placeholder="Masukkan Nama Gudang"
+            className=" w-full border-1 border-blue-900 rounded-xl"
+            value={filterValue}
+            onChange={(e) => setFilterValue(e.target.value)}
           />
           <Button className="bg-[#0C295F] font-bold text-white rounded-md w-full lg:w-auto">
             Cari/Cek
           </Button>
-          <Button
-            onPress={onOpen}
-            className="bg-[#009338] font-bold text-white rounded-md w-full lg:w-auto">
+          <Button onPress={onOpen} className="bg-[#009338] font-bold text-white rounded-md w-full lg:w-auto">
             Tambah Gudang
-
           </Button>
         </div>
       </div>
@@ -214,7 +185,7 @@ const MainContent = () => {
             </TableHeader>
             <TableBody
               items={itemsWithIndex}
-              emptyContent={<div>Data Tidak Ditemukan !</div>}
+              emptyContent={<div>Data Tidak Ditemukan!</div>}
             >
               {(item) => (
                 <TableRow key={item.id}>
@@ -232,16 +203,17 @@ const MainContent = () => {
         <div className="flex justify-end p-4">
           <Pagination
             showControls
+            showShadow
+            color="primary"
             page={page}
+            onChange={setPage}
             total={pages}
-            onChange={(page) => setPage(page)}
           />
         </div>
       </div>
 
-
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}  isDismissable={false} isKeyboardDismissDisabled={true}>
-        <ModalTambah/>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false} isKeyboardDismissDisabled={true}>
+        <ModalTambah />
       </Modal>
     </div>
   );
