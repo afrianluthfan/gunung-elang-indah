@@ -15,10 +15,13 @@ import {
   ChipProps,
   SortDescriptor,
   Tooltip,
+  Divider,
+  Input,
 } from "@nextui-org/react";
 import { DeleteIcon } from "./DeleteIcon";
 import { EyeIcon } from "./EyeIcon";
 import { EditIcon } from "./EditIcon";
+import Swal from "sweetalert2";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   paid: "success",
@@ -46,6 +49,7 @@ type User = {
 
 export default function TableComponent() {
   const [users, setUsers] = useState<User[]>([]);
+  const [totalHutang, setTotalHutang] = useState<string>("");
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -59,15 +63,18 @@ export default function TableComponent() {
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
 
+  let Total = ""
+
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          `${apiUrl}/pemasukan/list`,
+          `${apiUrl}/piutang/list`,
           {},
         );
+        setTotalHutang(response.data.total);
         setUsers(response.data.data);
       } catch (error) {
         setError("Error fetching data");
@@ -78,6 +85,55 @@ export default function TableComponent() {
     fetchData();
   }, []);
 
+  const handleMarkAsPaid = async (id: number) => {
+    // Konfirmasi menggunakan SweetAlert2
+    const result = await Swal.fire({
+      title: "Apakah kamu yakin?",
+      text: `Kamu akan melunasi user dengan ID ${id}`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, lunasi!",
+      cancelButtonText: "Batal",
+    });
+
+    // Jika user mengkonfirmasi, lanjutkan ke API request
+    if (result.isConfirmed) {
+      try {
+        const response = await axios.post(`${apiUrl}/piutang/lunas`, {
+          id: id,
+        });
+
+        Swal.fire(
+          "Berhasil!",
+          `User dengan ID ${id} berhasil dilunasi.`,
+          "success"
+        );
+
+        try {
+          const response = await axios.post(
+            `${apiUrl}/pemasukan/list`,
+            {},
+          );
+          Total = response.data.total
+          setUsers(response.data.data);
+        } catch (error) {
+          setError("Error fetching data");
+          console.error("Error fetching data:", error);
+        }
+
+      } catch (error) {
+        console.error("Error marking user as paid:", error);
+
+        Swal.fire(
+          "Gagal!",
+          `Gagal melunasi user dengan ID ${id}.`,
+          "error"
+        );
+      }
+    }
+  }
   const columns = [
     { name: "No", uid: "number" },
     { name: "Tanggal", uid: "tanggal" },
@@ -94,7 +150,7 @@ export default function TableComponent() {
     return columns.filter((column) =>
       Array.from(visibleColumns).includes(column.uid),
     );
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
@@ -140,28 +196,21 @@ export default function TableComponent() {
         case "actions":
           return (
             <div className="relative flex items-center gap-2">
-              {/* <Tooltip content="Details" className="text-black">
-                <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                  <EyeIcon />
+              <Tooltip color="success" content="Mark as Paid">
+                <span
+                  className="cursor-pointer text-lg text-success active:opacity-50"
+                  onClick={() => handleMarkAsPaid(user.id)}
+                >
+                  {/* Replace CheckIcon with an appropriate icon or import it */}
+                  ✓
                 </span>
               </Tooltip>
-              <Tooltip content="Edit user" className="text-black">
-                <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                  <EditIcon />
-                </span>
-              </Tooltip>
-              <Tooltip color="danger" content="Delete user">
-                <span className="cursor-pointer text-lg text-danger active:opacity-50">
-                  <DeleteIcon />
-                </span>
-              </Tooltip> */}
             </div>
           );
         default:
           return cellValue;
       }
-    },
-    [],
+    }, [],
   );
 
   const onRowsPerPageChange = useCallback(
@@ -176,11 +225,65 @@ export default function TableComponent() {
     return <div>{error}</div>;
   }
 
+  const onSearchChange = useCallback((value?: string) => {
+    if (value) {
+      setFilterValue(value);
+      setPage(1);
+    } else {
+      setFilterValue("");
+    }
+  }, []);
+
+  const onClear = useCallback(() => {
+    setFilterValue("")
+    setPage(1)
+  }, [])
+
+
   return (
     <div>
+
+      <div className="mb-4">
+        <h1 className="font-bold text-sm mb-4">Data Pemasukan</h1>
+      </div>
+
+      <Divider className="mb-4" />
+
+      <div className="flex justify-between items-center gap-3 mb-3 w-full">
+        <Input
+          isClearable
+          className="w-full border-1 rounded-lg border-blue-900"
+          placeholder="Cari Nama Customer ..."
+          value={filterValue}
+          onClear={() => onClear()}
+          onValueChange={onSearchChange}
+        />
+      </div>
+
+      <Divider className="my-4" />
+
+      <div className="mb-4 background-color: #f0f0f0; padding: 10px; border-radius: 5px;">
+        <table border={10}>
+          <tbody>
+            <tr>
+              <td className="font-semibold text-sm">
+                Total Pemasukan
+              </td>
+              <td>
+                :
+              </td>
+              <td className="text-sm">
+                {totalHutang}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <Divider className="my-4" />
+
       <Table
         aria-label="Example table with custom cells"
-        
         onSelectionChange={setSelectedKeys}
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
@@ -188,7 +291,12 @@ export default function TableComponent() {
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
-            <TableColumn className="bg-[#0C295F] text-white" key={column.uid} align="start">
+            <TableColumn
+              key={column.uid}
+              allowsSorting
+              className="bg-[#0C295F] text-white text-center"
+              align="start"
+            >
               {column.name}
             </TableColumn>
           )}

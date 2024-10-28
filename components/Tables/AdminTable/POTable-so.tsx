@@ -24,7 +24,7 @@ import { useRouter } from "next/navigation";
 
 const columns = [
   { name: "NO.", uid: "number" },
-  { name: "TANGGAL.", uid: "tanggal" },
+  { name: "TANGGAL", uid: "tanggal", sortable: true },
   { name: "NAMA SUPLIER", uid: "nama_suplier", sortable: true },
   { name: "NOMOR PO", uid: "nomor_po", sortable: true },
   { name: "SUB TOTAL", uid: "sub_total", sortable: true },
@@ -32,6 +32,7 @@ const columns = [
   { name: "STATUS", uid: "status", sortable: true },
   { name: "ACTIONS", uid: "actions" },
 ];
+
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
@@ -60,11 +61,20 @@ export default function PITableComponent() {
     direction: "ascending",
   });
   const [page, setPage] = useState(1);
-  const [searchText, setSearchText] = useState<string>(""); // State for search text
+  const [searchText, setSearchText] = useState<string>("");
+
+  // Column-specific filters
+  const [filters, setFilters] = useState({
+    tanggal: "",
+    nama_suplier: "",
+    nomor_po: "",
+    sub_total: "",
+    total: "",
+  });
+
   const [username, setUsername] = useState<string | null>(null);
   const router = useRouter();
 
-  // Fetch username from localStorage
   useEffect(() => {
     const storedUsername = localStorage.getItem("statusAccount");
     if (storedUsername) {
@@ -72,17 +82,13 @@ export default function PITableComponent() {
     }
   }, []);
 
-  // Refresh page on navigation
   useEffect(() => {
     router.refresh();
   }, []);
 
-  // Function to fetch data from API
   const fetchData = async () => {
     try {
-      const response = await axios.post(
-        `${apiUrl}/purchase-order/list-so`
-      );
+      const response = await axios.post(`${apiUrl}/purchase-order/list-so`);
       if (response.data.status) {
         setUsers(response.data.data);
       } else {
@@ -93,31 +99,28 @@ export default function PITableComponent() {
     }
   };
 
-  // Fetch data on component mount and when navigating back
   useEffect(() => {
     fetchData();
   }, []);
 
   const filteredUsers = React.useMemo(() => {
     return users.filter((user) =>
+      Object.keys(filters).every((key) =>
+        (user[key as keyof User] || "")
+          .toString()
+          .toLowerCase()
+          .includes(filters[key as keyof typeof filters].toLowerCase())
+      ) &&
       user.nama_suplier.toLowerCase().includes(searchText.toLowerCase())
     );
-  }, [users, searchText]);
+  }, [users, filters, searchText]);
 
   const sortedItems = React.useMemo(() => {
     return [...filteredUsers].sort((a: User, b: User) => {
-      const first =
-        a[sortDescriptor.column as keyof User] !== undefined
-          ? String(a[sortDescriptor.column as keyof User])
-          : "";
-      const second =
-        b[sortDescriptor.column as keyof User] !== undefined
-          ? String(b[sortDescriptor.column as keyof User])
-          : "";
+      const first = a[sortDescriptor.column as keyof User] ?? "";
+      const second = b[sortDescriptor.column as keyof User] ?? "";
 
-      // Ensure both values are strings before comparing
-      const cmp = first.localeCompare(second);
-
+      const cmp = String(first).localeCompare(String(second));
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, filteredUsers]);
@@ -137,7 +140,6 @@ export default function PITableComponent() {
       if (columnKey === "number") {
         return user.index;
       }
-
       const cellValue = user[columnKey as keyof User];
       switch (columnKey) {
         case "status":
@@ -154,15 +156,10 @@ export default function PITableComponent() {
         case "actions":
           return (
             <div className="relative flex items-center gap-2">
-
               <Tooltip content="Details" className="text-black text-center">
                 <span
                   onClick={() =>
-                    router.push(
-                      username === "admin"
-                        ? `/sales-order-finance/edit?id=${user.id}`
-                        : `/sales-order-finance/edit?id=${user.id}`
-                    )
+                    router.push(`/purchase-order/edit?id=${user.id}`)
                   }
                   className="cursor-pointer text-lg text-default-400 active:opacity-50">
                   <EyeIcon className="items-center" />
@@ -172,11 +169,7 @@ export default function PITableComponent() {
                 <Tooltip content="Edit" className="text-black text-center">
                   <span
                     onClick={() =>
-                      router.push(
-                        username === "ADMIN"
-                          ? `/purchase-order/edit-admin?id=${user.id}`
-                          : ``
-                      )
+                      router.push(`/purchase-order/edit-admin?id=${user.id}`)
                     }
                     className="cursor-pointer text-lg text-default-400 active:opacity-50"
                   >
@@ -193,13 +186,12 @@ export default function PITableComponent() {
     [username, router]
   );
 
-  const onRowsPerPageChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setRowsPerPage(Number(e.target.value));
-      setPage(1);
-    },
-    []
-  );
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilters({
+      ...filters,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
@@ -207,14 +199,17 @@ export default function PITableComponent() {
 
   return (
     <div>
-      <div className="flex justify-between gap-4 mb-5">
-        <Input
-          type="text"
-          placeholder="Masukan Nama Supplier"
-          value={searchText}
-          onChange={handleSearchChange}
-        />
-        <Button className="bg-[#0C295F] w-10 font-bold text-white">Cari/Cek</Button>
+
+      <div className="mb-5">
+        <Divider />
+      </div>
+
+      <div className="flex gap-2 mb-5">
+        <Input className="border-1 border-blue-900 rounded-xl " placeholder="Tanggal" name="tanggal" onChange={handleFilterChange} />
+        <Input className="border-1 border-blue-900 rounded-xl " placeholder="Nama Suplier" name="nama_suplier" onChange={handleFilterChange} />
+        <Input className="border-1 border-blue-900 rounded-xl " placeholder="Nomor PO" name="nomor_po" onChange={handleFilterChange} />
+        <Input className="border-1 border-blue-900 rounded-xl " placeholder="Sub Total" name="sub_total" onChange={handleFilterChange} />
+        <Input className="border-1 border-blue-900 rounded-xl " placeholder="Total" name="total" onChange={handleFilterChange} />
       </div>
 
       <div className="mb-5">
@@ -230,7 +225,12 @@ export default function PITableComponent() {
         >
           <TableHeader columns={columns}>
             {(column) => (
-              <TableColumn className="bg-[#0C295F] text-white text-center" key={column.uid} align="start">
+              <TableColumn
+                key={column.uid}
+                allowsSorting
+                className="bg-[#0C295F] text-white text-center"
+                align="start"
+              >
                 {column.name}
               </TableColumn>
             )}
@@ -251,11 +251,14 @@ export default function PITableComponent() {
       </div>
       <div className="mt-5 flex justify-between">
         <Pagination
-          total={pages}
+          showControls
+          showShadow
+          color="primary"
           page={page}
-          onChange={(newPage) => setPage(newPage)}
+          onChange={setPage}
+          total={pages}
         />
-        <select value={rowsPerPage} onChange={onRowsPerPageChange}>
+        <select value={rowsPerPage} onChange={(e) => setRowsPerPage(Number(e.target.value))}>
           {[5, 10, 25, 50].map((pageSize) => (
             <option key={pageSize} value={pageSize}>
               {pageSize} per page
@@ -266,5 +269,3 @@ export default function PITableComponent() {
     </div>
   );
 }
-
-// comment

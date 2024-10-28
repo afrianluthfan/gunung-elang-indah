@@ -503,7 +503,7 @@ const ProformaInvoiceDetail = () => {
                 <TableCell className="text-center">{item.kat}</TableCell>
                 <TableCell className="text-center">
                   <textarea
-                    className="w-full border-2 rounded px-2 py-1 text-sm"
+                    className="w-full border-1 rounded px-2 py-1 text-sm"
                     value={item.nama_barang}
                     onChange={(e) => {
                       const updatedItems = [...responseData.item_detail_pi]
@@ -521,7 +521,7 @@ const ProformaInvoiceDetail = () => {
                 <TableCell className="text-center">{item.variable}</TableCell>
                 <TableCell className="text-center">
                   <textarea
-                    className="w-full border-2 rounded px-2 py-1 text-sm"
+                    className="w-full border-1 rounded px-2 py-1 text-sm"
                     value={item.quantity}
                     onChange={(e) => {
                       const updatedItems = [...responseData.item_detail_pi]
@@ -538,7 +538,7 @@ const ProformaInvoiceDetail = () => {
                 </TableCell>
                 <TableCell className="text-center">
                   <textarea
-                    className="w-full border-2 rounded px-2 py-1 text-sm"
+                    className="w-full border-1 rounded px-2 py-1 text-sm"
                     value={item.harga_satuan}
                     onChange={(e) => {
                       const updatedItems = [...responseData.item_detail_pi]
@@ -556,7 +556,7 @@ const ProformaInvoiceDetail = () => {
                 </TableCell>
                 <TableCell className="text-center">
                   <textarea
-                    className="w-full border-2 rounded px-2 py-1 text-sm"
+                    className="w-full border-1 rounded px-2 py-1 text-sm"
                     value={item.discount}
                     onChange={(e) => {
                       const updatedItems = [...responseData.item_detail_pi]

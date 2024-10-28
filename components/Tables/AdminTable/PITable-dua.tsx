@@ -57,11 +57,19 @@ export default function PITableComponent() {
     direction: "ascending",
   });
   const [page, setPage] = useState(1);
-  const [searchText, setSearchText] = useState<string>(""); // State for search text
+
+  // State untuk filter setiap kolom
+  const [filters, setFilters] = useState({
+    nama_company: "",
+    invoice_number: "",
+    total: "",
+    status: "",
+    created_at: "",
+  });
+
   const [username, setUsername] = useState<string | null>(null);
   const router = useRouter();
 
-  // Fetch username from localStorage
   useEffect(() => {
     const storedUsername = localStorage.getItem("statusAccount");
     if (storedUsername) {
@@ -72,17 +80,17 @@ export default function PITableComponent() {
   useEffect(() => {
     router.refresh();
   }, [router]);
+
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        `${apiUrl}/proforma-invoice/get-all-list`,
+        `${apiUrl}/proforma-invoice/get-all-list`
       );
       console.log("API response:", response.data);
       if (response.data.status) {
         setUsers(response.data.data);
-        console.log("Users set:", response.data.data);
       } else {
         console.error("Failed to fetch data:", response.data.message);
       }
@@ -96,10 +104,20 @@ export default function PITableComponent() {
   }, []);
 
   const filteredUsers = React.useMemo(() => {
-    return users.filter((user) =>
-      user.nama_company?.toLowerCase().includes(searchText.toLowerCase()),
-    );
-  }, [users, searchText]);
+    return users.filter((user) => {
+      return (
+        user.nama_company
+          ?.toLowerCase()
+          .includes(filters.nama_company.toLowerCase()) &&
+        user.invoice_number
+          ?.toLowerCase()
+          .includes(filters.invoice_number.toLowerCase()) &&
+        user.total?.toLowerCase().includes(filters.total.toLowerCase()) &&
+        user.status?.toLowerCase().includes(filters.status.toLowerCase()) &&
+        user.created_at?.toLowerCase().includes(filters.created_at.toLowerCase())
+      );
+    });
+  }, [users, filters]);
 
   const sortedItems = React.useMemo(() => {
     return [...filteredUsers].sort((a: User, b: User) => {
@@ -112,9 +130,7 @@ export default function PITableComponent() {
           ? String(b[sortDescriptor.column as keyof User])
           : "";
 
-      // Ensure both values are strings before comparing
       const cmp = first.localeCompare(second);
-
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, filteredUsers]);
@@ -158,7 +174,7 @@ export default function PITableComponent() {
                     router.push(
                       username === "SALES"
                         ? `/proforma-invoice-dua/edit?id=${user.id}&divisi=${user.divisi}`
-                        : `/proforma-invoice-dua/edit?id=${user.id}&divisi=${user.divisi}`,
+                        : `/proforma-invoice-dua/edit?id=${user.id}&divisi=${user.divisi}`
                     )
                   }
                   className="cursor-pointer text-lg text-default-400 active:opacity-50"
@@ -173,7 +189,7 @@ export default function PITableComponent() {
                       router.push(
                         username === "SALES"
                           ? `/proforma-invoice-dua/edit-sales?id=${user.id}&divisi=${user.divisi}`
-                          : "",
+                          : ""
                       )
                     }
                     className="cursor-pointer text-lg text-default-400 active:opacity-50"
@@ -188,7 +204,7 @@ export default function PITableComponent() {
           return cellValue;
       }
     },
-    [username, router],
+    [username, router]
   );
 
   const onRowsPerPageChange = React.useCallback(
@@ -196,25 +212,60 @@ export default function PITableComponent() {
       setRowsPerPage(Number(e.target.value));
       setPage(1);
     },
-    [],
+    []
   );
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
+  const handleFilterChange = (columnKey: string, value: string) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [columnKey]: value,
+    }));
   };
 
   return (
     <div>
+      <div className="mb-5">
+        <Divider />
+      </div>
       <div className="mb-5 flex flex-col justify-between gap-4 lg:flex-row">
         <Input
           type="text"
-          placeholder="Masukan Nama Perusahaan"
-          value={searchText}
-          onChange={handleSearchChange}
+          placeholder="Filter Tanggal"
+          className="border-1 border-blue-900 rounded-xl "
+          value={filters.created_at}
+          onChange={(e) => handleFilterChange("created_at", e.target.value)}
         />
-        <Button className="w-10 bg-[#0C295F] font-bold text-white">
-          Cari/Cek
-        </Button>
+        <Input
+          type="text"
+          placeholder="Filter Nama Perusahaan"
+          className="border-1 border-blue-900 rounded-xl "
+          value={filters.nama_company}
+          onChange={(e) => handleFilterChange("nama_company", e.target.value)}
+        />
+        <Input
+          type="text"
+          placeholder="Filter Nomor PI"
+          className="border-1 border-blue-900 rounded-xl "
+          value={filters.invoice_number}
+          onChange={(e) =>
+            handleFilterChange("invoice_number", e.target.value)
+          }
+        />
+        <Input
+          type="text"
+          placeholder="Filter Total"
+          className="border-1 border-blue-900 rounded-xl "
+          value={filters.total}
+          onChange={(e) => handleFilterChange("total", e.target.value)}
+        />
+
+        <Input
+          type="text"
+          placeholder="Filter Status"
+          className="border-1 border-blue-900 rounded-xl "
+          value={filters.status}
+          onChange={(e) => handleFilterChange("status", e.target.value)}
+        />
       </div>
 
       <div className="mb-5">
@@ -236,6 +287,7 @@ export default function PITableComponent() {
               <TableColumn
                 className="bg-[#0C295F] text-center text-white"
                 key={column.uid}
+                allowsSorting
                 align="start"
               >
                 {column.name}
@@ -243,34 +295,41 @@ export default function PITableComponent() {
             )}
           </TableHeader>
           <TableBody
-            emptyContent={"No Proforma Invoice found"}
+            emptyContent={"No Data Available"}
             items={itemsWithIndex}
           >
             {(item) => (
               <TableRow key={item.id}>
                 {(columnKey) => (
-                  <TableCell className="items-center text-center">
-                    {renderCell(item, columnKey)}
-                  </TableCell>
+                  <TableCell>{renderCell(item, columnKey)}</TableCell>
                 )}
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <div className="mt-5 flex justify-between">
+      <div className="mt-3 flex items-center justify-between">
         <Pagination
-          total={pages}
+          showControls
+          showShadow
+          color="primary"
           page={page}
-          onChange={(newPage) => setPage(newPage)}
+          onChange={setPage}
+          total={pages}
         />
-        <select value={rowsPerPage} onChange={onRowsPerPageChange}>
-          {[5, 10, 25, 50].map((pageSize) => (
-            <option key={pageSize} value={pageSize}>
-              {pageSize} per page
-            </option>
-          ))}
-        </select>
+        <div className="flex items-center gap-4">
+          <label className="text-small text-default-500">Rows per page:</label>
+          <select
+            className="rounded-lg border border-default-200 bg-default-100 p-1 text-small text-default-900 outline-none focus:border-primary data-[hover=true]:cursor-pointer data-[hover=true]:bg-default-200"
+            onChange={onRowsPerPageChange}
+          >
+            {[5, 10, 15, 20].map((rows) => (
+              <option key={rows} value={rows}>
+                {rows}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );

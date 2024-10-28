@@ -16,6 +16,7 @@ import {
   SortDescriptor,
   Tooltip,
   Divider,
+  Input,
 } from "@nextui-org/react";
 import { DeleteIcon } from "./DeleteIcon";
 import { EyeIcon } from "./EyeIcon";
@@ -48,6 +49,7 @@ type User = {
 
 export default function TableComponent() {
   const [users, setUsers] = useState<User[]>([]);
+  const [totalHutang, setTotalHutang] = useState<string>("");
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -72,7 +74,7 @@ export default function TableComponent() {
           `${apiUrl}/piutang/list`,
           {},
         );
-        Total = response.data.total
+        setTotalHutang(response.data.total);
         setUsers(response.data.data);
       } catch (error) {
         setError("Error fetching data");
@@ -95,14 +97,14 @@ export default function TableComponent() {
       confirmButtonText: "Ya, lunasi!",
       cancelButtonText: "Batal",
     });
-  
+
     // Jika user mengkonfirmasi, lanjutkan ke API request
     if (result.isConfirmed) {
       try {
         const response = await axios.post(`${apiUrl}/piutang/lunas`, {
           id: id,
         });
-  
+
         Swal.fire(
           "Berhasil!",
           `User dengan ID ${id} berhasil dilunasi.`,
@@ -123,7 +125,7 @@ export default function TableComponent() {
 
       } catch (error) {
         console.error("Error marking user as paid:", error);
-  
+
         Swal.fire(
           "Gagal!",
           `Gagal melunasi user dengan ID ${id}.`,
@@ -208,7 +210,7 @@ export default function TableComponent() {
         default:
           return cellValue;
       }
-    },    [],
+    }, [],
   );
 
   const onRowsPerPageChange = useCallback(
@@ -223,12 +225,65 @@ export default function TableComponent() {
     return <div>{error}</div>;
   }
 
+  const onSearchChange = useCallback((value?: string) => {
+    if (value) {
+      setFilterValue(value);
+      setPage(1);
+    } else {
+      setFilterValue("");
+    }
+  }, []);
+
+  const onClear = useCallback(() => {
+    setFilterValue("")
+    setPage(1)
+  }, [])
+
+
   return (
     <div>
 
+      <div className="mb-4">
+        <h1 className="font-bold text-sm mb-4">Data Piutang Penjualan</h1>
+      </div>
+
+      <Divider className="mb-4" />
+
+      <div className="flex justify-between items-center gap-3 mb-3 w-full">
+        <Input
+          isClearable
+          className="w-full border-1 rounded-lg border-blue-900"
+          placeholder="Cari Nama Customer ..."
+          value={filterValue}
+          onClear={() => onClear()}
+          onValueChange={onSearchChange}
+        />
+      </div>
+
+      <Divider className="my-4" />
+
+      <div className="mb-4 background-color: #f0f0f0; padding: 10px; border-radius: 5px;">
+        <table border={10}>
+          <tbody>
+            <tr>
+              <td className="font-semibold text-sm">
+                Total Piutang Saat Ini
+              </td>
+              <td>
+                :
+              </td>
+              <td className="text-sm">
+                {totalHutang}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <Divider className="my-4" />
+
       <Table
         aria-label="Example table with custom cells"
-        
         onSelectionChange={setSelectedKeys}
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
@@ -236,7 +291,12 @@ export default function TableComponent() {
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
-            <TableColumn className="bg-[#0C295F] text-white" key={column.uid} align="start">
+            <TableColumn
+              key={column.uid}
+              allowsSorting
+              className="bg-[#0C295F] text-white text-center"
+              align="start"
+            >
               {column.name}
             </TableColumn>
           )}
