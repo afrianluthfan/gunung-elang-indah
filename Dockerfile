@@ -14,6 +14,8 @@ RUN pnpm run build
 
 FROM base
 RUN apk add curl bash
+COPY .env ./
+RUN chmod 644 ./.env
 COPY --from=prod-deps /app/node_modules /app/node_modules
 COPY --from=build /app/.next /app/.next
 EXPOSE 3000
