@@ -1,6 +1,6 @@
 "use client";
 
-import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
+import ContentTopSectionLayout from "../../../components/layouts/TopSectionLayout";
 import TopSectionLeftSide from "./TopSectionLeftSide";
 import { Button, Divider, Input } from "@nextui-org/react";
 import { useForm } from "react-hook-form";

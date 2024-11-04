@@ -1,10 +1,9 @@
 "use client";
 
-import Sidebar from "@/components/Sidebar";
-import WelcomingMessage from "@/components/WelcomingMessage";
+import Sidebar from "../../../components/Sidebar";
+import WelcomingMessage from "../../../components/WelcomingMessage";
 import React, { FC, useEffect, useState } from "react";
-import axios from "axios";
-import FormMainContentLayout from "@/app/proforma-invoice-dua/form/FormMainContentLayout";
+import FormMainContentLayout from "../../../app/proforma-invoice-dua/form/FormMainContentLayout";
 import MainContent from "./MainContent";
 
 const Form: FC = () => {

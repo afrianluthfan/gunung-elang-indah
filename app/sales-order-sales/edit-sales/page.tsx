@@ -1,13 +1,12 @@
 "use client";
 
-import Sidebar from "@/components/Sidebar";
-import WelcomingMessage from "@/components/WelcomingMessage";
 import React, { FC, useEffect, useState } from "react";
 import FormMainContentLayout from "../form/FormMainContentLayout";
-import { useAppSelector } from "@/redux/store";
 import MainContent from "./MainContent";
 import ItemInput from "../form/ItemInput";
 import axios from "axios";
+import { useAppSelector } from "../../../redux/store";
+import WelcomingMessage from "../../../components/WelcomingMessage";
 // import MainContent from "../MainContent";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;

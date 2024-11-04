@@ -16,7 +16,7 @@ import axios from "axios";
 import { EyeIcon } from "./EyeIcon";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { setdetailSO } from "@/redux/features/detailSO-slice";
+import { setdetailSO } from "../../../redux/features/detailSO-slice";
 
 const columns = [
   { name: "NO.", uid: "number" },

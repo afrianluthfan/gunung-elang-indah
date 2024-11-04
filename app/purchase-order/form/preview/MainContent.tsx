@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
 import TopSectionLeftSide from "../TopSectionLeftSide";
 import {
   Button,
@@ -16,6 +15,7 @@ import {
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Swal from "sweetalert2";
+import ContentTopSectionLayout from "../../../../components/layouts/TopSectionLayout";
 
 const MainContent = () => {
   const router = useRouter();

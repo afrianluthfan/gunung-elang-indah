@@ -1,8 +1,8 @@
 import React, { FC, useEffect } from "react";
 import { Select, SelectItem, Selection } from "@nextui-org/react";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
-import { setAmount } from "@/redux/features/salesPIItemNumber-slice";
+import { AppDispatch } from "../redux/store";
+import { setAmount } from "../redux/features/salesPIItemNumber-slice";
 
 interface DropdownProps {
   data: { value: string; label: string }[];

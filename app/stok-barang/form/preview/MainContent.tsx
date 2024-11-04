@@ -1,6 +1,6 @@
 "use client";
 
-import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
+import ContentTopSectionLayout from "../../../../components/layouts/TopSectionLayout";
 import TopSectionLeftSide from "../TopSectionLeftSide";
 import {
   Button,
@@ -12,12 +12,12 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import { useAppSelector } from "@/redux/store";
+import { useAppSelector } from "../../../../redux/store";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { resetItemPO } from "@/redux/features/itemPo-slice";
-import { clearSalesPOInquiry } from "@/redux/features/salesPOInquiry-slice";
-import { resetListItemPO } from "@/redux/features/listItemPO-slice";
+import { resetItemPO } from "../../../../redux/features/itemPo-slice";
+import { clearSalesPOInquiry } from "../../../../redux/features/salesPOInquiry-slice";
+import { resetListItemPO } from "../../../../redux/features/listItemPO-slice";
 import { useRouter } from "next/navigation";
 
 const MainContent = () => {

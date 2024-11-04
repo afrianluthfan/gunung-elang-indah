@@ -1,7 +1,7 @@
 "use client";
 
-import ModalComponent from "@/components/ModalComponent";
-import { useAppSelector } from "@/redux/store";
+import ModalComponent from "../../../components/ModalComponent";
+import { useAppSelector } from "../../../redux/store";
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 

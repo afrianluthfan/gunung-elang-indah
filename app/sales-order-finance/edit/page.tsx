@@ -1,15 +1,13 @@
 "use client";
 
-import Sidebar from "@/components/Sidebar";
-import WelcomingMessage from "@/components/WelcomingMessage";
 import React, { FC, useEffect, useState } from "react";
 import FormMainContentLayout from "../form/FormMainContentLayout";
-import { useAppSelector } from "@/redux/store";
 import MainContent from "./MainContent";
 import ItemInput from "../form/ItemInput";
 import axios from "axios";
-// import MainContent from "../MainContent";
-
+import { useAppSelector } from "../../../redux/store";
+import Sidebar from "../../../components/Sidebar";
+import WelcomingMessage from "../../../components/WelcomingMessage";
 const Form: FC = () => {
   type ItemDataType = {
     id: number;

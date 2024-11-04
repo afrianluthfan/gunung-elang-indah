@@ -4,9 +4,9 @@ import React, { useState, useEffect } from "react";
 import { Button, Input } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/redux/store";
+import { AppDispatch, RootState } from "../../redux/store";
 import axios from "axios";
-import { logIn } from "@/redux/features/auth-slice";
+import { logIn } from "../../redux/features/auth-slice";
 
 const LoginForm = () => {
   const router = useRouter();

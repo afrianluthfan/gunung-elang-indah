@@ -98,7 +98,7 @@ const ProformaInvoiceDetail = () => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          `${apiUrl}/proforma-invoice/detailPI-so`,
+          `${apiUrl}/proforma-invoice/detailPI-so-logistik`,
           { id: id, divisi: divisi },
         );
         setResponseData(response.data.data);

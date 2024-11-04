@@ -1,8 +1,9 @@
 "use client"; // Tambahkan ini di bagian paling atas
 
+import MainContentLayout from "../../components/layouts/MainContentLayout";
+import WelcomingMessage from "../../components/WelcomingMessage";
 import MainContent from "./MainContent";
-import MainContentLayout from "@/components/layouts/MainContentLayout";
-import WelcomingMessage from "@/components/WelcomingMessage";
+
 
 const ProfilingPage = () => {
   return (

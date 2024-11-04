@@ -1,7 +1,7 @@
-import Sidebar from "@/components/Sidebar";
+import MainContentLayout from "../../components/layouts/MainContentLayout";
+import WelcomingMessage from "../../components/WelcomingMessage";
 import MainContent from "./MainContent";
-import MainContentLayout from "@/components/layouts/MainContentLayout";
-import WelcomingMessage from "@/components/WelcomingMessage";
+
 
 
 

@@ -1,14 +1,14 @@
 "use client";
 
 import { FC, useEffect, useState } from "react";
-import { useAppSelector } from "@/redux/store";
+import { useAppSelector } from "../redux/store";
 import Image from "next/image";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "../components/Sidebar";
 
 import { Button } from "@nextui-org/react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { logOut } from "@/redux/features/auth-slice";
+import { logOut } from "../redux/features/auth-slice";
 
 const WelcomingMessage: FC = () => {
   const activeUser = useAppSelector((state) => state.auth.value.statusAcount);

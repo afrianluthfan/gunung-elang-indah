@@ -1,8 +1,9 @@
-import Dropdown from "@/components/Dropdown";
-import { setDivisiProfiling } from "@/redux/features/divisiProfiling-slice";
-import { AppDispatch } from "@/redux/store";
+
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { setDivisiProfiling } from "../../../redux/features/divisiProfiling-slice";
+import { AppDispatch } from "../../../redux/store";
+import Dropdown from "../../../components/Dropdown";
 
 const TopSectionLeftSide = () => {
   const data = [

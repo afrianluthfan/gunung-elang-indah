@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
 import TopSectionLeftSide from "../TopSectionLeftSide";
 import {
   Button,
@@ -16,6 +15,7 @@ import {
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Swal from "sweetalert2";
+import ContentTopSectionLayout from "../../../../components/layouts/TopSectionLayout";
 
 const MainContent = () => {
   const router = useRouter();
@@ -650,9 +650,9 @@ const MainContent = () => {
         <p className="ml-5 lg:ml-0">{RP_sub_total}</p>
 
         <p>PPN 11% : </p>
-        <p>{pajak}</p>
+        <p>{RP_pajak_ppn}</p>
         <p>Total : </p>
-        <p>{total}</p>
+        <p>{RP_total}</p>
       </div>
 
       <div className="flex justify-end gap-4">

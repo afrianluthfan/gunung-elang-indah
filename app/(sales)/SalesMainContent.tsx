@@ -1,10 +1,10 @@
 "use client";
 
-import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
+import ContentTopSectionLayout from "../../components/layouts/TopSectionLayout";
 import TopSectionLeftSide from "../proforma-invoice-dua/TopSectionLeftSide";
 import TopSectionRightSide from "../proforma-invoice-dua/TopSectionRightSide";
 import { Divider } from "@nextui-org/react";
-import PITableComponent from "@/components/Tables/SalesTable/PITable";
+import PITableComponent from "../../components/Tables/SalesTable/PITable";
 import { usePathname } from "next/navigation";
 
 const SalesMainContent = () => {

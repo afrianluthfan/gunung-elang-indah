@@ -1,6 +1,6 @@
 "use client";
 
-import WelcomingMessage from "@/components/WelcomingMessage";
+import WelcomingMessage from "../../../components/WelcomingMessage";
 import React, { FC, useEffect, useState } from "react";
 import FormMainContentLayout from "../FormMainContentLayout";
 import MainContent from "./MainContent";

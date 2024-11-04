@@ -1,14 +1,14 @@
 "use client";
 
 import SidebarMenuItemsLayout from "./layouts/SidebarMenuItemsLayout";
-import SidebarMenuItem from "@/components/SidebarMenuItem";
+import SidebarMenuItem from "./SidebarMenuItem";
 import SidebarTopItem from "./SidebarTopItem";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@nextui-org/react";
-import { logOut } from "@/redux/features/auth-slice";
+import { logOut } from "../redux/features/auth-slice";
 import { useDispatch } from "react-redux";
-import { useAppSelector } from "@/redux/store";
+import { useAppSelector } from "../redux/store";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -123,25 +123,25 @@ const Sidebar = () => {
         pageRoute: "profiling",
       },
       {
-        pageName: "Proforma Invoice",
-        pageRoute: "proforma-invoice-dua",
+        pageName: "Sales Order",
+        pageRoute: "sales-order",
       },
       {
         pageName: "Purchase Order",
         pageRoute: "purchase-order",
       },
       {
+        pageName: "Proforma Invoice",
+        pageRoute: "proforma-invoice-dua",
+      },
+      {
         pageName: "Stok Barang",
         pageRoute: "stok-barang",
       },
-      {
-        pageName: "Sewa Barang",
-        pageRoute: "sewa-barang",
-      },
-      {
-        pageName: "Sales Order",
-        pageRoute: "sales-order",
-      },
+      // {
+      //   pageName: "Sewa Barang",
+      //   pageRoute: "sewa-barang",
+      // },
       {
         pageName: "Piutang",
         pageRoute: "piutang",
@@ -157,6 +157,10 @@ const Sidebar = () => {
       {
         pageName: "Pengeluaran",
         pageRoute: "pengeluaran",
+      },
+      {
+        pageName: "Dokumen Logistik",  
+        pageRoute: "dokumen-logistik",
       },
     ];
 

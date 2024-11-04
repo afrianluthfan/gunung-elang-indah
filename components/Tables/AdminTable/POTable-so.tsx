@@ -159,7 +159,7 @@ export default function PITableComponent() {
               <Tooltip content="Details" className="text-black text-center">
                 <span
                   onClick={() =>
-                    router.push(`/purchase-order/edit?id=${user.id}`)
+                    router.push(`/sales-order-finance/edit?id=${user.id}`)
                   }
                   className="cursor-pointer text-lg text-default-400 active:opacity-50">
                   <EyeIcon className="items-center" />
@@ -169,7 +169,7 @@ export default function PITableComponent() {
                 <Tooltip content="Edit" className="text-black text-center">
                   <span
                     onClick={() =>
-                      router.push(`/purchase-order/edit-admin?id=${user.id}`)
+                      router.push(`/sales-order-finance/edit-admin?id=${user.id}`)
                     }
                     className="cursor-pointer text-lg text-default-400 active:opacity-50"
                   >

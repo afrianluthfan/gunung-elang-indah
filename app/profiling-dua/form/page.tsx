@@ -1,8 +1,7 @@
-import MainContentLayout from "@/components/layouts/MainContentLayout";
-import Sidebar from "@/components/Sidebar";
-import WelcomingMessage from "@/components/WelcomingMessage";
+
 import React, { FC } from "react";
 import MainContent from "./MainContent";
+import WelcomingMessage from "../../../components/WelcomingMessage";
 
 interface pageProps {}
 

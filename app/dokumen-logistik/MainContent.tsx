@@ -3,8 +3,8 @@
 import { SetStateAction, useState } from "react";
 import TopSectionRightSide from "./TopSectionRightSide";
 import { Divider } from "@nextui-org/react";
-import TableComponentPO from "@/components/Tables/AdminTable/POTable-so-dokumen";
-import TableComponentPI from "@/components/Tables/AdminTable/PITable-dua-so-dokumen";
+import TableComponentPO from "../../components/Tables/AdminTable/POTable-so-dokumen";
+import TableComponentPI from "../../components/Tables/AdminTable/PITable-dua-so-dokumen";
 
 const MainContent = () => {
   const [selectedDocument, setSelectedDocument] = useState("none"); // Default value is "PO"

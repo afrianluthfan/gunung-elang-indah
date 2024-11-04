@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
+import ContentTopSectionLayout from "../../../../components/layouts/TopSectionLayout";
 import TopSectionLeftSide from "../TopSectionLeftSide";
 import {
   Button,

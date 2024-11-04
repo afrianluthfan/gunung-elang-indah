@@ -1,6 +1,6 @@
-import Sidebar from "@/components/Sidebar";
-import MainContentLayout from "@/components/layouts/MainContentLayout";
-import WelcomingMessage from "@/components/WelcomingMessage";
+
+import MainContentLayout from "../../components/layouts/MainContentLayout";
+import WelcomingMessage from "../../components/WelcomingMessage";
 import MainContent from "./MainContent";
 
 const SalesOrderPage = () => (
