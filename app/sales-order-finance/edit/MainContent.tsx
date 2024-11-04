@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import Swal from "sweetalert2";
+import './invoicePrint.css'
+
 import {
   Button,
   Divider,
@@ -78,6 +80,7 @@ const AdminMainContent = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const pdfRef = useRef(null);
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("statusAccount");
@@ -183,6 +186,43 @@ const AdminMainContent = () => {
         setShouldSubmit(true);
       }
     });
+  };
+
+  const [isVisible, setIsVisible] = useState(false);
+
+  const downloadPDF = async () => {
+    setIsVisible(true); // Tampilkan elemen sementara
+  
+    setTimeout(async () => {
+      const html2pdfModule = await import('html2pdf.js');
+      const html2pdf = html2pdfModule.default;
+  
+      const element = pdfRef.current;
+      if (!element) {
+        console.error("Element for PDF generation is not found.");
+        setIsVisible(false);
+        return;
+      }
+  
+      let namaFile = "PURCHASE ORDER - " + responseData.nomor_po;
+      const options = {
+        margin: 1,
+        filename: namaFile,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
+      };
+  
+      html2pdf()
+        .set(options)
+        .from(element)
+        .save()
+        .then(() => setIsVisible(false)) // Sembunyikan kembali setelah unduh
+        .catch((error: any) => {
+          console.error("Error generating PDF", error);
+          setIsVisible(false);
+        });
+    }, 0); // Tunggu sebentar agar PDF bisa di-render
   };
 
   return (
@@ -346,13 +386,153 @@ const AdminMainContent = () => {
       )}
 
       {username === "KEUANGAN" && responseData.status === "DITERIMA" && (
-        <Button className="w-full bg-green-600 text-white">
-          Download INVOICE
+        <Button onClick={downloadPDF} className="w-full bg-green-600 text-white">
+          Download PURCHASE ORDER
         </Button>
       )}
 
+      {/* PDF DOWNLOAD ELEMENT START */}
+
+      <div
+        className="invoice-container"
+        ref={pdfRef}
+        style={{ display: isVisible ? "block" : "none" }}
+      >
+        {/* Konten PDF */}
+        <div className="lion">
+          <h1 className="chile">PURCHASE ORDER</h1>
+          <hr className="snake" />
+        </div>
+
+
+        <div className="tiger">
+          <table className="zebra" >
+            <tbody>
+              <tr>
+                <td>Nomor PO</td>
+                <td>: {responseData.nomor_po}</td>
+              </tr>
+              <tr>
+                <td>Tanggal PO</td>
+                <td>: {responseData.tanggal}</td>
+              </tr>
+              <tr>
+                <td>Nomor Surat Jalan</td>
+                <td>: {responseData.nomor_si}</td>
+              </tr>
+              <tr>
+                <td>Prepared By</td>
+                <td>: {responseData.prepared_by}</td>
+              </tr>
+              <tr>
+                <td>Approve By</td>
+                <td>: {responseData.approved_by}</td>
+              </tr>
+            </tbody>
+          </table>
+          <table>
+            <tbody>
+              <tr>
+                <td>Kepada Yth:</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>{responseData.nama_suplier}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Jl. Dr. Moestopo No.6, Pasarjoyo</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Kec. Tenggarong</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Kabupaten Karawang</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Kode Pos: 41361</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <table className="penguin">
+          <thead>
+            <tr>
+              <th><p>No</p></th>
+              <th><p>KAT</p></th>
+              <th><p>Nama Barang</p></th>
+              <th><p>Qty</p></th>
+              <th><p>H. Satuan</p></th>
+              <th><p>Subtotal</p></th>
+            </tr>
+          </thead>
+          <tbody>
+            {responseData.item.map((item, index) => (
+              <tr key={item.id}>
+                <td><p>{index + 1}</p></td>
+                <td><p>{item.kode}</p></td>
+                <td><p>{item.name}</p></td>
+                <td><p>{item.quantity}</p></td>
+                <td><p>{item.price}</p></td>
+                <td><p>{item.amount}</p></td>
+              </tr>
+            ))}
+
+            <tr>
+              <td colSpan={5} className="right-align"><p>Sub Total:</p></td>
+              <td><p>{responseData.sub_total_rp}</p></td>
+            </tr>
+            <tr>
+              <td colSpan={5} className="right-align"><p>PPN 11%:</p></td>
+              <td><p>{responseData.pajak_rp}</p></td>
+            </tr>
+            <tr>
+              <td colSpan={5} className="right-align"><strong><p>Total:</p></strong></td>
+              <td><strong><p>{responseData.total_rp}</p></strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div className="kangaroo">
+
+          <div className="monkey">
+            Terbilang: Empat Puluh Dua Juta Empat Ratus Dua Ribu Rupiah
+          </div>
+          <div className="rabbit">
+            Keterangan: Jatuh tempo pembayaran pada hari Senin tanggal 01 Juli 2024
+          </div>
+          <div>Pembayaran dapat dilakukan dengan cara Transfer:</div>
+          <div>No. Rek: BCA 0083875175 a.n. PT Fismed Global Indonesia</div>
+        </div>
+
+        <div className="koala">
+          <div className="panda">
+            Yang Menerima,<br />
+            <strong>Penanggung Jawab, RS Terkait</strong>
+            <div className="dolphin"></div>
+          </div>
+          <div className="bear">
+            Bandung, 01 Juni 2024<br />
+            <strong>PT Fismed Global Indonesia</strong>
+            <div className="dolphin"></div>
+            <div>(Sonny Sonail)</div>
+            <div>General Manager</div>
+          </div>
+        </div>
+      </div>
+
+      {/* PDF DOWNLOAD ELEMENT END */}
+
     </div>
   );
+
+
 };
 
 export default AdminMainContent;
+

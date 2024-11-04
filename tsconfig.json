@@ -16,6 +16,8 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "baseUrl": "./src", 
+    "target": "es5", 
     "plugins": [
       {
         "name": "next"
@@ -34,7 +36,9 @@
     ".next/types/**/*.ts",
     "components/Tables/AdminTable/EyeIcon.jsx",
     "components/Tables/AdminTable/DeleteIcon.jsx",
-    "build/types/**/*.ts"
+    "build/types/**/*.ts",
+    "src/**/*",
+    "html2pdf.d.ts"
   ],
   "exclude": [
     "node_modules"

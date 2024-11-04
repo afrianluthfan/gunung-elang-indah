@@ -1,4 +1,4 @@
-import TableComponent from "@/components/Tables/FinanceTable/TablePiutang";
+import TableComponent from "../../components/Tables/FinanceTable/TablePiutang";
 
 const MainContent = () => (
   <div className="flex h-full w-full flex-col justify-between gap-6 p-8">

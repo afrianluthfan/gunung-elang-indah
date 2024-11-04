@@ -190,7 +190,7 @@ const ProformaInvoiceDetail = () => {
   const submitAcc = () => {
     Swal.fire({
       title: "Apakah Kamu Yakin ?",
-      text: "Apakah kamu yakin ingin menerima proforma invoice ini!",
+      text: "Apakah kamu yakin ingin menerima proforma invoice ini ?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",

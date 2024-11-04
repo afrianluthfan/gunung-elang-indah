@@ -1,7 +1,7 @@
 "use client";
 
-import Sidebar from "@/components/Sidebar";
-import WelcomingMessage from "@/components/WelcomingMessage";
+import Sidebar from "../../../components/Sidebar";
+import WelcomingMessage from "../../../components/WelcomingMessage";
 import React, { FC, useEffect, useState } from "react";
 import FormMainContentLayout from "../FormMainContentLayout";
 import MainContent from "./MainContent";

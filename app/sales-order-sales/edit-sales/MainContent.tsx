@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
-import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
 import {
   Button,
   Divider,

@@ -1,6 +1,7 @@
 "use client";
 
-import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
+import ContentTopSectionLayout from "../../../components/layouts/TopSectionLayout";
+import { useAppSelector } from "../../../redux/store";
 import TopSectionLeftSide from "./TopSectionLeftSide";
 import {
   Button,
@@ -12,7 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import { useAppSelector } from "@/redux/store";
 
 const MainContent = () => {
   const data = useAppSelector((state) => state.detailSO.value);

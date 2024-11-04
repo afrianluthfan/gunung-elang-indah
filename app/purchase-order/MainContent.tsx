@@ -1,8 +1,8 @@
-import ContentTopSectionLayout from "@/components/layouts/TopSectionLayout";
 import TopSectionLeftSide from "./TopSectionLeftSide";
 import TopSectionRightSide from "./TopSectionRightSide";
 import { Button, Divider, Input } from "@nextui-org/react";
-import TableComponent from "@/components/Tables/AdminTable/POTable";
+import TableComponent from "../../components/Tables/AdminTable/POTable";
+import ContentTopSectionLayout from "../../components/layouts/TopSectionLayout";
 
 const MainContent = () => (
   <div className="flex h-full w-full flex-col justify-between gap-6 p-8">

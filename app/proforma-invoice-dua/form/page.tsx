@@ -1,19 +1,17 @@
 "use client";
 
-import WelcomingMessage from "@/components/WelcomingMessage";
 import React, { FC, useEffect, useState } from "react";
 import MainContent from "./MainContent";
 import FormMainContentLayout from "./FormMainContentLayout";
 import ItemInput from "./ItemInput";
-import { useAppSelector } from "@/redux/store";
-import { setListItems } from "@/redux/features/listItemPI-slice";
 import { useDispatch } from "react-redux";
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { setSalesPOInquiry } from "@/redux/features/salesPOInquiry-slice";
-import { setSalesPIInquiry } from "@/redux/features/salesPIInquiry-slice";
-
+import { useAppSelector } from "../../../redux/store";
+import { setListItems } from "../../../redux/features/listItemPI-slice";
+import WelcomingMessage from "../../../components/WelcomingMessage";
+import { setSalesPIInquiry } from "../../../redux/features/salesPIInquiry-slice";
 const Form: FC = () => {
   const data = useAppSelector((state) => state.itemPO.value);
   const dataItem = useAppSelector((state) => state.listItemPO.value);
@@ -107,7 +105,7 @@ const Form: FC = () => {
     try {
       const responseData = await inquireData();
       console.log("response data: ", responseData);
-      dispatch(setSalesPOInquiry(responseData));
+      dispatch(setSalesPIInquiry(responseData));
       router.push("/purchase-order/form/preview");
     } catch (error) {
       console.error("Error inquiring data");

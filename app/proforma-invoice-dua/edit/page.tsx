@@ -1,9 +1,9 @@
 "use client";
 
-import WelcomingMessage from "@/components/WelcomingMessage";
+import WelcomingMessage from "../../../components/WelcomingMessage";
 import React, { FC, useEffect, useState } from "react";
 import FormMainContentLayout from "../form/FormMainContentLayout";
-import { useAppSelector } from "@/redux/store";
+import { useAppSelector } from "../../../redux/store";
 import MainContent from "./MainContent";
 import ItemInput from "../form/ItemInput";
 import axios from "axios";

@@ -25,6 +25,7 @@ type User = {
 };
 
 type RumahSakit = {
+  kategori_divisi: string;
   id: number;
   name: string;
   address_company: string;
@@ -80,7 +81,7 @@ const MainContent = () => {
           `${apiUrl}/price/ListByCustomer`,
           { nama: gudang }
         );
-        setUsers([]); // Bersihkan data sebelum set data baru
+        setUsers([]);
         setUsers(response.data.data);
       }
     } catch (error) {
@@ -242,7 +243,7 @@ const MainContent = () => {
             <option value="0">Pilih Rumah Sakit</option>
             {gudangList.map((gudang) => (
               <option key={gudang.name} value={gudang.name}>
-                {gudang.name} - {gudang.address_company}
+                {gudang.name} - {gudang.kategori_divisi}
               </option>
             ))}
           </select>

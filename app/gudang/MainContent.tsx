@@ -12,9 +12,9 @@ import {
   SortDescriptor,
 } from "@nextui-org/react";
 import Swal from "sweetalert2";
-import { DeleteIcon } from "@/components/Tables/FinanceTable/DeleteIcon";
+import { DeleteIcon } from "../../components/Tables/FinanceTable/DeleteIcon";
 import router from "next/router";
-import ModalTambah from "@/components/modal/ModalTambah";
+import ModalTambah from "../../components/modal/ModalTambah";
 
 type Gudang = {
   id: number;

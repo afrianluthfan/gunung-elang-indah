@@ -1,18 +1,17 @@
 "use client";
 
-import WelcomingMessage from "@/components/WelcomingMessage";
+import WelcomingMessage from "../../../components/WelcomingMessage";
 import React, { FC, useEffect, useState } from "react";
 import MainContent from "./MainContent";
 import FormMainContentLayout from "./FormMainContentLayout";
 import ItemInput from "./ItemInput";
-import { useAppSelector } from "@/redux/store";
-import { setListItems } from "@/redux/features/listItemPI-slice";
+import { useAppSelector } from "../../../redux/store";
+import { setListItems } from "../../../redux/features/listItemPI-slice";
 import { useDispatch } from "react-redux";
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { setSalesPOInquiry } from "@/redux/features/salesPOInquiry-slice";
-import { setSalesPIInquiry } from "@/redux/features/salesPIInquiry-slice";
+import { setSalesPOInquiry } from "../../../redux/features/salesPOInquiry-slice";
 
 const Form: FC = () => {
   const data = useAppSelector((state) => state.itemPO.value);

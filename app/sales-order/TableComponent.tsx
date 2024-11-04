@@ -1,5 +1,5 @@
-import SOTableComponent from "@/components/Tables/AdminTable/SOTable";
 import React, { FC } from "react";
+import SOTableComponent from "../../components/Tables/AdminTable/SOTable";
 
 interface TableComponentProps {}
 

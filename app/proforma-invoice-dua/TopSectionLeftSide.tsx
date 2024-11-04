@@ -1,4 +1,3 @@
-import { Input } from "@nextui-org/react";
 
 const TopSectionLeftSide = () => (
   <div className="flex w-full flex-col justify-between">

@@ -1,7 +1,7 @@
-import WelcomingMessage from "@/components/WelcomingMessage";
 import React, { FC } from "react";
 import MainContent from "./MainContent";
 import FormMainContentLayout from "../FormMainContentLayout";
+import WelcomingMessage from "../../../../components/WelcomingMessage";
 
 interface pageProps {}
 
