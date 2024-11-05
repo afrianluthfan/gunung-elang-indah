@@ -106,7 +106,7 @@ const MainContent = () => {
                 if (res.data.status === true) {
                   Swal.fire({
                     title: "Success",
-                    text: "PURCHASE ORDER BERHASIL DIBUAT",
+                    text: "Purchase Order berhasil dibuat",
                     icon: "success",
                   }).then((result) => {
                     if (result.isConfirmed) {
