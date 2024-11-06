@@ -6,9 +6,11 @@ COPY . /app
 WORKDIR /app
 
 FROM base AS prod-deps
+COPY .env ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
 FROM base AS build
+COPY .env ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run build
 
