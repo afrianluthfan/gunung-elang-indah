@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { FC, useEffect, useState } from "react";
@@ -48,15 +49,14 @@ const WelcomingMessage: FC = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(`${apiUrl}/token-validate`, {
-        token
-      },
-      );
+        token,
+      });
 
       if (response.data.status) {
       } else {
-        handleLogout(); 
+        handleLogout();
         localStorage.clear();
-      } 
+      }
     } catch (error) {
       console.error("Error validating token:", error);
       handleLogout();
@@ -65,8 +65,8 @@ const WelcomingMessage: FC = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); 
-    dispatch(logOut());    
+    localStorage.removeItem("token");
+    dispatch(logOut());
     setUser("");
     setIsSidebarOpen(false);
   };
@@ -76,10 +76,11 @@ const WelcomingMessage: FC = () => {
   }, []);
 
   return (
-    <div className="relative flex h-[11.5vh]  w-full items-center justify-between bg-white px-2 py-5 text-black">
+    <div className="relative flex h-[11.5vh] w-full items-center justify-between bg-white px-2 py-5 text-black">
       <div
-        className={`fixed left-0 top-0 z-[40] h-full w-full transition-transform duration-300 ease-in-out lg:z-0 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } w-[60vw] md:w-[15vw] md:translate-x-0`}
+        className={`fixed left-0 top-0 z-[40] h-full w-full transition-transform duration-300 ease-in-out lg:z-0 ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } w-[60vw] md:w-[15vw] md:translate-x-0`}
       >
         <Sidebar />
       </div>

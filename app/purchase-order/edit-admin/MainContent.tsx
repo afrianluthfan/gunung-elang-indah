@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
@@ -98,17 +99,16 @@ const AdminMainContent = () => {
   const [stockData, setStockData] = useState<any[]>([]);
 
   const [suppliers, setSuppliers] = useState([]);
-  const [selectedSupplier, setSelectedSupplier] = useState('');
-
+  const [selectedSupplier, setSelectedSupplier] = useState("");
 
   // SUYGGESTION SEARCH
 
-  const [itemSuggestions, setItemSuggestions] = useState<{ [key: number]: string[] }>({});
+  const [itemSuggestions, setItemSuggestions] = useState<{
+    [key: number]: string[];
+  }>({});
 
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
-
-
 
   useEffect(() => {
     if (!id) {
@@ -118,10 +118,9 @@ const AdminMainContent = () => {
 
     const fetchData = async () => {
       try {
-        const response = await axios.post(
-          `${apiUrl}/purchase-order/detail`,
-          { id: id }
-        );
+        const response = await axios.post(`${apiUrl}/purchase-order/detail`, {
+          id: id,
+        });
         setResponseData(response.data.data);
         if (response.data.data) {
           setSelectedSupplier(response.data.data.nama_suplier);
@@ -133,12 +132,14 @@ const AdminMainContent = () => {
 
     const fetchSuppliers = async () => {
       try {
-        const response = await axios.post(`${apiUrl}/proforma-invoice/rs-lists`);
+        const response = await axios.post(
+          `${apiUrl}/proforma-invoice/rs-lists`,
+        );
         if (response.data && response.data.data) {
           setSuppliers(response.data.data);
         }
       } catch (error) {
-        console.error('Error fetching suppliers:', error);
+        console.error("Error fetching suppliers:", error);
       }
     };
 
@@ -148,10 +149,10 @@ const AdminMainContent = () => {
 
   const handleSupplierChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newValue = e.target.value;
-    const [namaCustomer, alamat] = newValue.split('|');
+    const [namaCustomer, alamat] = newValue.split("|");
     setSelectedSupplier(newValue);
 
-    setResponseData(prevData => ({
+    setResponseData((prevData) => ({
       ...prevData,
       nama_suplier: namaCustomer,
     }));
@@ -165,10 +166,28 @@ const AdminMainContent = () => {
         const response = await axios.post(`${apiUrl}/stock-barang/list`);
         const items = response.data.data;
         setStockItems(items.map((item: { name: string }) => item.name));
-        const pricesMap = items.reduce((acc: Record<string, { price: string; kode: string; variable: string }>, item: { name: string, price: string, variable: string, kode: string }) => {
-          acc[item.name] = { price: item.price, kode: item.kode, variable: item.variable };
-          return acc;
-        }, {});
+        const pricesMap = items.reduce(
+          (
+            acc: Record<
+              string,
+              { price: string; kode: string; variable: string }
+            >,
+            item: {
+              name: string;
+              price: string;
+              variable: string;
+              kode: string;
+            },
+          ) => {
+            acc[item.name] = {
+              price: item.price,
+              kode: item.kode,
+              variable: item.variable,
+            };
+            return acc;
+          },
+          {},
+        );
         setPrices(pricesMap);
       } catch (error) {
         console.error("Error fetching stock items", error);
@@ -186,11 +205,11 @@ const AdminMainContent = () => {
 
     try {
       const response = await axios.post(
-        `${apiUrl}/stock-barang/list?query=${query}`
+        `${apiUrl}/stock-barang/list?query=${query}`,
       );
       const filteredSuggestions = response.data.data
         .filter((item: { name: string }) =>
-          item.name.toLowerCase().includes(query.toLowerCase())
+          item.name.toLowerCase().includes(query.toLowerCase()),
         )
         .map((item: { name: string }) => item.name);
 
@@ -205,7 +224,14 @@ const AdminMainContent = () => {
     setResponseData((prevData) => ({
       ...prevData,
       item: prevData.item.map((item, index) =>
-        index === itemIndex ? { ...item, price: typeof priceInfo === 'object' ? priceInfo.price : '', kode: typeof priceInfo === 'object' ? priceInfo.kode : '', variable: typeof priceInfo === 'object' ? priceInfo.variable : '' } : item
+        index === itemIndex
+          ? {
+              ...item,
+              price: typeof priceInfo === "object" ? priceInfo.price : "",
+              kode: typeof priceInfo === "object" ? priceInfo.kode : "",
+              variable: typeof priceInfo === "object" ? priceInfo.variable : "",
+            }
+          : item,
       ),
     }));
   };
@@ -216,7 +242,7 @@ const AdminMainContent = () => {
         try {
           const res = await axios.post(
             `${apiUrl}/purchase-order/edit/inquiry`,
-            responseData
+            responseData,
           );
 
           localStorage.setItem("purchaseOrder", JSON.stringify(res));
@@ -263,14 +289,14 @@ const AdminMainContent = () => {
 
   const handleFieldChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    itemIndex?: number
+    itemIndex?: number,
   ) => {
     const { name, value } = e.target;
 
     if (itemIndex !== undefined) {
       setResponseData((prevData) => {
         const updatedItems = prevData.item.map((item, index) =>
-          index === itemIndex ? { ...item, [name]: value } : item
+          index === itemIndex ? { ...item, [name]: value } : item,
         );
         if (name === "name") {
           updatePriceForItem(itemIndex, value);
@@ -288,8 +314,8 @@ const AdminMainContent = () => {
     setResponseData((prevData) => ({
       ...prevData,
       item: prevData.item.map((item) =>
-        item.id === itemIndex ? { ...item, gudang: value } : item
-      )
+        item.id === itemIndex ? { ...item, gudang: value } : item,
+      ),
     }));
   };
   const handleAddItem = () => {
@@ -329,52 +355,60 @@ const AdminMainContent = () => {
     setIsRejected(false);
   };
 
-
   const [gudangList, setGudangList] = useState<Gudang[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchGudangList = async () => {
       try {
-        const response = await axios.post(
-          `${apiUrl}/gudang/list`
-        );
+        const response = await axios.post(`${apiUrl}/gudang/list`);
         setGudangList(response.data.data);
       } catch (error) {
         setError("Error fetching Gudang list");
         console.error("Error fetching Gudang list:", error);
       }
-    }
+    };
 
     fetchGudangList();
   }, []);
-
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       {responseData.reason && (
         <div>
-          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+          <div
+            className="mb-4 border-l-4 border-red-500 bg-red-100 p-4 text-red-700"
+            role="alert"
+          >
             <p className="font-bold">Alasan Penolakan:</p>
             <p>{responseData.reason}</p>
           </div>
         </div>
       )}
 
-      <h1 className="font-semibold text-xl">Edit Purchase Order</h1>
+      <h1 className="text-xl font-semibold">Edit Purchase Order</h1>
       <Divider />
       <div className="flex gap-4">
         <div className="flex w-full flex-col space-y-2 md:w-1/3">
           <label className="text-left">Supplier:</label>
-          <select id="supplier" className="h-full border border-gray-300 rounded-md border-1" value={selectedSupplier} onChange={handleSupplierChange}>
+          <select
+            id="supplier"
+            className="h-full rounded-md border-1 border-gray-300"
+            value={selectedSupplier}
+            onChange={handleSupplierChange}
+          >
             <option value="">-- Pilih Supplier --</option>
-            {suppliers.map((supplier: {
-              address_company: string; id: string | number, name: string
-            }) => (
-              <option key={supplier.id} value={`${supplier.name}`}>
-                {supplier.name}
-              </option>
-            ))}
+            {suppliers.map(
+              (supplier: {
+                address_company: string;
+                id: string | number;
+                name: string;
+              }) => (
+                <option key={supplier.id} value={`${supplier.name}`}>
+                  {supplier.name}
+                </option>
+              ),
+            )}
           </select>
           <label className="text-left">Catatan PO:</label>
           <Input
@@ -382,7 +416,7 @@ const AdminMainContent = () => {
             name="catatan_po"
             onChange={(e) => handleFieldChange(e)}
             placeholder="Catatan PO"
-            className="py-2 rounded"
+            className="rounded py-2"
           />
         </div>
         <div className="flex w-full flex-col space-y-2 md:w-1/3">
@@ -425,7 +459,7 @@ const AdminMainContent = () => {
 
       <Divider />
 
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <h3 className="mb-2 text-left text-lg font-semibold">Barang:</h3>
         <div className="mb-2 flex justify-center">
           <Button className="bg-[#0C295F] text-white" onClick={handleAddItem}>
@@ -436,13 +470,25 @@ const AdminMainContent = () => {
 
       <Table removeWrapper className="mb-4">
         <TableHeader>
-          <TableColumn className="bg-[#0C295F] text-white text-center">No</TableColumn>
-          <TableColumn className="bg-[#0C295F] text-white">Nama Barang</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-center text-white">
+            No
+          </TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">
+            Nama Barang
+          </TableColumn>
           <TableColumn className="bg-[#0C295F] text-white">Kode</TableColumn>
-          <TableColumn className="bg-[#0C295F] text-white">Variable</TableColumn>
-          <TableColumn className="bg-[#0C295F] text-white">Quantity</TableColumn>
-          <TableColumn className="bg-[#0C295F] text-white">Harga Satuan</TableColumn>
-          <TableColumn className="bg-[#0C295F] text-white">Gudang Tujuan</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">
+            Variable
+          </TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">
+            Quantity
+          </TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">
+            Harga Satuan
+          </TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">
+            Gudang Tujuan
+          </TableColumn>
           <TableColumn className="bg-[#0C295F] text-white">Action</TableColumn>
         </TableHeader>
         <TableBody>
@@ -454,13 +500,18 @@ const AdminMainContent = () => {
                   <textarea
                     value={item.name}
                     name="name"
-                    className="w-full p-2 border border-black-500 rounded resize-none"
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
+                    className="border-black-500 w-full resize-none rounded border p-2"
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                      handleFieldChange(
+                        e as unknown as React.ChangeEvent<HTMLInputElement>,
+                        index,
+                      )
+                    }
                     placeholder="Nama Barang"
                     autoComplete="off"
                   />
                   {suggestions[index]?.length > 0 && (
-                    <div className="absolute bg-white border mt-2 w-full shadow-lg z-10">
+                    <div className="absolute z-10 mt-2 w-full border bg-white shadow-lg">
                       {suggestions[index].map((suggestion, i) => (
                         <div
                           key={i}
@@ -472,7 +523,10 @@ const AdminMainContent = () => {
                               return { ...prevData, item: updatedItems };
                             });
                             updatePriceForItem(index, suggestion);
-                            setSuggestions((prev) => ({ ...prev, [index]: [] }));
+                            setSuggestions((prev) => ({
+                              ...prev,
+                              [index]: [],
+                            }));
                           }}
                         >
                           {suggestion}
@@ -485,58 +539,79 @@ const AdminMainContent = () => {
               <TableCell>
                 <textarea
                   value={item.kode}
-                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  className="border-black-500 w-full resize-none rounded border p-2"
                   name="kode"
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    handleFieldChange(
+                      e as unknown as React.ChangeEvent<HTMLInputElement>,
+                      index,
+                    )
+                  }
                   placeholder="Kode"
                 />
               </TableCell>
               <TableCell>
                 <textarea
                   value={item.variable}
-                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  className="border-black-500 w-full resize-none rounded border p-2"
                   name="variable"
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    handleFieldChange(
+                      e as unknown as React.ChangeEvent<HTMLInputElement>,
+                      index,
+                    )
+                  }
                   placeholder="Variable"
                 />
               </TableCell>
               <TableCell>
                 <textarea
                   value={item.quantity}
-                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  className="border-black-500 w-full resize-none rounded border p-2"
                   name="quantity"
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    handleFieldChange(
+                      e as unknown as React.ChangeEvent<HTMLInputElement>,
+                      index,
+                    )
+                  }
                   placeholder="Quantity"
                 />
               </TableCell>
               <TableCell>
                 <textarea
                   value={item.price}
-                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  className="border-black-500 w-full resize-none rounded border p-2"
                   name="price"
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    handleFieldChange(
+                      e as unknown as React.ChangeEvent<HTMLInputElement>,
+                      index,
+                    )
+                  }
                   placeholder="Harga Satuan"
                 />
               </TableCell>
               <TableCell>
-              <select
+                <select
                   value={item.gudang}
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                    handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id);
+                    handleFieldChange(
+                      e as unknown as React.ChangeEvent<HTMLInputElement>,
+                      item.id,
+                    );
                     setGudang(e.target.value);
                   }}
                   name="gudang"
                   id="123"
-                  className="w-full px-5 py-4 border border-black-500 rounded resize-none"
+                  className="border-black-500 w-full resize-none rounded border px-5 py-4"
                 >
                   <option value="">Pilih Gudang Tujuan</option>
-                  {
-                    gudangList.map((gudang) => (
-                      <option key={gudang.id} value={gudang.nama_gudang}>
-                        {gudang.nama_gudang}
-                      </option>
-                    ))
-                  }
+                  {gudangList.map((gudang) => (
+                    <option key={gudang.id} value={gudang.nama_gudang}>
+                      {gudang.nama_gudang}
+                    </option>
+                  ))}
                 </select>
               </TableCell>
               <TableCell>

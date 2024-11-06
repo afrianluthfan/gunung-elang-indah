@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, { useEffect, useState, useCallback, useMemo } from "react";
@@ -65,15 +66,12 @@ export default function TableComponent() {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  let Total = ""
+  let Total = "";
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post(
-          `${apiUrl}/pengeluaran/list`,
-          {},
-        );
+        const response = await axios.post(`${apiUrl}/pengeluaran/list`, {});
 
         console.log("API Response:", response.data.total);
         setTotalHutang(response.data.total);
@@ -87,55 +85,50 @@ export default function TableComponent() {
     fetchData();
   }, []);
 
-  const handleMarkAsPaid = async (id: number) => {
-    // Konfirmasi menggunakan SweetAlert2
-    const result = await Swal.fire({
-      title: "Apakah kamu yakin?",
-      text: `Kamu akan melunasi user dengan ID ${id}`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Ya, lunasi!",
-      cancelButtonText: "Batal",
-    });
+  const handleMarkAsPaid = useCallback(
+    async (id: number) => {
+      // Konfirmasi menggunakan SweetAlert2
+      const result = await Swal.fire({
+        title: "Apakah kamu yakin?",
+        text: `Kamu akan melunasi user dengan ID ${id}`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, lunasi!",
+        cancelButtonText: "Batal",
+      });
 
-    // Jika user mengkonfirmasi, lanjutkan ke API request
-    if (result.isConfirmed) {
-      try {
-        const response = await axios.post(`${apiUrl}/hutang/lunas`, {
-          id: id,
-        });
-
-        Swal.fire(
-          "Berhasil!",
-          `User dengan ID ${id} berhasil dilunasi.`,
-          "success"
-        );
-
+      // Jika user mengkonfirmasi, lanjutkan ke API request
+      if (result.isConfirmed) {
         try {
-          const response = await axios.post(
-            `${apiUrl}/pengeluaran/list`,
-            {},
+          const response = await axios.post(`${apiUrl}/hutang/lunas`, {
+            id: id,
+          });
+
+          Swal.fire(
+            "Berhasil!",
+            `User dengan ID ${id} berhasil dilunasi.`,
+            "success",
           );
-          setTotalHutang(response.data.total);
-          setUsers(response.data.data);
+
+          try {
+            const response = await axios.post(`${apiUrl}/pengeluaran/list`, {});
+            setTotalHutang(response.data.total);
+            setUsers(response.data.data);
+          } catch (error) {
+            setError("Error fetching data");
+            console.error("Error fetching data:", error);
+          }
         } catch (error) {
-          setError("Error fetching data");
-          console.error("Error fetching data:", error);
+          console.error("Error marking user as paid:", error);
+
+          Swal.fire("Gagal!", `Gagal melunasi user dengan ID ${id}.`, "error");
         }
-
-      } catch (error) {
-        console.error("Error marking user as paid:", error);
-
-        Swal.fire(
-          "Gagal!",
-          `Gagal melunasi user dengan ID ${id}.`,
-          "error"
-        );
       }
-    }
-  }
+    },
+    [apiUrl, setTotalHutang, setUsers, setError],
+  );
   const columns = [
     { name: "No", uid: "number" },
     { name: "Tanggal", uid: "tanggal" },
@@ -211,7 +204,8 @@ export default function TableComponent() {
         default:
           return cellValue;
       }
-    }, [],
+    },
+    [handleMarkAsPaid],
   );
 
   const onRowsPerPageChange = useCallback(
@@ -232,9 +226,9 @@ export default function TableComponent() {
   }, []);
 
   const onClear = useCallback(() => {
-    setFilterValue("")
-    setPage(1)
-  }, [])
+    setFilterValue("");
+    setPage(1);
+  }, []);
 
   if (error) {
     return <div>{error}</div>;
@@ -243,15 +237,15 @@ export default function TableComponent() {
   return (
     <div>
       <div className="mb-4">
-        <h1 className="font-bold text-sm mb-4">Data Pengeluaran</h1>
+        <h1 className="mb-4 text-sm font-bold">Data Pengeluaran</h1>
       </div>
 
       <Divider className="mb-4" />
 
-      <div className="flex justify-between items-center gap-3 mb-3 w-full">
+      <div className="mb-3 flex w-full items-center justify-between gap-3">
         <Input
           isClearable
-          className="w-full border-1 rounded-lg border-blue-900"
+          className="w-full rounded-lg border-1 border-blue-900"
           placeholder="Cari Nama Suplier ..."
           value={filterValue}
           onClear={() => onClear()}
@@ -259,23 +253,15 @@ export default function TableComponent() {
         />
       </div>
 
-
-
       <Divider className="my-4" />
 
-      <div className="mb-4 background-color: #f0f0f0; padding: 10px; border-radius: 5px;">
+      <div className="background-color: #f0f0f0; padding: 10px; border-radius: 5px; mb-4">
         <table border={10}>
           <tbody>
             <tr>
-              <td className="font-semibold text-sm">
-                Total Pengeluaran
-              </td>
-              <td>
-                :
-              </td>
-              <td className="text-sm">
-                {totalHutang}
-              </td>
+              <td className="text-sm font-semibold">Total Pengeluaran</td>
+              <td>:</td>
+              <td className="text-sm">{totalHutang}</td>
             </tr>
           </tbody>
         </table>
@@ -295,7 +281,7 @@ export default function TableComponent() {
             <TableColumn
               key={column.uid}
               allowsSorting
-              className="bg-[#0C295F] text-white text-center"
+              className="bg-[#0C295F] text-center text-white"
               align="start"
             >
               {column.name}

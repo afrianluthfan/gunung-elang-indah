@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Divider, Input } from "@nextui-org/react";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Table,
   TableHeader,
@@ -48,7 +48,11 @@ type OrderData = {
   rumah_sakit: string;
 };
 
-export default function SOTableComponent({ selectedDocument }: { selectedDocument: string }) {
+export default function SOTableComponent({
+  selectedDocument,
+}: {
+  selectedDocument: string;
+}) {
   const [users, setUsers] = useState<OrderData[]>([]);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
@@ -68,28 +72,31 @@ export default function SOTableComponent({ selectedDocument }: { selectedDocumen
     }
   };
 
-  useEffect(() => {
+  useRef(() => {
     setUsers([]);
 
     const role = localStorage.getItem("statusAccount");
 
     if (role === "ADMIN") {
-      selectedDocument = "PI"
+      selectedDocument = "PI";
     } else if (role === "KEUANGAN") {
-      selectedDocument = "PO"
+      selectedDocument = "PO";
     }
-    
+
     if (selectedDocument === "PO" || selectedDocument === "PI") {
       console.log("Selected Document:", selectedDocument);
-      const endpoint = selectedDocument === "PO" ? `${apiUrl}/sales_order/list/finance` : `${apiUrl}/sales_order/list/admin`;
+      const endpoint =
+        selectedDocument === "PO"
+          ? `${apiUrl}/sales_order/list/finance`
+          : `${apiUrl}/sales_order/list/admin`;
       const request = {
-        dok : selectedDocument
-      };  
+        dok: selectedDocument,
+      };
       fetchData(endpoint, request);
-    } 
-  }, [selectedDocument]);
+    }
+  });
 
-  const handleEditButton = useCallback(
+  const handleEditButton = useRef(
     (id: number) => {
       const selectedOrder = users.find((user) => user.id === id);
       if (selectedOrder) {
@@ -103,15 +110,14 @@ export default function SOTableComponent({ selectedDocument }: { selectedDocumen
       } else if (role === "KEUANGAN") {
         router.push(`/sales-order-finance/${id}`);
       } else if (role === "LOGISTIK") {
-        if (selectedDocument = "PI") {
+        if ((selectedDocument = "PI")) {
           router.push(`/sales-order-sales/${id}`);
-        } else if (selectedDocument = "PO") {
+        } else if ((selectedDocument = "PO")) {
           router.push(`/sales-order-finance/${id}`);
         }
       }
-      
     },
-    [router, users, dispatch],
+    // [router, users, dispatch],
   );
 
   const sortedItems = React.useMemo(() => {
@@ -148,7 +154,7 @@ export default function SOTableComponent({ selectedDocument }: { selectedDocumen
           return (
             <div
               className="relative flex items-center gap-2"
-              onClick={() => handleEditButton(user.id)}
+              onClick={() => handleEditButton.current(user.id)}
             >
               <Tooltip content="Details" className="text-black">
                 <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
@@ -178,7 +184,8 @@ export default function SOTableComponent({ selectedDocument }: { selectedDocumen
           }
           return cellValue;
       }
-    }, [handleEditButton],
+    },
+    [handleEditButton],
   );
 
   const onRowsPerPageChange = React.useCallback(
@@ -199,12 +206,19 @@ export default function SOTableComponent({ selectedDocument }: { selectedDocumen
       >
         <TableHeader columns={columns}>
           {(column) => (
-            <TableColumn className="bg-[#0C295F] text-white" key={column.uid} align="start">
+            <TableColumn
+              className="bg-[#0C295F] text-white"
+              key={column.uid}
+              align="start"
+            >
               {column.name}
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"Silahkan pilih jenis dokumen dulu !"} items={itemsWithIndex}>
+        <TableBody
+          emptyContent={"Silahkan pilih jenis dokumen dulu !"}
+          items={itemsWithIndex}
+        >
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (

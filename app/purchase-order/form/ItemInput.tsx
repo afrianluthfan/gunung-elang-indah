@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Divider, Input } from "@nextui-org/react";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -45,10 +46,7 @@ const ItemInput: FC<ItemInputProps> = ({ itemNumber, index }) => {
   useEffect(() => {
     const fetchItemData = async () => {
       try {
-        const response = await axios.post(
-          `${apiUrl}/stock-barang/list`,
-          "",
-        );
+        const response = await axios.post(`${apiUrl}/stock-barang/list`, "");
         setItemData(response.data.data);
       } catch (error) {
         console.error("Error fetching data", error);

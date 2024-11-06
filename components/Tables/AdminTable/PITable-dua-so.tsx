@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -86,7 +87,7 @@ export default function PITableComponent() {
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        `${apiUrl}/proforma-invoice/get-all-list-so`
+        `${apiUrl}/proforma-invoice/get-all-list-so`,
       );
       console.log("API response:", response.data);
       if (response.data.status) {
@@ -114,7 +115,9 @@ export default function PITableComponent() {
           .includes(filters.invoice_number.toLowerCase()) &&
         user.total?.toLowerCase().includes(filters.total.toLowerCase()) &&
         user.status?.toLowerCase().includes(filters.status.toLowerCase()) &&
-        user.created_at?.toLowerCase().includes(filters.created_at.toLowerCase())
+        user.created_at
+          ?.toLowerCase()
+          .includes(filters.created_at.toLowerCase())
       );
     });
   }, [users, filters]);
@@ -158,7 +161,15 @@ export default function PITableComponent() {
           return (
             <Chip
               className="capitalize"
-              color={statusColorMap[status as keyof typeof statusColorMap] as "success" | "danger" | "primary" | "default" | "secondary" | "warning"}
+              color={
+                statusColorMap[status as keyof typeof statusColorMap] as
+                  | "success"
+                  | "danger"
+                  | "primary"
+                  | "default"
+                  | "secondary"
+                  | "warning"
+              }
               size="sm"
               variant="flat"
             >
@@ -203,7 +214,8 @@ export default function PITableComponent() {
         default:
           return cellValue;
       }
-    }, [username, router],
+    },
+    [username, router],
   );
 
   const onRowsPerPageChange = React.useCallback(
@@ -211,7 +223,7 @@ export default function PITableComponent() {
       setRowsPerPage(Number(e.target.value));
       setPage(1);
     },
-    []
+    [],
   );
 
   const handleFilterChange = (columnKey: string, value: string) => {
@@ -230,30 +242,28 @@ export default function PITableComponent() {
         <Input
           type="text"
           placeholder="Filter Tanggal"
-          className="border-1 border-blue-900 rounded-xl "
+          className="rounded-xl border-1 border-blue-900"
           value={filters.created_at}
           onChange={(e) => handleFilterChange("created_at", e.target.value)}
         />
         <Input
           type="text"
           placeholder="Filter Nama Perusahaan"
-          className="border-1 border-blue-900 rounded-xl "
+          className="rounded-xl border-1 border-blue-900"
           value={filters.nama_company}
           onChange={(e) => handleFilterChange("nama_company", e.target.value)}
         />
         <Input
           type="text"
           placeholder="Filter Nomor PI"
-          className="border-1 border-blue-900 rounded-xl "
+          className="rounded-xl border-1 border-blue-900"
           value={filters.invoice_number}
-          onChange={(e) =>
-            handleFilterChange("invoice_number", e.target.value)
-          }
+          onChange={(e) => handleFilterChange("invoice_number", e.target.value)}
         />
         <Input
           type="text"
           placeholder="Filter Total"
-          className="border-1 border-blue-900 rounded-xl "
+          className="rounded-xl border-1 border-blue-900"
           value={filters.total}
           onChange={(e) => handleFilterChange("total", e.target.value)}
         />
@@ -285,10 +295,7 @@ export default function PITableComponent() {
               </TableColumn>
             )}
           </TableHeader>
-          <TableBody
-            emptyContent={"No Data Available"}
-            items={itemsWithIndex}
-          >
+          <TableBody emptyContent={"No Data Available"} items={itemsWithIndex}>
             {(item) => (
               <TableRow key={item.id}>
                 {(columnKey) => (

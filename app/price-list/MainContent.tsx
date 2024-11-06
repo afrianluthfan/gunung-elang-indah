@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Divider, Input } from "@nextui-org/react";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
@@ -51,7 +52,7 @@ const MainContent = () => {
   const [gudang, setGudang] = useState("");
   const [gudangList, setGudangList] = useState<RumahSakit[]>([]);
   const [visibleColumns] = useState<Set<string>>(
-    new Set(INITIAL_VISIBLE_COLUMNS)
+    new Set(INITIAL_VISIBLE_COLUMNS),
   );
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
@@ -63,9 +64,7 @@ const MainContent = () => {
 
   const fetchGudangList = useCallback(async () => {
     try {
-      const response = await axios.post(
-        `${apiUrl}/proforma-invoice/rs-listc`
-      );
+      const response = await axios.post(`${apiUrl}/proforma-invoice/rs-listc`);
       setGudangList(response.data.data);
     } catch (error) {
       setError("Error fetching Gudang list");
@@ -77,10 +76,9 @@ const MainContent = () => {
     try {
       let response;
       if (gudang && gudang !== "0") {
-        response = await axios.post(
-          `${apiUrl}/price/ListByCustomer`,
-          { nama: gudang }
-        );
+        response = await axios.post(`${apiUrl}/price/ListByCustomer`, {
+          nama: gudang,
+        });
         setUsers([]);
         setUsers(response.data.data);
       }
@@ -119,7 +117,7 @@ const MainContent = () => {
 
     if (filterValue) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.nama.toLowerCase().includes(filterValue.toLowerCase())
+        user.nama.toLowerCase().includes(filterValue.toLowerCase()),
       );
     }
 
@@ -142,13 +140,16 @@ const MainContent = () => {
       ...item,
       number: start + index + 1,
     }));
-
-    
   }, [page, sortedItems, rowsPerPage]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const handleInputChange2 = (index: number, key: keyof User, value: string, id: number) => {
+  const handleInputChange2 = (
+    index: number,
+    key: keyof User,
+    value: string,
+    id: number,
+  ) => {
     const findUser = users.findIndex((user) => user.id === id);
 
     const updatedUsers = [...users];
@@ -164,17 +165,20 @@ const MainContent = () => {
           <Input
             value={user[columnKey as keyof User]?.toString()}
             onChange={(e) =>
-              handleInputChange2(index, columnKey as keyof User, e.target.value, user.id)
+              handleInputChange2(
+                index,
+                columnKey as keyof User,
+                e.target.value,
+                user.id,
+              )
             }
           />
         );
       }
 
-      return columnKey === "id"
-        ? index + 1
-        : user[columnKey as keyof User];
+      return columnKey === "id" ? index + 1 : user[columnKey as keyof User];
     },
-    [users]
+    [users],
   );
 
   const handleSetHarga = async () => {
@@ -189,10 +193,7 @@ const MainContent = () => {
         added: user.added,
       }));
 
-      const response = await axios.post(
-        `${apiUrl}/price/SetPrice`,
-        { input }
-      );
+      const response = await axios.post(`${apiUrl}/price/SetPrice`, { input });
 
       if (response.status === 200) {
         Swal.fire({
@@ -226,17 +227,15 @@ const MainContent = () => {
     return <div>{error}</div>;
   }
 
-
-
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <div className="flex w-full flex-col justify-between gap-4">
-        <h1 className="text-xl font-bold mb-4 lg:text-[2vh]">Cari Data</h1>
-        <div className="text-sm flex flex-col w-full justify-stretch gap-2 lg:flex-row lg:items-center">
+        <h1 className="mb-4 text-xl font-bold lg:text-[2vh]">Cari Data</h1>
+        <div className="flex w-full flex-col justify-stretch gap-2 text-sm lg:flex-row lg:items-center">
           <select
             name="Pilih Gudang"
             id="123"
-            className="rounded-lg border text-black text-small border-blue-900 bg-white p-2 w-full lg:w-auto"
+            className="w-full rounded-lg border border-blue-900 bg-white p-2 text-small text-black lg:w-auto"
             value={gudang}
             onChange={(e) => setGudang(e.target.value)}
           >
@@ -250,15 +249,15 @@ const MainContent = () => {
           <Input
             type="text"
             placeholder="Cari Nama Barang !"
-            className="w-full border-1 border-blue-800 rounded-xl "
+            className="w-full rounded-xl border-1 border-blue-800"
             onChange={(e) => setFilterValue(e.target.value)}
             value={filterValue}
           />
-          <Button className="bg-[#0C295F] font-bold text-white rounded-md w-full lg:w-auto">
+          <Button className="w-full rounded-md bg-[#0C295F] font-bold text-white lg:w-auto">
             Cari/Cek
           </Button>
           <Button
-            className="bg-green-700 font-bold text-white rounded-md w-full lg:w-auto"
+            className="w-full rounded-md bg-green-700 font-bold text-white lg:w-auto"
             onClick={handleSetHarga}
           >
             Set Harga
@@ -266,14 +265,13 @@ const MainContent = () => {
         </div>
       </div>
 
-
       <Divider />
 
       <div className="h-full">
-        <div className="h-[100vh] lg:h-[40vh] w-full overflow-auto">
+        <div className="h-[100vh] w-full overflow-auto lg:h-[40vh]">
           <Table
             aria-label="Example table with dynamic content"
-            className="w-full h-full"
+            className="h-full w-full"
             removeWrapper
             isHeaderSticky
             isStriped
@@ -282,20 +280,30 @@ const MainContent = () => {
           >
             <TableHeader columns={headerColumns}>
               {(column) => (
-                <TableColumn key={column.uid} allowsSorting className="bg-[#0C295F] text-white">
+                <TableColumn
+                  key={column.uid}
+                  allowsSorting
+                  className="bg-[#0C295F] text-white"
+                >
                   {column.name}
                 </TableColumn>
               )}
             </TableHeader>
             <TableBody
               items={itemsWithIndex}
-              emptyContent={<div>Data Tidak Ditemukan / Anda Blm Melimih Customer</div>}
+              emptyContent={
+                <div>Data Tidak Ditemukan / Anda Blm Melimih Customer</div>
+              }
             >
               {(item) => (
                 <TableRow key={item.id}>
                   {(columnKey) => (
                     <TableCell className="bg-white">
-                      {renderCell(item, columnKey, itemsWithIndex.indexOf(item))}
+                      {renderCell(
+                        item,
+                        columnKey,
+                        itemsWithIndex.indexOf(item),
+                      )}
                     </TableCell>
                   )}
                 </TableRow>

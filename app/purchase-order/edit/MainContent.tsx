@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
@@ -93,10 +94,9 @@ const AdminMainContent = () => {
 
     const fetchData = async () => {
       try {
-        const response = await axios.post(
-          `${apiUrl}/purchase-order/detail`,
-          { id: id }
-        );
+        const response = await axios.post(`${apiUrl}/purchase-order/detail`, {
+          id: id,
+        });
         setResponseData(response.data.data);
       } catch (error) {
         console.error("Error fetching data", error);
@@ -114,13 +114,13 @@ const AdminMainContent = () => {
         try {
           await axios.post(
             `${apiUrl}/purchase-order/edit/finance`,
-            responseData
+            responseData,
           );
           Swal.fire({
             title: "Success!",
             text: "Purchase order berhasil di " + responseData.status + ".",
             icon: "success",
-            confirmButtonText: "OK"
+            confirmButtonText: "OK",
           });
           router.push("/purchase-order");
         } catch (error) {
@@ -136,13 +136,13 @@ const AdminMainContent = () => {
 
   const submitAcc = () => {
     Swal.fire({
-      title: 'Apakah Kamu Yakin ?',
+      title: "Apakah Kamu Yakin ?",
       text: "Apakah kamu yakin ingin menerima purchase order ini ?",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, accept it!'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, accept it!",
     }).then((result) => {
       if (result.isConfirmed) {
         setResponseData((prevData) => ({
@@ -156,30 +156,30 @@ const AdminMainContent = () => {
 
   const submitReject = () => {
     Swal.fire({
-      title: 'Alasan Penolakan',
-      input: 'textarea',
-      inputLabel: 'Masukkan alasan penolakan',
-      inputPlaceholder: 'Alasan penolakan...',
+      title: "Alasan Penolakan",
+      input: "textarea",
+      inputLabel: "Masukkan alasan penolakan",
+      inputPlaceholder: "Alasan penolakan...",
       inputAttributes: {
-        'aria-label': 'Masukkan alasan penolakan'
+        "aria-label": "Masukkan alasan penolakan",
       },
       showCancelButton: true,
-      confirmButtonText: 'Kirim',
-      cancelButtonText: 'Batal',
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
+      confirmButtonText: "Kirim",
+      cancelButtonText: "Batal",
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
       inputValidator: (value) => {
         if (!value) {
-          return 'Alasan penolakan tidak boleh kosong!';
+          return "Alasan penolakan tidak boleh kosong!";
         }
         return null;
-      }
+      },
     }).then((result) => {
       if (result.isConfirmed) {
         setResponseData((prevData) => ({
           ...prevData,
           status: "DITOLAK",
-          reason: result.value
+          reason: result.value,
         }));
         setShouldSubmit(true);
       }
@@ -188,26 +188,28 @@ const AdminMainContent = () => {
 
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
-
-      {
-        responseData.reason && (
-          <div>
-            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
-              <p className="font-bold">Alasan Penolakan:</p>
-              <p>{responseData.reason}</p>
-            </div>
+      {responseData.reason && (
+        <div>
+          <div
+            className="mb-4 border-l-4 border-red-500 bg-red-100 p-4 text-red-700"
+            role="alert"
+          >
+            <p className="font-bold">Alasan Penolakan:</p>
+            <p>{responseData.reason}</p>
           </div>
-        )
-      }
+        </div>
+      )}
 
-      <h1 className="font-semibold lg:text-[1.85vh]">Detail Pembuatan Purchase Order</h1>
+      <h1 className="font-semibold lg:text-[1.85vh]">
+        Detail Pembuatan Purchase Order
+      </h1>
       <Divider />
       <div className="flex justify-between">
         <table className="">
           <tbody>
             <tr>
-              <td className=" text-left">
-                <h1 className=" font-medium">Nama Supplier</h1>
+              <td className="text-left">
+                <h1 className="font-medium">Nama Supplier</h1>
               </td>
               <td className="w-10 text-center">:</td>
               <td className="">
@@ -215,8 +217,8 @@ const AdminMainContent = () => {
               </td>
             </tr>
             <tr>
-              <td className=" text-left">
-                <h1 className=" font-medium">Nomor Purchase Order</h1>
+              <td className="text-left">
+                <h1 className="font-medium">Nomor Purchase Order</h1>
               </td>
               <td className="w-10 text-center">:</td>
               <td className="">
@@ -224,8 +226,8 @@ const AdminMainContent = () => {
               </td>
             </tr>
             <tr>
-              <td className=" text-left">
-                <h1 className=" font-medium">Nomor Surat Jalan</h1>
+              <td className="text-left">
+                <h1 className="font-medium">Nomor Surat Jalan</h1>
               </td>
               <td className="w-10 text-center">:</td>
               <td className="">
@@ -233,8 +235,8 @@ const AdminMainContent = () => {
               </td>
             </tr>
             <tr>
-              <td className=" text-left">
-                <h1 className=" font-medium">Tanggal</h1>
+              <td className="text-left">
+                <h1 className="font-medium">Tanggal</h1>
               </td>
               <td className="w-10 text-center">:</td>
               <td className="">
@@ -242,7 +244,7 @@ const AdminMainContent = () => {
               </td>
             </tr>
             <tr>
-              <td className=" text-left">
+              <td className="text-left">
                 <h1 className="font-medium">Catatan Purchase Order</h1>
               </td>
               <td className="w-10 text-center">:</td>
@@ -251,8 +253,8 @@ const AdminMainContent = () => {
               </td>
             </tr>
             <tr>
-              <td className=" text-left">
-                <h1 className=" font-medium">Prepared By</h1>
+              <td className="text-left">
+                <h1 className="font-medium">Prepared By</h1>
               </td>
               <td className="w-10 text-center">:</td>
               <td className="">
@@ -260,8 +262,8 @@ const AdminMainContent = () => {
               </td>
             </tr>
             <tr>
-              <td className=" text-left">
-                <h1 className=" font-medium">Prepared Jabatan</h1>
+              <td className="text-left">
+                <h1 className="font-medium">Prepared Jabatan</h1>
               </td>
               <td className="w-10 text-center">:</td>
               <td className="">
@@ -269,8 +271,8 @@ const AdminMainContent = () => {
               </td>
             </tr>
             <tr>
-              <td className=" text-left">
-                <h1 className=" font-medium">Approved By</h1>
+              <td className="text-left">
+                <h1 className="font-medium">Approved By</h1>
               </td>
               <td className="w-10 text-center">:</td>
               <td className="">
@@ -278,8 +280,8 @@ const AdminMainContent = () => {
               </td>
             </tr>
             <tr>
-              <td className=" text-left">
-                <h1 className=" font-medium">Approved Jabatan</h1>
+              <td className="text-left">
+                <h1 className="font-medium">Approved Jabatan</h1>
               </td>
               <td className="w-10 text-center">:</td>
               <td className="">
@@ -292,22 +294,38 @@ const AdminMainContent = () => {
 
       <Divider />
 
-      <div className="flex justify-start my-1">
+      <div className="my-1 flex justify-start">
         <h1 className="font-semibold lg:text-[1.4vh]">List Harga Barang</h1>
       </div>
 
       {/* Bagian Table */}
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <Table removeWrapper>
           <TableHeader>
-            <TableColumn className="bg-[#0C295F] text-white text-center">NO</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-center">KODE BARANG</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-center">NAMA BARANG</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-center">VARIABLE BARANG</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-center">QTY</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-center">HARGA SATUAN</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-center">GUDANG</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-center">SUB TOTAL</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-center text-white">
+              NO
+            </TableColumn>
+            <TableColumn className="bg-[#0C295F] text-center text-white">
+              KODE BARANG
+            </TableColumn>
+            <TableColumn className="bg-[#0C295F] text-center text-white">
+              NAMA BARANG
+            </TableColumn>
+            <TableColumn className="bg-[#0C295F] text-center text-white">
+              VARIABLE BARANG
+            </TableColumn>
+            <TableColumn className="bg-[#0C295F] text-center text-white">
+              QTY
+            </TableColumn>
+            <TableColumn className="bg-[#0C295F] text-center text-white">
+              HARGA SATUAN
+            </TableColumn>
+            <TableColumn className="bg-[#0C295F] text-center text-white">
+              GUDANG
+            </TableColumn>
+            <TableColumn className="bg-[#0C295F] text-center text-white">
+              SUB TOTAL
+            </TableColumn>
           </TableHeader>
           <TableBody>
             {responseData.item.map((item, index) => (
@@ -337,25 +355,20 @@ const AdminMainContent = () => {
         <p className="text-start">{responseData.total_rp}</p>
       </div>
 
-
-      {
-        username !== "ADMIN" && (
-
-          responseData.status !== "DITERIMA" && (
-            <div className="flex justify-end gap-3">
-              <Button onClick={submitReject} color="danger" className="min-w-36">
-                Ditolak
-              </Button>
-              <Button onClick={submitAcc} color="success" className="min-w-36 text-white">
-                Diterima
-              </Button>
-            </div>
-          )
-
-
-        )
-      }
-
+      {username !== "ADMIN" && responseData.status !== "DITERIMA" && (
+        <div className="flex justify-end gap-3">
+          <Button onClick={submitReject} color="danger" className="min-w-36">
+            Ditolak
+          </Button>
+          <Button
+            onClick={submitAcc}
+            color="success"
+            className="min-w-36 text-white"
+          >
+            Diterima
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

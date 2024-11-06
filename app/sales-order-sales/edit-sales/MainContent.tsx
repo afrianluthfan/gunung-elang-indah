@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
@@ -109,12 +110,9 @@ const AdminMainContent = () => {
     const fetchDoctorData = async () => {
       if (responseData.rumah_sakit) {
         try {
-          const res = await axios.post(
-            `${apiUrl}/proforma-invoice/dr-list`,
-            {
-              nama: responseData.rumah_sakit,
-            },
-          );
+          const res = await axios.post(`${apiUrl}/proforma-invoice/dr-list`, {
+            nama: responseData.rumah_sakit,
+          });
           setDoctorData(res.data.data);
           setDoctorSuggestions(
             res.data.data.map(
@@ -126,12 +124,9 @@ const AdminMainContent = () => {
         }
 
         try {
-          const res = await axios.post(
-            `${apiUrl}/price/ListByCustomer`,
-            {
-              nama: responseData.rumah_sakit,
-            },
-          );
+          const res = await axios.post(`${apiUrl}/price/ListByCustomer`, {
+            nama: responseData.rumah_sakit,
+          });
           setStockData(res.data.data);
         } catch (error) {
           console.error("Error fetching stock data", error);
@@ -145,13 +140,10 @@ const AdminMainContent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.post(
-          `${apiUrl}/proforma-invoice/detailPI`,
-          {
-            id: id,
-            divisi: divisi,
-          },
-        );
+        const res = await axios.post(`${apiUrl}/proforma-invoice/detailPI`, {
+          id: id,
+          divisi: divisi,
+        });
 
         console.log("Nama Docter", res.data.data.nama_dokter);
         // Deklarasi variabel dengan type purchase order
@@ -168,9 +160,7 @@ const AdminMainContent = () => {
   useEffect(() => {
     const fetchStockData = async () => {
       try {
-        const res = await axios.post(
-          `${apiUrl}/stock-barang/list`,
-        );
+        const res = await axios.post(`${apiUrl}/stock-barang/list`);
         setStockData(res.data.data);
       } catch (error) {
         console.error("Error fetching stock data", error);
@@ -179,9 +169,7 @@ const AdminMainContent = () => {
 
     const fetchHospitalData = async () => {
       try {
-        const res = await axios.post(
-          `${apiUrl}/proforma-invoice/rs-listc`,
-        );
+        const res = await axios.post(`${apiUrl}/proforma-invoice/rs-listc`);
         setHospitalData(res.data.data);
       } catch (error) {
         console.error("Error fetching hospital data", error);
@@ -343,10 +331,10 @@ const AdminMainContent = () => {
         item_detail_pi: prevData.item_detail_pi.map((item_detail_pi, idx) =>
           idx === index
             ? {
-              ...item_detail_pi,
-              nama_barang: selectedItem.name,
-              harga_satuan: selectedItem.price.toString(), // Convert to string if needed
-            }
+                ...item_detail_pi,
+                nama_barang: selectedItem.name,
+                harga_satuan: selectedItem.price.toString(), // Convert to string if needed
+              }
             : item_detail_pi,
         ),
       }));
@@ -372,22 +360,19 @@ const AdminMainContent = () => {
     }
   };
 
-
   const [gudangList, setGudangList] = useState<Gudang[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchGudangList = async () => {
       try {
-        const response = await axios.post(
-          `${apiUrl}/gudang/list`
-        );
+        const response = await axios.post(`${apiUrl}/gudang/list`);
         setGudangList(response.data.data);
       } catch (error) {
         setError("Error fetching Gudang list");
         console.error("Error fetching Gudang list:", error);
       }
-    }
+    };
 
     fetchGudangList();
   }, []);
@@ -406,8 +391,8 @@ const AdminMainContent = () => {
         </div>
       )}
 
-      <div className="flex justify-between text-">
-        <h1 className="text-xl font-semibold mt-2">Edit Purchase Order</h1>
+      <div className="text- flex justify-between">
+        <h1 className="mt-2 text-xl font-semibold">Edit Purchase Order</h1>
         <Button color="primary" onClick={submitAcc}>
           Simpan
         </Button>
@@ -584,30 +569,30 @@ const AdminMainContent = () => {
                 {responseData.item_detail_pi.map((row, index) => (
                   <TableRow key={index}>
                     <TableCell>
-                    <select
+                      <select
                         value={row.gudang}
                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                          handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index);
+                          handleFieldChange(
+                            e as unknown as React.ChangeEvent<HTMLInputElement>,
+                            index,
+                          );
                           setGudang(e.target.value);
                         }}
                         name="gudang"
                         id="123"
-                        className="w-full px-5 py-4 border border-black-500 rounded resize-none"
+                        className="border-black-500 w-full resize-none rounded border px-5 py-4"
                       >
                         <option value="">Pilih Gudang Tujuan</option>
-                        {
-                          gudangList.map((gudang) => (
-                            <option key={gudang.id} value={gudang.nama_gudang}>
-                              {gudang.nama_gudang}
-                            </option>
-                          ))
-                        }
+                        {gudangList.map((gudang) => (
+                          <option key={gudang.id} value={gudang.nama_gudang}>
+                            {gudang.nama_gudang}
+                          </option>
+                        ))}
                       </select>
                     </TableCell>
 
                     <TableCell>
                       <div className="relative w-full">
-
                         <Input
                           value={row.nama_barang}
                           name="nama_barang"
@@ -626,7 +611,7 @@ const AdminMainContent = () => {
                                   ...prevSuggestions,
                                   [index]:
                                     prevSuggestions[index] &&
-                                      prevSuggestions[index].length > 0
+                                    prevSuggestions[index].length > 0
                                       ? []
                                       : allSuggestions,
                                 }));
@@ -666,7 +651,6 @@ const AdminMainContent = () => {
                       />
                     </TableCell>
 
-
                     <TableCell>
                       <Tooltip content="Delete item">
                         <span
@@ -682,7 +666,6 @@ const AdminMainContent = () => {
               </TableBody>
             </Table>
           </div>
-
         </>
       )}
       {divisi === "Radiologi" && (
@@ -732,7 +715,7 @@ const AdminMainContent = () => {
                 className="py-2"
               />
             </div> */}
-             <div className="flex w-full flex-col space-y-2 md:w-1/3">
+            <div className="flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">RM:</label>
               <Input
                 value={responseData.rm}
@@ -743,9 +726,7 @@ const AdminMainContent = () => {
               />
             </div>
           </div>
-          <div className="flex flex-col gap-4 lg:flex-row">
-           
-          </div>
+          <div className="flex flex-col gap-4 lg:flex-row"></div>
 
           <Divider />
 
@@ -755,7 +736,7 @@ const AdminMainContent = () => {
             </Button>
           </div>
 
-          <div className="flex items-center justify-between overflow-x-scroll mb-10">
+          <div className="mb-10 flex items-center justify-between overflow-x-scroll">
             <Table
               aria-label="Table Barang"
               className="min-w-full divide-y divide-gray-200"
@@ -774,7 +755,6 @@ const AdminMainContent = () => {
                   Quantity
                 </TableColumn>
 
-
                 <TableColumn className="bg-[#0C295F] text-white">
                   Action
                 </TableColumn>
@@ -786,26 +766,26 @@ const AdminMainContent = () => {
                       <select
                         value={row.gudang}
                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                          handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index);
+                          handleFieldChange(
+                            e as unknown as React.ChangeEvent<HTMLInputElement>,
+                            index,
+                          );
                           setGudang(e.target.value);
                         }}
                         name="gudang"
                         id="123"
-                        className="w-full px-5 py-4 border border-black-500 rounded resize-none"
+                        className="border-black-500 w-full resize-none rounded border px-5 py-4"
                       >
                         <option value="">Pilih Gudang Tujuan</option>
-                        {
-                          gudangList.map((gudang) => (
-                            <option key={gudang.id} value={gudang.nama_gudang}>
-                              {gudang.nama_gudang}
-                            </option>
-                          ))
-                        }
+                        {gudangList.map((gudang) => (
+                          <option key={gudang.id} value={gudang.nama_gudang}>
+                            {gudang.nama_gudang}
+                          </option>
+                        ))}
                       </select>
                     </TableCell>
                     <TableCell>
                       <div className="relative w-full">
-
                         <Input
                           value={row.nama_barang}
                           name="nama_barang"
@@ -824,7 +804,7 @@ const AdminMainContent = () => {
                                   ...prevSuggestions,
                                   [index]:
                                     prevSuggestions[index] &&
-                                      prevSuggestions[index].length > 0
+                                    prevSuggestions[index].length > 0
                                       ? []
                                       : allSuggestions,
                                 }));
@@ -863,7 +843,6 @@ const AdminMainContent = () => {
                         className="py-2"
                       />
                     </TableCell>
-
 
                     <TableCell>
                       <Tooltip content="Delete item">

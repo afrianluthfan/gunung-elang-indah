@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -30,9 +31,7 @@ const MainContent = () => {
   useEffect(() => {
     const fetchHospitalData = async () => {
       try {
-        const res = await axios.post(
-          `${apiUrl}/proforma-invoice/rs-list`,
-        );
+        const res = await axios.post(`${apiUrl}/proforma-invoice/rs-list`);
         setHospitalData(res.data.data);
         console.log("Hospital data fetched", res.data.data);
       } catch (error) {
@@ -42,9 +41,7 @@ const MainContent = () => {
 
     const fetchDokterData = async () => {
       try {
-        const res = await axios.post(
-          `${apiUrl}/proforma-invoice/dr-listn`,
-        );
+        const res = await axios.post(`${apiUrl}/proforma-invoice/dr-listn`);
         setDoctorData(res.data.data);
         console.log("Data dokter fetched", res.data.data);
       } catch (error) {
@@ -56,14 +53,12 @@ const MainContent = () => {
     fetchDokterData();
   }, []);
 
-
   const backButton = () => {
     router.push("/profiling-dua");
   };
 
   // State untuk menyimpan value dropdown divisi
   const [kategoriDivisi, setKategoriDivisi] = useState("");
-
 
   // Fungsi untuk menangani submit form
   const onSubmit = async (data: Record<string, string | boolean>) => {
@@ -78,23 +73,21 @@ const MainContent = () => {
       divisi = "2";
     }
 
-    let rumah_sakit = localStorage.getItem('selectedHospital')
-    let doctor = localStorage.getItem('selectedDoctor')
+    let rumah_sakit = localStorage.getItem("selectedHospital");
+    let doctor = localStorage.getItem("selectedDoctor");
 
-    if (localStorage.getItem('selectedHospital') !== null) {
+    if (localStorage.getItem("selectedHospital") !== null) {
       console.log("Item 'selectedHospital' ada di localStorage.");
-      data.nama_perusahaan = rumah_sakit ?? ''
+      data.nama_perusahaan = rumah_sakit ?? "";
       setValue("nama_perusahaan", data.nama_perusahaan);
     } else {
       console.log("Item 'selectedHospital' tidak ada di localStorage.");
     }
 
-
-    if (localStorage.getItem('selectedDoctor') !== null) {
+    if (localStorage.getItem("selectedDoctor") !== null) {
       console.log("Item 'selectedDoctor' ada di localStorage.");
-      data.nama_dokter = doctor ?? ''
+      data.nama_dokter = doctor ?? "";
       setValue("nama_dokter", data.nama_dokter);
-
     } else {
       console.log("Item 'selectedDoctor' tidak ada di localStorage.");
     }
@@ -102,8 +95,8 @@ const MainContent = () => {
     console.log("Rumah Sakit : " + data.nama_perusahaan);
     console.log("Dokter : " + data.nama_dokter);
 
-    localStorage.removeItem('selectedHospital')
-    localStorage.removeItem('selectedDoctor')
+    localStorage.removeItem("selectedHospital");
+    localStorage.removeItem("selectedDoctor");
 
     const requestBody = {
       nama_perusahaan: data.nama_perusahaan,
@@ -146,10 +139,7 @@ const MainContent = () => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            await axios.post(
-              `${apiUrl}/customer-profilling/add`,
-              requestBody,
-            );
+            await axios.post(`${apiUrl}/customer-profilling/add`, requestBody);
 
             localStorage.removeItem("selectedHospital");
             localStorage.removeItem("selectedDoctor");
@@ -175,8 +165,6 @@ const MainContent = () => {
     const selectedHospital = hospitalData.find(
       (hospital) => hospital.name === suggestion,
     );
-
-
 
     if (selectedHospital) {
       setResponseData((prevData) => ({
@@ -213,9 +201,6 @@ const MainContent = () => {
 
   return (
     <div className="z-50 flex h-full w-full flex-col gap-6 bg-white p-8">
-
-
-
       <div className="flex flex-row justify-between gap-6">
         <h1 className="text-xl font-bold">Form Profiling</h1>
 
@@ -262,11 +247,13 @@ const MainContent = () => {
 
                       // Filter hospital suggestions based on the input value
                       const filteredSuggestions = hospitalData
-                      .filter(
-                        (hospital) =>
-                          hospital?.name?.toLowerCase()?.includes(value?.toLowerCase() || ''), // Add null checks
-                      )
-                      .map((hospital) => hospital.name);
+                        .filter(
+                          (hospital) =>
+                            hospital?.name
+                              ?.toLowerCase()
+                              ?.includes(value?.toLowerCase() || ""), // Add null checks
+                        )
+                        .map((hospital) => hospital.name);
 
                       setHospitalSuggestions(filteredSuggestions); // Update suggestions based on the filter
                     }}
@@ -316,7 +303,11 @@ const MainContent = () => {
                   label="No. IPAK"
                   className="w-full-lg"
                 />
-                <Input {...register("npwp_perusahaan")} label="NPWP Perusahaan" className="w-full-lg" />
+                <Input
+                  {...register("npwp_perusahaan")}
+                  label="NPWP Perusahaan"
+                  className="w-full-lg"
+                />
                 <Input
                   {...register("alamat_pengirim_facture_perusahaan")}
                   label="Alamat Pengirim Faktur"
@@ -364,7 +355,9 @@ const MainContent = () => {
             {kategoriDivisi !== "customer" && (
               <>
                 <div>
-                  <h3 className="mb-4 text-lg font-semibold">Data Penanggung Jawab</h3>
+                  <h3 className="mb-4 text-lg font-semibold">
+                    Data Penanggung Jawab
+                  </h3>
                   <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                     <Input
                       {...register("npwp_dokter")}
@@ -441,7 +434,6 @@ const MainContent = () => {
                   <h3 className="mb-4 text-lg font-semibold">Data Dokter</h3>
                   <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                     <div className="relative flex w-full flex-col space-y-2">
-
                       <Input
                         {...register("nama_dokter")}
                         name="nama_dokter"
@@ -452,11 +444,10 @@ const MainContent = () => {
                           setInputDoctorValue(value);
 
                           const filteredSuggestions = doctorData
-                            .filter(
-                              (doctor) =>
-                                doctor.namaDokter
-                                  .toLowerCase()
-                                  .includes(value.toLowerCase()),
+                            .filter((doctor) =>
+                              doctor.namaDokter
+                                .toLowerCase()
+                                .includes(value.toLowerCase()),
                             )
                             .map((doctor) => doctor.namaDokter);
 
@@ -472,7 +463,9 @@ const MainContent = () => {
                                 .filter((doctor) => doctor.namaDokter)
                                 .map((doctor) => doctor.namaDokter);
                               setDoctorSuggestions((prevSuggestions) =>
-                                prevSuggestions.length > 0 ? [] : allSuggestions,
+                                prevSuggestions.length > 0
+                                  ? []
+                                  : allSuggestions,
                               );
                             }}
                           >
@@ -587,8 +580,6 @@ const MainContent = () => {
               >
                 SUBMIT
               </Button>
-
-
             </div>
           </form>
         </div>

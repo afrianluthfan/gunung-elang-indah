@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
@@ -243,7 +244,7 @@ const ProformaInvoiceDetail = () => {
     try {
       const response = await axios.post(
         `${apiUrl}/sales_order/list/admin/edit/nama-barang-pi-so`,
-        responseData
+        responseData,
       );
 
       Swal.fire({
@@ -457,9 +458,11 @@ const ProformaInvoiceDetail = () => {
       <Divider />
 
       <div className="my-1 flex justify-between">
-        <h1 className="font-semibold lg:text-[1.4vh] pt-2">List Barang</h1>
-        <Button className="bg-[#0C295F] text-white p-2 rounded-xl hover:bg-[#1c4083]"
-          onClick={handleSetNamaBarang}>
+        <h1 className="pt-2 font-semibold lg:text-[1.4vh]">List Barang</h1>
+        <Button
+          className="rounded-xl bg-[#0C295F] p-2 text-white hover:bg-[#1c4083]"
+          onClick={handleSetNamaBarang}
+        >
           Set Nama Barang
         </Button>
       </div>
@@ -503,71 +506,70 @@ const ProformaInvoiceDetail = () => {
                 <TableCell className="text-center">{item.kat}</TableCell>
                 <TableCell className="text-center">
                   <textarea
-                    className="w-full border-1 rounded px-2 py-1 text-sm"
+                    className="w-full rounded border-1 px-2 py-1 text-sm"
                     value={item.nama_barang}
                     onChange={(e) => {
-                      const updatedItems = [...responseData.item_detail_pi]
+                      const updatedItems = [...responseData.item_detail_pi];
                       updatedItems[index] = {
                         ...item,
-                        nama_barang: e.target.value
-                      }
+                        nama_barang: e.target.value,
+                      };
                       setResponseData({
                         ...responseData,
-                        item_detail_pi: updatedItems
-                      })
+                        item_detail_pi: updatedItems,
+                      });
                     }}
                   />
                 </TableCell>
                 <TableCell className="text-center">{item.variable}</TableCell>
                 <TableCell className="text-center">
                   <textarea
-                    className="w-full border-1 rounded px-2 py-1 text-sm"
+                    className="w-full rounded border-1 px-2 py-1 text-sm"
                     value={item.quantity}
                     onChange={(e) => {
-                      const updatedItems = [...responseData.item_detail_pi]
+                      const updatedItems = [...responseData.item_detail_pi];
                       updatedItems[index] = {
                         ...item,
-                        quantity: e.target.value
-                      }
+                        quantity: e.target.value,
+                      };
                       setResponseData({
                         ...responseData,
-                        item_detail_pi: updatedItems
-                      })
+                        item_detail_pi: updatedItems,
+                      });
                     }}
                   />
                 </TableCell>
                 <TableCell className="text-center">
                   <textarea
-                    className="w-full border-1 rounded px-2 py-1 text-sm"
+                    className="w-full rounded border-1 px-2 py-1 text-sm"
                     value={item.harga_satuan}
                     onChange={(e) => {
-                      const updatedItems = [...responseData.item_detail_pi]
+                      const updatedItems = [...responseData.item_detail_pi];
                       updatedItems[index] = {
                         ...item,
-                        harga_satuan: e.target.value
-                      }
+                        harga_satuan: e.target.value,
+                      };
                       setResponseData({
                         ...responseData,
-                        item_detail_pi: updatedItems
-                      })
+                        item_detail_pi: updatedItems,
+                      });
                     }}
                   />
-
                 </TableCell>
                 <TableCell className="text-center">
                   <textarea
-                    className="w-full border-1 rounded px-2 py-1 text-sm"
+                    className="w-full rounded border-1 px-2 py-1 text-sm"
                     value={item.discount}
                     onChange={(e) => {
-                      const updatedItems = [...responseData.item_detail_pi]
+                      const updatedItems = [...responseData.item_detail_pi];
                       updatedItems[index] = {
                         ...item,
-                        discount: e.target.value
-                      }
+                        discount: e.target.value,
+                      };
                       setResponseData({
                         ...responseData,
-                        item_detail_pi: updatedItems
-                      })
+                        item_detail_pi: updatedItems,
+                      });
                     }}
                   />
                 </TableCell>

@@ -1,5 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-
 
 import React, { FC, useEffect, useState } from "react";
 import FormMainContentLayout from "../form/FormMainContentLayout";
@@ -23,7 +23,6 @@ const Form: FC = () => {
     updated_by: string;
   };
 
-  const user = useAppSelector((state) => state.auth.value).username;
   const itemDetail = useAppSelector((state) => state.editPIItems.value);
   const [itemListData, setItemListData] = useState<ItemDataType[]>([]);
   const [content, setContent] = useState<JSX.Element[]>([]);
@@ -36,18 +35,15 @@ const Form: FC = () => {
   useEffect(() => {
     const fetchItemListData = async () => {
       try {
-        const response = await axios.post(
-          `${apiUrl}/stock-barang/list`,
-          "",
-        );
+        const response = await axios.post(`${apiUrl}/stock-barang/list`, "");
         setItemListData(response.data.data);
         const newContent = itemDetail.map((item, index) => (
           <FormMainContentLayout key={index}>
             <ItemInput
               itemNumber={index + 1}
               index={index}
-            // itemData={item}
-            // autocompleteData={response.data.data} // Pass autocompleteData here
+              // itemData={item}
+              // autocompleteData={response.data.data} // Pass autocompleteData here
             />
           </FormMainContentLayout>
         ));

@@ -1,9 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import WelcomingMessage from "../../../components/WelcomingMessage";
 import React, { FC, useEffect, useState } from "react";
 import FormMainContentLayout from "../form/FormMainContentLayout";
-import { useAppSelector } from "../../../redux/store";import MainContent from "./MainContent";
+import { useAppSelector } from "../../../redux/store";
+import MainContent from "./MainContent";
 import ItemInput from "../form/ItemInput";
 import axios from "axios";
 // import MainContent from "../MainContent";
@@ -20,7 +22,6 @@ const Form: FC = () => {
     updated_by: string;
   };
 
-  const user = useAppSelector((state) => state.auth.value).username;
   const itemDetail = useAppSelector((state) => state.editPIItems.value);
   const [itemListData, setItemListData] = useState<ItemDataType[]>([]);
   const [content, setContent] = useState<JSX.Element[]>([]);
@@ -32,10 +33,7 @@ const Form: FC = () => {
   useEffect(() => {
     const fetchItemListData = async () => {
       try {
-        const response = await axios.post(
-          `${apiUrl}/stock-barang/list`,
-          "",
-        );
+        const response = await axios.post(`${apiUrl}/stock-barang/list`, "");
         setItemListData(response.data.data);
         const newContent = itemDetail.map((item, index) => (
           <FormMainContentLayout key={index}>

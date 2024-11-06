@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
@@ -251,7 +252,7 @@ const ProformaInvoiceDetail = () => {
         <div className="flex justify-between">
           <table className="">
             <tbody>
-               <tr>
+              <tr>
                 <td className="text-left">
                   <h1 className="font-medium">Perusahaan</h1>
                 </td>

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -203,9 +204,9 @@ export default function PITableComponent() {
     setSearchText(e.target.value);
   };
   const onClear = useCallback(() => {
-    setFilterValue("")
-    setPage(1)
-  }, [])
+    setFilterValue("");
+    setPage(1);
+  }, []);
 
   const onSearchChange = useCallback((value?: string) => {
     if (value) {
@@ -216,13 +217,12 @@ export default function PITableComponent() {
     }
   }, []);
 
-
   return (
     <div>
-      <div className="flex justify-between gap-4 mb-5">
+      <div className="mb-5 flex justify-between gap-4">
         <Input
           isClearable
-          className="w-full border-1 rounded-lg border-blue-900"
+          className="w-full rounded-lg border-1 border-blue-900"
           placeholder="Cari Nama Suplier ..."
           value={filterValue}
           onClear={() => onClear()}
@@ -249,7 +249,7 @@ export default function PITableComponent() {
               <TableColumn
                 key={column.uid}
                 allowsSorting
-                className="bg-[#0C295F] text-white text-center"
+                className="bg-[#0C295F] text-center text-white"
                 align="start"
               >
                 {column.name}

@@ -87,7 +87,7 @@ export default function PITableComponent() {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchItemData1 = async () => {
+  const fetchItemData1 = React.useCallback(async () => {
     try {
       const response = await axios.post(
         `${apiUrl}/proforma-invoice/get-all-list`,
@@ -98,20 +98,17 @@ export default function PITableComponent() {
       console.error("Error fetching data from API 1", error);
       return [];
     }
-  };
+  }, [apiUrl]);
 
-  const fetchItemData2 = async () => {
+  const fetchItemData2 = React.useCallback(async () => {
     try {
-      const response = await axios.post(
-        `${apiUrl}/stock-barang/list`,
-        "",
-      );
+      const response = await axios.post(`${apiUrl}/stock-barang/list`, "");
       return response.data.data;
     } catch (error) {
       console.error("Error fetching data from API 2", error);
       return [];
     }
-  };
+  }, [apiUrl]);
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -142,7 +139,7 @@ export default function PITableComponent() {
     };
 
     fetchAllData();
-  }, []);
+  }, [fetchItemData1, fetchItemData2]);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -257,7 +254,6 @@ export default function PITableComponent() {
     <div>
       <Table
         aria-label="Example table with custom cells"
-        
         onSelectionChange={setSelectedKeys}
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -60,20 +61,20 @@ export default function PITableComponent() {
   const router = useRouter();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchItemData = async () => {
-    try {
-      const response = await axios.post(
-        `${apiUrl}/proforma-invoice/get-all-list`,
-        "",
-      );
-      return response.data.data;
-    } catch (error) {
-      console.error("Error fetching data from API", error);
-      return [];
-    }
-  };
-
   useEffect(() => {
+    const fetchItemData = async () => {
+      try {
+        const response = await axios.post(
+          `${apiUrl}/proforma-invoice/get-all-list`,
+          "",
+        );
+        return response.data.data;
+      } catch (error) {
+        console.error("Error fetching data from API", error);
+        return [];
+      }
+    };
+
     const fetchAllData = async () => {
       const data = await fetchItemData();
 

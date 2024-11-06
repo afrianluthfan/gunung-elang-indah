@@ -1,4 +1,13 @@
-import { button, Button, Divider, Input, Modal, Tooltip, useDisclosure } from "@nextui-org/react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import {
+  button,
+  Button,
+  Divider,
+  Input,
+  Modal,
+  Tooltip,
+  useDisclosure,
+} from "@nextui-org/react";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import {
@@ -34,7 +43,7 @@ const MainContent = () => {
   const [filterValue, setFilterValue] = useState("");
   const [gudangList, setGudangList] = useState<Gudang[]>([]);
   const [visibleColumns] = useState<Set<string>>(
-    new Set(INITIAL_VISIBLE_COLUMNS)
+    new Set(INITIAL_VISIBLE_COLUMNS),
   );
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
@@ -65,27 +74,32 @@ const MainContent = () => {
     fetchGudangList();
   }, [fetchGudangList]);
 
-  const columns = [
-    { name: "No", uid: "id" },
-    { name: "Nama Gudang", uid: "nama_gudang" },
-    { name: "Alamat Gudang", uid: "alamat_gudang" },
-    { name: "Action", uid: "action" },
-  ];
+  const columns = useMemo(
+    () => [
+      { name: "No", uid: "id" },
+      { name: "Nama Gudang", uid: "nama_gudang" },
+      { name: "Alamat Gudang", uid: "alamat_gudang" },
+      { name: "Action", uid: "action" },
+    ],
+    [],
+  );
 
   const headerColumns = useMemo(() => {
     return columns.filter((column) => visibleColumns.has(column.uid));
-  }, [columns, visibleColumns]);
+  }, [visibleColumns, columns]);
 
   const filteredItems = useMemo(() => {
     return gudangList.filter((gudang) =>
-      gudang.nama_gudang.toLowerCase().includes(filterValue.toLowerCase())
+      gudang.nama_gudang.toLowerCase().includes(filterValue.toLowerCase()),
     );
   }, [filterValue, gudangList]);
 
   const sortedItems = useMemo(() => {
     return [...filteredItems].sort((a, b) => {
       const first = a[sortDescriptor.column as keyof Gudang] as string | number;
-      const second = b[sortDescriptor.column as keyof Gudang] as string | number;
+      const second = b[sortDescriptor.column as keyof Gudang] as
+        | string
+        | number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
@@ -101,41 +115,55 @@ const MainContent = () => {
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const handleDelete = (id: number) => {
-    Swal.fire({
-      title: "Apakah Kamu Yakin?",
-      text: "Apakah kamu yakin ingin data ini dihapus?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await axios.post(`${apiUrl}/gudang/delete`, { id });
-          fetchGudangList();
-          Swal.fire("Nice!", "Data Berhasil Dihapus!.", "success");
-        } catch (error) {
-          console.error("Error deleting data", error);
-          Swal.fire("Error!", "Terjadi kesalahan saat menghapus data.", "error");
+  const handleDelete = useCallback(
+    (id: number) => {
+      Swal.fire({
+        title: "Apakah Kamu Yakin?",
+        text: "Apakah kamu yakin ingin data ini dihapus?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            await axios.post(`${apiUrl}/gudang/delete`, { id });
+            fetchGudangList();
+            Swal.fire("Nice!", "Data Berhasil Dihapus!.", "success");
+          } catch (error) {
+            console.error("Error deleting data", error);
+            Swal.fire(
+              "Error!",
+              "Terjadi kesalahan saat menghapus data.",
+              "error",
+            );
+          }
         }
-      }
-    });
-  };
+      });
+    },
+    [apiUrl, fetchGudangList],
+  );
 
   const renderCell = useCallback(
-    (gudang: Gudang & { number: number }, columnKey: React.Key, index: number) => {
+    (
+      gudang: Gudang & { number: number },
+      columnKey: React.Key,
+      index: number,
+    ) => {
       if (columnKey === "action") {
         return (
-          <Button className="bg-transparent" onClick={() => handleDelete(gudang.id)}>
+          <Button
+            className="bg-transparent"
+            onClick={() => handleDelete(gudang.id)}
+          >
             <DeleteIcon />
           </Button>
         );
       }
       return columnKey === "id" ? index + 1 : gudang[columnKey as keyof Gudang];
     },
-    [handleDelete]
+    [handleDelete],
   );
 
   if (error) {
@@ -145,19 +173,22 @@ const MainContent = () => {
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <div className="flex w-full flex-col justify-between gap-4">
-        <h1 className="text-xl font-bold mb-4 lg:text-[2vh]">Cari Gudang</h1>
-        <div className="text-sm flex flex-col w-full justify-stretch gap-2 lg:flex-row lg:items-center">
+        <h1 className="mb-4 text-xl font-bold lg:text-[2vh]">Cari Gudang</h1>
+        <div className="flex w-full flex-col justify-stretch gap-2 text-sm lg:flex-row lg:items-center">
           <Input
             type="text"
             placeholder="Masukkan Nama Gudang"
-            className=" w-full border-1 border-blue-900 rounded-xl"
+            className="w-full rounded-xl border-1 border-blue-900"
             value={filterValue}
             onChange={(e) => setFilterValue(e.target.value)}
           />
-          <Button className="bg-[#0C295F] font-bold text-white rounded-md w-full lg:w-auto">
+          <Button className="w-full rounded-md bg-[#0C295F] font-bold text-white lg:w-auto">
             Cari/Cek
           </Button>
-          <Button onPress={onOpen} className="bg-[#009338] font-bold text-white rounded-md w-full lg:w-auto">
+          <Button
+            onPress={onOpen}
+            className="w-full rounded-md bg-[#009338] font-bold text-white lg:w-auto"
+          >
             Tambah Gudang
           </Button>
         </div>
@@ -166,10 +197,10 @@ const MainContent = () => {
       <Divider />
 
       <div className="h-full">
-        <div className="h-[100vh] lg:h-[40vh] w-full overflow-auto">
+        <div className="h-[100vh] w-full overflow-auto lg:h-[40vh]">
           <Table
             aria-label="Example table with dynamic content"
-            className="w-full h-full"
+            className="h-full w-full"
             removeWrapper
             isHeaderSticky
             isStriped
@@ -178,7 +209,11 @@ const MainContent = () => {
           >
             <TableHeader columns={headerColumns}>
               {(column) => (
-                <TableColumn key={column.uid} allowsSorting className="bg-[#0C295F] text-white">
+                <TableColumn
+                  key={column.uid}
+                  allowsSorting
+                  className="bg-[#0C295F] text-white"
+                >
                   {column.name}
                 </TableColumn>
               )}
@@ -191,7 +226,11 @@ const MainContent = () => {
                 <TableRow key={item.id}>
                   {(columnKey) => (
                     <TableCell className="bg-white">
-                      {renderCell(item, columnKey, itemsWithIndex.indexOf(item))}
+                      {renderCell(
+                        item,
+                        columnKey,
+                        itemsWithIndex.indexOf(item),
+                      )}
                     </TableCell>
                   )}
                 </TableRow>
@@ -212,7 +251,12 @@ const MainContent = () => {
         </div>
       </div>
 
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false} isKeyboardDismissDisabled={true}>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        isDismissable={false}
+        isKeyboardDismissDisabled={true}
+      >
         <ModalTambah />
       </Modal>
     </div>

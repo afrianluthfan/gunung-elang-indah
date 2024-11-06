@@ -86,14 +86,14 @@ const MainContent = () => {
     fetchData();
   }, [fetchData]);
 
-  const columns = [
+  const columns = useMemo(() => [
     { name: "No", uid: "number" },
     { name: "Variable", uid: "variable" },
     { name: "Nama", uid: "nama" },
     { name: "Jumlah Barang", uid: "qty" },
     { name: "Katalog", uid: "kode" },
     { name: "Gudang", uid: "namaGudang" },
-  ];
+  ], []);
 
   const headerColumns = useMemo(() => {
     return columns.filter((column) => visibleColumns.has(column.uid));

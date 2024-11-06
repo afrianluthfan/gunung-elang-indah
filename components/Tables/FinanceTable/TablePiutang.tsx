@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, { useEffect, useState, useCallback, useMemo } from "react";
@@ -18,9 +19,7 @@ import {
   Divider,
   Input,
 } from "@nextui-org/react";
-import { DeleteIcon } from "./DeleteIcon";
-import { EyeIcon } from "./EyeIcon";
-import { EditIcon } from "./EditIcon";
+
 import Swal from "sweetalert2";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
@@ -63,17 +62,12 @@ export default function TableComponent() {
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
 
-  let Total = ""
-
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post(
-          `${apiUrl}/piutang/list`,
-          {},
-        );
+        const response = await axios.post(`${apiUrl}/piutang/list`, {});
         setTotalHutang(response.data.total);
         setUsers(response.data.data);
       } catch (error) {
@@ -108,32 +102,24 @@ export default function TableComponent() {
         Swal.fire(
           "Berhasil!",
           `User dengan ID ${id} berhasil dilunasi.`,
-          "success"
+          "success",
         );
 
         try {
-          const response = await axios.post(
-            `${apiUrl}/piutang/list`,
-            {},
-          );
-          Total = response.data.total
+          const response = await axios.post(`${apiUrl}/piutang/list`, {});
+          setTotalHutang(response.data.total);
           setUsers(response.data.data);
         } catch (error) {
           setError("Error fetching data");
           console.error("Error fetching data:", error);
         }
-
       } catch (error) {
         console.error("Error marking user as paid:", error);
 
-        Swal.fire(
-          "Gagal!",
-          `Gagal melunasi user dengan ID ${id}.`,
-          "error"
-        );
+        Swal.fire("Gagal!", `Gagal melunasi user dengan ID ${id}.`, "error");
       }
     }
-  }
+  };
   const columns = [
     { name: "No", uid: "number" },
     { name: "Tanggal", uid: "tanggal" },
@@ -141,7 +127,7 @@ export default function TableComponent() {
     { name: "Nominal", uid: "nominal" },
     { name: "Pajak", uid: "pajak" },
     { name: "Amount", uid: "amount" },
-    { name: "Actions", uid: "actions" }
+    { name: "Actions", uid: "actions" },
   ];
 
   const headerColumns = useMemo(() => {
@@ -210,7 +196,8 @@ export default function TableComponent() {
         default:
           return cellValue;
       }
-    }, [],
+    },
+    [],
   );
 
   const onRowsPerPageChange = useCallback(
@@ -233,24 +220,22 @@ export default function TableComponent() {
   };
 
   const onClear = () => {
-    setFilterValue("")
-    setPage(1)
-  }
-
+    setFilterValue("");
+    setPage(1);
+  };
 
   return (
     <div>
-
       <div className="mb-4">
-        <h1 className="font-bold text-sm mb-4">Data Piutang Penjualan</h1>
+        <h1 className="mb-4 text-sm font-bold">Data Piutang Penjualan</h1>
       </div>
 
       <Divider className="mb-4" />
 
-      <div className="flex justify-between items-center gap-3 mb-3 w-full">
+      <div className="mb-3 flex w-full items-center justify-between gap-3">
         <Input
           isClearable
-          className="w-full border-1 rounded-lg border-blue-900"
+          className="w-full rounded-lg border-1 border-blue-900"
           placeholder="Cari Nama Customer ..."
           value={filterValue}
           onClear={() => onClear()}
@@ -260,19 +245,13 @@ export default function TableComponent() {
 
       <Divider className="my-4" />
 
-      <div className="mb-4 background-color: #f0f0f0; padding: 10px; border-radius: 5px;">
+      <div className="background-color: #f0f0f0; padding: 10px; border-radius: 5px; mb-4">
         <table border={10}>
           <tbody>
             <tr>
-              <td className="font-semibold text-sm">
-                Total Piutang Saat Ini
-              </td>
-              <td>
-                :
-              </td>
-              <td className="text-sm">
-                {totalHutang}
-              </td>
+              <td className="text-sm font-semibold">Total Piutang Saat Ini</td>
+              <td>:</td>
+              <td className="text-sm">{totalHutang}</td>
             </tr>
           </tbody>
         </table>
@@ -292,7 +271,7 @@ export default function TableComponent() {
             <TableColumn
               key={column.uid}
               allowsSorting
-              className="bg-[#0C295F] text-white text-center"
+              className="bg-[#0C295F] text-center text-white"
               align="start"
             >
               {column.name}
