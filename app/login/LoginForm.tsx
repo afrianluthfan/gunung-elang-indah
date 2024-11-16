@@ -71,13 +71,13 @@ const LoginForm = () => {
             router.push("/proforma-invoice-dua");
             break;
           case "admin":
-            router.push("/profiling-dua");
+            router.push("/beranda");
             break;
           case "logistik":
             router.push("/stok-barang");
             break;
           case "keuangan":
-            router.push("/piutang");
+            router.push("/beranda");
             break;
           default:
             break;

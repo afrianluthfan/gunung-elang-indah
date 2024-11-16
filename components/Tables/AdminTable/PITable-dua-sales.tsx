@@ -27,12 +27,11 @@ const columns = [
   { name: "TANGGAL", uid: "created_at", sortable: true },
   { name: "NAMA PERUSAHAAN", uid: "nama_company", sortable: true },
   { name: "NOMOR PI", uid: "invoice_number", sortable: true },
-  { name: "TOTAL", uid: "total", sortable: true },
   { name: "STATUS", uid: "status", sortable: true },
   { name: "ACTIONS", uid: "actions" },
 ];
 
-const statusColorMap = {
+const statusColorMap: Record<string, ChipProps["color"]> = {
   DITERIMA: "success",
   DITOLAK: "danger",
   DIPROSES: "primary",
@@ -58,6 +57,7 @@ export default function PITableComponent() {
   });
   const [page, setPage] = useState(1);
 
+  // State untuk filter setiap kolom
   const [filters, setFilters] = useState({
     nama_company: "",
     invoice_number: "",
@@ -86,7 +86,7 @@ export default function PITableComponent() {
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        `${apiUrl}/proforma-invoice/get-all-list-so`
+        `${apiUrl}/proforma-invoice/get-all-list`
       );
       console.log("API response:", response.data);
       if (response.data.status) {
@@ -105,13 +105,12 @@ export default function PITableComponent() {
 
   const filteredUsers = React.useMemo(() => {
     return users.filter((user) => {
-      const date = new Date(user.created_at);
+      const userDate = new Date(user.created_at);
       const startDate = filters.startDate ? new Date(filters.startDate) : null;
       const endDate = filters.endDate ? new Date(filters.endDate) : null;
 
-      const isWithinDateRange = 
-        (!startDate || date >= startDate) && 
-        (!endDate || date <= endDate);
+      const isWithinDateRange =
+        (!startDate || userDate >= startDate) && (!endDate || userDate <= endDate);
 
       return (
         user.nama_company
@@ -166,7 +165,7 @@ export default function PITableComponent() {
           return (
             <Chip
               className="capitalize"
-              color={statusColorMap[status as keyof typeof statusColorMap] as "success" | "danger" | "primary" | "default" | "secondary" | "warning"}
+              color={statusColorMap[status] || "default"}
               size="sm"
               variant="flat"
             >
@@ -176,28 +175,28 @@ export default function PITableComponent() {
         case "actions":
           return (
             <div className="relative flex items-center gap-2">
-              <Tooltip content="Details" className="text-black">
+              <Tooltip content="Details" className="text-center text-black">
                 <span
                   onClick={() =>
                     router.push(
                       username === "SALES"
-                        ? `/sales-order-sales/edit?id=${user.id}&divisi=${user.divisi}`
-                        : `/sales-order-sales/edit?id=${user.id}&divisi=${user.divisi}`,
+                        ? `/proforma-invoice-dua/edit?id=${user.id}&divisi=${user.divisi}`
+                        : `/proforma-invoice-dua/edit?id=${user.id}&divisi=${user.divisi}`
                     )
                   }
                   className="cursor-pointer text-lg text-default-400 active:opacity-50"
                 >
-                  <EyeIcon />
+                  <EyeIcon className="items-center" />
                 </span>
               </Tooltip>
-              {user.status !== "DITERIMA" && username === "SALES" && (
-                <Tooltip content="Edit">
+              {user.status !== "Diterima" && username === "SALES" && (
+                <Tooltip content="Edit" className="text-center text-black">
                   <span
                     onClick={() =>
                       router.push(
                         username === "SALES"
                           ? `/proforma-invoice-dua/edit-sales?id=${user.id}&divisi=${user.divisi}`
-                          : "",
+                          : ""
                       )
                     }
                     className="cursor-pointer text-lg text-default-400 active:opacity-50"
@@ -211,7 +210,8 @@ export default function PITableComponent() {
         default:
           return cellValue;
       }
-    }, [username, router],
+    },
+    [username, router]
   );
 
   const onRowsPerPageChange = React.useCallback(
@@ -235,40 +235,52 @@ export default function PITableComponent() {
         <Divider />
       </div>
       <div className="mb-5 flex flex-col justify-between gap-4 lg:flex-row">
-        <Input
-          type="date"
-          placeholder="Start Date"
-          className="border-1 border-blue-900 rounded-xl"
-          value={filters.startDate}
-          onChange={(e) => handleFilterChange("startDate", e.target.value)}
-        />
-        <Input
-          type="date"
-          placeholder="End Date"
-          className="border-1 border-blue-900 rounded-xl"
-          value={filters.endDate}
-          onChange={(e) => handleFilterChange("endDate", e.target.value)}
-        />
+        <div className="flex gap-2">
+          <Input
+            type="date"
+            placeholder="Start Date"
+            className="border-1 border-blue-900 rounded-xl"
+            value={filters.startDate}
+            onChange={(e) => handleFilterChange("startDate", e.target.value)}
+          />
+          <Input
+            type="date"
+            placeholder="End Date"
+            className="border-1 border-blue-900 rounded-xl"
+            value={filters.endDate}
+            onChange={(e) => handleFilterChange("endDate", e.target.value)}
+          />
+        </div>
         <Input
           type="text"
           placeholder="Filter Nama Perusahaan"
-          className="border-1 border-blue-900 rounded-xl"
+          className="border-1 border-blue-900 rounded-xl "
           value={filters.nama_company}
           onChange={(e) => handleFilterChange("nama_company", e.target.value)}
         />
         <Input
           type="text"
           placeholder="Filter Nomor PI"
-          className="border-1 border-blue-900 rounded-xl"
+          className="border-1 border-blue-900 rounded-xl "
           value={filters.invoice_number}
-          onChange={(e) => handleFilterChange("invoice_number", e.target.value)}
+          onChange={(e) =>
+            handleFilterChange("invoice_number", e.target.value)
+          }
         />
         <Input
           type="text"
           placeholder="Filter Total"
-          className="border-1 border-blue-900 rounded-xl"
+          className="border-1 border-blue-900 rounded-xl "
           value={filters.total}
           onChange={(e) => handleFilterChange("total", e.target.value)}
+        />
+
+        <Input
+          type="text"
+          placeholder="Filter Status"
+          className="border-1 border-blue-900 rounded-xl "
+          value={filters.status}
+          onChange={(e) => handleFilterChange("status", e.target.value)}
         />
       </div>
 
@@ -289,7 +301,7 @@ export default function PITableComponent() {
           <TableHeader columns={columns}>
             {(column) => (
               <TableColumn
-                className="bg-[#0C295F] text-center text-white"
+                className="bg-[#0C295F] text-left text-white"
                 key={column.uid}
                 allowsSorting
                 align="start"
@@ -318,8 +330,12 @@ export default function PITableComponent() {
           showShadow
           color="primary"
           page={page}
+          initialPage={1}
           onChange={setPage}
           total={pages}
+          classNames={{
+            cursor: "bg-blue-500 text-white"
+          }}
         />
         <div className="flex items-center gap-4">
           <label className="text-small text-default-500">Rows per page:</label>
@@ -327,7 +343,7 @@ export default function PITableComponent() {
             className="rounded-lg border border-default-200 bg-default-100 p-1 text-small text-default-900 outline-none focus:border-primary data-[hover=true]:cursor-pointer data-[hover=true]:bg-default-200"
             onChange={onRowsPerPageChange}
           >
-            {[5, 10, 15, 20].map((rows) => (
+            {[5, 10, 15, 25, 50].map((rows) => (
               <option key={rows} value={rows}>
                 {rows}
               </option>

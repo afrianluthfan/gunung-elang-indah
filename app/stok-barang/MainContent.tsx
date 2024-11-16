@@ -166,7 +166,7 @@ const MainContent = () => {
             name="gudang"
             className="w-full px-5 py-4 border border-black-500 rounded resize-none"
           >
-            <option value="">Pilih Gudang Tujuan</option>
+            <option value="">Pilih Gudang Asal</option>
             {gudangList.map((gudang) => (
               <option key={gudang.id} value={gudang.id}>
                 {gudang.nama_gudang}
@@ -177,11 +177,9 @@ const MainContent = () => {
             type="text"
             placeholder="Masukan Nama Barang"
             value={filterValue}
-            onChange={(e) => setFilterValue(e.target.value)} 
+            onChange={(e) => setFilterValue(e.target.value)}
           />
-          <Button className="bg-[#0C295F] font-bold text-white">
-            Cari/Cek
-          </Button>
+
         </div>
       </div>
 
@@ -231,7 +229,7 @@ const MainContent = () => {
               total={pages}
             />
             <select value={rowsPerPage} onChange={onRowsPerPageChange}>
-              {[5, 10].map((pageSize) => (
+              {[5, 10, 25, 50].map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize} per page
                 </option>

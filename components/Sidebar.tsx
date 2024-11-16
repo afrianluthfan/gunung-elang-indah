@@ -57,59 +57,70 @@ const Sidebar = () => {
 
     const adminMenus = [
       {
+        pageName: "Beranda",
+        pageRoute: "beranda",
+      },
+      {
         pageName: "Profiling",
         pageRoute: "profiling-dua",
+      },
+      {
+        pageName: "Purchase Order",
+        pageRoute: "purchase-order",
       },
       {
         pageName: "Proforma Invoice",
         pageRoute: "proforma-invoice-dua",
       },
       {
-        pageName: "Purchase Order",
-        pageRoute: "purchase-order",
-      },
-      {
-        pageName: "Stok Barang",
-        pageRoute: "stok-barang",
-      },
-      {
         pageName: "Sales Order",
         pageRoute: "sales-order-sales",
-      },
-      {
-        pageName: "Price List",
-        pageRoute: "price-list",
       },
       {
         pageName: "Data Gudang",
         pageRoute: "gudang",
       },
+      {
+        pageName: "Stok Barang",
+        pageRoute: "stok-barang",
+      },
+      
+      {
+        pageName: "Price List",
+        pageRoute: "price-list",
+      },
+
     ];
 
     const financeMenus = [
       {
-        pageName: "Piutang",
-        pageRoute: "piutang",
+        pageName: "Beranda",
+        pageRoute: "beranda",
       },
       {
-        pageName: "Hutang",
-        pageRoute: "hutang",
+        pageName: "Purchase Order",
+        pageRoute: "purchase-order",
+      },
+      {
+        pageName: "Purchase Order Disetujui",
+        pageRoute: "sales-order-finance",
+      },
+      
+      {
+        pageName: "Piutang",
+        pageRoute: "piutang",
       },
       {
         pageName: "Pemasukan",
         pageRoute: "pemasukan",
       },
       {
+        pageName: "Hutang",
+        pageRoute: "hutang",
+      },
+      {
         pageName: "Pengeluaran",
         pageRoute: "pengeluaran",
-      },
-      {
-        pageName: "Sales Order",
-        pageRoute: "sales-order-finance",
-      },
-      {
-        pageName: "Purchase Order",
-        pageRoute: "purchase-order",
       },
       {
         pageName: "Stok Barang",
@@ -199,7 +210,7 @@ const Sidebar = () => {
         ))}
       </SidebarMenuItemsLayout>
       <Button
-        className="w-fit min-w-16 px-0 text-xs font-bold lg:w-full lg:px-4 lg:text-sm"
+        className="w-fit min-w-16 px-0 text-xs bg-red-600 text-white font-bold lg:w-full lg:px-4 lg:text-sm"
         onClick={handleLogOut}
       >
         Log Out

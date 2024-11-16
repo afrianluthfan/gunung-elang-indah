@@ -154,9 +154,7 @@ const MainContent = () => {
             value={filterValue}
             onChange={(e) => setFilterValue(e.target.value)}
           />
-          <Button className="bg-[#0C295F] font-bold text-white rounded-md w-full lg:w-auto">
-            Cari/Cek
-          </Button>
+         
           <Button onPress={onOpen} className="bg-[#009338] font-bold text-white rounded-md w-full lg:w-auto">
             Tambah Gudang
           </Button>

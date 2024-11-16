@@ -60,11 +60,13 @@ export default function PITableComponent() {
 
   // State untuk filter setiap kolom
   const [filters, setFilters] = useState({
+    startDate: "",
+    endDate: "",
     nama_company: "",
     invoice_number: "",
     total: "",
     status: "",
-    created_at: "",
+
   });
 
   const [username, setUsername] = useState<string | null>(null);
@@ -105,7 +107,15 @@ export default function PITableComponent() {
 
   const filteredUsers = React.useMemo(() => {
     return users.filter((user) => {
+      const userDate = new Date(user.created_at);
+      const startDate = filters.startDate ? new Date(filters.startDate) : null;
+      const endDate = filters.endDate ? new Date(filters.endDate) : null;
+
+      const isWithinDateRange =
+        (!startDate || userDate >= startDate) && (!endDate || userDate <= endDate);
+
       return (
+        isWithinDateRange &&
         user.nama_company
           ?.toLowerCase()
           .includes(filters.nama_company.toLowerCase()) &&
@@ -113,8 +123,9 @@ export default function PITableComponent() {
           ?.toLowerCase()
           .includes(filters.invoice_number.toLowerCase()) &&
         user.total?.toLowerCase().includes(filters.total.toLowerCase()) &&
-        user.status?.toLowerCase().includes(filters.status.toLowerCase()) &&
-        user.created_at?.toLowerCase().includes(filters.created_at.toLowerCase())
+
+
+        user.status?.toLowerCase().includes(filters.status.toLowerCase())
       );
     });
   }, [users, filters]);
@@ -228,33 +239,45 @@ export default function PITableComponent() {
         <Divider />
       </div>
       <div className="mb-5 flex flex-col justify-between gap-4 lg:flex-row">
-        <Input
-          type="text"
-          placeholder="Filter Tanggal"
-          className="border-1 border-blue-900 rounded-xl "
-          value={filters.created_at}
-          onChange={(e) => handleFilterChange("created_at", e.target.value)}
-        />
+        <div className="flex gap-2">
+          <Input
+            type="date"
+            placeholder="Start Date"
+            className="border-1 border-blue-900 rounded-xl"
+            value={filters.startDate}
+            onChange={(e) => handleFilterChange("startDate", e.target.value)}
+          />
+          <Input
+            type="date"
+            placeholder="End Date"
+            className="border-1 border-blue-900 rounded-xl"
+            value={filters.endDate}
+            onChange={(e) => handleFilterChange("endDate", e.target.value)}
+          />
+        </div>
         <Input
           type="text"
           placeholder="Filter Nama Perusahaan"
-          className="border-1 border-blue-900 rounded-xl "
+          className="border-1 border-blue-900 rounded-xl"
           value={filters.nama_company}
           onChange={(e) => handleFilterChange("nama_company", e.target.value)}
         />
         <Input
           type="text"
           placeholder="Filter Nomor PI"
-          className="border-1 border-blue-900 rounded-xl "
+
+          className="border-1 border-blue-900 rounded-xl"
           value={filters.invoice_number}
-          onChange={(e) =>
-            handleFilterChange("invoice_number", e.target.value)
-          }
+
+
+
+          onChange={(e) => handleFilterChange("invoice_number", e.target.value)}
         />
         <Input
           type="text"
           placeholder="Filter Total"
-          className="border-1 border-blue-900 rounded-xl "
+
+          className="border-1 border-blue-900 rounded-xl"
           value={filters.total}
           onChange={(e) => handleFilterChange("total", e.target.value)}
         />
@@ -262,7 +285,8 @@ export default function PITableComponent() {
         <Input
           type="text"
           placeholder="Filter Status"
-          className="border-1 border-blue-900 rounded-xl "
+
+          className="border-1 border-blue-900 rounded-xl"
           value={filters.status}
           onChange={(e) => handleFilterChange("status", e.target.value)}
         />
@@ -285,7 +309,7 @@ export default function PITableComponent() {
           <TableHeader columns={columns}>
             {(column) => (
               <TableColumn
-                className="bg-[#0C295F] text-center text-white"
+                className="bg-[#0C295F] text-left text-white"
                 key={column.uid}
                 allowsSorting
                 align="start"
@@ -323,7 +347,7 @@ export default function PITableComponent() {
             className="rounded-lg border border-default-200 bg-default-100 p-1 text-small text-default-900 outline-none focus:border-primary data-[hover=true]:cursor-pointer data-[hover=true]:bg-default-200"
             onChange={onRowsPerPageChange}
           >
-            {[5, 10, 15, 20].map((rows) => (
+            {[5, 10, 15, 25, 50].map((rows) => (
               <option key={rows} value={rows}>
                 {rows}
               </option>
