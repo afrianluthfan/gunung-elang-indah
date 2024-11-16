@@ -44,6 +44,7 @@ const MainContent = () => {
   const [filterValue, setFilterValue] = useState("");
   const [gudang, setGudang] = useState("");
   const [gudangList, setGudangList] = useState<RumahSakit[]>([]);
+  const [selectedDivisi, setSelectedDivisi] = useState<string>("");
   const [visibleColumns] = useState<Set<string>>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
@@ -96,18 +97,26 @@ const MainContent = () => {
     }
   }, [gudang, fetchData]);
 
-  const columns = [
-    { name: "No", uid: "id" },
-    { name: "Nama Perusahaan", uid: "nama_perusahaan" },
-    { name: "Nomor Telpon Perusahaan", uid: "notelp_perusahaan" },
-    { name: "Nama ", uid: "nama_dokter" },
-    { name: "Nomor ", uid: "notelp_dokter" },
-    { name: "Aksi", uid: "action" },
-  ];
+  const columns = useMemo(() => {
+    const selectedRS = gudangList.find(rs => rs.name === gudang);
+    const baseColumns = [
+      { name: "No", uid: "id" },
+      { name: "Nama Perusahaan", uid: "nama_perusahaan" },
+      { name: "Nomor Telpon Perusahaan", uid: "notelp_perusahaan" },
+      { name: "Nomor ", uid: "notelp_dokter" },
+      { name: "Aksi", uid: "action" },
+    ];
+
+    if (selectedRS?.kategori_divisi === "Customer") {
+      baseColumns.splice(3, 0, { name: "Nama ", uid: "nama_dokter" });
+    }
+
+    return baseColumns;
+  }, [gudang, gudangList]);
 
   const headerColumns = useMemo(() => {
     return columns.filter((column) => visibleColumns.has(column.uid));
-  }, [visibleColumns]);
+  }, [visibleColumns, columns]);
 
   const filteredItems = useMemo(() => {
     let filteredUsers = Array.isArray(users) ? [...users] : [];
@@ -180,7 +189,7 @@ const MainContent = () => {
 
       return columnKey === "id" ? index + 1 : user[columnKey as keyof User];
     },
-    [users, router] // tambahkan router di dalam dependency array
+    [users, router]
   );
 
   if (error) {
@@ -197,9 +206,13 @@ const MainContent = () => {
             id="123"
             className="rounded-lg border text-black text-small border-blue-900 bg-white p-2 w-full lg:w-auto"
             value={gudang}
-            onChange={(e) => setGudang(e.target.value)}
+            onChange={(e) => {
+              setGudang(e.target.value);
+              const selectedRS = gudangList.find(rs => rs.name === e.target.value);
+              setSelectedDivisi(selectedRS?.kategori_divisi || "");
+            }}
           >
-            <option value="0">Pilih Rumah Sakit</option>
+            <option value="">Pilih Perusahaan</option>
             {gudangList.map((gudang) => (
               <option key={gudang.name} value={gudang.name}>
                 {gudang.name} - {gudang.kategori_divisi}
@@ -212,10 +225,8 @@ const MainContent = () => {
             className=" w-full border-1 border-blue-900 rounded-xl"
             onChange={(e) => setFilterValue(e.target.value)}
             value={filterValue}
+            isDisabled={gudang === ""}
           />
-          <Button className="bg-[#0C295F] font-bold text-white rounded-md w-full lg:w-auto">
-            Cari/Cek
-          </Button>
           <Button
             className="bg-green-700 font-bold text-white rounded-md w-full lg:w-auto"
             onClick={() => router.push("/profiling-dua/form")}

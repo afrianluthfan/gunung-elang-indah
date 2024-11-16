@@ -78,23 +78,21 @@ const MainContent = () => {
       divisi = "2";
     }
 
-    let rumah_sakit = localStorage.getItem('selectedHospital')
-    let doctor = localStorage.getItem('selectedDoctor')
+    let rumah_sakit = localStorage.getItem("selectedHospital");
+    let doctor = localStorage.getItem("selectedDoctor");
 
-    if (localStorage.getItem('selectedHospital') !== null) {
+    if (localStorage.getItem("selectedHospital") !== null) {
       console.log("Item 'selectedHospital' ada di localStorage.");
-      data.nama_perusahaan = rumah_sakit ?? ''
+      data.nama_perusahaan = rumah_sakit ?? "";
       setValue("nama_perusahaan", data.nama_perusahaan);
     } else {
       console.log("Item 'selectedHospital' tidak ada di localStorage.");
     }
 
-
-    if (localStorage.getItem('selectedDoctor') !== null) {
+    if (localStorage.getItem("selectedDoctor") !== null) {
       console.log("Item 'selectedDoctor' ada di localStorage.");
-      data.nama_dokter = doctor ?? ''
+      data.nama_dokter = doctor ?? "";
       setValue("nama_dokter", data.nama_dokter);
-
     } else {
       console.log("Item 'selectedDoctor' tidak ada di localStorage.");
     }
@@ -102,8 +100,8 @@ const MainContent = () => {
     console.log("Rumah Sakit : " + data.nama_perusahaan);
     console.log("Dokter : " + data.nama_dokter);
 
-    localStorage.removeItem('selectedHospital')
-    localStorage.removeItem('selectedDoctor')
+    localStorage.removeItem("selectedHospital");
+    localStorage.removeItem("selectedDoctor");
 
     const requestBody = {
       nama_perusahaan: data.nama_perusahaan,
@@ -111,8 +109,7 @@ const MainContent = () => {
       npwp_address_perusahaan: data.npwp_address_perusahaan,
       npwp_perusahaan: data.npwp_perusahaan,
       ipak_number_perusahaan: data.ipak_number_perusahaan,
-      alamat_pengirim_facture_perusahaan:
-        data.alamat_pengirim_facture_perusahaan,
+      alamat_pengirim_facture_perusahaan: data.alamat_pengirim_facture_perusahaan,
       kota_perusahaan: data.kota_perusahaan,
       kode_pos_perusahaan: data.kode_pos_perusahaan,
       telpon_perusahaan: data.telpon_perusahaan,
@@ -137,7 +134,7 @@ const MainContent = () => {
     try {
       Swal.fire({
         title: "Apakah Kamu Yakin?",
-        text: "Apakah kamu yakin ingin data ini di input ?",
+        text: "Apakah kamu yakin ingin data ini di input?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -145,11 +142,17 @@ const MainContent = () => {
         confirmButtonText: "Yes",
       }).then(async (result) => {
         if (result.isConfirmed) {
+          Swal.fire({
+            title: "Sedang memproses...",
+            text: "Mohon tunggu, data sedang diinput.",
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            },
+          });
+
           try {
-            await axios.post(
-              `${apiUrl}/customer-profilling/add`,
-              requestBody,
-            );
+            await axios.post(`${apiUrl}/customer-profilling/add`, requestBody);
 
             localStorage.removeItem("selectedHospital");
             localStorage.removeItem("selectedDoctor");
@@ -158,12 +161,8 @@ const MainContent = () => {
             Swal.fire("Nice!", "Data telah di input ke system!.", "success");
           } catch (error) {
             console.error("Error submitting data", error);
-            Swal.fire(
-              "Error!",
-              "Terjadi kesalahan saat mengirim data.",
-              "error",
-            );
-          }
+            Swal.fire("Error!", "Terjadi kesalahan saat mengirim data.", "error");
+          } 
         }
       });
     } catch (error) {
@@ -176,17 +175,15 @@ const MainContent = () => {
       (hospital) => hospital.name === suggestion,
     );
 
-
-
     if (selectedHospital) {
       setResponseData((prevData) => ({
         ...prevData,
-        rumah_sakit: selectedHospital.name, // Update responseData with the selected company
+        rumah_sakit: selectedHospital.name, 
       }));
-      setInputCompanyValue(selectedHospital.name); // Update the input value to the selected suggestion
-      setHospitalSuggestions([]); // Clear the suggestions list
+      setInputCompanyValue(selectedHospital.name); 
+      setHospitalSuggestions([]); 
 
-      localStorage.setItem("selectedHospital", selectedHospital.name); // Optional: Store in localStorage
+      localStorage.setItem("selectedHospital", selectedHospital.name); 
     } else {
       console.log("No hospital found for the selected suggestion");
     }
@@ -202,7 +199,7 @@ const MainContent = () => {
         ...prevData,
         nama_dokter: selectedDoctor.namaDokter,
       }));
-      setInputDoctorValue(selectedDoctor.namaDokter); // Update input with selected value
+      setInputDoctorValue(selectedDoctor.namaDokter); 
       setDoctorSuggestions([]);
 
       localStorage.setItem("selectedDoctor", selectedDoctor.namaDokter);
@@ -246,29 +243,26 @@ const MainContent = () => {
             <div>
               <h3 className="mb-4 text-lg font-semibold">Data Perusahaan</h3>
 
-              {/* Grid untuk PC dan flex untuk mobile */}
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                 <div className="relative flex w-full flex-col space-y-2">
-                  {/* <label className="text-left">Nama Perusahaan</label> */}
 
                   <Input
                     {...register("nama_perusahaan")}
                     name="nama_perusahaan"
-                    value={inputCompanyValue} // Controlled by local state
+                    value={inputCompanyValue} 
                     placeholder="Nama Perusahaan"
                     onChange={(e) => {
                       const value = e.target.value;
-                      setInputCompanyValue(value); // Update the local state for input
+                      setInputCompanyValue(value); 
 
-                      // Filter hospital suggestions based on the input value
                       const filteredSuggestions = hospitalData
-                      .filter(
-                        (hospital) =>
-                          hospital?.name?.toLowerCase()?.includes(value?.toLowerCase() || ''), // Add null checks
-                      )
-                      .map((hospital) => hospital.name);
+                        .filter(
+                          (hospital) =>
+                            hospital?.name?.toLowerCase()?.includes(value?.toLowerCase() || ''), 
+                        )
+                        .map((hospital) => hospital.name);
 
-                      setHospitalSuggestions(filteredSuggestions); // Update suggestions based on the filter
+                      setHospitalSuggestions(filteredSuggestions);
                     }}
                     className="h-[100%] w-full flex-1 border-none outline-none"
                     endContent={
@@ -289,7 +283,6 @@ const MainContent = () => {
                     }
                   />
 
-                  {/* Dropdown Suggestions */}
                   {hospitalSuggestions.length > 0 && (
                     <ul className="absolute top-[2rem] z-[40] mt-1 max-h-48 w-full overflow-y-auto rounded-xl border border-gray-300 bg-white">
                       {hospitalSuggestions.map((suggestion, idx) => (
@@ -297,7 +290,7 @@ const MainContent = () => {
                           key={idx}
                           onClick={() =>
                             handleHospitalSuggestionClick(suggestion)
-                          } // Call the selection handler
+                          } 
                           className="cursor-pointer p-2 hover:bg-gray-200"
                         >
                           {suggestion}

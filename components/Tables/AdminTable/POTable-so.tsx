@@ -65,7 +65,8 @@ export default function PITableComponent() {
 
   // Column-specific filters
   const [filters, setFilters] = useState({
-    tanggal: "",
+    startDate: "",
+    endDate: "",
     nama_suplier: "",
     nomor_po: "",
     sub_total: "",
@@ -104,15 +105,22 @@ export default function PITableComponent() {
   }, []);
 
   const filteredUsers = React.useMemo(() => {
-    return users.filter((user) =>
-      Object.keys(filters).every((key) =>
-        (user[key as keyof User] || "")
-          .toString()
-          .toLowerCase()
-          .includes(filters[key as keyof typeof filters].toLowerCase())
-      ) &&
-      user.nama_suplier.toLowerCase().includes(searchText.toLowerCase())
-    );
+    return users.filter((user) => {
+      const userDate = new Date(user.tanggal.split('-').reverse().join('-'));
+      const startDate = filters.startDate ? new Date(filters.startDate) : null;
+      const endDate = filters.endDate ? new Date(filters.endDate) : null;
+
+      const dateInRange = (!startDate || userDate >= startDate) && (!endDate || userDate <= endDate);
+
+      return dateInRange &&
+        Object.keys(filters).filter(key => key !== 'startDate' && key !== 'endDate').every((key) =>
+          (user[key as keyof User] || "")
+            .toString()
+            .toLowerCase()
+            .includes(filters[key as keyof typeof filters].toLowerCase())
+        ) &&
+        user.nama_suplier.toLowerCase().includes(searchText.toLowerCase());
+    });
   }, [users, filters, searchText]);
 
   const sortedItems = React.useMemo(() => {
@@ -199,17 +207,17 @@ export default function PITableComponent() {
 
   return (
     <div>
-
       <div className="mb-5">
         <Divider />
       </div>
 
       <div className="flex gap-2 mb-5">
-        <Input className="border-1 border-blue-900 rounded-xl " placeholder="Tanggal" name="tanggal" onChange={handleFilterChange} />
-        <Input className="border-1 border-blue-900 rounded-xl " placeholder="Nama Suplier" name="nama_suplier" onChange={handleFilterChange} />
-        <Input className="border-1 border-blue-900 rounded-xl " placeholder="Nomor PO" name="nomor_po" onChange={handleFilterChange} />
-        <Input className="border-1 border-blue-900 rounded-xl " placeholder="Sub Total" name="sub_total" onChange={handleFilterChange} />
-        <Input className="border-1 border-blue-900 rounded-xl " placeholder="Total" name="total" onChange={handleFilterChange} />
+        <Input type="date" className="border-1 border-blue-900 rounded-xl" placeholder="Start Date" name="startDate" onChange={handleFilterChange} />
+        <Input type="date" className="border-1 border-blue-900 rounded-xl" placeholder="End Date" name="endDate" onChange={handleFilterChange} />
+        <Input className="border-1 border-blue-900 rounded-xl" placeholder="Nama Suplier" name="nama_suplier" onChange={handleFilterChange} />
+        <Input className="border-1 border-blue-900 rounded-xl" placeholder="Nomor PO" name="nomor_po" onChange={handleFilterChange} />
+        <Input className="border-1 border-blue-900 rounded-xl" placeholder="Sub Total" name="sub_total" onChange={handleFilterChange} />
+        <Input className="border-1 border-blue-900 rounded-xl" placeholder="Total" name="total" onChange={handleFilterChange} />
       </div>
 
       <div className="mb-5">
@@ -228,7 +236,7 @@ export default function PITableComponent() {
               <TableColumn
                 key={column.uid}
                 allowsSorting
-                className="bg-[#0C295F] text-white text-center"
+                className="bg-[#0C295F] text-white text-left"
                 align="start"
               >
                 {column.name}
@@ -242,7 +250,7 @@ export default function PITableComponent() {
             {(item) => (
               <TableRow key={item.id}>
                 {(columnKey) => (
-                  <TableCell className="text-center items-center">{renderCell(item, columnKey)}</TableCell>
+                  <TableCell className="text-left items-center">{renderCell(item, columnKey)}</TableCell>
                 )}
               </TableRow>
             )}

@@ -23,29 +23,19 @@ type ItemDetail = {
   variable: string
   kode: string
   id: number;
-  po_id: number;
   name: string;
   quantity: string;
   price: string;
-  discount: string;
-  amount: string;
+  // discount: string;
 };
 
 type PurchaseOrder = {
-  id: number;
   nama_suplier: string;
-  nomor_po: string;
-  tanggal: string;
   catatan_po: string;
   prepared_by: string;
   prepared_jabatan: string;
   approved_by: string;
   approved_jabatan: string;
-  sub_total: string;
-  pajak: string;
-  total: string;
-  status: string;
-  reason?: string;
   item: ItemDetail[];
   item_deleted: { id: number }[];
 };
@@ -59,20 +49,12 @@ type Gudang = {
 const AdminMainContent = () => {
   const router = useRouter();
   const [responseData, setResponseData] = useState<PurchaseOrder>({
-    id: 0,
     nama_suplier: "",
-    nomor_po: "",
-    tanggal: "",
     catatan_po: "",
     prepared_by: "",
     prepared_jabatan: "",
     approved_by: "",
     approved_jabatan: "",
-    sub_total: "",
-    pajak: "",
-    total: "",
-    status: "",
-    reason: "",
     item: [],
     item_deleted: [],
   });
@@ -120,7 +102,26 @@ const AdminMainContent = () => {
     if (shouldSubmit) {
       const submitData = async () => {
         try {
-          const res = await axios.post(
+          // Check if any required field is empty
+          console.log("Gudang:", responseData.item.map((item) => item.gudang));
+          const hasEmptyField = Object.entries(responseData).some(([key, value]) => {
+            if (key === 'item_deleted') return false;
+            if (Array.isArray(value)) {
+              if (key === 'item') {
+                return value.length === 0 || value.some((item: { id: number, gudang?: string }) => !item?.gudang);
+              } return value.length === 0;
+            } return value === "" || value === null || value === undefined;
+          });
+          console.log("Gudang:", responseData.item.map((item) => item.gudang));
+          if (hasEmptyField) {
+            Swal.fire({
+              title: "Error",
+              text: "Data Belum Lengkap",
+              icon: "error",
+              confirmButtonColor: "#3085d6",
+            });
+            return;
+          } const res = await axios.post(
             `${apiUrl}/purchase-order/inquiry`,
             responseData
           );
@@ -138,7 +139,6 @@ const AdminMainContent = () => {
       submitData();
     }
   }, [shouldSubmit, responseData]);
-
   const handleDelete = (id: number) => {
     if (id !== undefined) {
       Swal.fire({

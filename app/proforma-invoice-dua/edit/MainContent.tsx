@@ -251,7 +251,7 @@ const ProformaInvoiceDetail = () => {
         <div className="flex justify-between">
           <table className="">
             <tbody>
-               <tr>
+              <tr>
                 <td className="text-left">
                   <h1 className="font-medium">Perusahaan</h1>
                 </td>
@@ -426,71 +426,120 @@ const ProformaInvoiceDetail = () => {
       </div>
 
       {/* Bagian Table */}
-      <div className="flex items-center justify-between overflow-x-scroll">
-        <Table removeWrapper>
-          <TableHeader>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              NO
-            </TableColumn>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              KODE BARANG
-            </TableColumn>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              NAMA BARANG
-            </TableColumn>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              VARIABLE
-            </TableColumn>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              QTY
-            </TableColumn>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              HARGA SATUAN
-            </TableColumn>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              DISC
-            </TableColumn>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              GUDANG ASAL
-            </TableColumn>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              SUB TOTAL
-            </TableColumn>
-          </TableHeader>
-          <TableBody>
-            {responseData.item_detail_pi.map((item, index) => (
-              <TableRow key={item.id}>
-                <TableCell className="text-center">{index + 1}</TableCell>
-                <TableCell className="text-center">{item.kat}</TableCell>
-                <TableCell className="text-center">
-                  {item.nama_barang}
-                </TableCell>
-                <TableCell className="text-center">{item.variable}</TableCell>
-                <TableCell className="text-center">{item.quantity}</TableCell>
-                <TableCell className="text-center">
-                  {item.harga_satuan}
-                </TableCell>
-                <TableCell className="text-center">{item.discount}</TableCell>
-                <TableCell className="text-center">{item.gudang}</TableCell>
-                <TableCell className="text-center">
-                  {item.sub_total_item}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+  
+      {username === "SALES" ? (
+        <div className="flex items-center justify-between overflow-x-scroll">
+          <Table removeWrapper>
+            <TableHeader>
+              <TableColumn className="bg-[#0C295F] text-center text-white">
+                NO
+              </TableColumn>
+              <TableColumn className="bg-[#0C295F] text-center text-white">
+                KODE BARANG
+              </TableColumn>
+              <TableColumn className="bg-[#0C295F] text-center text-white">
+                NAMA BARANG
+              </TableColumn>
+              <TableColumn className="bg-[#0C295F] text-center text-white">
+                VARIABLE
+              </TableColumn>
+              <TableColumn className="bg-[#0C295F] text-center text-white">
+                QTY
+              </TableColumn>
+              <TableColumn className="bg-[#0C295F] text-center text-white">
+                GUDANG ASAL
+              </TableColumn>
+            </TableHeader>
+            <TableBody>
+              {responseData.item_detail_pi.map((item, index) => (
+
+                <TableRow key={item.id}>
+                  <TableCell className="text-center">{index + 1}</TableCell>
+                  <TableCell className="text-center">{item.kat}</TableCell>
+                  <TableCell className="text-center">
+                    {item.nama_barang}
+                  </TableCell>
+                  <TableCell className="text-center">{item.variable}</TableCell>
+                  <TableCell className="text-center">{item.quantity}</TableCell>
+                  <TableCell className="text-center">{item.gudang}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      ) : (
+        <div className="flex items-center justify-between overflow-x-scroll">
+          <Table removeWrapper>
+            <TableHeader>
+              <TableColumn className="bg-[#0C295F] text-center text-white">
+                NO
+              </TableColumn>
+              <TableColumn className="bg-[#0C295F] text-center text-white">
+                KODE BARANG
+              </TableColumn>
+              <TableColumn className="bg-[#0C295F] text-center text-white">
+                NAMA BARANG
+              </TableColumn>
+              <TableColumn className="bg-[#0C295F] text-center text-white">
+                VARIABLE
+              </TableColumn>
+              <TableColumn className="bg-[#0C295F] text-center text-white">
+                QTY
+              </TableColumn>
+              <TableColumn className="bg-[#0C295F] text-center text-white">
+                HARGA SATUAN
+              </TableColumn>
+              <TableColumn className="bg-[#0C295F] text-center text-white">
+                DISC
+              </TableColumn>
+              <TableColumn className="bg-[#0C295F] text-center text-white">
+                GUDANG ASAL
+              </TableColumn>
+              <TableColumn className="bg-[#0C295F] text-center text-white">
+                SUB TOTAL
+              </TableColumn>
+            </TableHeader>
+            <TableBody>
+              {responseData.item_detail_pi.map((item, index) => (
+
+                <TableRow key={item.id}>
+                  <TableCell className="text-center">{index + 1}</TableCell>
+                  <TableCell className="text-center">{item.kat}</TableCell>
+                  <TableCell className="text-center">
+                    {item.nama_barang}
+                  </TableCell>
+                  <TableCell className="text-center">{item.variable}</TableCell>
+                  <TableCell className="text-center">{item.quantity}</TableCell>
+
+                  <TableCell className="text-center">
+                    {item.harga_satuan}
+                  </TableCell>
+                  <TableCell className="text-center">{item.discount}</TableCell>
+                  <TableCell className="text-center">{item.gudang}</TableCell>
+                  <TableCell className="text-center">
+                    {item.sub_total_item}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
 
       <Divider />
 
-      <div className="grid grid-cols-2 gap-2 self-end text-sm font-bold lg:w-[25%]">
-        <p className="text-end">Sub Total : </p>
-        <p className="text-start">{responseData.sub_total}</p>
-        <p className="text-end">PPN 11% : </p>
-        <p className="text-start">{responseData.pajak}</p>
-        <p className="text-end">Total : </p>
-        <p className="text-start">{responseData.total}</p>
-      </div>
+      {username === "ADMIN" && (
+        <div className="grid grid-cols-2 gap-2 self-end text-sm font-bold lg:w-[25%]">
+          <p className="text-end">Sub Total : </p>
+          <p className="text-start">{responseData.sub_total}</p>
+          <p className="text-end">PPN 11% : </p>
+          <p className="text-start">{responseData.pajak}</p>
+          <p className="text-end">Total : </p>
+          <p className="text-start">{responseData.total}</p>
+        </div>
+      )}
+
+
 
       {username === "ADMIN" && responseData.status !== "Diterima" && (
         <div className="flex justify-end gap-3">

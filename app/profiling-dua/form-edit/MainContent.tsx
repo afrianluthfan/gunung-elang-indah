@@ -144,11 +144,9 @@ const MainContent = () => {
     router.push("/profiling-dua");
   };
 
-  // State untuk menyimpan value dropdown divisi
   const [kategoriDivisi, setKategoriDivisi] = useState("");
 
 
-  // Fungsi untuk menangani submit form
   const onSubmit = async (data: Record<string, string | boolean>) => {
     console.log("Divisi : " + kategoriDivisi);
     let divisi = "";
@@ -161,44 +159,39 @@ const MainContent = () => {
       divisi = "2";
     }
 
-    let rumah_sakit = localStorage.getItem('selectedHospital')
-    let doctor = localStorage.getItem('selectedDoctor')
+    let rumah_sakit = localStorage.getItem("selectedHospital");
+    let doctor = localStorage.getItem("selectedDoctor");
 
-    if (localStorage.getItem('selectedHospital') !== null) {
+    if (rumah_sakit !== null) {
       console.log("Item 'selectedHospital' ada di localStorage.");
-      data.nama_perusahaan = rumah_sakit ?? ''
+      data.nama_perusahaan = rumah_sakit ?? "";
       setValue("nama_perusahaan", data.nama_perusahaan);
     } else {
       console.log("Item 'selectedHospital' tidak ada di localStorage.");
     }
 
-
-    if (localStorage.getItem('selectedDoctor') !== null) {
+    if (doctor !== null) {
       console.log("Item 'selectedDoctor' ada di localStorage.");
-      data.nama_dokter = doctor ?? ''
+      data.nama_dokter = doctor ?? "";
       setValue("nama_dokter", data.nama_dokter);
     } else {
       console.log("Item 'selectedDoctor' tidak ada di localStorage.");
     }
 
-
     console.log("Rumah Sakit : " + data.nama_perusahaan);
     console.log("Dokter : " + data.nama_dokter);
 
-    localStorage.removeItem('selectedHospital')
-    localStorage.removeItem('selectedDoctor')
-
-
+    localStorage.removeItem("selectedHospital");
+    localStorage.removeItem("selectedDoctor");
 
     const requestBody = {
-      id: parseInt(id ?? '0'),
+      id: parseInt(id ?? "0"),
       nama_perusahaan: data.nama_perusahaan,
       address_perusahaan: data.address_perusahaan,
       npwp_address_perusahaan: data.npwp_address_perusahaan,
       npwp_perusahaan: data.npwp_perusahaan,
       ipak_number_perusahaan: data.ipak_number_perusahaan,
-      alamat_pengirim_facture_perusahaan:
-        data.alamat_pengirim_facture_perusahaan,
+      alamat_pengirim_facture_perusahaan: data.alamat_pengirim_facture_perusahaan,
       kota_perusahaan: data.kota_perusahaan,
       kode_pos_perusahaan: data.kode_pos_perusahaan,
       telpon_perusahaan: data.telpon_perusahaan,
@@ -223,7 +216,7 @@ const MainContent = () => {
     try {
       Swal.fire({
         title: "Apakah Kamu Yakin?",
-        text: "Apakah kamu yakin ingin data ini di input ?",
+        text: "Apakah kamu yakin ingin menginput data ini?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -231,24 +224,28 @@ const MainContent = () => {
         confirmButtonText: "Yes",
       }).then(async (result) => {
         if (result.isConfirmed) {
+          Swal.fire({
+            title: "Mengirim data...",
+            text: "Mohon tunggu sebentar.",
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            },
+          });
+
           try {
-            await axios.post(
-              `${apiUrl}/profile/EditDetailProfile`,
-              requestBody,
-            );
+            await axios.post(`${apiUrl}/profile/EditDetailProfile`, requestBody);
 
             localStorage.removeItem("selectedHospital");
             localStorage.removeItem("selectedDoctor");
 
             router.push("/profiling-dua");
-            Swal.fire("Nice!", "Data telah di input ke system!.", "success");
+
+            Swal.fire("Nice!", "Data telah di input ke sistem!", "success");
           } catch (error) {
             console.error("Error submitting data", error);
-            Swal.fire(
-              "Error!",
-              "Terjadi kesalahan saat mengirim data.",
-              "error",
-            );
+
+            Swal.fire("Error!", "Terjadi kesalahan saat mengirim data.", "error");
           }
         }
       });
@@ -256,6 +253,7 @@ const MainContent = () => {
       console.error("Error processing request", error);
     }
   };
+
 
   const handleHospitalSuggestionClick = (suggestion: string) => {
     const selectedHospital = hospitalData.find(

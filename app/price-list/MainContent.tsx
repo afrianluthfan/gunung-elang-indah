@@ -143,7 +143,7 @@ const MainContent = () => {
       number: start + index + 1,
     }));
 
-    
+
   }, [page, sortedItems, rowsPerPage]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
@@ -179,6 +179,15 @@ const MainContent = () => {
 
   const handleSetHarga = async () => {
     try {
+      Swal.fire({
+        title: "Sedang memproses...",
+        text: "Mohon tunggu, sedang mengatur harga.",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
       const input = users.map((user) => ({
         nama_Rumah_Sakit: gudang,
         kode: user.kode,
@@ -189,15 +198,12 @@ const MainContent = () => {
         added: user.added,
       }));
 
-      const response = await axios.post(
-        `${apiUrl}/price/SetPrice`,
-        { input }
-      );
+      const response = await axios.post(`${apiUrl}/price/SetPrice`, { input });
 
       if (response.status === 200) {
         Swal.fire({
           title: "Sukses!",
-          text: "Data berhasil dikirim!",
+          text: "Harga berhasil di set!",
           icon: "success",
           confirmButtonText: "OK",
         });
@@ -206,7 +212,7 @@ const MainContent = () => {
       } else {
         Swal.fire({
           title: "Gagal!",
-          text: "Gagal mengirim data.",
+          text: "Harga gagal di set.",
           icon: "error",
           confirmButtonText: "Coba Lagi",
         });
@@ -219,7 +225,7 @@ const MainContent = () => {
         icon: "error",
         confirmButtonText: "OK",
       });
-    }
+    } 
   };
 
   if (error) {
@@ -240,7 +246,7 @@ const MainContent = () => {
             value={gudang}
             onChange={(e) => setGudang(e.target.value)}
           >
-            <option value="0">Pilih Rumah Sakit</option>
+            <option value="">Pilih Rumah Sakit</option>
             {gudangList.map((gudang) => (
               <option key={gudang.name} value={gudang.name}>
                 {gudang.name} - {gudang.kategori_divisi}
@@ -253,10 +259,8 @@ const MainContent = () => {
             className="w-full border-1 border-blue-800 rounded-xl "
             onChange={(e) => setFilterValue(e.target.value)}
             value={filterValue}
+            isDisabled={gudang === ""}
           />
-          <Button className="bg-[#0C295F] font-bold text-white rounded-md w-full lg:w-auto">
-            Cari/Cek
-          </Button>
           <Button
             className="bg-green-700 font-bold text-white rounded-md w-full lg:w-auto"
             onClick={handleSetHarga}

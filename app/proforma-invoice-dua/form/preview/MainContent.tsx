@@ -45,16 +45,14 @@ const MainContent = () => {
     const aksi = localStorage.getItem("aksi");
     let pesan = "";
     if (aksi === "update") {
-      pesan = "Mengubah";
+      pesan = "mengubah";
     } else {
       pesan = "membuat";
     }
 
     Swal.fire({
       title: "Apakah Kamu Yakin ?",
-      text: "Apakah kamu yakin ingin " + pesan + " Proforma Invoice ini?",
-      icon: "warning",
-      showCancelButton: true,
+      html: "Apakah kamu yakin ingin " + pesan + " <b>Proforma Invoice</b>  ini?",      icon: "warning",      showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Ya, Terima!",
@@ -70,7 +68,7 @@ const MainContent = () => {
               console.log(res);
               if (res.data.status === true) {
                 Swal.fire({
-                  title: "Success",
+                  title: "Sukses",
                   text: "Proforma Invoice berhasil diubah",
                   icon: "success",
                 }).then((result) => {
@@ -94,7 +92,7 @@ const MainContent = () => {
               );
               if (res.data.status === true) {
                 Swal.fire({
-                  title: "Success",
+                  title: "Sukses",
                   text: "Proforma invoice berhasil dibuat",
                   icon: "success",
                 }).then((result) => {
@@ -531,129 +529,224 @@ const MainContent = () => {
         <h1 className="font-semibold lg:text-[1.85vh]">List Harga Barang</h1>
       </div>
 
-      {/* Bagian Table */}
-      <div className="flex items-center justify-between overflow-scroll lg:overflow-auto">
-        <Table removeWrapper>
-          <TableHeader>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              NO
-            </TableColumn>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              KODE BARANG
-            </TableColumn>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              NAMA BARANG
-            </TableColumn>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              VARIABLE
-            </TableColumn>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              QUANTITY
-            </TableColumn>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              HARGA SATUAN
-            </TableColumn>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              DISCOUNT
-            </TableColumn>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              AMOUNT
-            </TableColumn>
-            <TableColumn className="bg-[#0C295F] text-center text-white">
-              GUDANG ASAL
-            </TableColumn>
-          </TableHeader>
-          <TableBody>
-            {item?.map(
-              (
-                item: {
-                  gudang: string;
-                  amount: string;
-                  variable: string;
-                  kode: string;
-                  nama_barang: string;
-                  quantity: string;
-                  harga_satuan: string;
-                  discount: string;
-                  RP_sub_total_item: string;
-                },
-                index: number,
-              ) => (
-                <TableRow key={index} className="">
-                  <TableCell className="text-center">{index + 1}</TableCell>
-                  <TableCell className="text-center">{item.kode}</TableCell>
-                  <TableCell className="text-center">
-                    {item.nama_barang}
-                  </TableCell>
-                  <TableCell className="text-center">{item.variable}</TableCell>
-                  <TableCell className="text-center">{item.quantity}</TableCell>
-                  <TableCell className="text-center">
-                    {item.harga_satuan}
-                  </TableCell>
-                  <TableCell className="text-center">{item.discount}</TableCell>
-                  <TableCell className="text-center">{item.amount}</TableCell>
-                  <TableCell className="text-center">{item.gudang}</TableCell>
-                </TableRow>
-              ),
-            )}
-            {item_detail_pi?.map(
-              (
-                item_detail_pi: {
-                  gudang: string;
-                  amount: string;
-                  variable: string;
-                  kode: string;
-                  nama_barang: string;
-                  quantity: string;
-                  harga_satuan: string;
-                  discount: string;
-                  rp_sub_total_item: string;
-                },
-                index: number,
-              ) => (
-                <TableRow key={index} className="">
-                  <TableCell className="text-center">{index + 1}</TableCell>
-                  <TableCell className="text-center">
-                    {item_detail_pi.kode}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {item_detail_pi.nama_barang}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {item_detail_pi.variable}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {item_detail_pi.quantity}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {item_detail_pi.harga_satuan}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {item_detail_pi.discount}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {item_detail_pi.rp_sub_total_item}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {item_detail_pi.gudang}
-                  </TableCell>
-                </TableRow>
-              ),
-            )}
-          </TableBody>
-        </Table>
-      </div>
 
-      <div className="grid grid-cols-2 self-end py-4 text-end text-sm font-bold lg:w-[35%]">
-        <p>Sub Total : </p>
+      {username === "SALES" ? (
+        <>
+          <div className="flex items-center justify-between overflow-scroll lg:overflow-auto">
+            <Table removeWrapper>
+              <TableHeader>
+                <TableColumn className="bg-[#0C295F] text-center text-white">
+                  NO
+                </TableColumn>
+                <TableColumn className="bg-[#0C295F] text-center text-white">
+                  KODE BARANG
+                </TableColumn>
+                <TableColumn className="bg-[#0C295F] text-center text-white">
+                  NAMA BARANG
+                </TableColumn>
+                <TableColumn className="bg-[#0C295F] text-center text-white">
+                  VARIABLE
+                </TableColumn>
+                <TableColumn className="bg-[#0C295F] text-center text-white">
+                  QUANTITY
+                </TableColumn>
+                <TableColumn className="bg-[#0C295F] text-center text-white">
+                  GUDANG ASAL
+                </TableColumn>
+              </TableHeader>
+              <TableBody>
+                {item?.map(
+                  (
+                    item: {
+                      gudang: string;
+                      amount: string;
+                      variable: string;
+                      kode: string;
+                      nama_barang: string;
+                      quantity: string;
+                      harga_satuan: string;
+                      discount: string;
+                      RP_sub_total_item: string;
+                    },
+                    index: number,
+                  ) => (
+                    <TableRow key={index} className="">
+                      <TableCell className="text-center">{index + 1}</TableCell>
+                      <TableCell className="text-center">{item.kode}</TableCell>
+                      <TableCell className="text-center">
+                        {item.nama_barang}
+                      </TableCell>
+                      <TableCell className="text-center">{item.variable}</TableCell>
+                      <TableCell className="text-center">{item.quantity}</TableCell>
+                      <TableCell className="text-center">{item.gudang}</TableCell>
+                    </TableRow>
+                  ),
+                )}
+                {item_detail_pi?.map(
+                  (
+                    item_detail_pi: {
+                      gudang: string;
+                      amount: string;
+                      variable: string;
+                      kode: string;
+                      nama_barang: string;
+                      quantity: string;
+                      harga_satuan: string;
+                      discount: string;
+                      rp_sub_total_item: string;
+                    },
+                    index: number,
+                  ) => (
+                    <TableRow key={index} className="">
+                      <TableCell className="text-center">{index + 1}</TableCell>
+                      <TableCell className="text-center">
+                        {item_detail_pi.kode}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item_detail_pi.nama_barang}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item_detail_pi.variable}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item_detail_pi.quantity}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item_detail_pi.gudang}
+                      </TableCell>
+                    </TableRow>
+                  ),
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="flex items-center justify-between overflow-scroll lg:overflow-auto">
+            <Table removeWrapper>
+              <TableHeader>
+                <TableColumn className="bg-[#0C295F] text-center text-white">
+                  NO
+                </TableColumn>
+                <TableColumn className="bg-[#0C295F] text-center text-white">
+                  KODE BARANG
+                </TableColumn>
+                <TableColumn className="bg-[#0C295F] text-center text-white">
+                  NAMA BARANG
+                </TableColumn>
+                <TableColumn className="bg-[#0C295F] text-center text-white">
+                  VARIABLE
+                </TableColumn>
+                <TableColumn className="bg-[#0C295F] text-center text-white">
+                  QUANTITY
+                </TableColumn>
+                <TableColumn className="bg-[#0C295F] text-center text-white">
+                  HARGA SATUAN
+                </TableColumn>
+                <TableColumn className="bg-[#0C295F] text-center text-white">
+                  DISCOUNT
+                </TableColumn>
+                <TableColumn className="bg-[#0C295F] text-center text-white">
+                  AMOUNT
+                </TableColumn>
+                <TableColumn className="bg-[#0C295F] text-center text-white">
+                  GUDANG ASAL
+                </TableColumn>
+              </TableHeader>
+              <TableBody>
+                {item?.map(
+                  (
+                    item: {
+                      gudang: string;
+                      amount: string;
+                      variable: string;
+                      kode: string;
+                      nama_barang: string;
+                      quantity: string;
+                      harga_satuan: string;
+                      discount: string;
+                      RP_sub_total_item: string;
+                    },
+                    index: number,
+                  ) => (
+                    <TableRow key={index} className="">
+                      <TableCell className="text-center">{index + 1}</TableCell>
+                      <TableCell className="text-center">{item.kode}</TableCell>
+                      <TableCell className="text-center">
+                        {item.nama_barang}
+                      </TableCell>
+                      <TableCell className="text-center">{item.variable}</TableCell>
+                      <TableCell className="text-center">{item.quantity}</TableCell>
+                      <TableCell className="text-center">
+                        {item.harga_satuan}
+                      </TableCell>
+                      <TableCell className="text-center">{item.discount}</TableCell>
+                      <TableCell className="text-center">{item.amount}</TableCell>
+                      <TableCell className="text-center">{item.gudang}</TableCell>
+                    </TableRow>
+                  ),
+                )}
+                {item_detail_pi?.map(
+                  (
+                    item_detail_pi: {
+                      gudang: string;
+                      amount: string;
+                      variable: string;
+                      kode: string;
+                      nama_barang: string;
+                      quantity: string;
+                      harga_satuan: string;
+                      discount: string;
+                      rp_sub_total_item: string;
+                    },
+                    index: number,
+                  ) => (
+                    <TableRow key={index} className="">
+                      <TableCell className="text-center">{index + 1}</TableCell>
+                      <TableCell className="text-center">
+                        {item_detail_pi.kode}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item_detail_pi.nama_barang}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item_detail_pi.variable}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item_detail_pi.quantity}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item_detail_pi.harga_satuan}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item_detail_pi.discount}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item_detail_pi.rp_sub_total_item}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item_detail_pi.gudang}
+                      </TableCell>
+                    </TableRow>
+                  ),
+                )}
+              </TableBody>
+            </Table>
+          </div>
 
-        <p className="ml-5 lg:ml-0">{RP_sub_total}</p>
+          <div className="grid grid-cols-2 self-end py-4 text-end text-sm font-bold lg:w-[35%]">
+            <p>Sub Total : </p>
 
-        <p>PPN 11% : </p>
-        <p>{RP_pajak_ppn}</p>
-        <p>Total : </p>
-        <p>{RP_total}</p>
-      </div>
+            <p className="ml-5 lg:ml-0">{RP_sub_total}</p>
+
+            <p>PPN 11% : </p>
+            <p>{RP_pajak_ppn}</p>
+            <p>Total : </p>
+            <p>{RP_total}</p>
+          </div>
+        </>
+      )}
 
       <div className="flex justify-end gap-4">
         <Button onClick={cancelData} className="min-w-36 bg-red-600 text-white">
