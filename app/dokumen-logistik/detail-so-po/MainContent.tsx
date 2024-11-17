@@ -25,6 +25,7 @@ type ItemDetail = {
   price: string;
   discount: string;
   amount: string;
+  lots: string;
 };
 
 type PurchaseOrder = {
@@ -298,13 +299,15 @@ const AdminMainContent = () => {
       {/* Bagian Table */}
       <div className="flex justify-between items-center">
         <Table removeWrapper>
-          <TableHeader>
+        <TableHeader>
             <TableColumn className="bg-[#0C295F] text-white text-center">NO</TableColumn>
             <TableColumn className="bg-[#0C295F] text-white text-center">KODE BARANG</TableColumn>
             <TableColumn className="bg-[#0C295F] text-white text-center">NAMA BARANG</TableColumn>
             <TableColumn className="bg-[#0C295F] text-white text-center">VARIABLE BARANG</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">LOTS</TableColumn>
             <TableColumn className="bg-[#0C295F] text-white text-center">QTY</TableColumn>
             <TableColumn className="bg-[#0C295F] text-white text-center">HARGA SATUAN</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">DISKON</TableColumn>
             <TableColumn className="bg-[#0C295F] text-white text-center">GUDANG</TableColumn>
             <TableColumn className="bg-[#0C295F] text-white text-center">SUB TOTAL</TableColumn>
           </TableHeader>
@@ -315,8 +318,10 @@ const AdminMainContent = () => {
                 <TableCell className="text-center">{item.kode}</TableCell>
                 <TableCell className="text-center">{item.name}</TableCell>
                 <TableCell className="text-center">{item.variable}</TableCell>
+                <TableCell className="text-center">{item.lots}</TableCell>
                 <TableCell className="text-center">{item.quantity}</TableCell>
                 <TableCell className="text-center">{item.price}</TableCell>
+                <TableCell className="text-center">{item.discount}</TableCell>
                 <TableCell className="text-center">{item.gudang}</TableCell>
                 <TableCell className="text-center">{item.amount}</TableCell>
               </TableRow>

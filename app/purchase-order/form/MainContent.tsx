@@ -26,7 +26,8 @@ type ItemDetail = {
   name: string;
   quantity: string;
   price: string;
-  // discount: string;
+  discount: string;
+  lots: string;
 };
 
 type PurchaseOrder = {
@@ -231,6 +232,7 @@ const AdminMainContent = () => {
           variable: "",
           kode: "",
           gudang: "",
+          lots: "",
         },
       ],
     }));
@@ -371,8 +373,10 @@ const AdminMainContent = () => {
           <TableColumn className="bg-[#0C295F] text-white text-center w-[300px]">Nama Barang</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white text-center">Variable</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white text-center">Kode</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white text-center">Lots</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white text-center">Quantity</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white text-center">Harga Satuan</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white text-center">Diskon</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white text-center">Gudang Tujuan</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white text-center">Aksi</TableColumn>
         </TableHeader>
@@ -407,7 +411,7 @@ const AdminMainContent = () => {
               <TableCell>
                 <textarea
                   value={item.variable}
-                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  className="w-full p-2 border border-black-500 rounded "
                   name="variable"
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
                   placeholder="Variable"
@@ -416,10 +420,19 @@ const AdminMainContent = () => {
               <TableCell>
                 <textarea
                   value={item.kode}
-                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  className="w-full p-2 border border-black-500 rounded "
                   name="kode"
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
                   placeholder="Kode"
+                />
+              </TableCell>
+              <TableCell>
+                <textarea
+                  value={item.lots}
+                  className="w-full p-2 border border-black-500 rounded "
+                  name="lots"
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
+                  placeholder="Lots"
                 />
               </TableCell>
               <TableCell>
@@ -438,6 +451,15 @@ const AdminMainContent = () => {
                   className="w-full p-2 border border-black-500 rounded resize-none"
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
                   placeholder="Harga Satuan"
+                />
+              </TableCell>
+              <TableCell>
+                <textarea
+                  value={item.discount}
+                  name="discount"
+                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
+                  placeholder="Diskon"
                 />
               </TableCell>
               <TableCell>
@@ -498,7 +520,5 @@ const AdminMainContent = () => {
 };
 
 export default AdminMainContent;
-function setItems(arg0: (prevItems: any) => any) {
-  throw new Error("Function not implemented.");
-}
+
 
