@@ -19,11 +19,13 @@ type User = {
   qty: number;
   harga: string;
   variable: string;
+  lots: string;
 };
 
 const INITIAL_VISIBLE_COLUMNS = [
   "number",
   "variable",
+  "lots",
   "nama",
   "qty",
   "harga",
@@ -89,6 +91,7 @@ const MainContent = () => {
   const columns = [
     { name: "No", uid: "number" },
     { name: "Variable", uid: "variable" },
+    { name: "Lots", uid: "lots" },
     { name: "Nama", uid: "nama" },
     { name: "Jumlah Barang", uid: "qty" },
     { name: "Katalog", uid: "kode" },

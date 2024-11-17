@@ -34,6 +34,7 @@ type ItemDetail = {
   kode: string;
   variable: string;
   gudang: string;
+  lots: string;
 };
 
 type PurchaseOrder = {
@@ -308,6 +309,7 @@ const AdminMainContent = () => {
           kode: "",
           variable: "",
           gudang: "",
+          lots: "",
         },
       ],
     }));
@@ -440,8 +442,10 @@ const AdminMainContent = () => {
           <TableColumn className="bg-[#0C295F] text-white">Nama Barang</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white">Kode</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white">Variable</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">Lots</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white">Quantity</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white">Harga Satuan</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">Diskon</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white">Gudang Tujuan</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white">Action</TableColumn>
         </TableHeader>
@@ -502,6 +506,15 @@ const AdminMainContent = () => {
               </TableCell>
               <TableCell>
                 <textarea
+                  value={item.lots}
+                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  name="lots"
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
+                  placeholder="Lots"
+                />
+              </TableCell>
+              <TableCell>
+                <textarea
                   value={item.quantity}
                   className="w-full p-2 border border-black-500 rounded resize-none"
                   name="quantity"
@@ -516,6 +529,15 @@ const AdminMainContent = () => {
                   name="price"
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
                   placeholder="Harga Satuan"
+                />
+              </TableCell>
+              <TableCell>
+                <textarea
+                  value={item.discount}
+                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  name="discount"
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
+                  placeholder="Diskon"
                 />
               </TableCell>
               <TableCell>

@@ -153,7 +153,8 @@ const MainContent = () => {
   // Destructure the inner data object
   const {
     nama_suplier, nomor_po, tanggal, catatan_po, prepared_by, prepared_jabatan,
-    approved_by, approved_jabatan, sub_total, pajak, total, item, nomor_si
+    approved_by, approved_jabatan, sub_total, pajak, total, item, nomor_si, 
+    
   } = data.data.data || {};
 
   return (
@@ -254,9 +255,6 @@ const MainContent = () => {
 
       <Divider />
 
-
-
-
       {/* Bagian Table  */}
 
       <div className="flex justify-start my-1">
@@ -271,20 +269,24 @@ const MainContent = () => {
             <TableColumn className="bg-[#0C295F] text-white text-center">KODE</TableColumn>
             <TableColumn className="bg-[#0C295F] text-white text-center">NAMA BARANG</TableColumn>
             <TableColumn className="bg-[#0C295F] text-white text-center">VARIABLE</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">LOTS</TableColumn>
             <TableColumn className="bg-[#0C295F] text-white text-center">QUANTITY</TableColumn>
             <TableColumn className="bg-[#0C295F] text-white text-center">HARGA SATUAN</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">DISKON</TableColumn>
             <TableColumn className="bg-[#0C295F] text-white text-center">GUDANG</TableColumn>
             <TableColumn className="bg-[#0C295F] text-white text-center">AMOUNT</TableColumn>
           </TableHeader>
           <TableBody>
-            {item?.map((item: { name: string; kode: string; quantity: number; price: string; gudang: string; amount: string; variable: string }, index: number) => (
+            {item?.map((item: { name: string; kode: string; quantity: number; price: string; gudang: string; amount: string; variable: string; discount: string; lots: string }, index: number) => (
               <TableRow key={index} className="">
                 <TableCell className="text-center">{index + 1}</TableCell>
                 <TableCell className="text-center">{item.kode}</TableCell>
                 <TableCell className="text-center">{item.name}</TableCell>
                 <TableCell className="text-center">{item.variable}</TableCell>
+                <TableCell className="text-center">{item.lots}</TableCell>
                 <TableCell className="text-center">{item.quantity}</TableCell>
                 <TableCell className="text-center">{item.price}</TableCell>
+                <TableCell className="text-center">{item.discount}%</TableCell>
                 <TableCell className="text-center">{item.gudang}</TableCell>
                 <TableCell className="text-center">{item.amount}</TableCell>
               </TableRow>
