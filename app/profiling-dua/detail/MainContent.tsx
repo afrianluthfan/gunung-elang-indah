@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button, Divider, Input } from "@nextui-org/react";
+import { Button, Divider, Input, Textarea } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -299,28 +299,15 @@ const MainContent = () => {
 
 
       <div className="flex flex-row justify-between gap-6">
-        <h1 className="text-xl font-bold">Form Edit Profiling </h1>
+        <h1 className="text-xl font-bold">Detail Profiling </h1>
 
-        <div>
-          <select
-            value={kategoriDivisi}
-            onChange={(e) => setKategoriDivisi(e.target.value)} // Simpan value ke state
-            className="w-full rounded-md border border-gray-300 p-2"
-          >
-            <option value="">Pilih Divisi</option>
-            <option value="supplier">Supplier</option>
-            <option value="customer">Customer</option>
-            <option value="customer_non_rumah_sakit">
-              Customer Non Rumah Sakit
-            </option>
-          </select>
-        </div>
+
       </div>
 
       <Divider />
 
       {kategoriDivisi !== "" && (
-        <div className="rounded-3xl bg-white p-6">
+        <div className="rounded-3xl bg-white p-6 ">
           <form
             className="flex flex-col gap-6"
             onSubmit={handleSubmit(onSubmit)}
@@ -330,105 +317,66 @@ const MainContent = () => {
 
               {/* Grid untuk PC dan flex untuk mobile */}
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                <div className="relative flex w-full flex-col space-y-2">
-                  {/* <label className="text-left">Nama Perusahaan</label> */}
-
-                  <Input
-                    {...register("nama_perusahaan")}
-                    name="nama_perusahaan"
-                    value={inputCompanyValue} // Controlled by local state
-                    placeholder="Nama Perusahaan"
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setInputCompanyValue(value); // Update the local state for input
-
-                      // Filter hospital suggestions based on the input value
-                      const filteredSuggestions = hospitalData
-                        .filter(
-                          (hospital) =>
-                            hospital?.name?.toLowerCase()?.includes(value?.toLowerCase() || ''), // Add null checks
-                        )
-                        .map((hospital) => hospital.name);
-
-                      setHospitalSuggestions(filteredSuggestions); // Update suggestions based on the filter
-                    }}
-                    className="h-[100%] w-full flex-1 border-none outline-none"
-                    endContent={
-                      <button
-                        className="opacity-75"
-                        type="button"
-                        onClick={() => {
-                          const allSuggestions = hospitalData
-                            .filter((hospital) => hospital.name)
-                            .map((hospital) => hospital.name);
-                          setHospitalSuggestions((prevSuggestions) =>
-                            prevSuggestions.length > 0 ? [] : allSuggestions,
-                          );
-                        }}
-                      >
-                        ▼
-                      </button>
-                    }
-                  />
-
-                  {/* Dropdown Suggestions */}
-                  {hospitalSuggestions.length > 0 && (
-                    <ul className="absolute top-[2rem] z-[40] mt-1 max-h-48 w-full overflow-y-auto rounded-xl border border-gray-300 bg-white">
-                      {hospitalSuggestions.map((suggestion, idx) => (
-                        <li
-                          key={idx}
-                          onClick={() =>
-                            handleHospitalSuggestionClick(suggestion)
-                          } // Call the selection handler
-                          className="cursor-pointer p-2 hover:bg-gray-200"
-                        >
-                          {suggestion}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-                <Input
+                <Textarea
+                  disabled
+                  {...register("nama_perusahaan")}
+                  label="Nama Perusahaan"
+                  className="w-full-lg"
+                />
+                <Textarea
+                  disabled
                   {...register("address_perusahaan")}
                   label="Alamat Perusahaan"
                   className="w-full-lg"
                 />
-                <Input
+                <Textarea
+                  disabled
                   {...register("ipak_number_perusahaan")}
                   label="No. IPAK"
                   className="w-full-lg"
                 />
-                <Input {...register("npwp_perusahaan")} label="NPWP Perusahaan" className="w-full-lg" />
-                <Input
+                <Textarea
+                  disabled
+                  {...register("npwp_perusahaan")}
+                  label="NPWP Perusahaan"
+                  className="w-full-lg"
+                />
+                <Textarea
+                  disabled
                   {...register("alamat_pengirim_facture_perusahaan")}
                   label="Alamat Pengirim Faktur"
                   className="w-full-lg"
                 />
-                <Input
+                <Textarea
+                  disabled
                   {...register("npwp_address_perusahaan")}
                   label="Alamat NPWP Perusahaan"
                   className="w-full-lg"
                 />
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <Input
+                  <Textarea
+                    disabled
                     {...register("email_perusahaan")}
                     label="Email Perusahaan"
                     className="w-full-lg"
                   />
-                  <Input
+                  <Textarea
+                    disabled
                     {...register("telpon_perusahaan")}
                     label="Telepon Perusahaan"
                     className="w-full-lg"
                   />
                 </div>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <Input
+                  <Textarea
+                    disabled
                     {...register("kota_perusahaan")}
                     label="Kota Perusahaan"
                     className="w-full-lg"
                   />
-                  <Input
+                  <Textarea
+                    disabled
                     {...register("kode_pos_perusahaan")}
                     label="Kode Pos Perusahaan"
                     className="w-full-lg"
@@ -444,66 +392,78 @@ const MainContent = () => {
                 <div>
                   <h3 className="mb-4 text-lg font-semibold">Data Penanggung Jawab</h3>
                   <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                    <Input
+                    <Textarea
+                      disabled
                       {...register("npwp_dokter")}
                       label="NPWP"
                       className="w-full"
                     />
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <Input
+                      <Textarea
+                        disabled
                         {...register("telpon_dokter")}
                         label="Telepon"
                         className="w-full"
                       />
-                      <Input
+                      <Textarea
+                        disabled
                         {...register("email_dokter")}
                         label="Email"
                         className="w-full"
                       />
                     </div>
-                    <Input
+                    <Textarea
+                      disabled
                       {...register("pic_dokter")}
                       label="PIC"
                       className="w-full"
                     />
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <Input
+                      <Textarea
+                        disabled
                         {...register("kota_dokter")}
                         label="Kota"
                         className="w-full"
                       />
-                      <Input
+                      <Textarea
+                        disabled
                         {...register("kode_pos_dokter")}
                         label="Kode Pos"
                         className="w-full"
                       />
                     </div>
-                    <Input
+                    <Textarea
+                      disabled
                       {...register("handphone_dokter")}
                       label="Handphone"
                       className="w-full"
                     />
-                    <Input
+                    <Textarea
+                      disabled
                       {...register("kode_pajak_dokter")}
                       label="Kode Pajak"
                       className="w-full"
                     />
-                    <Input
+                    <Textarea
+                      disabled
                       {...register("cp_dokter")}
                       label="Contact Person"
                       className="w-full"
                     />
-                    <Input
+                    <Textarea
+                      disabled
                       {...register("verifikasi_dokter")}
                       label="Verifikasi"
                       className="w-full"
                     />
-                    <Input
+                    <Textarea
+                      disabled
                       {...register("pembuat_cp")}
                       label="Pembuat CP"
                       className="w-full"
                     />
-                    <Input
+                    <Textarea
+                      disabled
                       {...register("term_of_payment")}
                       label="Term of Payment"
                       className="w-full"
@@ -518,128 +478,92 @@ const MainContent = () => {
                 <div>
                   <h3 className="mb-4 text-lg font-semibold">Data Dokter</h3>
                   <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                    <div className="relative flex w-full flex-col space-y-2">
 
-                      <Input
-                        {...register("nama_dokter")}
-                        name="nama_dokter"
-                        value={inputDoctorValue}
-                        placeholder="Nama Dokter"
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setInputDoctorValue(value);
+                    <Textarea
+                      disabled
+                      {...register("nama_dokter")}
+                      label="Nama Dokter"
+                      className="w-full"
+                    />
 
-                          const filteredSuggestions = doctorData
-                            .filter(
-                              (doctor) =>
-                                doctor.namaDokter
-                                  .toLowerCase()
-                                  .includes(value.toLowerCase()),
-                            )
-                            .map((doctor) => doctor.namaDokter);
-
-                          setDoctorSuggestions(filteredSuggestions);
-                        }}
-                        className="h-[100%] w-full flex-1 border-none outline-none"
-                        endContent={
-                          <button
-                            className="opacity-75"
-                            type="button"
-                            onClick={() => {
-                              const allSuggestions = doctorData
-                                .filter((doctor) => doctor.namaDokter)
-                                .map((doctor) => doctor.namaDokter);
-                              setDoctorSuggestions((prevSuggestions) =>
-                                prevSuggestions.length > 0 ? [] : allSuggestions,
-                              );
-                            }}
-                          >
-                            ▼
-                          </button>
-                        }
-                      />
-
-                      {doctorSuggestions.length > 0 && (
-                        <ul className="absolute top-[2rem] z-[40] mt-1 max-h-48 w-full overflow-y-auto rounded-xl border border-gray-300 bg-white">
-                          {doctorSuggestions.map((suggestion, idx) => (
-                            <li
-                              key={idx}
-                              onClick={() =>
-                                handleDoctorSuggestionClick(suggestion)
-                              }
-                              className="cursor-pointer p-2 hover:bg-gray-200"
-                            >
-                              {suggestion}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                    <Input
+                    <Textarea
+                      disabled
                       {...register("alamat_pengirim_dokter")}
                       label="Alamat Pengirim Dokter"
                       className="w-full"
                     />
-                    <Input
+                    <Textarea
+                      disabled
                       {...register("npwp_dokter")}
                       label="NPWP Dokter"
                       className="w-full"
                     />
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <Input
+                      <Textarea
+                        disabled
                         {...register("telpon_dokter")}
                         label="Telepon Dokter"
                         className="w-full"
                       />
-                      <Input
+                      <Textarea
+                        disabled
                         {...register("email_dokter")}
                         label="Email Dokter"
                         className="w-full"
                       />
                     </div>
-                    <Input
+                    <Textarea
+                      disabled
                       {...register("pic_dokter")}
                       label="PIC Dokter"
                       className="w-full"
                     />
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <Input
+                      <Textarea
+                        disabled
                         {...register("kota_dokter")}
                         label="Kota Dokter"
                         className="w-full"
                       />
-                      <Input
+                      <Textarea
+                        disabled
                         {...register("kode_pos_dokter")}
                         label="Kode Pos Dokter"
                         className="w-full"
                       />
                     </div>
-                    <Input
+                    <Textarea
+                      disabled
                       {...register("handphone_dokter")}
                       label="Handphone Dokter"
                       className="w-full"
                     />
-                    <Input
+                    <Textarea
+                      disabled
                       {...register("kode_pajak_dokter")}
                       label="Kode Pajak Dokter"
                       className="w-full"
                     />
-                    <Input
+                    <Textarea
+                      disabled
                       {...register("cp_dokter")}
                       label="Contact Person Dokter"
                       className="w-full"
                     />
-                    <Input
+                    <Textarea
+                      disabled
                       {...register("verifikasi_dokter")}
                       label="Verifikasi"
                       className="w-full"
                     />
-                    <Input
+                    <Textarea
+                      disabled
                       {...register("pembuat_cp")}
                       label="Pembuat CP"
                       className="w-full"
                     />
-                    <Input
+                    <Textarea
+                      disabled
                       {...register("term_of_payment")}
                       label="Term of Payment"
                       className="w-full"
@@ -649,25 +573,7 @@ const MainContent = () => {
               </>
             )}
 
-            <div className="flex flex-row justify-end gap-3">
-              <Button
-                color="danger"
-                className="self-center font-semibold text-white"
-                onClick={backButton}
-              >
-                CANCEL
-              </Button>
 
-              <Button
-                color="success"
-                className="self-center font-semibold text-white"
-                type="submit"
-              >
-                SUBMIT
-              </Button>
-
-
-            </div>
           </form>
         </div>
       )}

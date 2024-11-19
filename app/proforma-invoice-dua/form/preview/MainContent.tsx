@@ -535,22 +535,22 @@ const MainContent = () => {
           <div className="flex items-center justify-between overflow-scroll lg:overflow-auto">
             <Table removeWrapper>
               <TableHeader>
-                <TableColumn className="bg-[#0C295F] text-center text-white">
+                <TableColumn className="bg-[#0C295F] text-left text-white">
                   NO
                 </TableColumn>
-                <TableColumn className="bg-[#0C295F] text-center text-white">
+                <TableColumn className="bg-[#0C295F] text-left text-white">
                   KODE BARANG
                 </TableColumn>
-                <TableColumn className="bg-[#0C295F] text-center text-white">
+                <TableColumn className="bg-[#0C295F] text-left text-white">
                   NAMA BARANG
                 </TableColumn>
-                <TableColumn className="bg-[#0C295F] text-center text-white">
+                <TableColumn className="bg-[#0C295F] text-left text-white">
                   VARIABLE
                 </TableColumn>
-                <TableColumn className="bg-[#0C295F] text-center text-white">
+                <TableColumn className="bg-[#0C295F] text-left text-white">
                   QUANTITY
                 </TableColumn>
-                <TableColumn className="bg-[#0C295F] text-center text-white">
+                <TableColumn className="bg-[#0C295F] text-left text-white">
                   GUDANG ASAL
                 </TableColumn>
               </TableHeader>
@@ -571,14 +571,14 @@ const MainContent = () => {
                     index: number,
                   ) => (
                     <TableRow key={index} className="">
-                      <TableCell className="text-center">{index + 1}</TableCell>
-                      <TableCell className="text-center">{item.kode}</TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="text-left">{index + 1}</TableCell>
+                      <TableCell className="text-left">{item.kode}</TableCell>
+                      <TableCell className="text-left">
                         {item.nama_barang}
                       </TableCell>
-                      <TableCell className="text-center">{item.variable}</TableCell>
-                      <TableCell className="text-center">{item.quantity}</TableCell>
-                      <TableCell className="text-center">{item.gudang}</TableCell>
+                      <TableCell className="text-left">{item.variable}</TableCell>
+                      <TableCell className="text-left">{item.quantity}</TableCell>
+                      <TableCell className="text-left">{item.gudang}</TableCell>
                     </TableRow>
                   ),
                 )}
@@ -626,31 +626,31 @@ const MainContent = () => {
           <div className="flex items-center justify-between overflow-scroll lg:overflow-auto">
             <Table removeWrapper>
               <TableHeader>
-                <TableColumn className="bg-[#0C295F] text-center text-white">
+                <TableColumn className="bg-[#0C295F] text-left text-white">
                   NO
                 </TableColumn>
-                <TableColumn className="bg-[#0C295F] text-center text-white">
+                <TableColumn className="bg-[#0C295F] text-left text-white">
                   KODE BARANG
                 </TableColumn>
-                <TableColumn className="bg-[#0C295F] text-center text-white">
+                <TableColumn className="bg-[#0C295F] text-left text-white">
                   NAMA BARANG
                 </TableColumn>
-                <TableColumn className="bg-[#0C295F] text-center text-white">
+                <TableColumn className="bg-[#0C295F] text-left text-white">
                   VARIABLE
                 </TableColumn>
-                <TableColumn className="bg-[#0C295F] text-center text-white">
+                <TableColumn className="bg-[#0C295F] text-left text-white">
                   QUANTITY
                 </TableColumn>
-                <TableColumn className="bg-[#0C295F] text-center text-white">
+                <TableColumn className="bg-[#0C295F] text-left text-white">
                   HARGA SATUAN
                 </TableColumn>
-                <TableColumn className="bg-[#0C295F] text-center text-white">
+                <TableColumn className="bg-[#0C295F] text-left text-white">
                   DISCOUNT
                 </TableColumn>
-                <TableColumn className="bg-[#0C295F] text-center text-white">
+                <TableColumn className="bg-[#0C295F] text-left text-white">
                   AMOUNT
                 </TableColumn>
-                <TableColumn className="bg-[#0C295F] text-center text-white">
+                <TableColumn className="bg-[#0C295F] text-left text-white">
                   GUDANG ASAL
                 </TableColumn>
               </TableHeader>
@@ -671,19 +671,19 @@ const MainContent = () => {
                     index: number,
                   ) => (
                     <TableRow key={index} className="">
-                      <TableCell className="text-center">{index + 1}</TableCell>
-                      <TableCell className="text-center">{item.kode}</TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="text-left">{index + 1}</TableCell>
+                      <TableCell className="text-left">{item.kode}</TableCell>
+                      <TableCell className="text-left">
                         {item.nama_barang}
                       </TableCell>
-                      <TableCell className="text-center">{item.variable}</TableCell>
-                      <TableCell className="text-center">{item.quantity}</TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="text-left">{item.variable}</TableCell>
+                      <TableCell className="text-left">{item.quantity}</TableCell>
+                      <TableCell className="text-left">
                         {item.harga_satuan}
                       </TableCell>
-                      <TableCell className="text-center">{item.discount}</TableCell>
-                      <TableCell className="text-center">{item.amount}</TableCell>
-                      <TableCell className="text-center">{item.gudang}</TableCell>
+                      <TableCell className="text-left">{item.discount}</TableCell>
+                      <TableCell className="text-left">{item.amount}</TableCell>
+                      <TableCell className="text-left">{item.gudang}</TableCell>
                     </TableRow>
                   ),
                 )}

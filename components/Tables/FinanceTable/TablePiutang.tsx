@@ -17,11 +17,13 @@ import {
   Tooltip,
   Divider,
   Input,
+  Button,
 } from "@nextui-org/react";
 import { DeleteIcon } from "./DeleteIcon";
 import { EyeIcon } from "./EyeIcon";
 import { EditIcon } from "./EditIcon";
 import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   paid: "success",
@@ -45,6 +47,9 @@ type User = {
   nominal: string;
   amount: string;
   tanggal: string;
+  pi_id: string;
+  divisi: string;
+
 };
 
 export default function TableComponent() {
@@ -62,6 +67,8 @@ export default function TableComponent() {
   });
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
 
   let Total = ""
 
@@ -134,6 +141,12 @@ export default function TableComponent() {
       }
     }
   }
+
+  const handleDetailPiutang = async (id: string) => {
+    // Konfirmasi menggunakan SweetAlert2
+    
+  }
+
   const columns = [
     { name: "No", uid: "number" },
     { name: "Tanggal", uid: "tanggal" },
@@ -167,10 +180,17 @@ export default function TableComponent() {
 
   const sortedItems = useMemo(() => {
     return [...filteredItems].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] as string | number;
-      const second = b[sortDescriptor.column as keyof User] as string | number;
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
+      const first = a[sortDescriptor.column as keyof User] as string;
+      const second = b[sortDescriptor.column as keyof User] as string;
 
+      if (sortDescriptor.column === 'nominal' || sortDescriptor.column === 'pajak' || sortDescriptor.column === 'amount') {
+        const firstValue = parseInt(first.replace(/[^0-9]/g, ''));
+        const secondValue = parseInt(second.replace(/[^0-9]/g, ''));
+        const cmp = firstValue < secondValue ? -1 : firstValue > secondValue ? 1 : 0;
+        return sortDescriptor.direction === "descending" ? -cmp : cmp;
+      }
+
+      const cmp = first < second ? -1 : first > second ? 1 : 0;
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, filteredItems]);
@@ -182,7 +202,6 @@ export default function TableComponent() {
       index: start + index + 1,
     }));
   }, [page, sortedItems, rowsPerPage]);
-
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const renderCell = useCallback(
@@ -195,17 +214,28 @@ export default function TableComponent() {
       switch (columnKey) {
         case "actions":
           return (
-            <div className="relative flex items-center gap-2">
-              <Tooltip color="success" content="Mark as Paid">
-                <span
-                  className="cursor-pointer text-lg text-success active:opacity-50"
-                  onClick={() => handleMarkAsPaid(user.id)}
-                >
-                  {/* Replace CheckIcon with an appropriate icon or import it */}
-                  ✓
-                </span>
-              </Tooltip>
+            <div className="flex items-center gap-2">
+              <Button
+                color="success"
+                className="cursor-pointer active:opacity-50 text-white"
+                onClick={() => handleMarkAsPaid(user.id)}
+              >
+                Lunas
+              </Button>
+
+              <Button
+                color="primary"
+                className="cursor-pointer active:opacity-50 text-white"
+                onClick={() =>
+                  router.push(
+                      `/piutang/edit?id=${user.pi_id}&divisi=${user.divisi}`
+                  )
+                }
+              >
+                Detail
+              </Button>
             </div>
+
           );
         default:
           return cellValue;
@@ -292,7 +322,7 @@ export default function TableComponent() {
             <TableColumn
               key={column.uid}
               allowsSorting
-              className="bg-[#0C295F] text-white text-center"
+              className="bg-[#0C295F] text-white text-left"
               align="start"
             >
               {column.name}

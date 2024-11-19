@@ -137,26 +137,36 @@ const AdminMainContent = () => {
 
   useEffect(() => {
     if (shouldSubmit) {
-      if (responseData.item.length === 0) {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Tidak ada item yang dipilih",
-        });
-        return;
-      }
+
 
       const submitData = async () => {
         try {
+
+          // if (responseData.item.length === 0) {
+          //   Swal.fire({
+          //     icon: "error",
+          //     title: "Data Belum Lengkap",
+          //     text: "Mohon lengkapi semua data",
+          //   });
+          //   return;
+          // }
+
           const res = await axios.post(
             `${apiUrl}/proforma-invoice/inquiry`,
             responseData,
           );
 
+
+
           localStorage.setItem("purchaseOrder", JSON.stringify(res));
           router.push("/proforma-invoice-dua/form/preview");
         } catch (error) {
-          console.error("Error submitting data", error);
+          Swal.fire({
+            icon: "error",
+            title: "Data Belum Lengkap",
+            text: "Mohon lengkapi semua data",
+          });
+          return;
         } finally {
           setShouldSubmit(false);
         }

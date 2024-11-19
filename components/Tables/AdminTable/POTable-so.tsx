@@ -28,7 +28,7 @@ const columns = [
   { name: "NAMA SUPLIER", uid: "nama_suplier", sortable: true },
   { name: "NOMOR PO", uid: "nomor_po", sortable: true },
   { name: "SUB TOTAL", uid: "sub_total", sortable: true },
-  { name: "TOTAL", uid: "total", sortable: true },
+  { name: "TOTAL (PPN)", uid: "total", sortable: true },
   { name: "STATUS", uid: "status", sortable: true },
   { name: "ACTIONS", uid: "actions" },
 ];
@@ -128,6 +128,12 @@ export default function PITableComponent() {
       const first = a[sortDescriptor.column as keyof User] ?? "";
       const second = b[sortDescriptor.column as keyof User] ?? "";
 
+      if (sortDescriptor.column === "sub_total" || sortDescriptor.column === "total" || sortDescriptor.column === "pajak") {
+        const firstValue = parseInt(String(first).replace(/[^0-9]/g, ""));
+        const secondValue = parseInt(String(second).replace(/[^0-9]/g, ""));
+        return sortDescriptor.direction === "descending" ? secondValue - firstValue : firstValue - secondValue;
+      }
+
       const cmp = String(first).localeCompare(String(second));
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
@@ -140,7 +146,6 @@ export default function PITableComponent() {
       index: start + index + 1,
     }));
   }, [page, sortedItems, rowsPerPage]);
-
   const pages = Math.ceil(filteredUsers.length / rowsPerPage);
 
   const renderCell = React.useCallback(

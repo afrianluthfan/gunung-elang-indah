@@ -242,7 +242,7 @@ const MainContent = () => {
       </div>
 
       <Divider />
-      <h1 className="text-lg font-bold my-2 lg:text-[2vh]">Barang yang terjual : {totalBarangTerjual}</h1>
+      <h1 className="text-lg font-bold my-2 ">Barang yang terjual : {totalBarangTerjual}</h1>
 
       <div className="shadow-md rounded-lg ">
         <Table aria-label="Data Penjualan" removeWrapper>
@@ -277,6 +277,11 @@ const MainContent = () => {
         <Button className="bg-green-500 text-white" disabled={currentPage === totalPages} onClick={handleNextPage}>
           Next →
         </Button>
+      </div>
+
+      <div>
+        <hr className="border-t-2 border-gray-300 my-4" />
+        <h1 className="text-sm font-bold mb-4 text-center">Support By Gunung Elang Indah</h1>
       </div>
     </div>
   );

@@ -41,7 +41,7 @@ const MainContent = () => {
 
       Swal.fire({
         title: "Apakah Kamu Yakin ?",
-        text: "Apakah kamu yakin ingin mengubah purchase order ini?",
+        html: "Apakah kamu yakin ingin mengubah <b>Purchase Order</b> ini?",        
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -90,7 +90,7 @@ const MainContent = () => {
     } else {
       Swal.fire({
         title: "Apakah Kamu Yakin ?",
-        text: "Apakah kamu yakin ingin Membuat purchase order ini?",
+        html: "Apakah kamu yakin ingin membuat <b>Purchase Order</b> ini?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -106,7 +106,7 @@ const MainContent = () => {
                 if (res.data.status === true) {
                   Swal.fire({
                     title: "Success",
-                    text: "Purchase Order berhasil dibuat",
+                    text: "Purchase order berhasil dibuat",
                     icon: "success",
                   }).then((result) => {
                     if (result.isConfirmed) {
@@ -265,30 +265,30 @@ const MainContent = () => {
       <div className="flex justify-between items-center">
         <Table removeWrapper>
           <TableHeader>
-            <TableColumn className="bg-[#0C295F] text-white text-center">NO</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-center">KODE</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-center">NAMA BARANG</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-center">VARIABLE</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-center">LOTS</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-center">QUANTITY</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-center">HARGA SATUAN</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-center">DISKON</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-center">GUDANG</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-center">AMOUNT</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-left">NO</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-left">KODE</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-left">NAMA BARANG</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-left">VARIABLE</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-left">LOTS</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-left">QUANTITY</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-left">HARGA SATUAN</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-left">DISKON</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-left">GUDANG</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-left">AMOUNT</TableColumn>
           </TableHeader>
           <TableBody>
             {item?.map((item: { name: string; kode: string; quantity: number; price: string; gudang: string; amount: string; variable: string; discount: string; lots: string }, index: number) => (
               <TableRow key={index} className="">
-                <TableCell className="text-center">{index + 1}</TableCell>
-                <TableCell className="text-center">{item.kode}</TableCell>
-                <TableCell className="text-center">{item.name}</TableCell>
-                <TableCell className="text-center">{item.variable}</TableCell>
-                <TableCell className="text-center">{item.lots}</TableCell>
-                <TableCell className="text-center">{item.quantity}</TableCell>
-                <TableCell className="text-center">{item.price}</TableCell>
-                <TableCell className="text-center">{item.discount}%</TableCell>
-                <TableCell className="text-center">{item.gudang}</TableCell>
-                <TableCell className="text-center">{item.amount}</TableCell>
+                <TableCell className="text-left">{index + 1}</TableCell>
+                <TableCell className="text-left">{item.kode}</TableCell>
+                <TableCell className="text-left">{item.name}</TableCell>
+                <TableCell className="text-left">{item.variable}</TableCell>
+                <TableCell className="text-left">{item.lots}</TableCell>
+                <TableCell className="text-left">{item.quantity}</TableCell>
+                <TableCell className="text-left">{item.price}</TableCell>
+                <TableCell className="text-left">{item.discount}%</TableCell>
+                <TableCell className="text-left">{item.gudang}</TableCell>
+                <TableCell className="text-left">{item.amount}</TableCell>
               </TableRow>
             ))}
           </TableBody>

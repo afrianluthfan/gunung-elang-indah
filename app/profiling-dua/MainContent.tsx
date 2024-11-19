@@ -177,11 +177,18 @@ const MainContent = () => {
         return (
           <div className="flex gap-2">
             <Button
-              className="bg-blue-600 text-white"
+              className="bg-yellow-500 text-white"
               size="sm"
               onClick={() => router.push(`/profiling-dua/form-edit?id=${user.id}`)}
             >
               Edit
+            </Button>
+            <Button
+              className="bg-blue-600 text-white"
+              size="sm"
+              onClick={() => router.push(`/profiling-dua/detail?id=${user.id}`)}
+            >
+              Detail
             </Button>
           </div>
         );
