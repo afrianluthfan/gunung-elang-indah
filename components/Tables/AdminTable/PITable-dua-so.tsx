@@ -129,6 +129,12 @@ export default function PITableComponent() {
 
   const sortedItems = React.useMemo(() => {
     return [...filteredUsers].sort((a: User, b: User) => {
+      if (sortDescriptor.column === 'total') {
+        const valueA = Number(a.total?.replace(/[^0-9]/g, '')) || 0;
+        const valueB = Number(b.total?.replace(/[^0-9]/g, '')) || 0;
+        return sortDescriptor.direction === "descending" ? valueB - valueA : valueA - valueB;
+      }
+
       const first =
         a[sortDescriptor.column as keyof User] !== undefined
           ? String(a[sortDescriptor.column as keyof User])
@@ -150,6 +156,7 @@ export default function PITableComponent() {
       index: start + index + 1,
     }));
   }, [page, sortedItems, rowsPerPage]);
+  
 
   const pages = Math.ceil(filteredUsers.length / rowsPerPage);
 

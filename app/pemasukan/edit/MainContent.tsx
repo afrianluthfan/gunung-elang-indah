@@ -98,7 +98,7 @@ const ProformaInvoiceDetail = () => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          `${apiUrl}/proforma-invoice/detailPI`,
+          `${apiUrl}/proforma-invoice/detailPI-so`,
           { id: id, divisi: divisi },
         );
         setResponseData(response.data.data);
@@ -190,7 +190,7 @@ const ProformaInvoiceDetail = () => {
   const submitAcc = () => {
     Swal.fire({
       title: "Apakah Kamu Yakin ?",
-      text: "Apakah kamu yakin ingin menerima proforma invoice ini ?",
+      text: "Apakah kamu yakin ingin menerima proforma invoice ini!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -239,10 +239,45 @@ const ProformaInvoiceDetail = () => {
     });
   };
 
+  const handleSetNamaBarang = async () => {
+    try {
+      const response = await axios.post(
+        `${apiUrl}/sales_order/list/admin/edit/nama-barang-pi-so`,
+        responseData
+      );
+
+      Swal.fire({
+        title: "Success!",
+        text: "Nama Barang berhasil diperbarui.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+
+      try {
+        const response = await axios.post(
+          `${apiUrl}/proforma-invoice/detailPI-so`,
+          { id: id, divisi: divisi },
+        );
+        setResponseData(response.data.data);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    } catch (error) {
+      console.error("Error updating Nama Barang", error);
+
+      Swal.fire({
+        title: "Error!",
+        text: "Gagal memperbarui Nama Barang. Silakan coba lagi.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
+  };
+
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <h1 className="font-semibold lg:text-[1.85vh]">
-        Detail Proforma Invoice
+        Detail Piutang
       </h1>
       <Divider />
 
@@ -421,140 +456,83 @@ const ProformaInvoiceDetail = () => {
 
       <Divider />
 
-      <div className="my-1 flex justify-start">
-        <h1 className="font-semibold lg:text-[1.4vh]">List Barang</h1>
+      <div className="my-1 flex justify-between">
+        <h1 className="font-semibold lg:text-[1.4vh] pt-2">List Barang</h1>
       </div>
 
       {/* Bagian Table */}
-  
-      {username === "SALES" ? (
-        <div className="flex items-center justify-between overflow-x-scroll">
-          <Table removeWrapper>
-            <TableHeader>
-              <TableColumn className="bg-[#0C295F] text-left text-white">
-                NO
-              </TableColumn>
-              <TableColumn className="bg-[#0C295F] text-left text-white">
-                KODE BARANG
-              </TableColumn>
-              <TableColumn className="bg-[#0C295F] text-left text-white">
-                NAMA BARANG
-              </TableColumn>
-              <TableColumn className="bg-[#0C295F] text-left text-white">
-                VARIABLE
-              </TableColumn>
-              <TableColumn className="bg-[#0C295F] text-left text-white">
-                QTY
-              </TableColumn>
-              <TableColumn className="bg-[#0C295F] text-left text-white">
-                GUDANG ASAL
-              </TableColumn>
-            </TableHeader>
-            <TableBody>
-              {responseData.item_detail_pi.map((item, index) => (
-
-                <TableRow key={item.id}>
-                  <TableCell className="text-left">{index + 1}</TableCell>
-                  <TableCell className="text-left">{item.kat}</TableCell>
-                  <TableCell className="text-left">
-                    {item.nama_barang}
-                  </TableCell>
-                  <TableCell className="text-left">{item.variable}</TableCell>
-                  <TableCell className="text-left">{item.quantity}</TableCell>
-                  <TableCell className="text-left">{item.gudang}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      ) : (
-        <div className="flex items-center justify-between overflow-x-scroll">
-          <Table removeWrapper>
-            <TableHeader>
-              <TableColumn className="bg-[#0C295F] text-left text-white">
-                NO
-              </TableColumn>
-              <TableColumn className="bg-[#0C295F] text-left text-white">
-                KODE BARANG
-              </TableColumn>
-              <TableColumn className="bg-[#0C295F] text-left text-white">
-                NAMA BARANG
-              </TableColumn>
-              <TableColumn className="bg-[#0C295F] text-left text-white">
-                VARIABLE
-              </TableColumn>
-              <TableColumn className="bg-[#0C295F] text-left text-white">
-                QTY
-              </TableColumn>
-              <TableColumn className="bg-[#0C295F] text-left text-white">
-                HARGA SATUAN
-              </TableColumn>
-              <TableColumn className="bg-[#0C295F] text-left text-white">
-                DISC
-              </TableColumn>
-              <TableColumn className="bg-[#0C295F] text-left text-white">
-                GUDANG ASAL
-              </TableColumn>
-              <TableColumn className="bg-[#0C295F] text-left text-white">
-                SUB TOTAL
-              </TableColumn>
-            </TableHeader>
-            <TableBody>
-              {responseData.item_detail_pi.map((item, index) => (
-
-                <TableRow key={item.id}>
-                  <TableCell className="text-left">{index + 1}</TableCell>
-                  <TableCell className="text-left">{item.kat}</TableCell>
-                  <TableCell className="text-left">
-                    {item.nama_barang}
-                  </TableCell>
-                  <TableCell className="text-left">{item.variable}</TableCell>
-                  <TableCell className="text-left">{item.quantity}</TableCell>
-
-                  <TableCell className="text-left">
-                    {item.harga_satuan}
-                  </TableCell>
-                  <TableCell className="text-left">{item.discount}</TableCell>
-                  <TableCell className="text-left">{item.gudang}</TableCell>
-                  <TableCell className="text-left">
-                    {item.sub_total_item}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+      <div className="flex items-center justify-between overflow-x-scroll">
+        <Table removeWrapper>
+          <TableHeader>
+            <TableColumn className="bg-[#0C295F] text-center text-white">
+              NO
+            </TableColumn>
+            <TableColumn className="bg-[#0C295F] text-center text-white">
+              KODE BARANG
+            </TableColumn>
+            <TableColumn className="bg-[#0C295F] text-center text-white">
+              NAMA BARANG
+            </TableColumn>
+            <TableColumn className="bg-[#0C295F] text-center text-white">
+              VARIABLE
+            </TableColumn>
+            <TableColumn className="bg-[#0C295F] text-center text-white">
+              QTY
+            </TableColumn>
+            <TableColumn className="bg-[#0C295F] text-center text-white">
+              HARGA SATUAN
+            </TableColumn>
+            <TableColumn className="bg-[#0C295F] text-center text-white">
+              DISC
+            </TableColumn>
+            <TableColumn className="bg-[#0C295F] text-center text-white">
+              GUDANG ASAL
+            </TableColumn>
+            <TableColumn className="bg-[#0C295F] text-center text-white">
+              SUB TOTAL
+            </TableColumn>
+          </TableHeader>
+          <TableBody>
+            {responseData.item_detail_pi.map((item, index) => (
+              <TableRow key={item.id}>
+                <TableCell className="text-center">{index + 1}</TableCell>
+                <TableCell className="text-center">{item.kat}</TableCell>
+                <TableCell className="text-center">
+                  {item.nama_barang}
+                </TableCell>
+                <TableCell className="text-center">{item.variable}</TableCell>
+                <TableCell className="text-center">
+                 {item.quantity}
+                </TableCell>
+                <TableCell className="text-center">
+                  {item.harga_satuan}
+                </TableCell>
+                <TableCell className="text-center">
+                  {item.discount}%
+                </TableCell>
+                <TableCell className="text-center">{item.gudang}</TableCell>
+                <TableCell className="text-center">
+                  {item.sub_total_item}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
       <Divider />
 
-      {username === "ADMIN" && (
-        <div className="grid grid-cols-2 gap-2 self-end text-sm font-bold lg:w-[25%]">
-          <p className="text-end">Sub Total : </p>
-          <p className="text-start">{responseData.sub_total}</p>
-          <p className="text-end">PPN 11% : </p>
-          <p className="text-start">{responseData.pajak}</p>
-          <p className="text-end">Total : </p>
-          <p className="text-start">{responseData.total}</p>
-        </div>
-      )}
+      <div className="grid grid-cols-2 gap-2 self-end text-sm font-bold lg:w-[25%]">
+        <p className="text-end">Sub Total : </p>
+        <p className="text-start">{responseData.sub_total}</p>
+        <p className="text-end">PPN 11% : </p>
+        <p className="text-start">{responseData.pajak}</p>
+        <p className="text-end">Total : </p>
+        <p className="text-start">{responseData.total}</p>
+      </div>
 
+      <Divider />
 
-
-      {username === "ADMIN" && responseData.status !== "Diterima" && (
-        <div className="flex justify-end gap-3">
-          <Button onClick={submitReject} color="danger" className="min-w-36">
-            Ditolak
-          </Button>
-          <Button
-            onClick={submitAcc}
-            color="success"
-            className="min-w-36 text-white"
-          >
-            Diterima
-          </Button>
-        </div>
-      )}
     </div>
   );
 };

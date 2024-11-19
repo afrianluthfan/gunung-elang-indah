@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import Swal from "sweetalert2";
+import './invoicePrint.css'
+
 import {
   Button,
   Divider,
-  Input,
   Table,
   TableBody,
   TableCell,
@@ -78,6 +79,8 @@ const AdminMainContent = () => {
   const [username, setUsername] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const pdfRef = useRef(null);
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("statusAccount");
@@ -95,7 +98,7 @@ const AdminMainContent = () => {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          `${apiUrl}/purchase-order/detail`,
+          `${apiUrl}/purchase-order/detail-so`,
           { id: id }
         );
         setResponseData(response.data.data);
@@ -106,8 +109,6 @@ const AdminMainContent = () => {
 
     fetchData();
   }, [id]);
-
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     if (shouldSubmit) {
@@ -138,7 +139,7 @@ const AdminMainContent = () => {
   const submitAcc = () => {
     Swal.fire({
       title: 'Apakah Kamu Yakin ?',
-      text: "Apakah kamu yakin ingin menerima purchase order ini ?",
+      text: "Apakah kamu yakin ingin menerima purchase order ini!",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -185,6 +186,43 @@ const AdminMainContent = () => {
         setShouldSubmit(true);
       }
     });
+  };
+
+  const [isVisible, setIsVisible] = useState(false);
+
+  const downloadPDF = async () => {
+    setIsVisible(true); // Tampilkan elemen sementara
+
+    setTimeout(async () => {
+      const html2pdfModule = await import('html2pdf.js');
+      const html2pdf = html2pdfModule.default;
+
+      const element = pdfRef.current;
+      if (!element) {
+        console.error("Element for PDF generation is not found.");
+        setIsVisible(false);
+        return;
+      }
+
+      let namaFile = "PURCHASE ORDER - " + responseData.nomor_po;
+      const options = {
+        margin: 1,
+        filename: namaFile,
+        image: { type: "jpeg", quality: 1 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
+      };
+
+      html2pdf()
+        .set(options)
+        .from(element)
+        .save()
+        .then(() => setIsVisible(false)) // Sembunyikan kembali setelah unduh
+        .catch((error: any) => {
+          console.error("Error generating PDF", error);
+          setIsVisible(false);
+        });
+    }, 0); // Tunggu sebentar agar PDF bisa di-render
   };
 
   return (
@@ -301,30 +339,30 @@ const AdminMainContent = () => {
       <div className="flex justify-between items-center">
         <Table removeWrapper>
           <TableHeader>
-            <TableColumn className="bg-[#0C295F] text-white text-left">NO</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">KODE BARANG</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">NAMA BARANG</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">VARIABLE BARANG</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">LOTS</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">QTY</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">HARGA SATUAN</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">DISKON</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">GUDANG</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">SUB TOTAL</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">NO</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">KODE BARANG</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">NAMA BARANG</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">VARIABLE BARANG</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">LOTS</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">QTY</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">HARGA SATUAN</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">DISKON</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">GUDANG</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-center">SUB TOTAL</TableColumn>
           </TableHeader>
           <TableBody>
             {responseData.item.map((item, index) => (
               <TableRow key={item.id}>
-                <TableCell className="text-left">{index + 1}</TableCell>
-                <TableCell className="text-left">{item.kode}</TableCell>
-                <TableCell className="text-left">{item.name}</TableCell>
-                <TableCell className="text-left">{item.variable}</TableCell>
-                <TableCell className="text-left">{item.lots}</TableCell>
-                <TableCell className="text-left">{item.quantity}</TableCell>
-                <TableCell className="text-left">{item.price}</TableCell>
-                <TableCell className="text-left">{item.discount}%</TableCell>
-                <TableCell className="text-left">{item.gudang}</TableCell>
-                <TableCell className="text-left">{item.amount}</TableCell>
+                <TableCell className="text-center">{index + 1}</TableCell>
+                <TableCell className="text-center">{item.kode}</TableCell>
+                <TableCell className="text-center">{item.name}</TableCell>
+                <TableCell className="text-center">{item.variable}</TableCell>
+                <TableCell className="text-center">{item.lots}</TableCell>
+                <TableCell className="text-center">{item.quantity}</TableCell>
+                <TableCell className="text-center">{item.price}</TableCell>
+                <TableCell className="text-center">{item.discount}</TableCell>
+                <TableCell className="text-center">{item.gudang}</TableCell>
+                <TableCell className="text-center">{item.amount}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -343,26 +381,154 @@ const AdminMainContent = () => {
       </div>
 
 
-      {
-        username !== "ADMIN" && (
+      <Divider />
 
-          responseData.status !== "DITERIMA" && (
-            <div className="flex justify-end gap-3">
-              <Button onClick={submitReject} color="danger" className="min-w-36">
-                Ditolak
-              </Button>
-              <Button onClick={submitAcc} color="success" className="min-w-36 text-white">
-                Diterima
-              </Button>
-            </div>
-          )
+      <Button onClick={downloadPDF} className="w-full bg-green-600 text-white">
+        Download Kwitansi
+      </Button>
+
+      {/* PDF DOWNLOAD ELEMENT START */}
+
+      <div
+        className="invoice-container"
+        ref={pdfRef}
+        style={{ display: isVisible ? "block" : "none" }}
+      >
+        {/* Konten PDF */}
+        <div className="lion">
+          <h1 className="chile">PURCHASE ORDER</h1>
+          <hr className="snake" />
+        </div>
 
 
-        )
-      }
+        <div className="tiger">
+          <table className="zebra" >
+            <tbody>
+              <tr>
+                <td>Nomor PO</td>
+                <td>: {responseData.nomor_po}</td>
+              </tr>
+              <tr>
+                <td>Tanggal PO</td>
+                <td>: {responseData.tanggal}</td>
+              </tr>
+              <tr>
+                <td>Nomor Surat Jalan</td>
+                <td>: {responseData.nomor_si}</td>
+              </tr>
+              <tr>
+                <td>Prepared By</td>
+                <td>: {responseData.prepared_by}</td>
+              </tr>
+              <tr>
+                <td>Approve By</td>
+                <td>: {responseData.approved_by}</td>
+              </tr>
+            </tbody>
+          </table>
+          <table>
+            <tbody>
+              <tr>
+                <td>Kepada Yth:</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>{responseData.nama_suplier}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Jl. Dr. Moestopo No.6, Pasarjoyo</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Kec. Tenggarong</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Kabupaten Karawang</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Kode Pos: 41361</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <table className="penguin">
+          <thead>
+            <tr>
+              <th><p>No</p></th>
+              <th><p>KAT</p></th>
+              <th><p>Nama Barang</p></th>
+              <th><p>Qty</p></th>
+              <th><p>H. Satuan</p></th>
+              <th><p>Subtotal</p></th>
+            </tr>
+          </thead>
+          <tbody>
+            {responseData.item.map((item, index) => (
+              <tr key={item.id}>
+                <td><p>{index + 1}</p></td>
+                <td><p>{item.kode}</p></td>
+                <td><p>{item.name}</p></td>
+                <td><p>{item.quantity}</p></td>
+                <td><p>{item.price}</p></td>
+                <td><p>{item.amount}</p></td>
+              </tr>
+            ))}
+
+            <tr>
+              <td colSpan={5} className="right-align"><p>Sub Total:</p></td>
+              <td><p>{responseData.sub_total_rp}</p></td>
+            </tr>
+            <tr>
+              <td colSpan={5} className="right-align"><p>PPN 11%:</p></td>
+              <td><p>{responseData.pajak_rp}</p></td>
+            </tr>
+            <tr>
+              <td colSpan={5} className="right-align"><strong><p>Total:</p></strong></td>
+              <td><strong><p>{responseData.total_rp}</p></strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div className="kangaroo">
+
+          <div className="monkey">
+            Terbilang: Empat Puluh Dua Juta Empat Ratus Dua Ribu Rupiah
+          </div>
+          <div className="rabbit">
+            Keterangan: Jatuh tempo pembayaran pada hari Senin tanggal 01 Juli 2024
+          </div>
+          <div>Pembayaran dapat dilakukan dengan cara Transfer:</div>
+          <div>No. Rek: BCA 0083875175 a.n. PT Fismed Global Indonesia</div>
+        </div>
+
+        <div className="koala">
+          <div className="panda">
+            Yang Menerima,<br />
+            <strong>Penanggung Jawab, RS Terkait</strong>
+            <div className="dolphin"></div>
+          </div>
+          <div className="bear">
+            Bandung, 01 Juni 2024<br />
+            <strong>PT Fismed Global Indonesia</strong>
+            <div className="dolphin"></div>
+            <div>(Sonny Sonail)</div>
+            <div>General Manager</div>
+          </div>
+        </div>
+      </div>
+
+      {/* PDF DOWNLOAD ELEMENT END */}
 
     </div>
   );
+
+
 };
 
 export default AdminMainContent;
+
