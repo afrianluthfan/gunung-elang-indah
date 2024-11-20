@@ -665,8 +665,6 @@ const MainContent = () => {
               >
                 SUBMIT
               </Button>
-
-
             </div>
           </form>
         </div>
