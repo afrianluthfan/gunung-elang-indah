@@ -119,7 +119,7 @@ const AdminMainContent = () => {
           );
           Swal.fire({
             title: "Success!",
-            text: "Purchase order berhasil di " + responseData.status + ".",
+            html: "<b>Purchase Order</b> berhasil di " + responseData.status + ".",
             icon: "success",
             confirmButtonText: "OK"
           });
@@ -138,7 +138,7 @@ const AdminMainContent = () => {
   const submitAcc = () => {
     Swal.fire({
       title: 'Apakah Kamu Yakin ?',
-      text: "Apakah kamu yakin ingin menerima purchase order ini ?",
+      html: "Apakah kamu yakin ingin menerima <b>Purchase Order</b> ini ?",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',

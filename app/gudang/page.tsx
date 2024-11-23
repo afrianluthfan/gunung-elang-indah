@@ -7,12 +7,16 @@ import WelcomingMessage from "../../components/WelcomingMessage";
 const ProfilingPage = () => {
   return (
     <section className="flex max-h-screen">
-      {/* Main Content */}
-      <div className="ml-0 h-screen w-full bg-[#EFEFEF] text-black md:ml-[17.3vw] md:w-[82.7vw]">
+      {/* sidebar */}
+      {/* <Sidebar /> */}
+
+      <div className="ml-0 h-screen w-full bg-[#FFFFFF] text-black md:ml-[17.3vw] md:w-[82.7vw]">
+        {/* top bar that says "Welcome, {user}" */}
         <WelcomingMessage />
-        <MainContentLayout>
-          <MainContent />
-        </MainContentLayout>
+        {/* main content */}
+        {/* <MainContentLayout> */}
+        <MainContent />
+        {/* </MainContentLayout> */}
       </div>
     </section>
   );

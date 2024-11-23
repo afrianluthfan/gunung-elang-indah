@@ -131,7 +131,7 @@ const ProformaInvoiceDetail = () => {
             // Jika berhasil, tampilkan pesan sukses
             Swal.fire({
               title: "Success!",
-              text: "Proforma Invoice berhasil di " + responseData.status + ".",
+              html: "<b>Proforma Invoice</b> berhasil di " + responseData.status + ".",
               icon: "success",
               confirmButtonText: "OK",
             });
@@ -190,7 +190,7 @@ const ProformaInvoiceDetail = () => {
   const submitAcc = () => {
     Swal.fire({
       title: "Apakah Kamu Yakin ?",
-      text: "Apakah kamu yakin ingin menerima proforma invoice ini ?",
+      html: "Apakah kamu yakin ingin menerima <b>Proforma Invoice</b> ini ?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",

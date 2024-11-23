@@ -52,7 +52,7 @@ const MainContent = () => {
 
     Swal.fire({
       title: "Apakah Kamu Yakin ?",
-      html: "Apakah kamu yakin ingin " + pesan + " <b>Proforma Invoice</b>  ini?",      icon: "warning",      showCancelButton: true,
+      html: "Apakah kamu yakin ingin " + pesan + " <b>Proforma Invoice</b>  ini?", icon: "warning", showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Ya, Terima!",
@@ -69,7 +69,7 @@ const MainContent = () => {
               if (res.data.status === true) {
                 Swal.fire({
                   title: "Sukses",
-                  text: "Proforma Invoice berhasil diubah",
+                  html: "<b>Proforma Invoice</b> berhasil diubah",
                   icon: "success",
                 }).then((result) => {
                   if (result.isConfirmed) {
@@ -93,7 +93,7 @@ const MainContent = () => {
               if (res.data.status === true) {
                 Swal.fire({
                   title: "Sukses",
-                  text: "Proforma invoice berhasil dibuat",
+                  html: "<b>Proforma Invoice</b> berhasil dibuat",                  
                   icon: "success",
                 }).then((result) => {
                   if (result.isConfirmed) {

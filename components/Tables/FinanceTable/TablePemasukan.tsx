@@ -213,7 +213,7 @@ export default function TableComponent() {
                 className="cursor-pointer active:opacity-50 text-white"
                 onClick={() =>
                   router.push(
-                    `/piutang/edit?id=${user.pi_id}&divisi=${user.divisi}`
+                    `/pemasukan/edit?id=${user.pi_id}&divisi=${user.divisi}`
                   )
                 }
               >
@@ -337,6 +337,11 @@ export default function TableComponent() {
             </option>
           ))}
         </select>
+      </div>
+
+      <div>
+        <hr className="border-t-2 border-gray-300 my-4" />
+        <h1 className="text-sm mb-4 text-center">© License held by PT Gunung Elang Indah</h1>
       </div>
     </div>
   );
