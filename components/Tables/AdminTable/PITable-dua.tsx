@@ -36,6 +36,7 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   DITERIMA: "success",
   DITOLAK: "danger",
   DIPROSES: "primary",
+  DIBATALKAN: "danger",
 };
 
 type User = {
@@ -159,7 +160,7 @@ export default function PITableComponent() {
       index: start + index + 1,
     }));
   }, [page, sortedItems, rowsPerPage]);
-  
+
   const pages = Math.ceil(filteredUsers.length / rowsPerPage);
 
   const renderCell = React.useCallback(
@@ -360,6 +361,11 @@ export default function PITableComponent() {
             ))}
           </select>
         </div>
+      </div>
+
+      <div>
+        <hr className="border-t-2 border-gray-300 my-4" />
+        <h1 className="text-sm mb-4 text-center">© License held by PT Gunung Elang Indah</h1>
       </div>
     </div>
   );

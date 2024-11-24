@@ -21,6 +21,8 @@ import { EditIcon } from "./EditIcon";
 import { EyeIcon } from "./EyeIcon";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { DeleteIcon } from "../../icon/DeleteIcon";
+import Swal from "sweetalert2";
 
 const columns = [
   { name: "NO.", uid: "number" },
@@ -39,6 +41,7 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   DITERIMA: "success",
   DITOLAK: "danger",
   DIPROSES: "primary",
+  DIBATALKAN: "danger",
 };
 
 type ItemData = {
@@ -87,7 +90,7 @@ export default function PITableComponent() {
     router.refresh();
   }, []);
 
-  const fetchData = async () => {
+  const getAllListPOApprove = async () => {
     try {
       const response = await axios.post(`${apiUrl}/purchase-order/list-so`);
       if (response.data.status) {
@@ -101,7 +104,7 @@ export default function PITableComponent() {
   };
 
   useEffect(() => {
-    fetchData();
+    getAllListPOApprove();
   }, []);
 
   const filteredUsers = React.useMemo(() => {
@@ -190,6 +193,19 @@ export default function PITableComponent() {
                   </span>
                 </Tooltip>
               )}
+
+
+              <Tooltip content="Delete" className="text-black">
+                <span
+                  onClick={() =>
+                    deleteUser(user.id) // Assuming deleteUser is the function to call the delete API
+                  }
+                  className="cursor-pointer text-lg text-default-400 active:opacity-50"
+                >
+                  <DeleteIcon />
+                </span>
+              </Tooltip>
+
             </div>
           );
         default:
@@ -198,6 +214,32 @@ export default function PITableComponent() {
     },
     [username, router]
   );
+
+  const deleteUser = async (id: number) => {
+    const confirmDelete = await Swal.fire({
+      title: 'Konfirmasi Pembatalan',
+      text: 'Apakah Anda yakin ingin membatalkan?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, batalkan!',
+      cancelButtonText: 'Tidak, kembali'
+    });
+
+    if (confirmDelete.isConfirmed) {
+      try {
+        const response = await axios.post(`${apiUrl}/purchase-order/cancel`, {
+          id: id,
+        });
+        if (response.status !== 200) {
+          throw new Error('Failed to delete user');
+        } else {
+          await getAllListPOApprove(); // Call the API to refresh the data
+        }
+      } catch (error) {
+        console.error('Error deleting user:', error);
+      }
+    }
+  };
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters({
@@ -278,6 +320,11 @@ export default function PITableComponent() {
             </option>
           ))}
         </select>
+      </div>
+
+      <div>
+        <hr className="border-t-2 border-gray-300 my-4" />
+        <h1 className="text-sm mb-4 text-center">© License held by PT Gunung Elang Indah</h1>
       </div>
     </div>
   );

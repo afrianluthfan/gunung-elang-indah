@@ -239,7 +239,12 @@ const MainContent = () => {
             </select>
           </div>
         </div>
+        <div>
+          <hr className="border-t-2 border-gray-300 my-4" />
+          <h1 className="text-sm mb-4 text-center">© License held by PT Gunung Elang Indah</h1>
+        </div>
       </div>
+
     </div>
   );
 };

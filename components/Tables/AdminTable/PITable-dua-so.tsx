@@ -21,6 +21,8 @@ import { EditIcon } from "./EditIcon";
 import { EyeIcon } from "./EyeIcon";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { DeleteIcon } from "../../icon/DeleteIcon";
+import Swal from "sweetalert2";
 
 const columns = [
   { name: "NO.", uid: "number" },
@@ -36,6 +38,7 @@ const statusColorMap = {
   DITERIMA: "success",
   DITOLAK: "danger",
   DIPROSES: "primary",
+  DIBATALKAN: "danger",
 };
 
 type User = {
@@ -83,7 +86,7 @@ export default function PITableComponent() {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchData = async () => {
+  const getAllListSO = async () => {
     try {
       const response = await axios.post(
         `${apiUrl}/proforma-invoice/get-all-list-so`
@@ -100,7 +103,7 @@ export default function PITableComponent() {
   };
 
   useEffect(() => {
-    fetchData();
+    getAllListSO();
   }, []);
 
   const filteredUsers = React.useMemo(() => {
@@ -109,8 +112,8 @@ export default function PITableComponent() {
       const startDate = filters.startDate ? new Date(filters.startDate) : null;
       const endDate = filters.endDate ? new Date(filters.endDate) : null;
 
-      const isWithinDateRange = 
-        (!startDate || date >= startDate) && 
+      const isWithinDateRange =
+        (!startDate || date >= startDate) &&
         (!endDate || date <= endDate);
 
       return (
@@ -129,23 +132,42 @@ export default function PITableComponent() {
 
   const sortedItems = React.useMemo(() => {
     return [...filteredUsers].sort((a: User, b: User) => {
-      if (sortDescriptor.column === 'total') {
-        const valueA = Number(a.total?.replace(/[^0-9]/g, '')) || 0;
-        const valueB = Number(b.total?.replace(/[^0-9]/g, '')) || 0;
-        return sortDescriptor.direction === "descending" ? valueB - valueA : valueA - valueB;
+      const column = sortDescriptor.column as keyof User;
+
+      // Handle date sorting
+      if (column === 'created_at') {
+        const dateA = new Date(a.created_at).getTime();
+        const dateB = new Date(b.created_at).getTime();
+        return sortDescriptor.direction === "descending"
+          ? dateB - dateA
+          : dateA - dateB;
       }
 
-      const first =
-        a[sortDescriptor.column as keyof User] !== undefined
-          ? String(a[sortDescriptor.column as keyof User])
-          : "";
-      const second =
-        b[sortDescriptor.column as keyof User] !== undefined
-          ? String(b[sortDescriptor.column as keyof User])
-          : "";
+      // Handle total amount sorting
+      if (column === 'total') {
+        const valueA = Number(a.total?.replace(/[^0-9]/g, '')) || 0;
+        const valueB = Number(b.total?.replace(/[^0-9]/g, '')) || 0;
+        return sortDescriptor.direction === "descending"
+          ? valueB - valueA
+          : valueA - valueB;
+      }
 
-      const cmp = first.localeCompare(second);
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
+      // Handle sub_total sorting
+      if (column === 'sub_total') {
+        const valueA = Number(a.sub_total) || 0;
+        const valueB = Number(b.sub_total) || 0;
+        return sortDescriptor.direction === "descending"
+          ? valueB - valueA
+          : valueA - valueB;
+      }
+
+      // Default string sorting for other columns
+      const valueA = String(a[column] || '').toLowerCase();
+      const valueB = String(b[column] || '').toLowerCase();
+
+      return sortDescriptor.direction === "descending"
+        ? valueB.localeCompare(valueA)
+        : valueA.localeCompare(valueB);
     });
   }, [sortDescriptor, filteredUsers]);
 
@@ -156,7 +178,7 @@ export default function PITableComponent() {
       index: start + index + 1,
     }));
   }, [page, sortedItems, rowsPerPage]);
-  
+
 
   const pages = Math.ceil(filteredUsers.length / rowsPerPage);
 
@@ -213,6 +235,18 @@ export default function PITableComponent() {
                   </span>
                 </Tooltip>
               )}
+              {username === "ADMIN" && (
+                <Tooltip content="Delete" className="text-black">
+                  <span
+                    onClick={() =>
+                      deleteUser(user.id) // Assuming deleteUser is the function to call the delete API
+                    }
+                    className="cursor-pointer text-lg text-default-400 active:opacity-50"
+                  >
+                    <DeleteIcon />
+                  </span>
+                </Tooltip>
+              )}
             </div>
           );
         default:
@@ -221,6 +255,32 @@ export default function PITableComponent() {
     }, [username, router],
   );
 
+
+  const deleteUser = async (id: number) => {
+    const confirmDelete = await Swal.fire({
+      title: 'Konfirmasi Pembatalan',
+      text: 'Apakah Anda yakin ingin membatalkan?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, batalkan!',
+      cancelButtonText: 'Tidak, kembali'
+    });
+
+    if (confirmDelete.isConfirmed) {
+      try {
+        const response = await axios.post(`${apiUrl}/proforma-invoice/cancel`, {
+          id: id,
+        });
+        if (response.status !== 200) {
+          throw new Error('Failed to delete user');
+        } else {
+          await getAllListSO(); // Call the API to refresh the data
+        }
+      } catch (error) {
+        console.error('Error deleting user:', error);
+      }
+    }
+  };
   const onRowsPerPageChange = React.useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       setRowsPerPage(Number(e.target.value));
@@ -341,6 +401,11 @@ export default function PITableComponent() {
             ))}
           </select>
         </div>
+      </div>
+
+      <div>
+        <hr className="border-t-2 border-gray-300 my-4" />
+        <h1 className="text-sm mb-4 text-center">© License held by PT Gunung Elang Indah</h1>
       </div>
     </div>
   );

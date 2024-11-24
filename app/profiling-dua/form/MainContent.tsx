@@ -103,6 +103,26 @@ const MainContent = () => {
     localStorage.removeItem("selectedHospital");
     localStorage.removeItem("selectedDoctor");
 
+    if (divisi === "1") {
+      if (!data.nama_perusahaan || !data.address_perusahaan || !data.nama_dokter) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Data Blm Lengkap',
+          html: 'Mohon lengkapi data <b>Formulir</b>',
+        });
+        return;
+      }
+    } else {
+      if (!data.nama_perusahaan || !data.address_perusahaan ) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Data Blm Lengkap',
+          html: 'Mohon lengkapi data <b>Formulir</b>',
+        });
+        return;
+      }
+    }
+
     const requestBody = {
       nama_perusahaan: data.nama_perusahaan,
       address_perusahaan: data.address_perusahaan,
@@ -162,7 +182,7 @@ const MainContent = () => {
           } catch (error) {
             console.error("Error submitting data", error);
             Swal.fire("Error!", "Terjadi kesalahan saat mengirim data.", "error");
-          } 
+          }
         }
       });
     } catch (error) {
@@ -178,12 +198,12 @@ const MainContent = () => {
     if (selectedHospital) {
       setResponseData((prevData) => ({
         ...prevData,
-        rumah_sakit: selectedHospital.name, 
+        rumah_sakit: selectedHospital.name,
       }));
-      setInputCompanyValue(selectedHospital.name); 
-      setHospitalSuggestions([]); 
+      setInputCompanyValue(selectedHospital.name);
+      setHospitalSuggestions([]);
 
-      localStorage.setItem("selectedHospital", selectedHospital.name); 
+      localStorage.setItem("selectedHospital", selectedHospital.name);
     } else {
       console.log("No hospital found for the selected suggestion");
     }
@@ -199,7 +219,7 @@ const MainContent = () => {
         ...prevData,
         nama_dokter: selectedDoctor.namaDokter,
       }));
-      setInputDoctorValue(selectedDoctor.namaDokter); 
+      setInputDoctorValue(selectedDoctor.namaDokter);
       setDoctorSuggestions([]);
 
       localStorage.setItem("selectedDoctor", selectedDoctor.namaDokter);
@@ -249,16 +269,16 @@ const MainContent = () => {
                   <Input
                     {...register("nama_perusahaan")}
                     name="nama_perusahaan"
-                    value={inputCompanyValue} 
+                    value={inputCompanyValue}
                     placeholder="Nama Perusahaan"
                     onChange={(e) => {
                       const value = e.target.value;
-                      setInputCompanyValue(value); 
+                      setInputCompanyValue(value);
 
                       const filteredSuggestions = hospitalData
                         .filter(
                           (hospital) =>
-                            hospital?.name?.toLowerCase()?.includes(value?.toLowerCase() || ''), 
+                            hospital?.name?.toLowerCase()?.includes(value?.toLowerCase() || ''),
                         )
                         .map((hospital) => hospital.name);
 
@@ -290,7 +310,7 @@ const MainContent = () => {
                           key={idx}
                           onClick={() =>
                             handleHospitalSuggestionClick(suggestion)
-                          } 
+                          }
                           className="cursor-pointer p-2 hover:bg-gray-200"
                         >
                           {suggestion}

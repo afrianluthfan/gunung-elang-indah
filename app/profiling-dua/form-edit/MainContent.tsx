@@ -184,6 +184,26 @@ const MainContent = () => {
     localStorage.removeItem("selectedHospital");
     localStorage.removeItem("selectedDoctor");
 
+    if (divisi === "1") {
+      if (!data.nama_perusahaan || !data.address_perusahaan || !data.nama_dokter) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Data Blm Lengkap',
+          html: 'Mohon lengkapi data <b>Formulir</b>',
+        });
+        return;
+      }
+    } else {
+      if (!data.nama_perusahaan || !data.address_perusahaan ) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Data Blm Lengkap',
+          html: 'Mohon lengkapi data <b>Formulir</b>',
+        });
+        return;
+      }
+    }
+
     const requestBody = {
       id: parseInt(id ?? "0"),
       nama_perusahaan: data.nama_perusahaan,

@@ -1,4 +1,4 @@
-import { Button, Divider, Input } from "@nextui-org/react";
+import { Button, Divider, Input, Tooltip } from "@nextui-org/react";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import {
@@ -12,6 +12,8 @@ import {
   SortDescriptor,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
+import { EyeIcon } from "../../components/icon/EyeIcon";
+import { EditIcon } from "../../components/icon/EditIcon";
 
 type User = {
   id: number;
@@ -176,20 +178,24 @@ const MainContent = () => {
       if (columnKey === "action") {
         return (
           <div className="flex gap-2">
-            <Button
-              className="bg-yellow-500 text-white"
-              size="sm"
-              onClick={() => router.push(`/profiling-dua/form-edit?id=${user.id}`)}
-            >
-              Edit
-            </Button>
-            <Button
-              className="bg-blue-600 text-white"
-              size="sm"
-              onClick={() => router.push(`/profiling-dua/detail?id=${user.id}`)}
-            >
-              Detail
-            </Button>
+
+            <Tooltip content="Details" className="text-black">
+              <span
+                onClick={() => router.push(`/profiling-dua/detail?id=${user.id}`)}
+                className="cursor-pointer text-lg text-default-400 active:opacity-50"
+              >
+                <EyeIcon />
+              </span>
+            </Tooltip>
+
+            <Tooltip content="Edit" className="text-black">
+              <span
+                onClick={() => router.push(`/profiling-dua/form-edit?id=${user.id}`)}
+                className="cursor-pointer text-lg text-default-400 active:opacity-50"
+              >
+                <EditIcon />
+              </span>
+            </Tooltip>
           </div>
         );
       }
@@ -289,6 +295,11 @@ const MainContent = () => {
             total={pages}
           />
         </div>
+      </div>
+
+      <div>
+        <hr className="border-t-2 border-gray-300 my-4" />
+        <h1 className="text-sm mb-4 text-center">© License held by PT Gunung Elang Indah</h1>
       </div>
     </div>
   );
