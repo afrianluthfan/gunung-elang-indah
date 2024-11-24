@@ -36,6 +36,7 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   DITERIMA: "success",
   DITOLAK: "danger",
   DIPROSES: "primary",
+  DIBATALKAN: "danger",
 };
 
 type User = {

@@ -21,6 +21,8 @@ import { EditIcon } from "./EditIcon";
 import { EyeIcon } from "./EyeIcon";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { DeleteIcon } from "../../icon/DeleteIcon";
+import Swal from "sweetalert2";
 
 const columns = [
   { name: "NO.", uid: "number" },
@@ -36,6 +38,7 @@ const statusColorMap = {
   DITERIMA: "success",
   DITOLAK: "danger",
   DIPROSES: "primary",
+  DIBATALKAN: "danger",
 };
 
 type User = {
@@ -83,7 +86,7 @@ export default function PITableComponent() {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchData = async () => {
+  const getAllListSO = async () => {
     try {
       const response = await axios.post(
         `${apiUrl}/proforma-invoice/get-all-list-so`
@@ -100,7 +103,7 @@ export default function PITableComponent() {
   };
 
   useEffect(() => {
-    fetchData();
+    getAllListSO();
   }, []);
 
   const filteredUsers = React.useMemo(() => {
@@ -232,6 +235,18 @@ export default function PITableComponent() {
                   </span>
                 </Tooltip>
               )}
+              {username === "ADMIN" && (
+                <Tooltip content="Delete" className="text-black">
+                  <span
+                    onClick={() =>
+                      deleteUser(user.id) // Assuming deleteUser is the function to call the delete API
+                    }
+                    className="cursor-pointer text-lg text-default-400 active:opacity-50"
+                  >
+                    <DeleteIcon />
+                  </span>
+                </Tooltip>
+              )}
             </div>
           );
         default:
@@ -240,6 +255,32 @@ export default function PITableComponent() {
     }, [username, router],
   );
 
+
+  const deleteUser = async (id: number) => {
+    const confirmDelete = await Swal.fire({
+      title: 'Konfirmasi Pembatalan',
+      text: 'Apakah Anda yakin ingin membatalkan?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, batalkan!',
+      cancelButtonText: 'Tidak, kembali'
+    });
+
+    if (confirmDelete.isConfirmed) {
+      try {
+        const response = await axios.post(`${apiUrl}/proforma-invoice/cancel`, {
+          id: id,
+        });
+        if (response.status !== 200) {
+          throw new Error('Failed to delete user');
+        } else {
+          await getAllListSO(); // Call the API to refresh the data
+        }
+      } catch (error) {
+        console.error('Error deleting user:', error);
+      }
+    }
+  };
   const onRowsPerPageChange = React.useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       setRowsPerPage(Number(e.target.value));

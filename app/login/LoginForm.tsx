@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
 import axios from "axios";
 import { logIn } from "../../redux/features/auth-slice";
+import Swal from "sweetalert2";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -31,15 +32,15 @@ const LoginForm = () => {
 
   const handleLogin = async () => {
     if (!password || !username) {
-      setAlert({
-        visible: true,
-        message: !username
-          ? "Username Masih Kosong!"
-          : "Password Masih Kosong!",
+      Swal.fire({
+        icon: 'warning',
+        title: 'Perhatian',
+        text: !username ? "Username Masih Kosong!" : "Password Masih Kosong!",
+        timerProgressBar: true,
+        willClose: () => {
+          setAlert({ visible: false, message: "" });
+        }
       });
-      setTimeout(() => {
-        setAlert({ visible: false, message: "" });
-      }, 5000); // Hide alert after 5 seconds
       return;
     }
 
@@ -83,17 +84,23 @@ const LoginForm = () => {
             break;
         }
       } else {
-        setAlert({ visible: true, message: "Username atau Password Salah!" });
-        setTimeout(() => {
-          setAlert({ visible: false, message: "" });
-        }, 3000); // Hide alert after 3 seconds
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Error',
+          text: 'Username atau Password Salah!',
+          timerProgressBar: true,
+          willClose: () => {
+            setAlert({ visible: false, message: "" });
+          }
+        });
       }
     } catch (error) {
-      console.error("Login Error:", error); // Debugging the error
-      setAlert({ visible: true, message: "Terjadi kesalahan saat login!" });
-      setTimeout(() => {
-        setAlert({ visible: false, message: "" });
-      }, 3000); // Hide alert after 3 seconds
+          Swal.fire({
+            icon: 'error',
+            title: 'Login Error',
+            text: 'Terjadi kesalahan saat login!',
+            timerProgressBar: true,
+          });
     }
   };
 
