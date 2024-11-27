@@ -1,16 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import Swal from "sweetalert2";
+import './invoicePrint.css'
 import {
   Button,
   Divider,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
   TableRow,
+  useDisclosure,
 } from "@nextui-org/react";
 
 type ItemDetailPI = {
@@ -26,6 +33,7 @@ type ItemDetailPI = {
 };
 
 type ProformaInvoice = {
+  tanggalAsli: string;
   nama_pasien: string;
   nama_dokter: string;
   alamat: string;
@@ -46,7 +54,10 @@ type ProformaInvoice = {
   nama_customer: string;
   alamat_customer: string;
   rm: string;
+
+  terbilang: string;
   item_detail_pi: ItemDetailPI[];
+  kwitansi: string;
 };
 
 const ProformaInvoiceDetail = () => {
@@ -73,6 +84,9 @@ const ProformaInvoiceDetail = () => {
     alamat: "",
     rm: "",
     item_detail_pi: [],
+    terbilang: "",
+    kwitansi: "",
+    tanggalAsli: "",
   });
 
   const [shouldSubmit, setShouldSubmit] = useState(false);
@@ -81,6 +95,17 @@ const ProformaInvoiceDetail = () => {
   const id = searchParams.get("id");
   const divisi = searchParams.get("divisi");
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [size, setSize] = React.useState('md')
+
+  const sizes = ["3xl"];
+
+
+  const handleOpen = (size: string) => {
+    setSize(size)
+    onOpen();
+  }
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("statusAccount");
@@ -101,6 +126,38 @@ const ProformaInvoiceDetail = () => {
           `${apiUrl}/proforma-invoice/detailPI-so`,
           { id: id, divisi: divisi },
         );
+
+        const invoiceNumber = response.data.data.invoice_number;
+        const parts = invoiceNumber.split("/");
+        const nomorInvoice = parts[0].replace("INV", "");
+        const bulanKw = parts[2];
+        const tahunKw = parts[3];
+        const nomorKwitansi = `KW${nomorInvoice}/FGI/BDG/${bulanKw}/${tahunKw}`;
+
+
+        const tanggal = response.data.data.tanggal;
+        const bulanMapping = {
+          "01": "Januari",
+          "02": "Februari",
+          "03": "Maret",
+          "04": "April",
+          "05": "Mei",
+          "06": "Juni",
+          "07": "Juli",
+          "08": "Agustus",
+          "09": "September",
+          "10": "Oktober",
+          "11": "November",
+          "12": "Desember"
+        };
+
+        const [tanggalHari, bulanAngka, tahun] = tanggal.split("-");
+        const namaBulan = bulanMapping[bulanAngka as keyof typeof bulanMapping];
+        const tanggalFormatted = `${tanggalHari} ${namaBulan} ${tahun}`;
+        console.log(tanggalFormatted);
+
+        response.data.data.tanggalAsli = tanggalFormatted;
+        response.data.data.kwitansi = nomorKwitansi;
         setResponseData(response.data.data);
       } catch (error) {
         console.error("Error fetching data", error);
@@ -272,6 +329,45 @@ const ProformaInvoiceDetail = () => {
         confirmButtonText: "OK",
       });
     }
+  };
+
+  const pdfRef = useRef(null);
+
+  const [isVisible, setIsVisible] = useState(false);
+
+  const downloadPDF = async () => {
+    setIsVisible(true); // Tampilkan elemen sementara
+
+    setTimeout(async () => {
+      const html2pdfModule = await import('html2pdf.js');
+      const html2pdf = html2pdfModule.default;
+
+      const element = pdfRef.current;
+      if (!element) {
+        console.error("Element for PDF generation is not found.");
+        setIsVisible(false);
+        return;
+      }
+
+      let namaFile = "KWITANSI - " + responseData.kwitansi;
+      const options = {
+        margin: 1,
+        filename: namaFile,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
+      };
+
+      html2pdf()
+        .set(options)
+        .from(element)
+        .save()
+        .then(() => setIsVisible(false)) // Sembunyikan kembali setelah unduh
+        .catch((error: any) => {
+          console.error("Error generating PDF", error);
+          setIsVisible(false);
+        });
+    }, 0); // Tunggu sebentar agar PDF bisa di-render
   };
 
   return (
@@ -502,7 +598,7 @@ const ProformaInvoiceDetail = () => {
                 </TableCell>
                 <TableCell className="text-center">{item.variable}</TableCell>
                 <TableCell className="text-center">
-                 {item.quantity}
+                  {item.quantity}
                 </TableCell>
                 <TableCell className="text-center">
                   {item.harga_satuan}
@@ -533,12 +629,104 @@ const ProformaInvoiceDetail = () => {
 
       <Divider />
 
-      <Button className="w-full bg-green-600 text-white">
-        Download Kwitansi
+      <Button key={size} onPress={() => handleOpen(size)} className="w-full bg-green-600 text-white">
+        ↓ | Download Kwitansi
       </Button>
 
-     
+      {/* Kwitansi modal start  */}
 
+      <Modal
+        size={"3xl"}
+        isOpen={isOpen}
+        onClose={onClose}
+        scrollBehavior="inside"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1 text-black">Kwitansi Preview</ModalHeader>
+              <ModalBody>
+                <div
+                  className="invoice-container text-black"
+                  ref={pdfRef}
+                >
+                  <div className="flex justify-between">
+                    <img src="/logo.jpg" alt="Logo" className="h-20 w-auto mr[90px]" />
+                    <div className="lion mt-5">
+                      <h1 className="chile">KWITANSI</h1>
+                    </div>
+                    <h1 className="ml-[90px]"> </h1>
+                  </div>
+
+                  <hr className="snake" />
+
+                  <div className="text-xs my-4">
+                    <table className="zebra" >
+                      <tbody>
+                        <tr>
+                          <td>Nomor</td>
+                          <td>: {responseData.kwitansi}</td>
+                        </tr>
+                        <tr>
+                          <td>Nama</td>
+                          <td>: {responseData.rumah_sakit}</td>
+                        </tr>
+
+                        <tr>
+                          <td>Banyaknya Uang</td>
+                          <td>: <b>{responseData.total}</b></td>
+                        </tr>
+                        <tr>
+                          <td>Untuk Pembayaran</td>
+                          <td>: {responseData.invoice_number}</td>
+                        </tr>
+
+                      </tbody>
+                    </table>
+
+                  </div>
+
+                  <div className="kangaroo">
+                    <div className="monkey">
+                      <p className="mb-4">Terbilang: {responseData.terbilang}</p>
+                    </div>
+                    <div className="my-2">
+                      <div>Pembayaran dapat dilakukan dengan cara Transfer:</div>
+                      <div>No. Rek: <b>BCA 0083875175</b> </div>
+                      <div>a.n. <b>PT Fismed Global Indonesia</b></div>
+                    </div>
+
+                  </div>
+
+                  <div className="koala">
+                    <div className="panda">
+                      <br />
+                      <strong></strong>
+                    </div>
+                    <div className="bear">
+                      Bandung, {responseData.tanggalAsli}<br />
+                      <strong>PT Fismed Global Indonesia</strong>
+                      <div className="dolphin"></div>
+                      <div>(Sonny Sonail)</div>
+                      <div>General Manager</div>
+                    </div>
+                  </div>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose} className="border-red-600 border">
+                  Close
+                </Button>
+                <Button onClick={downloadPDF} className=" bg-green-600 text-white">
+                  ↓ | Download KWITANSI
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      {/* Kwitansi modal end  */}
     </div>
   );
 };

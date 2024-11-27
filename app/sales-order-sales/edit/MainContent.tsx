@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import Swal from "sweetalert2";
+import './invoicePrint.css'
 import {
   Button,
   Divider,
@@ -11,7 +12,14 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure
 } from "@nextui-org/react";
+
 
 type ItemDetailPI = {
   gudang: string;
@@ -26,6 +34,8 @@ type ItemDetailPI = {
 };
 
 type ProformaInvoice = {
+  tanggal: string;
+  terbilang: string;
   nama_pasien: string;
   nama_dokter: string;
   alamat: string;
@@ -46,6 +56,7 @@ type ProformaInvoice = {
   nama_customer: string;
   alamat_customer: string;
   rm: string;
+  tanggalAsli: string;
   item_detail_pi: ItemDetailPI[];
 };
 
@@ -58,6 +69,7 @@ const ProformaInvoiceDetail = () => {
     divisi: "",
     invoice_number: "",
     due_date: "",
+    tanggal: "",
     number_si: "",
     sub_total: "",
     pajak: "",
@@ -73,6 +85,8 @@ const ProformaInvoiceDetail = () => {
     alamat: "",
     rm: "",
     item_detail_pi: [],
+    terbilang: "",
+    tanggalAsli: "",
   });
 
   const [shouldSubmit, setShouldSubmit] = useState(false);
@@ -81,6 +95,17 @@ const ProformaInvoiceDetail = () => {
   const id = searchParams.get("id");
   const divisi = searchParams.get("divisi");
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [size, setSize] = React.useState('md')
+
+  const sizes = ["3xl"];
+
+
+  const handleOpen = (size: string) => {
+    setSize(size)
+    onOpen();
+  }
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("statusAccount");
@@ -101,6 +126,29 @@ const ProformaInvoiceDetail = () => {
           `${apiUrl}/proforma-invoice/detailPI-so`,
           { id: id, divisi: divisi },
         );
+
+        const tanggal = response.data.data.tanggal;
+        const bulanMapping = {
+          "01": "Januari",
+          "02": "Februari",
+          "03": "Maret",
+          "04": "April",
+          "05": "Mei",
+          "06": "Juni",
+          "07": "Juli",
+          "08": "Agustus",
+          "09": "September",
+          "10": "Oktober",
+          "11": "November",
+          "12": "Desember"
+        };
+
+        const [tanggalHari, bulanAngka, tahun] = tanggal.split("-");
+        const namaBulan = bulanMapping[bulanAngka as keyof typeof bulanMapping];
+        const tanggalFormatted = `${tanggalHari} ${namaBulan} ${tahun}`;
+        console.log(tanggalFormatted);
+
+        response.data.data.tanggalAsli = tanggalFormatted;
         setResponseData(response.data.data);
       } catch (error) {
         console.error("Error fetching data", error);
@@ -274,11 +322,70 @@ const ProformaInvoiceDetail = () => {
     }
   };
 
+  // HANDLER DOWNLOAD INVOICE START 
+  const pdfRef = useRef(null);
+
+  const downloadPDF = async () => {
+    setIsVisible(true); // Tampilkan elemen sementara
+
+    setTimeout(async () => {
+      const html2pdfModule = await import('html2pdf.js');
+      const html2pdf = html2pdfModule.default;
+
+      const element = pdfRef.current;
+      if (!element) {
+        console.error("Element for PDF generation is not found.");
+        setIsVisible(false);
+        return;
+      }
+
+      let namaFile = "INVOICE - " + responseData.invoice_number;
+      const options = {
+        margin: 1,
+        filename: namaFile,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
+      };
+
+      html2pdf()
+        .set(options)
+        .from(element)
+        .save()
+        .then(() => setIsVisible(false)) // Sembunyikan kembali setelah unduh
+        .catch((error: any) => {
+          console.error("Error generating PDF", error);
+          setIsVisible(false);
+        });
+    }, 0); // Tunggu sebentar agar PDF bisa di-render
+  };
+
+  const [isVisible, setIsVisible] = useState(false);
+  // HANDLER DOWNLOAD INVOICE END 
+
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
-      <h1 className="font-semibold lg:text-[1.85vh]">
-        Detail SO Proforma Invoice
-      </h1>
+      <div className="my-1 flex justify-between">
+        <h1 className="font-semibold lg:text-[1.85vh]">
+          Detail SO Proforma Invoice
+        </h1>
+        <div className="flex gap-2">
+          <Button className="bg-blue-500 text-white p-2 rounded-xl hover:bg-blue-600"
+            onClick={handleSetNamaBarang}>
+            ⏎ | Set Perubahan
+          </Button>
+          {username === "ADMIN" && responseData.status === "Diterima" && (
+            <Button key={size} onPress={() => handleOpen(size)} className="bg-green-600 text-white" >↓ | Download Invoice</Button>
+          )}
+          {username === "LOGISTIK" && responseData.status === "Diterima" && (
+            <Button className="bg-green-600 text-white">
+              ↓ | Download Surat Jalan
+            </Button>
+          )}
+        </div>
+      </div>
+
+
       <Divider />
 
       {/* Jika divisi === Ortopedic */}
@@ -456,13 +563,9 @@ const ProformaInvoiceDetail = () => {
 
       <Divider />
 
-      <div className="my-1 flex justify-between">
-        <h1 className="font-semibold lg:text-[1.4vh] pt-2">List Barang</h1>
-        <Button className="bg-[#0C295F] text-white p-2 rounded-xl hover:bg-[#1c4083]"
-          onClick={handleSetNamaBarang}>
-          Set Nama Barang
-        </Button>
-      </div>
+      <h1 className="font-semibold text-medium">
+        List Barang
+      </h1>
 
       {/* Bagian Table */}
       <div className="flex items-center justify-between overflow-x-scroll">
@@ -596,17 +699,192 @@ const ProformaInvoiceDetail = () => {
 
       {username === "LOGISTIK" && responseData.status === "Diterima" && (
         <Button className="w-full bg-green-600 text-white">
-          Download Surat Jalan
+          ↓ | Download Surat Jalan
         </Button>
       )}
 
-      {username === "ADMIN" && responseData.status === "Diterima" && (
-        <Button className="w-full bg-green-600 text-white">
-          Download INVOICE
-        </Button>
-      )}
+
+
+      <Modal
+        size={"3xl"}
+        isOpen={isOpen}
+        onClose={onClose}
+        scrollBehavior="inside"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1 text-black">Invoice Preview</ModalHeader>
+              <ModalBody>
+                <div
+                  className="invoice-container text-black"
+                  ref={pdfRef}
+                >
+                  <div className="flex justify-between">
+                    <img src="/logo.jpg" alt="Logo" className="h-20 w-auto mr[90px]" />
+                    <div className="lion mt-5">
+                      <h1 className="chile">INVOICE</h1>
+                    </div>
+                    <h1 className="ml-[90px]"> </h1>
+                  </div>
+
+                  <hr className="snake" />
+
+                  <div className="tiger">
+                    <table className="zebra" >
+                      <tbody>
+                        <tr>
+                          <td>Nomor Invoice</td>
+                          <td>: {responseData.invoice_number}</td>
+                        </tr>
+                        <tr>
+                          <td>Nomor Surat Jalan</td>
+                          <td>: {responseData.number_si}</td>
+                        </tr>
+
+                        <tr>
+                          <td>Tanggal Invoice</td>
+                          <td>: {responseData.tanggal}</td>
+                        </tr>
+                        {/* <tr>
+                          <td>Jatuh Tempo Dummy</td>
+                          <td>: {responseData.tanggal_tindakan}</td>
+                        </tr> */}
+                        {responseData.divisi !== "Radiologi" && (
+                          <>
+                            <tr>
+                              <td>Tanggal Tindakan</td>
+                              <td>: {responseData.tanggal_tindakan}</td>
+                            </tr>
+                            <tr>
+                              <td>Nama Dokter</td>
+                              <td>: {responseData.nama_dokter}</td>
+                            </tr>
+                            <tr>
+                              <td>Nama Pasien</td>
+                              <td>: {responseData.nama_pasien}</td>
+                            </tr>
+                          </>
+                        )}
+                        <tr>
+                          <td>Rekam Medis</td>
+                          <td>: {responseData.rm}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td>Kepada Yth:</td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>{responseData.nama_customer}</td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>Jl. Dr. Moestopo No.6, Pasarjoyo</td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>Kec. Tenggarong</td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>Kabupaten Karawang</td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>Kode Pos: 41361</td>
+                          <td></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <table className="penguin">
+                    <thead>
+                      <tr>
+                        <th><p>No</p></th>
+                        <th><p>KAT</p></th>
+                        <th><p>Nama Barang</p></th>
+                        <th><p>Qty</p></th>
+                        <th><p>H. Satuan</p></th>
+                        <th><p>Diskon</p></th>
+                        <th><p>Subtotal</p></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {responseData.item_detail_pi.map((item, index) => (
+                        <tr key={item.id}>
+                          <td><p>{index + 1}</p></td>
+                          <td><p>{item.kat}</p></td>
+                          <td><p>{item.nama_barang}</p></td>
+                          <td><p>{item.quantity}</p></td>
+                          <td><p>{item.harga_satuan}</p></td>
+                          <td><p>{item.discount}</p></td>
+                          <td><p>{item.sub_total_item}</p></td>
+                        </tr>
+                      ))}
+
+                      <tr>
+                        <td colSpan={6} className="right-align"><p>Sub Total:</p></td>
+                        <td><p>{responseData.sub_total}</p></td>
+                      </tr>
+                      <tr>
+                        <td colSpan={6} className="right-align"><p>PPN 11%:</p></td>
+                        <td><p>{responseData.pajak}</p></td>
+                      </tr>
+                      <tr>
+                        <td colSpan={6} className="right-align"><strong><p>Total:</p></strong></td>
+                        <td><strong><p>{responseData.total}</p></strong></td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div className="kangaroo">
+                    <div className="monkey">
+                      Terbilang: {responseData.terbilang}
+                    </div>
+                    <div className="rabbit">
+                      Keterangan: Jatuh tempo pembayaran pada hari Senin tanggal 01 Juli 2024
+                    </div>
+                    <div>Pembayaran dapat dilakukan dengan cara Transfer:</div>
+                    <div>No. Rek: BCA 0083875175 a.n. PT Fismed Global Indonesia</div>
+                  </div>
+
+                  <div className="koala">
+                    <div className="panda">
+                      Yang Menerima,<br />
+                      <strong>Penanggung Jawab, RS Terkait</strong>
+                      <div className="dolphin"></div>
+                    </div>
+                    <div className="bear">
+                      Bandung, { responseData.tanggalAsli}<br />
+                      <strong>PT Fismed Global Indonesia</strong>
+                      <div className="dolphin"></div>
+                      <div>(Sonny Sonail)</div>
+                      <div>General Manager</div>
+                    </div>
+                  </div>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose} className="border-red-600 border">
+                  Close
+                </Button>
+                <Button onClick={downloadPDF} className=" bg-green-600 text-white">
+                  ↓ | Download INVOICE
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
+
+
 };
 
 export default ProformaInvoiceDetail;
