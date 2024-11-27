@@ -5,30 +5,20 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 WORKDIR /app
 
-# Install dependencies (dev and prod)
-FROM base AS deps
+# Install dependencies and build in single stage
+FROM base AS builder
 COPY package.json pnpm-lock.yaml ./
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-
-# Build application
-FROM base AS build
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --prefer-offline
 COPY . ./
-COPY --from=deps /app/node_modules ./node_modules
-RUN --mount=type=cache,target=.next pnpm run build
-
-# Install only production dependencies
-FROM base AS prod-deps
-COPY package.json pnpm-lock.yaml ./
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+RUN --mount=type=cache,id=next,target=/app/.next/cache pnpm run build
 
 # Final stage
 FROM base
 RUN apk add --no-cache curl bash
-COPY .env ./ 
-
-# Only copy the .env file in the final stage
+COPY package.json pnpm-lock.yaml ./
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile --prefer-offline
+COPY .env ./
 RUN chmod 644 ./.env
-COPY --from=prod-deps /app/node_modules ./node_modules
-COPY --from=build /app/.next ./.next
+COPY --from=builder /app/.next ./.next
 EXPOSE 3000
 CMD ["pnpm", "start"]
