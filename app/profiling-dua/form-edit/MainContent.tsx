@@ -188,7 +188,7 @@ const MainContent = () => {
       if (!data.nama_perusahaan || !data.address_perusahaan || !data.nama_dokter) {
         Swal.fire({
           icon: 'warning',
-          title: 'Data Blm Lengkap',
+          title: 'Data Belum Lengkap',
           html: 'Mohon lengkapi data <b>Formulir</b>',
         });
         return;
@@ -197,7 +197,7 @@ const MainContent = () => {
       if (!data.nama_perusahaan || !data.address_perusahaan ) {
         Swal.fire({
           icon: 'warning',
-          title: 'Data Blm Lengkap',
+          title: 'Data Belum Lengkap',
           html: 'Mohon lengkapi data <b>Formulir</b>',
         });
         return;

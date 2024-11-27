@@ -1,0 +1,122 @@
+.elephant {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+}
+
+.lion {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.lion h1 {
+    margin: 0;
+    font-size: 12px;
+}
+
+.tiger {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    font-size: 12px;
+}
+
+.tiger .zebra,
+.tiger .giraffe {
+    width: 48%;
+}
+
+.penguin {
+    font-size: 12px;
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.penguin th,
+.penguin td {
+    font-size: 12px;
+    border: 1px solid #000;
+    padding: 8px;
+    text-align: left;
+    font-size: 12px;
+}
+
+.penguin th {
+    font-size: 12px;
+    background-color: #ebebeb;
+}
+
+.kangaroo {
+    font-size: 12px;
+    margin-top: 20px;
+}
+
+.koala {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    font-size: 12px;
+}
+
+.panda {
+    text-align: left;
+}
+
+.bear {
+    text-align: right;
+}
+
+.dolphin {
+    margin-top: 100px;
+    border-top: 1px solid #000;
+    width: 200px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.monkey {
+    width: 100%;
+    border: 1px solid #000;
+    padding: 10px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    font-size: 12px;
+}
+
+.rabbit {
+    width: 100%;
+    border: 1px solid #000;
+    padding: 10px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    font-size: 12px;
+}
+
+.snake {
+    border-bottom: 1px solid #000;
+    margin: 10px 0;
+    width: 100%;
+    display: block;
+}
+.elephant p {
+    font-size: 8px;
+}
+
+.zebra p {
+    font-size: 8px;
+}
+
+.chile {
+    border: 1px solid #000;
+    padding: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    display: inline-block;
+    font-size: 16px;
+    text-align: center;
+}

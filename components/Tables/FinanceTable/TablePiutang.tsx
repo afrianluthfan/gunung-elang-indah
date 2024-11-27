@@ -144,7 +144,7 @@ export default function TableComponent() {
 
   const handleDetailPiutang = async (id: string) => {
     // Konfirmasi menggunakan SweetAlert2
-    
+
   }
 
   const columns = [
@@ -215,25 +215,26 @@ export default function TableComponent() {
         case "actions":
           return (
             <div className="flex items-center gap-2">
-              <Button
-                color="success"
-                className="cursor-pointer active:opacity-50 text-white"
-                onClick={() => handleMarkAsPaid(user.id)}
-              >
-                Lunas
-              </Button>
-
-              <Button
-                color="primary"
-                className="cursor-pointer active:opacity-50 text-white"
-                onClick={() =>
-                  router.push(
+              <Tooltip content="Lunas" className="text-black">
+                <span
+                  className="cursor-pointer active:opacity-50 text-success hover:text-success-400"
+                  onClick={() => handleMarkAsPaid(user.id)}
+                >
+                  ✓
+                </span>
+              </Tooltip>
+              <Tooltip content="Detail" className="text-black">
+                <span
+                  onClick={() =>
+                    router.push(
                       `/piutang/edit?id=${user.pi_id}&divisi=${user.divisi}`
-                  )
-                }
-              >
-                Detail
-              </Button>
+                    )
+                  }
+                  className="cursor-pointer text-lg text-default-400 active:opacity-50"
+                >
+                  <EyeIcon />
+                </span>
+              </Tooltip>
             </div>
 
           );
