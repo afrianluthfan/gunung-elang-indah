@@ -199,7 +199,7 @@ export default function TableComponent() {
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const router = useRouter();
-  
+
   const renderCell = useCallback(
     (user: User & { index: number }, columnKey: React.Key) => {
       if (columnKey === "number") {
@@ -271,6 +271,10 @@ export default function TableComponent() {
           onClear={() => onClear()}
           onValueChange={onSearchChange}
         />
+        <Button color="success" className="text-white" onClick={() => router.push("/pengeluaran/add")}>
+          Tambah
+        </Button>
+
       </div>
 
 
