@@ -721,7 +721,8 @@ const ProformaInvoiceDetail = () => {
                   ref={pdfRef}
                 >
                   <div className="flex justify-between">
-                    <img src="/logo.jpg" alt="Logo" className="h-20 w-auto mr[90px]" />
+                    <img src="/LOGO_KOP.png" alt="Logo" className="h-20 w-auto  scale-200" />
+
                     <div className="lion mt-5">
                       <h1 className="chile">INVOICE</h1>
                     </div>
