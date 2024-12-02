@@ -360,7 +360,7 @@ const AdminMainContent = () => {
                 <TableCell className="text-center">{item.lots}</TableCell>
                 <TableCell className="text-center">{item.quantity}</TableCell>
                 <TableCell className="text-center">{item.price}</TableCell>
-                <TableCell className="text-center">{item.discount}</TableCell>
+                <TableCell className="text-center">{item.discount}%</TableCell>
                 <TableCell className="text-center">{item.gudang}</TableCell>
                 <TableCell className="text-center">{item.amount}</TableCell>
               </TableRow>
