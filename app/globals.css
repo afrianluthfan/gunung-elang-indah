@@ -31,3 +31,14 @@ body {
     text-wrap: balance;
   }
 }
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/static/Inter-VariableFont_opsz,wght.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+}
