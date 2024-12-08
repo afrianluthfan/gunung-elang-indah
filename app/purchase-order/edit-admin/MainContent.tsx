@@ -226,6 +226,17 @@ const AdminMainContent = () => {
           setIsRejected(false);
         } catch (error) {
           console.error("Error submitting data", error);
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Data Belum Lengkap',
+            text: 'Mohon lengkapi semua data yang diperlukan!',
+            confirmButtonText: 'Ok'
+          }
+        );
+
+
+          setIsRejected(true);
         } finally {
           setShouldSubmit(false);
         }
@@ -234,7 +245,6 @@ const AdminMainContent = () => {
       submitData();
     }
   }, [shouldSubmit, responseData]);
-
   const handleDelete = (index: number) => {
     Swal.fire({
       title: "Apakah Kamu Yakin ?",
@@ -541,7 +551,7 @@ const AdminMainContent = () => {
                 />
               </TableCell>
               <TableCell>
-              <select
+                <select
                   value={item.gudang}
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                     handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id);

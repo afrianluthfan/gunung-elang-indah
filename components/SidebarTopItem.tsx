@@ -6,7 +6,7 @@ const SidebarTopItem: FC = () => {
     <div className="flex min-w-[110px] flex-col items-center justify-center">
       <div className="flex aspect-square w-[35%] items-center justify-center overflow-hidden rounded-full border border-white">
         <Image
-          src="/logo.jpg" // Perhatikan bahwa src seharusnya menggunakan path relatif dari public folder, bukan "../public/logo.jpg"
+          src="/logo.jpg" // Perhatikan bahwa src seharusnya menggunakan path relatif dari public folder, bukan "../public/LOGO.png"
           alt="Logo"
           width={0}
           height={0}

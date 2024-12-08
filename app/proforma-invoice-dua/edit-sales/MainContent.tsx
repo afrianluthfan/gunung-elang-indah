@@ -217,6 +217,13 @@ const AdminMainContent = () => {
           localStorage.setItem("aksi", "update");
           router.push("/proforma-invoice-dua/form/preview");
         } catch (error) {
+
+          Swal.fire({
+            icon: "error",
+            title: "Data Belum Lengkap!",
+            text: "silahkan lengkapi data terlebih dahulu",
+          });
+
           console.error("Error submitting data", error);
         } finally {
           setShouldSubmit(false);
@@ -349,7 +356,7 @@ const AdminMainContent = () => {
               ...item_detail_pi,
               nama_barang: selectedItem.name,
               harga_satuan: selectedItem.price.toString(),
-              kode: selectedItem.kode, 
+              kode: selectedItem.kode,
               discount: selectedItem.diskon.toString(),
               variable: selectedItem.variable,
             }
@@ -478,11 +485,12 @@ const AdminMainContent = () => {
             </div>
             <div className="flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">Tanggal Tindakan:</label>
-              <Input
+              <input
                 type="date"
                 value={responseData.tanggal_tindakan}
                 name="tanggal_tindakan"
                 onChange={(e) => handleFieldChange(e, -1)}
+                onFocus={(e) => e.target.showPicker && e.target.showPicker()} // Memunculkan picker jika didukung
                 className="flex-1 rounded-md border border-gray-300 px-2 py-2 outline-none"
               />
             </div>
@@ -590,7 +598,7 @@ const AdminMainContent = () => {
                 {responseData.item_detail_pi.map((row, index) => (
                   <TableRow key={index}>
                     <TableCell>
-                    <select
+                      <select
                         value={row.gudang}
                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                           handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index);
@@ -738,7 +746,7 @@ const AdminMainContent = () => {
                 className="py-2"
               />
             </div> */}
-             <div className="flex w-full flex-col space-y-2 md:w-1/3">
+            <div className="flex w-full flex-col space-y-2 md:w-1/3">
               <label className="text-left">RM:</label>
               <Input
                 value={responseData.rm}
@@ -750,7 +758,7 @@ const AdminMainContent = () => {
             </div>
           </div>
           <div className="flex flex-col gap-4 lg:flex-row">
-           
+
           </div>
 
           <Divider />
