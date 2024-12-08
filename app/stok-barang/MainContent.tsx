@@ -190,38 +190,40 @@ const MainContent = () => {
 
       <div className="h-full ">
         <div className="text-sm">
-          <Table
-            aria-label="Example table with custom cells"
-            className="overflow-x-scroll"
-            sortDescriptor={sortDescriptor}
-            onSortChange={setSortDescriptor}
-            removeWrapper
-          >
-            <TableHeader columns={headerColumns}>
-              {(column) => (
-                <TableColumn
-                  key={column.uid}
-                  align="start"
-                  allowsSorting
-                  className="bg-[#0C295F] text-white"
-                >
-                  {column.name}
-                </TableColumn>
-              )}
-            </TableHeader>
-            <TableBody
-              emptyContent={"Barang Tidak Ada Di Gudang Ini"}
-              items={itemsWithIndex}
+          <div className="w-full overflow-x-auto">
+            <Table
+              aria-label="Example table with custom cells"
+              sortDescriptor={sortDescriptor}
+              onSortChange={setSortDescriptor}
+              removeWrapper
             >
-              {(item) => (
-                <TableRow key={item.number}>
-                  {(columnKey) => (
-                    <TableCell>{renderCell(item, columnKey)}</TableCell>
-                  )}
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+              <TableHeader columns={headerColumns}>
+                {(column) => (
+                  <TableColumn
+                    key={column.uid}
+                    align="start"
+                    allowsSorting
+                    className={`bg-[#0C295F] text-white ${column.uid === 'number' ? 'w-[50px] min-w-[50px]' : 'w-[200px] min-w-[200px]'}`}
+                  >
+                    {column.name}
+                  </TableColumn>
+                )}
+              </TableHeader>
+              <TableBody
+                emptyContent={"Barang Tidak Ada Di Gudang Ini"}
+                items={itemsWithIndex}
+              >
+                {(item) => (
+                  <TableRow key={item.number}>
+                    {(columnKey) => (
+                      <TableCell className={columnKey === 'number' ? 'w-[50px] min-w-[50px]' : 'w-[200px] min-w-[200px]'}>{renderCell(item, columnKey)}</TableCell>
+                    )}
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+
           <div className="mt-5 flex justify-between">
             <Pagination
               showControls

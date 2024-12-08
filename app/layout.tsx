@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: "PT Fismed Global Indonesia",
   description: "Generate By PT Gunung Elang Indah",
   icons: {
-    icon: '/logo.jpg',
+    icon: '/LOGO.png',
   }
 };
 
