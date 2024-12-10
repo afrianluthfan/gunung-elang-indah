@@ -145,21 +145,15 @@ export default function PITableComponent() {
 
       // Handle total amount sorting
       if (column === 'total') {
-        const valueA = Number(a.total?.replace(/[^0-9]/g, '')) || 0;
-        const valueB = Number(b.total?.replace(/[^0-9]/g, '')) || 0;
+
+        const valueA = Number(a.total?.substring(4).replace(/[^0-9]/g, '')) || 0;
+        console.log(valueA);
+        const valueB = Number(b.total?.substring(4).replace(/[^0-9]/g, '')) || 0;
         return sortDescriptor.direction === "descending"
           ? valueB - valueA
           : valueA - valueB;
       }
 
-      // Handle sub_total sorting
-      if (column === 'sub_total') {
-        const valueA = Number(a.sub_total) || 0;
-        const valueB = Number(b.sub_total) || 0;
-        return sortDescriptor.direction === "descending"
-          ? valueB - valueA
-          : valueA - valueB;
-      }
 
       // Default string sorting for other columns
       const valueA = String(a[column] || '').toLowerCase();
@@ -380,14 +374,21 @@ export default function PITableComponent() {
         </Table>
       </div>
       <div className="mt-3 flex items-center justify-between">
-        <Pagination
-          showControls
-          showShadow
-          color="primary"
-          page={page}
-          onChange={setPage}
-          total={pages}
-        />
+        {
+          pages && (
+            <Pagination
+              showControls
+              showShadow
+              autoFocus={true}
+              initialPage={1}
+              color="primary"
+              page={page}
+              onChange={setPage}
+              total={pages}
+            />
+          )
+        }
+
         <div className="flex items-center gap-4">
           <label className="text-small text-default-500">Rows per page:</label>
           <select

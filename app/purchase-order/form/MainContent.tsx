@@ -19,6 +19,7 @@ import Swal from "sweetalert2";
 import { DeleteIcon } from "../../../components/Tables/AdminTable/DeleteIcon";
 
 type ItemDetail = {
+  keterangan_barang: string;
   gudang: string
   variable: string
   kode: string
@@ -233,6 +234,7 @@ const AdminMainContent = () => {
           kode: "",
           gudang: "",
           lots: "",
+          keterangan_barang: "",
         },
       ],
     }));
@@ -367,136 +369,156 @@ const AdminMainContent = () => {
         <h1 className="text-lg text-black font-semibold mt-2">Data Barang</h1>
         <Button onClick={handleAddItem} className="bg-[#0C295F] text-white">Tambah Barang</Button>
       </div>
-      <Table removeWrapper>
-        <TableHeader>
-          <TableColumn className="bg-[#0C295F] text-white text-center">No</TableColumn>
-          <TableColumn className="bg-[#0C295F] text-white text-center w-[300px]">Nama Barang</TableColumn>
-          <TableColumn className="bg-[#0C295F] text-white text-center">Variable</TableColumn>
-          <TableColumn className="bg-[#0C295F] text-white text-center">Kode</TableColumn>
-          <TableColumn className="bg-[#0C295F] text-white text-center">Lots</TableColumn>
-          <TableColumn className="bg-[#0C295F] text-white text-center">Quantity</TableColumn>
-          <TableColumn className="bg-[#0C295F] text-white text-center">Harga Satuan</TableColumn>
-          <TableColumn className="bg-[#0C295F] text-white text-center">Diskon</TableColumn>
-          <TableColumn className="bg-[#0C295F] text-white text-center">Gudang Tujuan</TableColumn>
-          <TableColumn className="bg-[#0C295F] text-white text-center">Aksi</TableColumn>
-        </TableHeader>
-        <TableBody>
-          {responseData.item.map((item, index) => (
-            <TableRow key={item.id}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>
-                <div className="relative">
+
+      <div className="w-full overflow-x-auto">
+
+        <Table removeWrapper>
+          <TableHeader>
+            <TableColumn className="bg-[#0C295F] text-white w-[50px]">No</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white w-[300px]">Nama Barang</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white w-[300px]">Variable</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white w-[300px]">Kode</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white w-[300px]">Lots</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white w-[50px]">Quantity</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white w-[50px]">Harga Satuan</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white w-[50px]">Diskon</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white w-[300px]">Gudang Tujuan</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white w-[300px]">Keterangan</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white w-[50px]">Aksi</TableColumn>
+          </TableHeader>
+          <TableBody>
+            {responseData.item.map((item, index) => (
+              <TableRow key={item.id}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>
+                  <div className="relative w-[300px]">
+                    <textarea
+                      value={item.name}
+                      name="name"
+                      className="w-[300px] p-2 border border-black-500 rounded resize-none"
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
+                      placeholder="Nama Barang"
+                    />
+                  </div>
+                </TableCell>
+                <TableCell>
                   <textarea
-                    value={item.name}
-                    name="name"
-                    className="w-full p-2 border border-black-500 rounded resize-none"
+                    value={item.variable}
+                    className="p-2 border border-black-500 rounded w-[300px]"
+                    name="variable"
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
-                    placeholder="Nama Barang"
+                    placeholder="Variable"
                   />
-                  {itemSuggestions[item.id]?.length > 0 && (
-                    <div className="absolute bg-white border mt-2 w-full shadow-lg z-10 !h-[300px] overflow-y-auto">
-                      {itemSuggestions[item.id].map((suggestion, idx) => (
-                        <div
-                          key={idx}
-                          className="cursor-pointer p-2 hover:bg-gray-100"
-                          onClick={() => handleSuggestionClick(suggestion, item.id)}
-                        >
-                          {suggestion}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </TableCell>
-              <TableCell>
-                <textarea
-                  value={item.variable}
-                  className="w-full p-2 border border-black-500 rounded "
-                  name="variable"
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
-                  placeholder="Variable"
-                />
-              </TableCell>
-              <TableCell>
-                <textarea
-                  value={item.kode}
-                  className="w-full p-2 border border-black-500 rounded "
-                  name="kode"
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
-                  placeholder="Kode"
-                />
-              </TableCell>
-              <TableCell>
-                <textarea
-                  value={item.lots}
-                  className="w-full p-2 border border-black-500 rounded "
-                  name="lots"
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
-                  placeholder="Lots"
-                />
-              </TableCell>
-              <TableCell>
-                <textarea
-                  value={item.quantity}
-                  name="quantity"
-                  className="w-full p-2 border border-black-500 rounded resize-none"
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
-                  placeholder="Quantity"
-                />
-              </TableCell>
-              <TableCell>
-                <textarea
-                  value={item.price}
-                  name="price"
-                  className="w-full p-2 border border-black-500 rounded resize-none"
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
-                  placeholder="Harga Satuan"
-                />
-              </TableCell>
-              <TableCell>
-                <textarea
-                  value={item.discount}
-                  name="discount"
-                  className="w-full p-2 border border-black-500 rounded resize-none"
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
-                  placeholder="Diskon"
-                />
-              </TableCell>
-              <TableCell>
-                <select
-                  value={item.gudang}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                    handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id);
-                    setGudang(e.target.value);
-                  }}
-                  name="gudang"
-                  id="123"
-                  className="w-full px-5 py-4 border border-black-500 rounded resize-none"
-                >
-                  <option value="">Pilih Gudang Tujuan</option>
-                  {
-                    gudangList.map((gudang) => (
-                      <option key={gudang.id} value={gudang.nama_gudang}>
-                        {gudang.nama_gudang}
-                      </option>
-                    ))
-                  }
-                </select>
-              </TableCell>
-              <TableCell>
-                <Tooltip content="Delete" className="text-black">
-                  <span
-                    className="cursor-pointer text-lg text-default-400 active:opacity-50"
-                    onClick={() => handleDelete(item.id)}
+                </TableCell>
+                <TableCell>
+                  <textarea
+                    value={item.kode}
+                    className="w-[300px] p-2 border border-black-500 rounded "
+                    name="kode"
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
+                    placeholder="Kode"
+                  />
+                </TableCell>
+                <TableCell>
+                  <textarea
+                    value={item.lots}
+                    className="w-[300px] p-2 border border-black-500 rounded "
+                    name="lots"
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
+                    placeholder="Lots"
+                  />
+                </TableCell>
+                <TableCell>
+                  <textarea
+                    value={item.quantity}
+                    name="quantity"
+                    className="w-[100px] p-2 border border-black-500 rounded resize-none"
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
+                    placeholder="Quantity"
+                  />
+                </TableCell>
+                <TableCell>
+                  <textarea
+                    value={item.price}
+                    name="price"
+                    className="w-[100px] p-2 border border-black-500 rounded resize-none"
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
+                    placeholder="Harga Satuan"
+                  />
+                </TableCell>
+                <TableCell>
+                  <textarea
+                    value={item.discount}
+                    name="discount"
+                    className="w-[100px] p-2 border border-black-500 rounded resize-none"
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
+                    placeholder="Diskon"
+                  />
+                </TableCell>
+                <TableCell>
+                  <select
+                    value={item.gudang}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                      handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id);
+                      setGudang(e.target.value);
+                    }}
+                    name="gudang"
+                    id="123"
+                    className="w-[200px] px-2 py-5 border border-black-500 rounded resize-none"
                   >
-                    <DeleteIcon />
-                  </span>
-                </Tooltip>
-              </TableCell>
-            </TableRow>
+                    <option value="">Pilih Gudang Tujuan</option>
+                    {
+                      gudangList.map((gudang) => (
+                        <option key={gudang.id} value={gudang.nama_gudang}>
+                          {gudang.nama_gudang}
+                        </option>
+                      ))
+                    }
+                  </select>
+                </TableCell>
+                <TableCell>
+                  <textarea
+                    value={item.keterangan_barang}
+                    name="keterangan_barang"
+                    className="w-[300px] p-2 border border-black-500 rounded resize-none"
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, item.id)}
+                    placeholder="Keterangan"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Tooltip content="Delete" className="text-black">
+                    <span
+                      className="cursor-pointer text-lg text-default-400 active:opacity-50"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      <DeleteIcon />
+                    </span>
+                  </Tooltip>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
+        <div className="">
+          {responseData.item.map((item) => (
+            itemSuggestions[item.id]?.length > 0 && (
+              <div className="absolute bg-white border mt-2 w-[300px] shadow-lg z-10 !h-[300px] overflow-y-auto">
+                {itemSuggestions[item.id].map((suggestion, idx) => (
+                  <div
+                    key={idx}
+                    className="cursor-pointer p-2 hover:bg-gray-100"
+                    onClick={() => handleSuggestionClick(suggestion, item.id)}
+                  >
+                    {suggestion}
+                  </div>
+                ))}
+              </div>
+            )
           ))}
-        </TableBody>
-      </Table>
+        </div>
+      </div>
+
       {!isRejected && (
         <div className="flex justify-end gap-3">
           <Button

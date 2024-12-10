@@ -41,7 +41,7 @@ const MainContent = () => {
 
       Swal.fire({
         title: "Apakah Kamu Yakin ?",
-        html: "Apakah kamu yakin ingin mengubah <b>Purchase Order</b> ini?",        
+        html: "Apakah kamu yakin ingin mengubah <b>Purchase Order</b> ini?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -101,26 +101,26 @@ const MainContent = () => {
           try {
             if (data && data.data && data.data.data) {
 
-              
-                const res = await axios.post(`${apiUrl}/purchase-order/posting`, data.data.data);
-                if (res.data.status === true) {
-                  Swal.fire({
-                    title: "Success",
-                    html: "<b>Purchase Order</b> berhasil dibuat",
-                    icon: "success",
-                  }).then((result) => {
-                    if (result.isConfirmed) {
-                      router.push("/purchase-order");
-                    }
-                  });
-                } else {
-                  Swal.fire({
-                    title: "Failed",
-                    text: "Purchase Order gagal diubah",
-                    icon: "error",
-                  });
-                }
-              
+
+              const res = await axios.post(`${apiUrl}/purchase-order/posting`, data.data.data);
+              if (res.data.status === true) {
+                Swal.fire({
+                  title: "Success",
+                  html: "<b>Purchase Order</b> berhasil dibuat",
+                  icon: "success",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    router.push("/purchase-order");
+                  }
+                });
+              } else {
+                Swal.fire({
+                  title: "Failed",
+                  text: "Purchase Order gagal diubah",
+                  icon: "error",
+                });
+              }
+
             } else {
               console.error("Data is not available");
             }
@@ -153,8 +153,8 @@ const MainContent = () => {
   // Destructure the inner data object
   const {
     nama_suplier, nomor_po, tanggal, catatan_po, prepared_by, prepared_jabatan,
-    approved_by, approved_jabatan, sub_total, pajak, total, item, nomor_si, 
-    
+    approved_by, approved_jabatan, sub_total, pajak, total, item, nomor_si,
+
   } = data.data.data || {};
 
   return (
@@ -262,33 +262,37 @@ const MainContent = () => {
       </div>
 
       {/* Bagian Table */}
-      <div className="flex justify-between items-center">
+      <div className=" w-full overflow-x-auto">
         <Table removeWrapper>
           <TableHeader>
-            <TableColumn className="bg-[#0C295F] text-white text-left">NO</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">KODE</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">NAMA BARANG</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">VARIABLE</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">LOTS</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">QUANTITY</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">HARGA SATUAN</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">DISKON</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">GUDANG</TableColumn>
-            <TableColumn className="bg-[#0C295F] text-white text-left">AMOUNT</TableColumn>
+            <TableColumn className="bg-[#0C295F] w-[300px] text-white text-left">NO</TableColumn>
+            <TableColumn className="bg-[#0C295F] w-[300px] text-white text-left">KODE</TableColumn>
+            <TableColumn className="bg-[#0C295F] w-[300px] text-white text-left">NAMA BARANG</TableColumn>
+            <TableColumn className="bg-[#0C295F] w-[300px] text-white text-left">VARIABLE</TableColumn>
+            <TableColumn className="bg-[#0C295F] w-[300px] text-white text-left">LOTS</TableColumn>
+            <TableColumn className="bg-[#0C295F] w-[300px] text-white text-left">QUANTITY</TableColumn>
+            <TableColumn className="bg-[#0C295F] w-[300px] text-white text-left">HARGA SATUAN</TableColumn>
+            <TableColumn className="bg-[#0C295F] w-[300px] text-white text-left">DISKON</TableColumn>
+            <TableColumn className="bg-[#0C295F] w-[300px] text-white text-left">GUDANG</TableColumn>
+            <TableColumn className="bg-[#0C295F] w-[300px] text-white text-left">AMOUNT</TableColumn>
+            <TableColumn className="bg-[#0C295F] w-[300px] text-white text-left">KETERANGAN</TableColumn>
           </TableHeader>
           <TableBody>
-            {item?.map((item: { name: string; kode: string; quantity: number; price: string; gudang: string; amount: string; variable: string; discount: string; lots: string }, index: number) => (
+            {item?.map((item: {
+              keterangan_barang: string; name: string; kode: string; quantity: number; price: string; gudang: string; amount: string; variable: string; discount: string; lots: string
+            }, index: number) => (
               <TableRow key={index} className="">
-                <TableCell className="text-left">{index + 1}</TableCell>
-                <TableCell className="text-left">{item.kode}</TableCell>
-                <TableCell className="text-left">{item.name}</TableCell>
-                <TableCell className="text-left">{item.variable}</TableCell>
-                <TableCell className="text-left">{item.lots}</TableCell>
-                <TableCell className="text-left">{item.quantity}</TableCell>
-                <TableCell className="text-left">{item.price}</TableCell>
-                <TableCell className="text-left">{item.discount}%</TableCell>
-                <TableCell className="text-left">{item.gudang}</TableCell>
-                <TableCell className="text-left">{item.amount}</TableCell>
+                <TableCell className="text-left w-[300px]">{index + 1}</TableCell>
+                <TableCell className="text-left w-[300px]">{item.kode}</TableCell>
+                <TableCell className="text-left w-[300px]">{item.name}</TableCell>
+                <TableCell className="text-left w-[300px]">{item.variable}</TableCell>
+                <TableCell className="text-left w-[300px]">{item.lots}</TableCell>
+                <TableCell className="text-left w-[300px]">{item.quantity}</TableCell>
+                <TableCell className="text-left w-[300px]">{item.price}</TableCell>
+                <TableCell className="text-left w-[300px]">{item.discount}%</TableCell>
+                <TableCell className="text-left w-[300px]">{item.gudang}</TableCell>
+                <TableCell className="text-left w-[300px]">{item.amount}</TableCell>
+                <TableCell className="text-left w-[300px]">{item.keterangan_barang}</TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -24,6 +24,7 @@ type Gudang = {
 };
 
 type ItemDetail = {
+  keterangan_barang: string | number | readonly string[] | undefined;
   id: number;
   po_id: number;
   name: string;
@@ -233,7 +234,7 @@ const AdminMainContent = () => {
             text: 'Mohon lengkapi semua data yang diperlukan!',
             confirmButtonText: 'Ok'
           }
-        );
+          );
 
 
           setIsRejected(true);
@@ -320,6 +321,7 @@ const AdminMainContent = () => {
           variable: "",
           gudang: "",
           lots: "",
+          keterangan_barang: "",
         },
       ],
     }));
@@ -446,9 +448,9 @@ const AdminMainContent = () => {
         </div>
       </div>
 
-      <Table removeWrapper className="mb-4">
+      <Table removeWrapper className="mb-4 overflow-x-auto">
         <TableHeader>
-          <TableColumn className="bg-[#0C295F] text-white text-center">No</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">No</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white">Nama Barang</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white">Kode</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white">Variable</TableColumn>
@@ -457,6 +459,7 @@ const AdminMainContent = () => {
           <TableColumn className="bg-[#0C295F] text-white">Harga Satuan</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white">Diskon</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white">Gudang Tujuan</TableColumn>
+          <TableColumn className="bg-[#0C295F] text-white">Keterangan</TableColumn>
           <TableColumn className="bg-[#0C295F] text-white">Action</TableColumn>
         </TableHeader>
         <TableBody>
@@ -468,7 +471,7 @@ const AdminMainContent = () => {
                   <textarea
                     value={item.name}
                     name="name"
-                    className="w-full p-2 border border-black-500 rounded resize-none"
+                    className="w-[300px] p-2 border border-black-500 rounded resize-none"
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
                     placeholder="Nama Barang"
                     autoComplete="off"
@@ -499,7 +502,7 @@ const AdminMainContent = () => {
               <TableCell>
                 <textarea
                   value={item.kode}
-                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  className="w-[300px] p-2 border border-black-500 rounded resize-none"
                   name="kode"
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
                   placeholder="Kode"
@@ -508,7 +511,7 @@ const AdminMainContent = () => {
               <TableCell>
                 <textarea
                   value={item.variable}
-                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  className="w-[300px] p-2 border border-black-500 rounded resize-none"
                   name="variable"
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
                   placeholder="Variable"
@@ -517,7 +520,7 @@ const AdminMainContent = () => {
               <TableCell>
                 <textarea
                   value={item.lots}
-                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  className="w-[300px] p-2 border border-black-500 rounded resize-none"
                   name="lots"
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
                   placeholder="Lots"
@@ -526,7 +529,7 @@ const AdminMainContent = () => {
               <TableCell>
                 <textarea
                   value={item.quantity}
-                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  className="w-[100px] p-2 border border-black-500 rounded resize-none"
                   name="quantity"
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
                   placeholder="Quantity"
@@ -535,7 +538,7 @@ const AdminMainContent = () => {
               <TableCell>
                 <textarea
                   value={item.price}
-                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  className="w-[100px] p-2 border border-black-500 rounded resize-none"
                   name="price"
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
                   placeholder="Harga Satuan"
@@ -544,7 +547,7 @@ const AdminMainContent = () => {
               <TableCell>
                 <textarea
                   value={item.discount}
-                  className="w-full p-2 border border-black-500 rounded resize-none"
+                  className="w-[100px] p-2 border border-black-500 rounded resize-none"
                   name="discount"
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
                   placeholder="Diskon"
@@ -559,7 +562,7 @@ const AdminMainContent = () => {
                   }}
                   name="gudang"
                   id="123"
-                  className="w-full px-5 py-4 border border-black-500 rounded resize-none"
+                  className="w-[200px] px-5 py-4 border border-black-500 rounded resize-none"
                 >
                   <option value="">Pilih Gudang Tujuan</option>
                   {
@@ -571,6 +574,17 @@ const AdminMainContent = () => {
                   }
                 </select>
               </TableCell>
+
+              <TableCell>
+                <textarea
+                  value={item.keterangan_barang}
+                  className="w-[300px] p-2 border border-black-500 rounded resize-none"
+                  name="keterangan_barang"
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, index)}
+                  placeholder="Keterangan"
+                />
+              </TableCell>
+              
               <TableCell>
                 <Tooltip content="Delete" className="text-black">
                   <span

@@ -215,19 +215,19 @@ export default function PITableComponent() {
       </div>
 
       <div className="flex gap-2 mb-5">
-        <Input 
-          type="date" 
-          className="border-1 border-blue-900 rounded-xl" 
-          placeholder="Start Date" 
-          name="startDate" 
-          onChange={handleFilterChange} 
+        <Input
+          type="date"
+          className="border-1 border-blue-900 rounded-xl"
+          placeholder="Start Date"
+          name="startDate"
+          onChange={handleFilterChange}
         />
-        <Input 
-          type="date" 
-          className="border-1 border-blue-900 rounded-xl" 
-          placeholder="End Date" 
-          name="endDate" 
-          onChange={handleFilterChange} 
+        <Input
+          type="date"
+          className="border-1 border-blue-900 rounded-xl"
+          placeholder="End Date"
+          name="endDate"
+          onChange={handleFilterChange}
         />
         <Input className="border-1 border-blue-900 rounded-xl" placeholder="Nama Suplier" name="nama_suplier" onChange={handleFilterChange} />
         <Input className="border-1 border-blue-900 rounded-xl" placeholder="Nomor PO" name="nomor_po" onChange={handleFilterChange} />
@@ -272,14 +272,20 @@ export default function PITableComponent() {
         </Table>
       </div>
       <div className="mt-5 flex justify-between">
-        <Pagination
-          showControls
-          showShadow
-          color="primary"
-          page={page}
-          onChange={setPage}
-          total={pages}
-        />
+        {
+          pages && (
+            <Pagination
+              showControls
+              showShadow
+              autoFocus={true}
+              initialPage={1}
+              color="primary"
+              page={page}
+              onChange={setPage}
+              total={pages}
+            />
+          )
+        }
         <select value={rowsPerPage} onChange={(e) => setRowsPerPage(Number(e.target.value))}>
           {[5, 10, 25, 50].map((pageSize) => (
             <option key={pageSize} value={pageSize}>

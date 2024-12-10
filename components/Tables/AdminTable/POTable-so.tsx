@@ -305,14 +305,20 @@ export default function PITableComponent() {
         </Table>
       </div>
       <div className="mt-5 flex justify-between">
-        <Pagination
-          showControls
-          showShadow
-          color="primary"
-          page={page}
-          onChange={setPage}
-          total={pages}
-        />
+        {
+          pages && (
+            <Pagination
+              showControls
+              showShadow
+              autoFocus={true}
+              initialPage={1}
+              color="primary"
+              page={page}
+              onChange={setPage}
+              total={pages}
+            />
+          )
+        }
         <select value={rowsPerPage} onChange={(e) => setRowsPerPage(Number(e.target.value))}>
           {[5, 10, 25, 50].map((pageSize) => (
             <option key={pageSize} value={pageSize}>
