@@ -503,7 +503,8 @@ const AdminMainContent = () => {
         <div className="">
           {responseData.item.map((item) => (
             itemSuggestions[item.id]?.length > 0 && (
-              <div className="absolute bg-white border mt-2 w-[300px] shadow-lg z-10 !h-[300px] overflow-y-auto">
+              <div key={item.id} className="absolute bg-white border mt-2 w-[300px] shadow-lg z-10 !h-[200px] overflow-y-auto">
+                <div className="font-bold mb-1">List Nama Barang :</div>
                 {itemSuggestions[item.id].map((suggestion, idx) => (
                   <div
                     key={idx}
@@ -537,6 +538,11 @@ const AdminMainContent = () => {
           </Button>
         </div>
       )}
+
+      <div>
+        <hr className="border-t-2 border-gray-300 my-4" />
+        <h1 className="text-sm mb-4 text-center">© License held by PT Gunung Elang Indah</h1>
+      </div>
     </div>
   );
 };

@@ -166,9 +166,6 @@ const Form: FC = () => {
               Next
             </Button>
           </div> */}
-          <div className="flex h-[4vh] items-center justify-center text-end font-semibold">
-            <h1>Supported by PT Gunung Elang Indah</h1>
-          </div>
         </div>
       </div>
     </section>
