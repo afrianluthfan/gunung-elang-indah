@@ -31,6 +31,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "harga",
   "kode",
   "namaGudang",
+  "keterangan_barang"
 ];
 
 type Gudang = {
@@ -97,6 +98,7 @@ const MainContent = () => {
     { name: "Katalog", uid: "kode" },
     { name: "Harga", uid: "harga" },
     { name: "Gudang", uid: "namaGudang" },
+    { name: "Keterangan", uid: "keterangan_barang" },
   ];
 
   const headerColumns = useMemo(() => {
@@ -225,14 +227,20 @@ const MainContent = () => {
           </div>
 
           <div className="mt-5 flex justify-between">
-            <Pagination
-              showControls
-              showShadow
-              color="primary"
-              page={page}
-              onChange={setPage}
-              total={pages}
-            />
+            {
+              pages && (
+                <Pagination
+                  showControls
+                  showShadow
+                  autoFocus={true}
+                  initialPage={1}
+                  color="primary"
+                  page={page}
+                  onChange={setPage}
+                  total={pages}
+                />
+              )
+            }
             <select value={rowsPerPage} onChange={onRowsPerPageChange}>
               {[5, 10, 25, 50].map((pageSize) => (
                 <option key={pageSize} value={pageSize}>

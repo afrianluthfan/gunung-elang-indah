@@ -225,7 +225,7 @@ const MainContent = () => {
         icon: "error",
         confirmButtonText: "OK",
       });
-    } 
+    }
   };
 
   if (error) {
@@ -309,12 +309,20 @@ const MainContent = () => {
         </div>
 
         <div className="flex justify-end p-4">
-          <Pagination
-            showControls
-            page={page}
-            total={pages}
-            onChange={(page) => setPage(page)}
-          />
+          {
+            pages && (
+              <Pagination
+                showControls
+                showShadow
+                autoFocus={true}
+                initialPage={1}
+                color="primary"
+                page={page}
+                onChange={setPage}
+                total={pages}
+              />
+            )
+          }
         </div>
       </div>
       <div>

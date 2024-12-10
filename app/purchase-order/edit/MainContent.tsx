@@ -15,6 +15,7 @@ import {
 } from "@nextui-org/react";
 
 type ItemDetail = {
+  keterangan_barang: string;
   gudang: string;
   variable: string;
   kode: string;
@@ -311,6 +312,7 @@ const AdminMainContent = () => {
             <TableColumn className="bg-[#0C295F] text-white text-left">DISKON</TableColumn>
             <TableColumn className="bg-[#0C295F] text-white text-left">GUDANG</TableColumn>
             <TableColumn className="bg-[#0C295F] text-white text-left">SUB TOTAL</TableColumn>
+            <TableColumn className="bg-[#0C295F] text-white text-left">KETERANGAN</TableColumn>
           </TableHeader>
           <TableBody>
             {responseData.item.map((item, index) => (
@@ -325,6 +327,7 @@ const AdminMainContent = () => {
                 <TableCell className="text-left">{item.discount}%</TableCell>
                 <TableCell className="text-left">{item.gudang}</TableCell>
                 <TableCell className="text-left">{item.amount}</TableCell>
+                <TableCell className="text-left">{item.keterangan_barang}</TableCell>
               </TableRow>
             ))}
           </TableBody>

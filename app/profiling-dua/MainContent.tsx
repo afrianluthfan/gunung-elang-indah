@@ -286,14 +286,20 @@ const MainContent = () => {
           </Table>
         </div>
         <div className="w-full mt-5 lg:w-auto">
-          <Pagination
-            showControls
-            showShadow
-            color="primary"
-            page={page}
-            onChange={setPage}
-            total={pages}
-          />
+          {
+            pages && (
+              <Pagination
+                showControls
+                showShadow
+                autoFocus={true}
+                initialPage={1}
+                color="primary"
+                page={page}
+                onChange={setPage}
+                total={pages}
+              />
+            )
+          }
         </div>
       </div>
 

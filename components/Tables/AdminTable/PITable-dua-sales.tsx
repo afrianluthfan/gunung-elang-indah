@@ -325,18 +325,20 @@ export default function PITableComponent() {
         </Table>
       </div>
       <div className="mt-3 flex items-center justify-between">
-        <Pagination
-          showControls
-          showShadow
-          color="primary"
-          page={page}
-          initialPage={1}
-          onChange={setPage}
-          total={pages}
-          classNames={{
-            cursor: "bg-blue-500 text-white"
-          }}
-        />
+        {
+          pages && (
+            <Pagination
+              showControls
+              showShadow
+              autoFocus={true}
+              initialPage={1}
+              color="primary"
+              page={page}
+              onChange={setPage}
+              total={pages}
+            />
+          )
+        }
         <div className="flex items-center gap-4">
           <label className="text-small text-default-500">Rows per page:</label>
           <select

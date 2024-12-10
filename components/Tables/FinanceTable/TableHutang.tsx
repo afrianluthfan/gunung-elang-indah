@@ -335,11 +335,20 @@ export default function TableComponent() {
         </TableBody>
       </Table>
       <div className="mt-5 flex justify-between">
-        <Pagination
-          total={pages}
-          page={page}
-          onChange={(newPage) => setPage(newPage)}
-        />
+        {
+          pages && (
+            <Pagination
+              showControls
+              showShadow
+              autoFocus={true}
+              initialPage={1}
+              color="primary"
+              page={page}
+              onChange={setPage}
+              total={pages}
+            />
+          )
+        }
         <select value={rowsPerPage} onChange={onRowsPerPageChange}>
           {[5, 10].map((pageSize) => (
             <option key={pageSize} value={pageSize}>

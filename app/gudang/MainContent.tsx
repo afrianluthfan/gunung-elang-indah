@@ -154,7 +154,7 @@ const MainContent = () => {
             value={filterValue}
             onChange={(e) => setFilterValue(e.target.value)}
           />
-         
+
           <Button onPress={onOpen} className="bg-[#009338] font-bold text-white rounded-md w-full lg:w-auto">
             Tambah Gudang
           </Button>
@@ -199,14 +199,20 @@ const MainContent = () => {
         </div>
 
         <div className="flex justify-end p-4">
-          <Pagination
-            showControls
-            showShadow
-            color="primary"
-            page={page}
-            onChange={setPage}
-            total={pages}
-          />
+          {
+            pages && (
+              <Pagination
+                showControls
+                showShadow
+                autoFocus={true}
+                initialPage={1}
+                color="primary"
+                page={page}
+                onChange={setPage}
+                total={pages}
+              />
+            )
+          }
         </div>
       </div>
 
