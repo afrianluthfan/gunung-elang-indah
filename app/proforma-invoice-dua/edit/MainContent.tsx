@@ -541,7 +541,7 @@ const ProformaInvoiceDetail = () => {
 
 
 
-      {username === "ADMIN" && responseData.status !== "Diterima" && (
+      {username === "ADMIN" && responseData.status !== "Diterima" || username === "SUPER ADMIN" && responseData.status !== "Diterima" && (
         <div className="flex justify-end gap-3">
           <Button onClick={submitReject} color="danger" className="min-w-36">
             Ditolak

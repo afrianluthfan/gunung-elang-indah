@@ -176,7 +176,7 @@ export default function PITableComponent() {
                   <EyeIcon className="items-center" />
                 </span>
               </Tooltip>
-              {user.status !== "DITERIMA" && username === "ADMIN" && (
+              {user.status !== "DITERIMA" && username === "ADMIN" || user.status !== "DITERIMA" && username === "SUPER ADMIN" && (
                 <Tooltip content="Edit" className="text-black text-center">
                   <span
                     onClick={() =>

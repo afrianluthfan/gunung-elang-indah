@@ -271,7 +271,7 @@ const MainContent = () => {
             </TableHeader>
             <TableBody
               items={itemsWithIndex}
-              emptyContent={<div>Data Tidak Ditemukan / Anda Blm Melimih Customer</div>}
+              emptyContent={<div>Data Tidak Ditemukan / ANDA BELUM MEMILIH PROFIL</div>}
             >
               {(item) => (
                 <TableRow key={item.id}>

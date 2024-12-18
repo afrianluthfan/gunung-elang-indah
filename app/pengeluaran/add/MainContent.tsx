@@ -69,22 +69,7 @@ const AdminMainContent = () => {
       const submitData = async () => {
         try {
           // Check if any required field is empty
-          const hasEmptyField = Object.entries(responseData).some(([key, value]) => {
-            if (key === 'item_deleted') return false;
-            if (key === 'item') return false;
-            if (Array.isArray(value)) {
-              return value.length === 0;
-            } return value === "" || value === null || value === undefined;
-          });          console.log("Gudang:", responseData.item.map((item) => item.gudang));
-          if (hasEmptyField) {
-            Swal.fire({
-              title: "Error",
-              text: "Data Belum Lengkap",
-              icon: "error",
-              confirmButtonColor: "#3085d6",
-            });
-            return;
-          } const res = await axios.post(
+          const res = await axios.post(
             `${apiUrl}/pengeluaran/inquiry`,
             responseData
           );
@@ -257,7 +242,7 @@ const AdminMainContent = () => {
             placeholder="Perusahaan / Toko"
             className="p-2 border border-gray-300 rounded"
           />
-          
+
           <label className="text-left">Keterangan: </label>
           <Input
             value={responseData.catatan_po}
@@ -403,7 +388,7 @@ const AdminMainContent = () => {
                   placeholder="Diskon"
                 />
               </TableCell>
-              
+
               <TableCell>
                 <Tooltip content="Delete" className="text-black">
                   <span

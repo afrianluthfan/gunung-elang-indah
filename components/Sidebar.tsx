@@ -24,7 +24,7 @@ const Sidebar = () => {
   const handleLogOut = () => {
     // Dispatch action untuk logout
     dispatch(logOut());
-    
+
     // Clear localStorage
     localStorage.clear(); // Menghapus semua data dari LocalStorage
 
@@ -84,7 +84,7 @@ const Sidebar = () => {
         pageName: "Stok Barang",
         pageRoute: "stok-barang",
       },
-      
+
       {
         pageName: "Price List",
         pageRoute: "price-list",
@@ -105,7 +105,7 @@ const Sidebar = () => {
         pageName: "Purchase Order Disetujui",
         pageRoute: "sales-order-finance",
       },
-      
+
       {
         pageName: "Piutang",
         pageRoute: "piutang",
@@ -126,20 +126,33 @@ const Sidebar = () => {
         pageName: "Stok Barang",
         pageRoute: "stok-barang",
       },
+
     ];
 
     const superAdmin = [
       {
-        pageName: "Profiling",
-        pageRoute: "profiling",
+        pageName: "Beranda",
+        pageRoute: "beranda",
       },
       {
-        pageName: "Sales Order",
-        pageRoute: "sales-order",
+        pageName: "Manajemen Akun",
+        pageRoute: "akun",
+      },
+      {
+        pageName: "Profiling",
+        pageRoute: "profiling-dua",
+      },
+      {
+        pageName: "Purchase Order Disetujui",
+        pageRoute: "sales-order-finance",
       },
       {
         pageName: "Purchase Order",
         pageRoute: "purchase-order",
+      },
+      {
+        pageName: "Sales Order",
+        pageRoute: "sales-order-sales",
       },
       {
         pageName: "Proforma Invoice",
@@ -149,10 +162,6 @@ const Sidebar = () => {
         pageName: "Stok Barang",
         pageRoute: "stok-barang",
       },
-      // {
-      //   pageName: "Sewa Barang",
-      //   pageRoute: "sewa-barang",
-      // },
       {
         pageName: "Piutang",
         pageRoute: "piutang",
@@ -170,8 +179,16 @@ const Sidebar = () => {
         pageRoute: "pengeluaran",
       },
       {
-        pageName: "Dokumen Logistik",  
+        pageName: "Dokumen Logistik",
         pageRoute: "dokumen-logistik",
+      },
+      {
+        pageName: "Data Gudang",
+        pageRoute: "gudang",
+      },
+      {
+        pageName: "Price List",
+        pageRoute: "price-list",
       },
     ];
 
@@ -188,7 +205,7 @@ const Sidebar = () => {
       case "KEUANGAN":
         setMenuItemsList(financeMenus);
         break;
-      case "SUPER_ADMIN": // Pastikan untuk menambahkan case untuk super admin
+      case "SUPER ADMIN": // Pastikan untuk menambahkan case untuk super admin
         setMenuItemsList(superAdmin);
         break;
       default:
@@ -199,16 +216,19 @@ const Sidebar = () => {
   return (
     <div className="fixed flex h-screen w-full flex-col items-center justify-between bg-[#0C295F] p-1 md:w-[17.3vw] md:p-5">
       <SidebarTopItem />
-      <SidebarMenuItemsLayout>
-        {menuItemsList.map((menuItem, index) => (
-          <SidebarMenuItem
-            key={index}
-            active={baseUrl === "/" + menuItem.pageRoute}
-            pageName={menuItem.pageName}
-            pageRoute={menuItem.pageRoute}
-          />
-        ))}
-      </SidebarMenuItemsLayout>
+      <div className="max-h-96 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[#0C295F] [&::-webkit-scrollbar-thumb]:bg-white">
+        <SidebarMenuItemsLayout >
+          {menuItemsList.map((menuItem, index) => (
+            <SidebarMenuItem
+              key={index}
+              active={baseUrl === "/" + menuItem.pageRoute}
+              pageName={menuItem.pageName}
+              pageRoute={menuItem.pageRoute}
+            />
+          ))}
+        </SidebarMenuItemsLayout>
+      </div>
+
       <Button
         className="w-fit min-w-16 px-0 text-xs bg-red-600 text-white font-bold lg:w-full lg:px-4 lg:text-sm"
         onClick={handleLogOut}

@@ -80,6 +80,9 @@ const LoginForm = () => {
           case "keuangan":
             router.push("/beranda");
             break;
+          case "super admin":
+            router.push("/beranda");
+            break;
           default:
             break;
         }
@@ -95,12 +98,12 @@ const LoginForm = () => {
         });
       }
     } catch (error) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Login Error',
-            text: 'Terjadi kesalahan saat login!',
-            timerProgressBar: true,
-          });
+      Swal.fire({
+        icon: 'error',
+        title: 'Login Error',
+        text: 'Terjadi kesalahan saat login!',
+        timerProgressBar: true,
+      });
     }
   };
 
@@ -127,6 +130,9 @@ const LoginForm = () => {
             break;
           case "KEUANGAN":
             router.push("/piutang");
+            break;
+          case "SUPER ADMIN":
+            router.push("/beranda");
             break;
           default:
             break;
