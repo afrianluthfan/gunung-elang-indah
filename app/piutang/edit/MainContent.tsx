@@ -312,7 +312,7 @@ const ProformaInvoiceDetail = () => {
 
       try {
         const response = await axios.post(
-          `${apiUrl}/proforma-invoice/detailPI-so`,
+          `${apiUrl}/proforma-invoice/detailPI`,
           { id: id, divisi: divisi },
         );
         setResponseData(response.data.data);
