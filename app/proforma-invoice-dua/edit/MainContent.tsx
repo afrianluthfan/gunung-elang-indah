@@ -426,7 +426,7 @@ const ProformaInvoiceDetail = () => {
       </div>
 
       {/* Bagian Table */}
-  
+
       {username === "SALES" ? (
         <div className="flex items-center justify-between overflow-x-scroll">
           <Table removeWrapper>
@@ -541,7 +541,22 @@ const ProformaInvoiceDetail = () => {
 
 
 
-      {username === "ADMIN" && responseData.status !== "Diterima" || username === "SUPER ADMIN" && responseData.status !== "Diterima" && (
+      {username === "ADMIN" && responseData.status !== "Diterima" && (
+        <div className="flex justify-end gap-3">
+          <Button onClick={submitReject} color="danger" className="min-w-36">
+            Ditolak
+          </Button>
+          <Button
+            onClick={submitAcc}
+            color="success"
+            className="min-w-36 text-white"
+          >
+            Diterima
+          </Button>
+        </div>
+      )}
+
+      {username === "SUPER ADMIN" && responseData.status !== "Diterima" && (
         <div className="flex justify-end gap-3">
           <Button onClick={submitReject} color="danger" className="min-w-36">
             Ditolak

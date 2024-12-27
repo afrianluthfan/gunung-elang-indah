@@ -200,12 +200,12 @@ export default function PITableComponent() {
                   <EyeIcon className="items-center" />
                 </span>
               </Tooltip>
-              {user.status !== "Diterima" && username === "SALES" && (
+              {user.status !== "Diterima" && username === "SUPER ADMIN" && (
                 <Tooltip content="Edit" className="text-center text-black">
                   <span
                     onClick={() =>
                       router.push(
-                        username === "SALES"
+                        username === "SUPER ADMIN"
                           ? `/proforma-invoice-dua/edit-sales?id=${user.id}&divisi=${user.divisi}`
                           : ""
                       )

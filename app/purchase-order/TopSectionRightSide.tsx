@@ -25,7 +25,16 @@ const TopSectionRightSide = () => {
         Segarkan
       </Button>
 
-      {username === "ADMIN" || username === "SUPER ADMIN" && (
+      {username === "SUPER ADMIN" && (
+        <Button
+          onClick={() => router.push("/purchase-order/form")}
+          className="bg-[#00a110] font-semibold text-white"
+        >
+          Tambah
+        </Button>
+      )}
+
+      {username === "ADMIN"  && (
         <Button
           onClick={() => router.push("/purchase-order/form")}
           className="bg-[#00a110] font-semibold text-white"
