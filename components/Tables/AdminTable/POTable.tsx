@@ -176,7 +176,20 @@ export default function PITableComponent() {
                   <EyeIcon className="items-center" />
                 </span>
               </Tooltip>
-              {user.status !== "DITERIMA" && username === "ADMIN" || user.status !== "DITERIMA" && username === "SUPER ADMIN" && (
+              {user.status !== "DITERIMA" && username === "ADMIN" && (
+                <Tooltip content="Edit" className="text-black text-center">
+                  <span
+                    onClick={() =>
+                      router.push(`/purchase-order/edit-admin?id=${user.id}`)
+                    }
+                    className="cursor-pointer text-lg text-default-400 active:opacity-50"
+                  >
+                    <EditIcon />
+                  </span>
+                </Tooltip>
+              )}
+
+              {user.status !== "DITERIMA" && username === "SUPER ADMIN" && (
                 <Tooltip content="Edit" className="text-black text-center">
                   <span
                     onClick={() =>
