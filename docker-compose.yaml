@@ -1,7 +1,7 @@
 services:
-  fismed_fe:
-    image: fismed-fe:latest
-    container_name: fismed-fe-dev
+  fismed_fe_staging:
+    image: fismed-fe-staging:latest
+    container_name: fismed-fe-staging
     restart: always
     deploy:
       # mode: replicated
@@ -10,9 +10,9 @@ services:
       resources:
         limits:
           cpus: '0.50'
-          memory: 1.5G
+          memory: 0.5G
     ports:
-      - 3000:3000
+      - 3030:3000
     networks:
       - fismed-network
     # healthcheck:  # Health check for service readiness
