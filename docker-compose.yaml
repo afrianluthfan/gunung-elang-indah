@@ -21,6 +21,6 @@ services:
     #   timeout: 10s
     #   retries: 5
 
-networks:
-  fismed-network:
-    driver: bridge  # Default bridge network
+# networks:
+#   fismed-network:
+#     driver: bridge  # Default bridge network
