@@ -10,7 +10,7 @@ services:
       resources:
         limits:
           cpus: '0.50'
-          memory: 1.5G
+          memory: 0.5G
     ports:
       - 3030:3000
     networks:
