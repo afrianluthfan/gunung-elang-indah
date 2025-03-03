@@ -56,6 +56,7 @@ type ProformaInvoice = {
   nama_customer: string;
   alamat_customer: string;
   rm: string;
+  keterangan: string;
   tanggalAsli: string;
   item_detail_pi: ItemDetailPI[];
 };
@@ -84,6 +85,7 @@ const ProformaInvoiceDetail = () => {
     rumah_sakit: "",
     alamat: "",
     rm: "",
+    keterangan: "",
     item_detail_pi: [],
     terbilang: "",
     tanggalAsli: "",
@@ -362,7 +364,6 @@ const ProformaInvoiceDetail = () => {
 
   const [isVisible, setIsVisible] = useState(false);
   // HANDLER DOWNLOAD INVOICE END 
-
   return (
     <div className="flex h-full w-full flex-col justify-between gap-6 p-8">
       <div className="my-1 flex justify-between">
@@ -487,6 +488,21 @@ const ProformaInvoiceDetail = () => {
                   <h1>{responseData.rm}</h1>
                 </td>
               </tr>
+
+              <tr>
+                <td className="text-left">
+                  <h1 className="font-medium">Keterangan</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <input
+                    type="text"
+                    className="border rounded px-2 py-1"
+                    value={responseData.keterangan}
+                    onChange={(e) => setResponseData({...responseData, keterangan: e.target.value})}
+                  />
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -554,6 +570,20 @@ const ProformaInvoiceDetail = () => {
                 <td className="w-10 text-center">:</td>
                 <td className="">
                   <h1>{responseData.rm}</h1>
+                </td>
+              </tr>
+
+              <tr>
+                <td className="text-left">
+                  <h1 className="font-medium">Keterangan</h1>
+                </td>
+                <td className="w-10 text-center">:</td>
+                <td className="">
+                  <textarea
+                    className="border rounded px-2 py-1 w-[500px]"
+                    value={responseData.keterangan}
+                    onChange={(e) => setResponseData({...responseData, keterangan: e.target.value})}
+                  />
                 </td>
               </tr>
             </tbody>
@@ -780,7 +810,7 @@ const ProformaInvoiceDetail = () => {
                           <td></td>
                         </tr>
                         <tr>
-                          <td>{responseData.nama_customer}</td>
+                          <td>{responseData.rumah_sakit}</td>
                           <td></td>
                         </tr>
                         <tr>
@@ -807,8 +837,10 @@ const ProformaInvoiceDetail = () => {
                     <thead>
                       <tr>
                         <th><p>No</p></th>
-                        <th><p>KAT</p></th>
-                        <th><p>Nama Barang</p></th>
+                        {/* <th><p>KAT</p></th> */}
+                        <th colSpan={2}>
+                          <p>Nama Barang</p>
+                        </th>
                         <th><p>Qty</p></th>
                         <th><p>H. Satuan</p></th>
                         <th><p>Diskon</p></th>
@@ -819,11 +851,11 @@ const ProformaInvoiceDetail = () => {
                       {responseData.item_detail_pi.map((item, index) => (
                         <tr key={item.id}>
                           <td><p>{index + 1}</p></td>
-                          <td><p>{item.kat}</p></td>
-                          <td><p>{item.nama_barang}</p></td>
+                          {/* <td><p>{item.kat}</p></td> */}
+                          <td colSpan={2}><p>{item.nama_barang}</p></td>
                           <td><p>{item.quantity}</p></td>
                           <td><p>{item.harga_satuan}</p></td>
-                          <td><p>{item.discount}</p></td>
+                          <td><p>{item.discount}%</p></td>
                           <td><p>{item.sub_total_item}</p></td>
                         </tr>
                       ))}
@@ -848,24 +880,53 @@ const ProformaInvoiceDetail = () => {
                       Terbilang: {responseData.terbilang}
                     </div>
                     <div className="rabbit">
-                      Keterangan: Jatuh tempo pembayaran pada hari Senin tanggal 01 Juli 2024
+                      Keterangan: {responseData.keterangan}
                     </div>
-                    <div>Pembayaran dapat dilakukan dengan cara Transfer:</div>
-                    <div>No. Rek: BCA 0083875175 a.n. PT Fismed Global Indonesia</div>
+
+                    <div className="rabbit">
+                      <div>Pembayaran dapat dilakukan dengan cara Transfer:</div>
+                      <table className="table-auto mt-2">
+                        <tbody>
+                          <tr>
+                            <td className="pr-2"><b>No. Rek </b></td>
+                            <td>: <input type="number" placeholder="Nomor Rekening" style={{ height: "25px", width: "200px" }} /></td>
+                          </tr>
+                          <tr>
+                            <td className="pr-2"><b>Atas Nama </b></td>
+                            <td>
+                              : <input type="text" placeholder="Nama Pemilik Rekening" style={{ height: "25px", width: "200px" }} />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
                   </div>
 
                   <div className="koala">
                     <div className="panda">
                       Yang Menerima,<br />
-                      <strong>Penanggung Jawab, RS Terkait</strong>
-                      <div className="dolphin"></div>
+                      <strong>Penanggung Jawab</strong>
+                      <br />
+                      <strong>{responseData.rumah_sakit}</strong>
+                      <div className="dolphin2"></div>
                     </div>
                     <div className="bear">
-                      Bandung, { responseData.tanggalAsli}<br />
+                      Bandung, {responseData.tanggalAsli}<br />
                       <strong>PT Fismed Global Indonesia</strong>
+                      <br />
+                      <strong className="text-white"> .</strong>
                       <div className="dolphin"></div>
-                      <div>(Sonny Sonail)</div>
-                      <div>General Manager</div>
+                      {/* <div>(Sonny Sonail)</div>
+                      <div>General Manager</div> */}
+                      <div>
+                        <div style={{ textAlign: "right" }}>
+                          <input type="text" placeholder="Nama Penanggung Jawab" style={{ textAlign: "right", height: "30px", width: "200px" }} />
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                          <input type="text" placeholder="Jabatan Penanggung Jawab" style={{ textAlign: "right", height: "30px", width: "200px" }} />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

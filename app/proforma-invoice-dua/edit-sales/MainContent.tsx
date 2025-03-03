@@ -53,6 +53,7 @@ type PurchaseOrder = {
   rumah_sakit: string;
   alamat: string;
   reason: string;
+  keterangan: string;
   item_detail_pi: ItemDetailPI[];
   item_deleted: { kat: string }[];
 };
@@ -77,6 +78,7 @@ const AdminMainContent = () => {
     rumah_sakit: "",
     alamat: "",
     reason: "",
+    keterangan: "",
     item_detail_pi: [],
     item_deleted: [],
   });
@@ -562,6 +564,17 @@ const AdminMainContent = () => {
             </div>
           </div>
 
+          <div className="flex w-full flex-col space-y-2 md:w-1/3">
+            <label className="text-left">Keterangan:</label>
+            <textarea
+              value={responseData.keterangan}
+              name="keterangan"
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, -1)}
+              placeholder="Keterangan"
+              className="flex-1 rounded-md border border-gray-300 px-2 py-2 outline-none resize-both min-h-[200px]"
+            />
+          </div>
+
           <Divider />
 
           <div className="flex justify-end">
@@ -756,6 +769,17 @@ const AdminMainContent = () => {
                 className="py-2"
               />
             </div>
+          </div>
+
+          <div className="flex w-full flex-col space-y-2 md:w-1/3">
+            <label className="text-left">Keterangan:</label>
+            <textarea
+              value={responseData.keterangan}
+              name="keterangan"
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>, -1)}
+              placeholder="Keterangan"
+              className="flex-1 rounded-md border border-gray-300 px-2 py-2 outline-none resize-both min-h-[200px]"
+            />
           </div>
           <div className="flex flex-col gap-4 lg:flex-row">
 

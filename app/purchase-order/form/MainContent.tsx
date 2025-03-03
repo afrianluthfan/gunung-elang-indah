@@ -38,6 +38,7 @@ type PurchaseOrder = {
   prepared_jabatan: string;
   approved_by: string;
   approved_jabatan: string;
+  keterangan: string;
   item: ItemDetail[];
   item_deleted: { id: number }[];
 };
@@ -57,6 +58,7 @@ const AdminMainContent = () => {
     prepared_jabatan: "",
     approved_by: "",
     approved_jabatan: "",
+    keterangan: "",
     item: [],
     item_deleted: [],
   });
@@ -318,14 +320,7 @@ const AdminMainContent = () => {
               </option>
             ))}
           </select>
-          <label className="text-left">Catatan PO:</label>
-          <Input
-            value={responseData.catatan_po}
-            name="catatan_po"
-            onChange={(e) => handleFieldChange(e)}
-            placeholder="Catatan PO"
-            className="p-2 border border-gray-300 rounded"
-          />
+
         </div>
         <div className="flex flex-col space-y-2 w-full md:w-1/3">
           <label className="text-left">Prepared by:</label>
@@ -364,6 +359,16 @@ const AdminMainContent = () => {
           />
         </div>
       </div>
+
+      <label className="text-left">Catatan PO:</label>
+      <textarea
+        value={responseData.catatan_po}
+        name="catatan_po"
+        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange(e as unknown as React.ChangeEvent<HTMLInputElement>)}
+        placeholder="Catatan PO"
+        className="p-2 border border-gray-300 rounded"
+      />
+
       <hr className="border-t-2 border-gray-200" />
       <div className="flex justify-between gap-3">
         <h1 className="text-lg text-black font-semibold mt-2">Data Barang</h1>

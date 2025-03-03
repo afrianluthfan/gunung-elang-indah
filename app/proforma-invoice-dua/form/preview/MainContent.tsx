@@ -170,6 +170,8 @@ const MainContent = () => {
     nama_dokter,
     nama_pasien,
     rumah_sakit,
+
+    keterangan,
   } = data.data.data || {};
 
   return (
@@ -277,6 +279,16 @@ const MainContent = () => {
                       <h1>{nama_pasien}</h1>
                     </td>
                   </tr>
+
+                  <tr>
+                    <td className="text-left">
+                      <h1 className="font-medium">Keterangan</h1>
+                    </td>
+                    <td className="w-10 text-center">:</td>
+                    <td className="">
+                      <h1>{keterangan}</h1>
+                    </td>
+                  </tr>
                 </td>
               </tbody>
             </table>
@@ -344,6 +356,16 @@ const MainContent = () => {
                     <td className="w-10 text-center">:</td>
                     <td className="">
                       <h1>{nomor_si}</h1>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td className="text-left">
+                      <h1 className="font-medium">Keterangan</h1>
+                    </td>
+                    <td className="w-10 text-center">:</td>
+                    <td className="">
+                      <h1>{keterangan}</h1>
                     </td>
                   </tr>
                 </td>
@@ -445,6 +467,16 @@ const MainContent = () => {
                       <h1>{nama_pasien}</h1>
                     </td>
                   </tr>
+
+                  <tr>
+                    <td className="text-left">
+                      <h1 className="font-medium">Keterangan</h1>
+                    </td>
+                    <td className="w-10 text-center">:</td>
+                    <td className="">
+                      <h1>{keterangan}</h1>
+                    </td>
+                  </tr>
                 </td>
               </tbody>
             </table>
@@ -512,6 +544,16 @@ const MainContent = () => {
                     <td className="w-10 text-center">:</td>
                     <td className="">
                       <h1>{number_si}</h1>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td className="text-left">
+                      <h1 className="font-medium">Keterangan</h1>
+                    </td>
+                    <td className="w-10 text-center">:</td>
+                    <td className="">
+                      <h1>{keterangan}</h1>
                     </td>
                   </tr>
                 </td>
